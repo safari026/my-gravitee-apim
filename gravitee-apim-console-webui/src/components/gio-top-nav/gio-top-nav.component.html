@@ -38,6 +38,19 @@
       >
         <mat-icon svgIcon="gio:question-mark-circle"></mat-icon>
       </button>
+      <button mat-icon-button type="button" (click)="toggleLanguage()" [attr.aria-label]="'common.language.switch' | translate">
+        <mat-icon>language</mat-icon>
+      </button>
+
+      <button
+        mat-icon-button
+        (click)="openContextualDocumentationClick()"
+        aria-label="Display contextual documentation"
+        *ngIf="!isOEM && displayContextualDocumentationButton"
+        data-pendoId="sidenav-resource-center"
+      >
+        <mat-icon svgIcon="gio:question-mark-circle"></mat-icon>
+      </button>
       <gio-notification-menu></gio-notification-menu>
       <gio-user-menu [hasAlert]="hasAlert" [userTaskCount]="userTaskCount"></gio-user-menu>
     </gio-top-bar-menu>

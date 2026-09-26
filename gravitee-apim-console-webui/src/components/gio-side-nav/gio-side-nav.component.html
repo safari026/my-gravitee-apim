@@ -22,7 +22,7 @@
         <gio-menu-selector
           [tabIndex]="1"
           [selectedItemValue]="currentEnv.id"
-          selectorTitle="Environment"
+          [selectorTitle]="'navigation.environment' | translate"
           [selectorItems]="environments"
           (selectChange)="changeCurrentEnv($event)"
         ></gio-menu-selector>

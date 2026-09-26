@@ -38,6 +38,7 @@ import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
 import { Constants } from '../../entities/Constants';
 import { EnvironmentSettingsService } from '../../services-ngx/environment-settings.service';
 import { Environment } from '../../entities/environment/environment';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 const PORTAL_SETTINGS_PERMISSIONS_SET = new Set(PORTAL_SETTINGS_PERMISSIONS);
 
@@ -49,6 +50,10 @@ describe('GioSideNavComponent', () => {
 
   const expirationDateInOneYear = new Date();
   expirationDateInOneYear.setFullYear(expirationDateInOneYear.getFullYear() + 1);
+
+  beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
+  });
 
   const init = async (
     licenseNotificationEnabled = true,
@@ -210,6 +215,41 @@ describe('GioSideNavComponent', () => {
       expect(searchItemNames).not.toContain('Kafka');
       expect(searchItemNames).not.toContain('Observability');
       expect(searchItemNames).not.toContain('Analytics');
+    });
+  });
+
+  describe('language switching', () => {
+    afterEach(() => {
+      localStorage.removeItem('gio-console-lang');
+    });
+
+    it('should rebuild menu labels when language changes without reload', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './home')?.displayName).toBe('Dashboard');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './applications')?.displayName).toBe('Applications');
+      expect(fixture.componentInstance.footerMenuItems.find(item => item.routerLink === '/_organization')?.displayName).toBe(
+        'Organization',
+      );
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './home')?.displayName).toBe('Дашборд');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './applications')?.displayName).toBe('Приложения');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './settings')?.displayName).toBe('Настройки');
+      expect(fixture.componentInstance.footerMenuItems.find(item => item.routerLink === '/_organization')?.displayName).toBe('Организация');
+
+      const kafkaItem = fixture.componentInstance.mainMenuItems.find(item =>
+        item.items?.some(child => child.routerLink === './clusters/kafka-standalone'),
+      );
+      expect(kafkaItem?.displayName).toBe('Kafka');
+      expect(kafkaItem?.items?.[0].displayName).toBe('Автономный');
     });
   });
 

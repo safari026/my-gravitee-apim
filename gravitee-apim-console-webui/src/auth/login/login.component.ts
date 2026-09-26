@@ -27,6 +27,8 @@ import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { SocialIdentityProvider } from '../../entities/organization/socialIdentityProvider';
 import { AuthService } from '../auth.service';
 import { Constants } from '../../entities/Constants';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { Language } from '../../shared/i18n/translations';
 
 export type SocialIdentityProviderVM = SocialIdentityProvider & { textColor?: string };
 
@@ -55,6 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly snackBarService: SnackBarService,
     private readonly authService: AuthService,
     private readonly iconRegistry: MatIconRegistry,
+    public readonly languageService: LanguageService,
     private readonly sanitizer: DomSanitizer,
   ) {
     this.userCreationEnabled = constants.org.settings.management?.userCreation?.enabled ?? false;
@@ -70,6 +73,9 @@ export class LoginComponent implements OnInit, OnDestroy {
         this.sanitizer.bypassSecurityTrustResourceUrl('assets/logo_' + type.toLowerCase() + '-idp.svg'),
       );
     });
+  }
+  setLanguage(language: Language): void {
+    this.languageService.setLanguage(language);
   }
 
   ngOnInit(): void {

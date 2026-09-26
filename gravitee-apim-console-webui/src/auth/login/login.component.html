@@ -19,21 +19,21 @@
 <mat-card appearance="outlined" class="card">
   <div class="card__header">
     <img class="card__header__logo" src="assets/gravitee_logo_full_on_light_solaris.png" alt="Gravitee.io" />
-    <div class="card__header__title">Sign In</div>
-    <div class="card__header__subtitle">to continue to the APIM Console</div>
+    <div class="card__header__title">{{ 'auth.login.title' | translate }}</div>
+    <div class="card__header__subtitle">{{ 'auth.login.subtitle' | translate }}</div>
   </div>
 
   <form *ngIf="!localLoginDisabled" class="card__form" [formGroup]="loginForm" (ngSubmit)="login()">
     <mat-form-field class="card__form__input">
-      <mat-label>Username</mat-label>
+      <mat-label>{{ 'auth.login.username' | translate }}</mat-label>
       <input matInput type="text" formControlName="username" autofocus data-testid="username-input" />
-      <mat-error *ngIf="loginForm.get('username').hasError('required')">Username is required.</mat-error>
+      <mat-error *ngIf="loginForm.get('username').hasError('required')">{{'auth.login.errors.usernameRequired' | translate}}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="card__form__input">
-      <mat-label>Password</mat-label>
+      <mat-label>{{ 'auth.login.password' | translate }}</mat-label>
       <input matInput type="password" formControlName="password" data-testid="password-input" />
-      <mat-error *ngIf="loginForm.get('password').hasError('required')">Password is required.</mat-error>
+      <mat-error *ngIf="loginForm.get('password').hasError('required')">{{'auth.login.errors.passwordRequired' | translate}}</mat-error>
     </mat-form-field>
 
     <button
@@ -44,12 +44,18 @@
       data-testid="sign-in-button"
     >
       <mat-icon svgIcon="gio:login"></mat-icon>
-      Sign in
+      {{ 'auth.login.submit' | translate }}
     </button>
 
-    <p class="card__form__goTo" *ngIf="userCreationEnabled">Don't have an account yet? <a routerLink="/_sign-up">Sign up</a></p>
+    <p class="card__form__goTo" *ngIf="userCreationEnabled">{{ 'auth.login.signUp.question' | translate }}<a routerLink="/_sign-up">{{'auth.login.signUp.link' | translate}}</a></p>
   </form>
+  <div>
+    <button type="button" (click)="setLanguage('en')">English</button>
 
+    <span> | </span>
+
+    <button type="button" (click)="setLanguage('ru')">Русский</button>
+  </div>
   <div class="card__providers">
     <button
       *ngFor="let provider of identityProviders"

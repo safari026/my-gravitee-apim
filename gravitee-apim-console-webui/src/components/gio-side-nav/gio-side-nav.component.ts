@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { GioLicenseService, GioMenuSearchService, LicenseOptions, MenuSearchItem, SelectorItem } from '@gravitee/ui-particles-angular';
-import { catchError, distinctUntilChanged, map, switchMap, takeUntil } from 'rxjs/operators';
+import { catchError, distinctUntilChanged, map, skip, switchMap, takeUntil } from 'rxjs/operators';
 import { EMPTY, Observable, of, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 
@@ -25,6 +26,7 @@ import { ApimFeature, UTMTags } from '../../shared/components/gio-license/gio-li
 import { Environment } from '../../entities/environment/environment';
 import { cleanRouterLink } from '../../util/router-link.util';
 import { EnvironmentSettingsService } from '../../services-ngx/environment-settings.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 interface MenuItem {
   icon?: string;
@@ -74,6 +76,7 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
 
   public currentEnv: Environment;
   private envHrid: string;
+  private envSettings?: EnvSettings;
   public licenseExpirationDate$: Observable<Date>;
   public licenseExpirationNotificationEnabled = true;
 
@@ -85,6 +88,9 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly gioMenuSearchService: GioMenuSearchService,
     private readonly environmentSettingsService: EnvironmentSettingsService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit(): void {
@@ -111,7 +117,18 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
       )
       .subscribe(envSettings => {
+        this.envSettings = envSettings;
         this.mainMenuItems = this.buildMainMenuItems(envSettings);
+      });
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.mainMenuItems = this.buildMainMenuItems(this.envSettings);
+        this.footerMenuItems = this.buildFooterMenuItems();
+        this.gioMenuSearchService.removeMenuSearchItems([SIDE_NAV_GROUP_ID]);
+        this.gioMenuSearchService.addMenuSearchItems(this.getSideNaveMenuSearchItems());
+        this.changeDetectorRef.markForCheck();
       });
 
     if (this.constants.org.settings?.licenseExpirationNotification?.enabled !== undefined) {
@@ -161,18 +178,23 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     const apiProductsIconRight$ = this.getMenuItemIconRight$(apiProductsLicenseOptions);
 
     const mainMenuItems: MenuItem[] = [
-      { icon: 'gio:home', routerLink: './home', displayName: 'Dashboard', category: 'home' },
+      {
+        icon: 'gio:home',
+        routerLink: './home',
+        displayName: this.languageService.translate('navigation.dashboard'),
+        category: this.languageService.translate('navigation.dashboard'),
+      },
       {
         icon: 'gio:cloud-settings',
         routerLink: './apis',
-        displayName: 'APIs',
-        category: 'Apis',
+        displayName: this.languageService.translate('navigation.apis'),
+        category: this.languageService.translate('navigation.apis'),
       },
       {
         icon: 'gio:folder',
         routerLink: './api-products',
-        displayName: 'API Products',
-        category: 'API Products',
+        displayName: this.languageService.translate('navigation.apiProducts'),
+        category: this.languageService.translate('navigation.apiProducts'),
         permissions: ['environment-api_product-r'],
         licenseOptions: apiProductsLicenseOptions,
         iconRight$: apiProductsIconRight$,
@@ -180,39 +202,39 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
       {
         icon: 'gio:box',
         routerLink: './integrations',
-        displayName: 'Integrations',
+        displayName: this.languageService.translate('navigation.integrations'),
         permissions: ['environment-integration-r'],
-        category: 'Integrations',
+        category: this.languageService.translate('navigation.integrations'),
       },
       {
         icon: 'gio:multi-window',
         routerLink: './applications',
-        displayName: 'Applications',
+        displayName: this.languageService.translate('navigation.applications'),
         permissions: ['environment-application-r'],
-        category: 'Applications',
+        category: this.languageService.translate('navigation.applications'),
       },
     ];
 
     mainMenuItems.push({
       icon: 'gio:cloud-server',
-      displayName: 'Gateways',
+      displayName: this.languageService.translate('navigation.gateways'),
       routerLink: './gateways',
       permissions: ['environment-instance-r'],
-      category: 'Gateways',
+      category: this.languageService.translate('navigation.gateways'),
     });
     mainMenuItems.push({
       icon: 'gio:cluster',
-      displayName: 'Kafka',
-      category: 'Kafka',
+      displayName: this.languageService.translate('navigation.kafka.title'),
+      category: this.languageService.translate('navigation.kafka.title'),
       permissions: ['environment-cluster-r'],
       licenseOptions: clusterLicenseOptions,
       iconRight$: clusterIconRight$,
       routerBasePath: `/${this.envHrid}/clusters`,
       items: [
         {
-          displayName: 'Standalone',
+          displayName: this.languageService.translate('navigation.kafka.standalone'),
           routerLink: './clusters/kafka-standalone',
-          category: 'Kafka',
+          category: this.languageService.translate('navigation.kafka.title'),
         },
       ],
     });
@@ -221,65 +243,65 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
       mainMenuItems.push({
         icon: 'gio:shield-check',
         routerLink: './api-score',
-        displayName: 'API Score',
+        displayName: this.languageService.translate('navigation.apiScore'),
         permissions: ['environment-integration-r'],
-        category: 'API Score',
+        category: this.languageService.translate('navigation.apiScore'),
       });
     }
 
     mainMenuItems.push({
       icon: 'gio:verified',
-      displayName: 'Audit',
+      displayName: this.languageService.translate('navigation.audit'),
       routerLink: './audit',
       permissions: ['environment-audit-r'],
       licenseOptions: auditLicenseOptions,
       iconRight$: auditIconRight$,
-      category: 'Audit',
+      category: this.languageService.translate('navigation.audit'),
     });
 
     mainMenuItems.push({
       icon: 'gio:dashboard-dots',
-      displayName: 'Observability',
-      category: 'Observability',
+      displayName: this.languageService.translate('navigation.observability.title'),
+      category: this.languageService.translate('navigation.observability.title'),
       permissions: ['environment-platform-r'],
       routerBasePath: `/${this.envHrid}/observability`,
       items: [
         {
-          displayName: 'Overview',
+          displayName: this.languageService.translate('navigation.observability.overview'),
           routerLink: './observability/overview',
-          category: 'Analytics',
+          category: this.languageService.translate('navigation.analytics.title'),
         },
         {
-          displayName: 'Dashboards',
+          displayName: this.languageService.translate('navigation.observability.dashboards'),
           routerLink: './observability/dashboards',
-          category: 'Analytics',
+          category: this.languageService.translate('navigation.analytics.title'),
           permissions: ['environment-dashboard-r', 'environment-api-r'],
         },
         {
-          displayName: 'Logs',
+          displayName: this.languageService.translate('navigation.observability.logs'),
           routerLink: './observability/logs-explorer',
-          category: 'Analytics',
+          category: this.languageService.translate('navigation.analytics.title'),
         },
       ],
     });
     mainMenuItems.push({
       icon: 'gio:bar-chart-2',
-      displayName: 'Analytics',
-      category: 'Analytics',
+      displayName: this.languageService.translate('navigation.analytics.title'),
+      category: this.languageService.translate('navigation.analytics.title'),
       permissions: ['environment-platform-r'],
       routerBasePath: `/${this.envHrid}/analytics`,
       iconRight$: of('gio:info'),
-      iconRightTooltip: 'This interface supports API V2 only. For API V4, switch to the new Observability interface.',
+      iconRightTooltip: this.languageService.translate('navigation.analytics.v2Tooltip'),
       items: [
         {
-          displayName: 'Dashboard',
+          displayName: this.languageService.translate('navigation.analytics.dashboard'),
           routerLink: './analytics/dashboard',
-          category: 'Analytics',
+          category: this.languageService.translate('navigation.analytics.title'),
         },
         {
-          displayName: 'Logs',
+          displayName: this.languageService.translate('navigation.analytics.logs'),
           routerLink: './analytics/logs',
-          category: 'Analytics',
+          category: this.languageService.translate('navigation.analytics.title'),
         },
       ],
     });
@@ -287,12 +309,12 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     if (!this.constants.isOEM && this.constants.org.settings.alert && this.constants.org.settings.alert.enabled) {
       mainMenuItems.push({
         icon: 'gio:alarm',
-        displayName: 'Alerts',
+        displayName: this.languageService.translate('navigation.alerts'),
         routerLink: './alerts',
         permissions: ['environment-alert-r'],
         licenseOptions: alertEngineLicenseOptions,
         iconRight$: alertEngineIconRight$,
-        category: 'Alerts',
+        category: this.languageService.translate('navigation.alerts'),
       });
     }
 
@@ -300,8 +322,8 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
       mainMenuItems.push({
         icon: 'gio:monitor',
         routerLink: './_portal',
-        displayName: 'Portal Settings',
-        category: 'Portal Settings',
+        displayName: this.languageService.translate('navigation.portalSettings'),
+        category: this.languageService.translate('navigation.portalSettings'),
         permissions: PORTAL_SETTINGS_PERMISSIONS,
         target: '_blank',
         externalLink: true,
@@ -311,8 +333,8 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     mainMenuItems.push({
       icon: 'gio:settings',
       routerLink: './settings',
-      displayName: 'Settings',
-      category: 'Environment',
+      displayName: this.languageService.translate('navigation.settings'),
+      category: this.languageService.translate('navigation.environment'),
       // prettier-ignore
       permissions: [
         // Portal
@@ -359,9 +381,9 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
       {
         icon: 'gio:building',
         routerLink: '/_organization',
-        displayName: 'Organization',
+        displayName: this.languageService.translate('navigation.organization'),
         permissions: ['organization-settings-r'],
-        category: 'Organization',
+        category: this.languageService.translate('navigation.organization'),
       },
     ]);
   }
