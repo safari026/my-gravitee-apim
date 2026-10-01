@@ -19,8 +19,10 @@ import { CommonModule } from '@angular/common';
 
 import { HealthAvailabilityTimeFrameComponent } from './health-availability-time-frame.component';
 
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+
 @NgModule({
-  imports: [HighchartsChartModule, CommonModule],
+  imports: [HighchartsChartModule, CommonModule, TranslatePipe],
   declarations: [HealthAvailabilityTimeFrameComponent],
   exports: [HealthAvailabilityTimeFrameComponent],
 })

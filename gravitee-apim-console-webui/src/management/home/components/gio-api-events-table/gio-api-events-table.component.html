@@ -23,9 +23,9 @@
   [length]="totalLength"
   (filtersChange)="onFiltersChanged($event)"
 >
-  <table mat-table [dataSource]="tableData" aria-label="API Events table">
+  <table mat-table [dataSource]="tableData" [attr.aria-label]="'dashboard.events.tableAria' | translate">
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>API</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'dashboard.table.api' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <a
           *ngIf="element.apiId"
@@ -36,7 +36,7 @@
     </ng-container>
 
     <ng-container matColumnDef="deployment">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Deployment</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'dashboard.table.deployment' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <span *ngIf="element.deploymentNumber" class="gio-badge-neutral"># {{ element.deploymentNumber }}</span
         >{{ element.deploymentLabel }}
@@ -44,16 +44,16 @@
     </ng-container>
 
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Date</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'dashboard.table.date' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.updatedAt | date: 'medium' }}
       </td>
     </ng-container>
 
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header>Type</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header>{{ 'dashboard.table.type' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.type }}
+        {{ 'dashboard.events.types.' + element.type | translate }}
       </td>
     </ng-container>
 
@@ -63,7 +63,7 @@
     <!-- Row shown when there is no data -->
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
       <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-        <div *ngIf="!isLoading; else loader" class="mat-body">No content to display</div>
+        <div *ngIf="!isLoading; else loader" class="mat-body">{{ 'dashboard.empty' | translate }}</div>
       </td>
     </tr>
   </table>

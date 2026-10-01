@@ -24,7 +24,7 @@
     <div>
       <mat-form-field *ngIf="!disableSearchInput" class="gio-table-wrapper__header-bar__search-field">
         <mat-icon matIconPrefix svgIcon="gio:search"></mat-icon>
-        <mat-label data-testid="search">{{ searchLabel }}</mat-label>
+        <mat-label data-testid="search">{{ searchLabel || ('common.search' | translate) }}</mat-label>
         <input class="search-input" [formControl]="inputSearch" type="search" matInput />
       </mat-form-field>
     </div>
@@ -37,7 +37,7 @@
         [pageSizeOptions]="paginationPageSizeOptions"
         [hidePageSize]="disablePageSize"
         [showFirstLastButtons]="true"
-        aria-label="Select page"
+        [attr.aria-label]="'common.selectPage' | translate"
         data-testid="paginator-header"
       ></mat-paginator>
     }
@@ -54,7 +54,7 @@
     [length]="effectiveLength"
     [hidePageSize]="true"
     [showFirstLastButtons]="true"
-    aria-label="Select page"
+    [attr.aria-label]="'common.selectPage' | translate"
     data-testid="paginator-footer"
   ></mat-paginator>
 </div>

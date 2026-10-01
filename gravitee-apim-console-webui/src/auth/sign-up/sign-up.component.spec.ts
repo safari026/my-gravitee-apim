@@ -27,6 +27,7 @@ import { SignUpModule } from './sign-up.module';
 import { SignUpComponent } from './sign-up.component';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 describe('SignUpComponent', () => {
   let fixture: ComponentFixture<SignUpComponent>;
@@ -34,6 +35,7 @@ describe('SignUpComponent', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, MatIconTestingModule, SignUpModule],
     });
@@ -49,6 +51,7 @@ describe('SignUpComponent', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    localStorage.removeItem('gio-console-lang');
   });
 
   it('should sign up', async () => {
@@ -85,6 +88,61 @@ describe('SignUpComponent', () => {
         key2: 'value1',
       },
     });
+  });
+
+  it('should show English copy by default', async () => {
+    expectGetCustomUserFields();
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Sign Up');
+    expect(text).toContain('to access to the APIM Console');
+    expect(text).toContain('First name');
+    expect(text).toContain('Last name');
+    expect(text).toContain('Email');
+    expect(text).toContain('Sign up');
+    expect(text).toContain('I have already an account!');
+    expect(text).toContain('Sign in');
+    expect(text).toContain('label1');
+  });
+
+  it('should switch Sign Up copy to Russian without recreating the component', async () => {
+    expectGetCustomUserFields();
+    fixture.detectChanges();
+
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    const text = fixture.nativeElement.textContent as string;
+    expect(text).toContain('Регистрация');
+    expect(text).toContain('для доступа к APIM Console');
+    expect(text).toContain('Имя');
+    expect(text).toContain('Фамилия');
+    expect(text).toContain('Зарегистрироваться');
+    expect(text).toContain('У меня уже есть аккаунт!');
+    expect(text).toContain('Войти');
+    expect(text).not.toContain('I have already an account!');
+    expect(text).toContain('label1');
+  });
+
+  it('should translate required validation messages', async () => {
+    expectGetCustomUserFields();
+    fixture.detectChanges();
+
+    const firstNameInput = await loader.getHarness(MatInputHarness.with({ selector: '[formControlName="firstName"]' }));
+    await firstNameInput.focus();
+    await firstNameInput.blur();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('First name is required.');
+
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Введите имя.');
+    expect(fixture.nativeElement.textContent).not.toContain('First name is required.');
   });
 
   const expectGetCustomUserFields = () => {

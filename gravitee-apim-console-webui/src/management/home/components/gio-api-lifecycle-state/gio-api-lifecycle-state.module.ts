@@ -19,9 +19,10 @@ import { CommonModule } from '@angular/common';
 import { GioApiLifecycleStateComponent } from './gio-api-lifecycle-state.component';
 
 import { GioChartPieModule } from '../../../../shared/components/gio-chart-pie/gio-chart-pie.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
-  imports: [CommonModule, GioChartPieModule],
+  imports: [CommonModule, GioChartPieModule, TranslatePipe],
   declarations: [GioApiLifecycleStateComponent],
   exports: [GioApiLifecycleStateComponent],
 })

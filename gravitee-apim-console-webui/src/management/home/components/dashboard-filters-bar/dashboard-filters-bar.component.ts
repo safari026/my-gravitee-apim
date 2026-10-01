@@ -32,6 +32,7 @@ import moment, { Moment } from 'moment/moment';
 import { customTimeFrames, DATE_TIME_FORMATS, timeFrameRangesParams, timeFrames } from '../../../../shared/utils/timeFrameRanges';
 import { HomeService } from '../../../../services-ngx/home.service';
 import { calculateCustomInterval } from '../../../../shared/utils/intervalFromTimeRanges';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'app-dashboard-filters-bar',
@@ -49,6 +50,7 @@ import { calculateCustomInterval } from '../../../../shared/utils/intervalFromTi
     MatInputModule,
     OwlDateTimeModule,
     OwlMomentDateTimeModule,
+    TranslatePipe,
   ],
   providers: [{ provide: OWL_DATE_TIME_FORMATS, useValue: DATE_TIME_FORMATS }],
   templateUrl: './dashboard-filters-bar.component.html',
@@ -113,5 +115,18 @@ export class DashboardFiltersBarComponent implements OnInit {
       to,
       interval,
     });
+  }
+
+  public timeframeLabelKey(id: string): string {
+    const labels: Record<string, string> = {
+      '1m': 'dashboard.timeframe.lastMinute',
+      '1h': 'dashboard.timeframe.lastHour',
+      '1d': 'dashboard.timeframe.lastDay',
+      '1w': 'dashboard.timeframe.lastWeek',
+      '1M': 'dashboard.timeframe.lastMonth',
+      custom: 'dashboard.timeframe.custom',
+    };
+
+    return labels[id] ?? id;
   }
 }

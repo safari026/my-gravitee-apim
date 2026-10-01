@@ -76,13 +76,6 @@ export class GioApiEventsTableComponent implements OnChanges {
         .pipe(
           map(eventPage => {
             this.totalLength = eventPage.totalElements;
-            const displayableEventType = {
-              PUBLISH_API: 'Deploy',
-              UNPUBLISH_API: 'Undeploy',
-              START_API: 'Start',
-              STOP_API: 'Stop',
-            };
-
             return eventPage.content?.map<TableDataSource>(event => ({
               apiId: event.properties['api_id'],
               apiName: event.properties['api_name'],
@@ -90,7 +83,7 @@ export class GioApiEventsTableComponent implements OnChanges {
               deploymentNumber: toNumber(event.properties['deployment_number']),
               deploymentLabel: event.properties['deployment_label'],
               updatedAt: event.updated_at,
-              type: displayableEventType[event.type],
+              type: event.type,
             }));
           }),
           tap(() => {

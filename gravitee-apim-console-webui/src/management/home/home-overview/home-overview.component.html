@@ -23,24 +23,24 @@
   <div class="row-cards">
     <mat-card class="card flex">
       <mat-card-header>
-        <mat-card-title>Summary</mat-card-title>
+        <mat-card-title>{{ 'dashboard.summary.title' | translate }}</mat-card-title>
       </mat-card-header>
       <mat-card-content class="card__content">
         <div *ngIf="apiNb !== undefined && applicationNb !== undefined; else loader" class="card__list">
           <div class="card__list__row">
             <span class="card__list__row__value">{{ apiNb }}</span>
-            <span class="card__list__row__label">Total APIs</span>
+            <span class="card__list__row__label">{{ 'dashboard.summary.totalApis' | translate }}</span>
           </div>
           <div class="card__list__row">
             <span class="card__list__row__value">{{ applicationNb }}</span>
-            <span class="card__list__row__label">Total Applications</span>
+            <span class="card__list__row__label">{{ 'dashboard.summary.totalApplications' | translate }}</span>
           </div>
         </div>
       </mat-card-content>
     </mat-card>
     <mat-card class="card">
       <mat-card-header>
-        <mat-card-title>API Lifecycle State</mat-card-title>
+        <mat-card-title>{{ 'dashboard.apiLifecycleState' | translate }}</mat-card-title>
       </mat-card-header>
       <mat-card-content class="card__content">
         <ng-container *ngIf="apiLifecycleState; else loader">
@@ -50,7 +50,7 @@
     </mat-card>
     <mat-card class="card">
       <mat-card-header>
-        <mat-card-title>API State</mat-card-title>
+        <mat-card-title>{{ 'dashboard.apiState' | translate }}</mat-card-title>
       </mat-card-header>
       <mat-card-content class="card__content">
         <ng-container *ngIf="apiState; else loader">
@@ -61,7 +61,10 @@
   </div>
   <div class="row">
     <div class="row-cards">
-      <api-analytics-response-status-ranges title="API Response Status" [responseStatusRanges]="v4ApiAnalyticsResponseStatusRanges" />
+      <api-analytics-response-status-ranges
+        [title]="'dashboard.apiResponseStatus' | translate"
+        [responseStatusRanges]="v4ApiAnalyticsResponseStatusRanges"
+      />
       <app-top-apis-widget [data]="topApis" [period]="timeRangeParams" />
       <top-failed-apis></top-failed-apis>
     </div>
@@ -83,7 +86,7 @@
   </div>
 
   <div class="row">
-    <h2 class="row-title">API Events</h2>
+    <h2 class="row-title">{{ 'dashboard.apiEvents' | translate }}</h2>
     <ng-container *ngIf="timeRangeParams; else loader">
       <gio-api-events-table [timeRangeParams]="timeRangeParams" />
     </ng-container>

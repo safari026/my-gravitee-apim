@@ -43,6 +43,7 @@ describe('HomeApiHealthCheckComponent', () => {
   };
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, HomeModule, MatIconTestingModule, HighchartsChartModule],
     });
@@ -56,6 +57,7 @@ describe('HomeApiHealthCheckComponent', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
     jest.clearAllMocks();
   });

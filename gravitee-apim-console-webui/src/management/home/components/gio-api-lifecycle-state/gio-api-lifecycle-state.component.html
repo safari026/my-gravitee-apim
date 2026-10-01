@@ -16,9 +16,9 @@
 
 -->
 <div *ngIf="!isEmpty; else noContent">
-  <gio-chart-pie [input]="chartPieInput" inputDescription="Nb hits"></gio-chart-pie>
+  <gio-chart-pie [input]="chartPieInput" [inputDescription]="'common.hits' | translate"></gio-chart-pie>
 </div>
 
 <ng-template #noContent>
-  <div class="mat-body">No content to display</div>
+  <div class="mat-body">{{ 'dashboard.empty' | translate }}</div>
 </ng-template>

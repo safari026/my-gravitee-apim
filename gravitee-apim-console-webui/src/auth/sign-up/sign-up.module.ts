@@ -28,6 +28,8 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { SignUpComponent } from './sign-up.component';
 
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [SignUpComponent],
   exports: [SignUpComponent],
@@ -45,6 +47,7 @@ import { SignUpComponent } from './sign-up.component';
 
     GioIconsModule,
     GioBannerModule,
+    TranslatePipe,
   ],
 })
 export class SignUpModule {}

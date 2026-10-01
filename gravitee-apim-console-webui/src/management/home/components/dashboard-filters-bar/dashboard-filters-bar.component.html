@@ -19,28 +19,28 @@
   <mat-card-content>
     <form class="form" [formGroup]="form">
       <mat-form-field>
-        <mat-label>Timeframe</mat-label>
+        <mat-label>{{ 'dashboard.timeframe.label' | translate }}</mat-label>
         <mat-select formControlName="period">
           @for (timeFrame of options; track timeFrame.id) {
             <mat-option [value]="timeFrame.id">
-              {{ timeFrame.label }}
+              {{ timeframeLabelKey(timeFrame.id) | translate }}
             </mat-option>
           }
         </mat-select>
       </mat-form-field>
 
       @if (periodFormValue.value === 'custom') {
-        <mat-form-field class="custom-date-input" aria-label="Input for selecting custom date">
-          <mat-label>From</mat-label>
-          <input aria-label="Select from date" matInput [owlDateTime]="fromDateTimePicker" [max]="nowDate" formControlName="from" />
+        <mat-form-field class="custom-date-input" [attr.aria-label]="'dashboard.timeframe.customDateAria' | translate">
+          <mat-label>{{ 'dashboard.timeframe.from' | translate }}</mat-label>
+          <input [attr.aria-label]="'dashboard.timeframe.fromAria' | translate" matInput [owlDateTime]="fromDateTimePicker" [max]="nowDate" formControlName="from" />
           <mat-icon [owlDateTimeTrigger]="fromDateTimePicker" matSuffix svgIcon="gio:nav-arrow-down"></mat-icon>
           <owl-date-time #fromDateTimePicker></owl-date-time>
         </mat-form-field>
 
-        <mat-form-field class="custom-date-input" aria-label="Input for selecting custom date">
-          <mat-label>To</mat-label>
+        <mat-form-field class="custom-date-input" [attr.aria-label]="'dashboard.timeframe.customDateAria' | translate">
+          <mat-label>{{ 'dashboard.timeframe.to' | translate }}</mat-label>
           <input
-            aria-label="Select to date"
+            [attr.aria-label]="'dashboard.timeframe.toAria' | translate"
             matInput
             [owlDateTime]="toDateTimePicker"
             [min]="minDate"
@@ -55,18 +55,20 @@
           data-testid="apply-button"
           [disabled]="form.invalid || !form.get('from').value || !form.get('to').value"
           mat-stroked-button
-          aria-label="Apply custom range button"
+          [attr.aria-label]="'dashboard.timeframe.applyAria' | translate"
           (click)="applyCustomDateRange()"
         >
-          Apply
+          {{ 'dashboard.timeframe.apply' | translate }}
         </button>
       } @else {
-        <button data-testid="refresh-button" mat-stroked-button aria-label="Refresh data" (click)="refreshData()">Refresh data</button>
+        <button data-testid="refresh-button" mat-stroked-button [attr.aria-label]="'dashboard.timeframe.refreshAria' | translate" (click)="refreshData()">
+          {{ 'dashboard.timeframe.refresh' | translate }}
+        </button>
       }
 
       <div class="errors">
         <mat-error *ngIf="form.get('to').hasError('owlDateTimeMin')">
-          <span> Error: Date "to" is earlier than "from"</span>
+          <span>{{ 'dashboard.timeframe.toBeforeFrom' | translate }}</span>
         </mat-error>
       </div>
     </form>

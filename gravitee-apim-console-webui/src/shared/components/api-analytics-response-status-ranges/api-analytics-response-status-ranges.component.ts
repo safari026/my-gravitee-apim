@@ -13,12 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, DestroyRef, Injector, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatCard, MatCardHeader, MatCardTitle } from '@angular/material/card';
 import { GioLoaderModule } from '@gravitee/ui-particles-angular';
+import { skip } from 'rxjs/operators';
 
 import { GioChartPieModule } from '../gio-chart-pie/gio-chart-pie.module';
 import { GioChartPieInput } from '../gio-chart-pie/gio-chart-pie.component';
+import { LanguageService } from '../../i18n/language.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 export type ApiAnalyticsResponseStatusRanges = {
   isLoading: boolean;
@@ -37,7 +41,7 @@ const UNKNOWN_RANGE = 'unknown';
 
 @Component({
   selector: 'api-analytics-response-status-ranges',
-  imports: [MatCard, GioChartPieModule, GioLoaderModule, MatCardTitle, MatCardHeader],
+  imports: [MatCard, GioChartPieModule, GioLoaderModule, MatCardTitle, MatCardHeader, TranslatePipe],
   templateUrl: './api-analytics-response-status-ranges.component.html',
   styleUrl: './api-analytics-response-status-ranges.component.scss',
 })
@@ -48,19 +52,53 @@ export class ApiAnalyticsResponseStatusRangesComponent implements OnChanges {
   @Input()
   responseStatusRanges: ApiAnalyticsResponseStatusRanges;
 
-  inputDescription = 'Nb hits';
-  totalInputDescription = 'Nb hits total';
   input: GioChartPieInput[];
+
+  constructor(
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly destroyRef: DestroyRef,
+  ) {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.buildInput());
+  }
 
   ngOnChanges(changes: SimpleChanges) {
     if (changes.responseStatusRanges && !this.responseStatusRanges?.isLoading) {
-      this.input = this.responseStatusRanges?.data
-        .filter(data => data.value > 0)
-        .map(data => ({
-          label: getLabel(data.label),
-          value: data.value,
-          color: getColor(data.label),
-        }));
+      this.buildInput();
+    }
+  }
+
+  private buildInput() {
+    if (!this.responseStatusRanges || this.responseStatusRanges.isLoading) {
+      return;
+    }
+
+    this.input = this.responseStatusRanges?.data
+      ?.filter(data => data.value > 0)
+      .map(data => ({
+        label: this.getLabel(data.label),
+        value: data.value,
+        color: getColor(data.label),
+      }));
+  }
+
+  private getLabel(label: string): string {
+    if (label === UNKNOWN_RANGE) {
+      return this.languageService.translate('common.noStatus');
+    } else if (label.startsWith('1')) {
+      return '1xx';
+    } else if (label.startsWith('2')) {
+      return '2xx';
+    } else if (label.startsWith('3')) {
+      return '3xx';
+    } else if (label.startsWith('4')) {
+      return '4xx';
+    } else if (label.startsWith('5')) {
+      return '5xx';
+    } else {
+      return label;
     }
   }
 }
@@ -76,24 +114,5 @@ const getColor = (label: string): string => {
     return '#cf3942';
   } else {
     return '#bbb';
-  }
-};
-
-const getLabel = (label: string): string => {
-  if (label === UNKNOWN_RANGE) {
-    // Requests that never got a response status — an aborted connection, a client that hung up.
-    return 'No status';
-  } else if (label.startsWith('1')) {
-    return '1xx';
-  } else if (label.startsWith('2')) {
-    return '2xx';
-  } else if (label.startsWith('3')) {
-    return '3xx';
-  } else if (label.startsWith('4')) {
-    return '4xx';
-  } else if (label.startsWith('5')) {
-    return '5xx';
-  } else {
-    return label;
   }
 };

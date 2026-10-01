@@ -36,6 +36,7 @@ describe('HomeOverviewComponent', () => {
   let httpTestingController: HttpTestingController;
 
   const init = async (permissions: string[] = ['environment-platform-r']) => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       imports: [HomeModule, OwlNativeDateTimeModule, NoopAnimationsModule, MatIconTestingModule, GioTestingModule],
       providers: [{ provide: GioTestingPermissionProvider, useValue: permissions }],
@@ -48,6 +49,7 @@ describe('HomeOverviewComponent', () => {
   };
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 

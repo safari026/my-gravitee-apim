@@ -21,9 +21,10 @@ import { GioLoaderModule } from '@gravitee/ui-particles-angular';
 import { GioApiEventsTableComponent } from './gio-api-events-table.component';
 
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
-  imports: [CommonModule, MatTableModule, GioTableWrapperModule, GioLoaderModule],
+  imports: [CommonModule, MatTableModule, GioTableWrapperModule, GioLoaderModule, TranslatePipe],
   declarations: [GioApiEventsTableComponent],
   exports: [GioApiEventsTableComponent],
 })

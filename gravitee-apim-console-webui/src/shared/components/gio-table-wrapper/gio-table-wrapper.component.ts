@@ -73,7 +73,7 @@ export class GioTableWrapperComponent implements AfterViewInit, OnChanges {
   filters: GioTableWrapperFilters = INITIAL_FILTERS_VALUE;
 
   @Input()
-  searchLabel = 'Search';
+  searchLabel: string | undefined;
 
   /** The current total number of items being paged (only for display). `-1` means unknown (count timed out). */
   @Input()

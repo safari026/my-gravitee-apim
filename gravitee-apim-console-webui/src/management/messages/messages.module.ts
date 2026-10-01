@@ -30,6 +30,7 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MessagesComponent } from './messages.component';
 
 import { GioPermissionModule } from '../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -49,6 +50,7 @@ import { GioPermissionModule } from '../../shared/components/gio-permission/gio-
     GioFormSlideToggleModule,
     GioPermissionModule,
     GioBannerModule,
+    TranslatePipe,
   ],
   declarations: [MessagesComponent],
 })

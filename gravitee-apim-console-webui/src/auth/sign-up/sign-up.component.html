@@ -19,27 +19,27 @@
 <mat-card appearance="outlined" class="card">
   <div class="card__header">
     <img class="card__header__logo" src="assets/gravitee_logo_full_on_light_solaris.png" alt="Gravitee.io" />
-    <div class="card__header__title">Sign Up</div>
-    <div class="card__header__subtitle">to access to the APIM Console</div>
+    <div class="card__header__title">{{ 'auth.signUp.title' | translate }}</div>
+    <div class="card__header__subtitle">{{ 'auth.signUp.subtitle' | translate }}</div>
   </div>
 
   <form class="card__form" *ngIf="!signUpSuccess" [formGroup]="signUpForm" (ngSubmit)="signUp()">
     <mat-form-field class="card__form__input">
-      <mat-label>First name</mat-label>
+      <mat-label>{{ 'auth.signUp.firstName' | translate }}</mat-label>
       <input matInput type="text" formControlName="firstName" autofocus />
-      <mat-error *ngIf="signUpForm.get('firstName').hasError('required')">First name is required.</mat-error>
+      <mat-error *ngIf="signUpForm.get('firstName').hasError('required')">{{ 'auth.signUp.errors.firstNameRequired' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="card__form__input">
-      <mat-label>Last name</mat-label>
+      <mat-label>{{ 'auth.signUp.lastName' | translate }}</mat-label>
       <input matInput type="text" formControlName="lastName" />
-      <mat-error *ngIf="signUpForm.get('lastName').hasError('required')">Last name is required.</mat-error>
+      <mat-error *ngIf="signUpForm.get('lastName').hasError('required')">{{ 'auth.signUp.errors.lastNameRequired' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="card__form__input">
-      <mat-label>Email</mat-label>
+      <mat-label>{{ 'auth.signUp.email' | translate }}</mat-label>
       <input matInput type="email" formControlName="email" />
-      <mat-error *ngIf="signUpForm.get('email').hasError('required')">Email is required.</mat-error>
+      <mat-error *ngIf="signUpForm.get('email').hasError('required')">{{ 'auth.signUp.errors.emailRequired' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="card__form__input" *ngFor="let field of customUserFields" formGroupName="customUserFields">
@@ -52,22 +52,24 @@
       <ng-container *ngIf="field.type === 'input'">
         <input matInput type="text" [formControlName]="field.key" />
       </ng-container>
-      <mat-error *ngIf="signUpForm.get('customUserFields.' + field.key).hasError('required')">{{ field.label }} is required.</mat-error>
+      <mat-error *ngIf="signUpForm.get('customUserFields.' + field.key).hasError('required')">{{
+        'auth.signUp.errors.fieldRequired' | translate: { label: field.label }
+      }}</mat-error>
     </mat-form-field>
 
     <button type="submit" class="card__form__button" mat-raised-button [disabled]="signUpForm.invalid || signUpInProgress">
       <mat-icon svgIcon="gio:login"></mat-icon>
-      Sign up
+      {{ 'auth.signUp.submit' | translate }}
     </button>
 
-    <p class="card__form__goTo">I have already an account! <a routerLink="/_login">Sign in</a></p>
+    <p class="card__form__goTo">{{ 'auth.signUp.alreadyHaveAccount' | translate }} <a routerLink="/_login">{{ 'auth.signUp.signIn' | translate }}</a></p>
   </form>
 
   <ng-container *ngIf="signUpSuccess">
     <gio-banner-success>
-      Thank you for signing up!
-      <span gioBannerBody>You will receive an email with a link to activate your account.</span>
+      {{ 'auth.signUp.success.title' | translate }}
+      <span gioBannerBody>{{ 'auth.signUp.success.body' | translate }}</span>
     </gio-banner-success>
-    <p class="card__form__signIn">Go to <a routerLink="/_login">Sign in</a></p>
+    <p class="card__form__signIn">{{ 'auth.signUp.success.goTo' | translate }} <a routerLink="/_login">{{ 'auth.signUp.signIn' | translate }}</a></p>
   </ng-container>
 </mat-card>

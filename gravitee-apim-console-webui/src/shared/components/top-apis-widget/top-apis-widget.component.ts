@@ -31,6 +31,7 @@ import { gioTableFilterCollection } from '../gio-table-wrapper/gio-table-wrapper
 import { TimeRangeParams } from '../../utils/timeFrameRanges';
 import { AnalyticsDefinitionVersion, AnalyticsTopApis } from '../../../entities/analytics/analytics';
 import { HomeService } from '../../../services-ngx/home.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 @Component({
   selector: 'app-top-apis-widget',
@@ -44,6 +45,7 @@ import { HomeService } from '../../../services-ngx/home.service';
     GioLoaderModule,
     MatIcon,
     MatTooltip,
+    TranslatePipe,
   ],
   templateUrl: './top-apis-widget.component.html',
   styleUrl: './top-apis-widget.component.scss',

@@ -39,6 +39,7 @@ describe('MessagesComponent', () => {
   const fakeRoles = [fakeRole({ name: 'ADMIN' }), fakeRole({ name: 'USER' }), fakeRole({ name: 'REVIEWER' })];
 
   const init = async (apiId?: string) => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       declarations: [MessagesComponent],
       imports: [NoopAnimationsModule, GioTestingModule, MessagesModule, MatIconTestingModule],
@@ -69,6 +70,7 @@ describe('MessagesComponent', () => {
   };
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 

@@ -150,6 +150,7 @@ describe('TasksComponent', () => {
   let routerNavigateSpy: jest.SpyInstance;
 
   const init = async () => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       declarations: [TasksComponent],
       imports: [NoopAnimationsModule, TasksModule, MatIconTestingModule, GioTestingModule],
@@ -178,6 +179,7 @@ describe('TasksComponent', () => {
   };
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 

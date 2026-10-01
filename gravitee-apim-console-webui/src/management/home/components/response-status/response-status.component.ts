@@ -26,10 +26,11 @@ import { HomeService } from '../../../../services-ngx/home.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { GioChartLineModule } from '../../../../shared/components/gio-chart-line/gio-chart-line.module';
 import { TimeRangeParams } from '../../../../shared/utils/timeFrameRanges';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'response-status',
-  imports: [GioChartLineModule, GioLoaderModule, MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle],
+  imports: [GioChartLineModule, GioLoaderModule, MatCard, MatCardHeader, MatCardSubtitle, MatCardTitle, TranslatePipe],
   templateUrl: './response-status.component.html',
   styleUrl: './response-status.component.scss',
 })

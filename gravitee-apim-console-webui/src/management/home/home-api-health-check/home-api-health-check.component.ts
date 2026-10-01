@@ -310,10 +310,10 @@ export class HomeApiHealthCheckComponent implements OnInit, OnDestroy {
 
   private getWorkflowBadge(api: ApiV2 | ApiV4): ApisTableDS['workflowBadge'] {
     const toReadableState = {
-      DEPRECATED: { text: 'Deprecated', class: 'gio-badge-error' },
-      DRAFT: { text: 'Draft', class: 'gio-badge-primary' },
-      IN_REVIEW: { text: 'In Review', class: 'gio-badge-error' },
-      REQUEST_FOR_CHANGES: { text: 'Need changes', class: 'gio-badge-error' },
+      DEPRECATED: { text: 'dashboard.lifecycle.deprecated', class: 'gio-badge-error' },
+      DRAFT: { text: 'dashboard.healthCheck.badge.draft', class: 'gio-badge-primary' },
+      IN_REVIEW: { text: 'dashboard.healthCheck.badge.inReview', class: 'gio-badge-error' },
+      REQUEST_FOR_CHANGES: { text: 'dashboard.healthCheck.badge.needChanges', class: 'gio-badge-error' },
     };
     return toReadableState?.[api.lifecycleState] ?? null;
   }

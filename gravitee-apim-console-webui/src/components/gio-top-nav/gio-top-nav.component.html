@@ -26,8 +26,8 @@
         <img class="gravitee-logo" ngSrc="assets/gravitee_logo_solaris.png" alt="Gravitee" height="62" width="64" />
       </ng-template>
     </button>
-    <gio-top-bar-content type="apim" productName="API Management"></gio-top-bar-content>
-    <gio-top-bar-link *ngIf="portalUrl" [url]="portalUrl" name="Developer Portal"></gio-top-bar-link>
+    <gio-top-bar-content type="apim" [productName]="'navigation.apiManagement' | translate"></gio-top-bar-content>
+    <gio-top-bar-link *ngIf="portalUrl" [url]="portalUrl" [name]="'navigation.developerPortal' | translate"></gio-top-bar-link>
     <gio-top-bar-menu>
       <button
         mat-icon-button

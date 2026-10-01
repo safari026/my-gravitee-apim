@@ -17,8 +17,8 @@
 -->
 <mat-card>
   <mat-card-header>
-    <mat-card-title class="mat-h5">Response time</mat-card-title>
-    <mat-card-subtitle>Average response time for the gateway and the API</mat-card-subtitle>
+    <mat-card-title class="mat-h5">{{ 'dashboard.responseTime.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'dashboard.responseTime.subtitle' | translate }}</mat-card-subtitle>
   </mat-card-header>
 
   @if (isLoading) {
