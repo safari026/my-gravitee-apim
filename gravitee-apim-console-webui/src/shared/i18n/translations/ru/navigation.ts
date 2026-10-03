@@ -1,0 +1,33 @@
+export const ruNavigation = {
+  environment: 'Окружение',
+  dashboard: 'Дашборд',
+  apis: 'API',
+  apiProducts: 'API-продукты',
+  integrations: 'Интеграции',
+  applications: 'Приложения',
+  gateways: 'Шлюзы',
+  kafka: {
+    title: 'Kafka',
+    standalone: 'Автономный',
+  },
+  apiScore: 'Оценка API',
+  audit: 'Аудит',
+  observability: {
+    title: 'Наблюдаемость',
+    overview: 'Обзор',
+    dashboards: 'Дашборды',
+    logs: 'Логи',
+  },
+  analytics: {
+    title: 'Аналитика',
+    dashboard: 'Дашборд',
+    logs: 'Логи',
+    v2Tooltip: 'Этот интерфейс поддерживает только API V2. Для API V4 перейдите в новый интерфейс Observability.',
+  },
+  alerts: 'Оповещения',
+  portalSettings: 'Настройки портала',
+  settings: 'Настройки',
+  organization: 'Организация',
+  developerPortal: 'Портал разработчика',
+  apiManagement: 'Управление API',
+} as const;

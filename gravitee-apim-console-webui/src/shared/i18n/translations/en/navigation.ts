@@ -1,0 +1,33 @@
+export const enNavigation = {
+  environment: 'Environment',
+  dashboard: 'Dashboard',
+  apis: 'APIs',
+  apiProducts: 'API Products',
+  integrations: 'Integrations',
+  applications: 'Applications',
+  gateways: 'Gateways',
+  kafka: {
+    title: 'Kafka',
+    standalone: 'Standalone',
+  },
+  apiScore: 'API Score',
+  audit: 'Audit',
+  observability: {
+    title: 'Observability',
+    overview: 'Overview',
+    dashboards: 'Dashboards',
+    logs: 'Logs',
+  },
+  analytics: {
+    title: 'Analytics',
+    dashboard: 'Dashboard',
+    logs: 'Logs',
+    v2Tooltip: 'This interface supports API V2 only. For API V4, switch to the new Observability interface.',
+  },
+  alerts: 'Alerts',
+  portalSettings: 'Portal Settings',
+  settings: 'Settings',
+  organization: 'Organization',
+  developerPortal: 'Developer Portal',
+  apiManagement: 'API Management',
+} as const;
