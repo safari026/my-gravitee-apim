@@ -28,10 +28,7 @@ import { GioPermissionService } from '../../../shared/components/gio-permission/
 import { PolicyService } from '../../../services-ngx/policy.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioApiImportDialogComponent, GioApiImportDialogData } from '../component/gio-api-import-dialog/gio-api-import-dialog.component';
-import {
-  GioInformationDialogComponent,
-  GioConnectorDialogData,
-} from '../component/gio-information-dialog/gio-information-dialog.component';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-creation-get-started',
@@ -59,6 +56,7 @@ export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
     private readonly policyService: PolicyService,
     private readonly snackBarService: SnackBarService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +97,7 @@ export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
         filter(apiId => !!apiId),
         tap(apiId => this.router.navigate(['..', apiId], { relativeTo: this.activatedRoute })),
         catchError(err => {
-          this.snackBarService.error(err.error?.message ?? 'An error occurred while importing the API.');
+          this.snackBarService.error(err.error?.message ?? this.languageService.translate('apis.creation.importError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
@@ -115,24 +113,5 @@ export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
       UtmCampaign.API_DESIGNER,
       installation?.additionalInformation.COCKPIT_INSTALLATION_STATUS === 'ACCEPTED' ? 'ACCEPTED' : undefined,
     );
-  }
-
-  onMoreInfoClick(event: MouseEvent) {
-    event.stopPropagation();
-    this.matDialog
-      .open<GioInformationDialogComponent, GioConnectorDialogData, boolean>(GioInformationDialogComponent, {
-        data: {
-          name: 'Classic (V2) and New (V4) APIs compared',
-          information: {
-            description:
-              'Gravitee V4 APIs contain most of the same capabilities as V2 APIs, including analytics, logs, failover, and health check. They also support some features not available in V2 APIs, such as protocol mediation, shared policy groups, and native Kafka support. Some functionalities are not yet included, however, including alerts, tenants, and some analytics capabilities.',
-          },
-        },
-        role: 'alertdialog',
-        id: 'moreInfoDialog',
-      })
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe();
   }
 }

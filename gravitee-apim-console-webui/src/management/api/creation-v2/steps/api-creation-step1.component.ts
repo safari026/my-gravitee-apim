@@ -65,7 +65,7 @@ const ApiCreationStep1Component: ng.IComponentOptions = {
       onSelectOpen = () => {
         // Wait for DOM to render
         setTimeout(() => {
-          this.scrollContainer = document.querySelector('[role="listbox"][aria-label="Groups"]');
+          this.scrollContainer = document.querySelector('[role="listbox"]');
           const boundScrollHandler = this.onScroll.bind(this);
           // Add scroll event listener
           this.scrollContainer.addEventListener('scroll', boundScrollHandler);

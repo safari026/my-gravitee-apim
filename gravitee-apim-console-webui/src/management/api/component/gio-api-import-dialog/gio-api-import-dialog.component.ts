@@ -26,6 +26,7 @@ import { ApiService } from '../../../../services-ngx/api.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { ApiV4 } from '../../../../entities/management-api-v2';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type GioApiImportDialogData = {
   policies?: PolicyListItem[];
@@ -39,12 +40,14 @@ export type GioApiImportDialogData = {
   standalone: false,
 })
 export class GioApiImportDialogComponent implements OnDestroy {
-  tabLabels = {
-    UploadFile: 'Upload a file',
-    SwaggerOpenAPI: 'Swagger / OpenAPI',
-    ApiDefinition: 'API definition',
-    WSDL: 'WSDL',
-  };
+  get tabLabels() {
+    return {
+      UploadFile: this.languageService.translate('apis.creation.importV2.tabs.uploadFile'),
+      SwaggerOpenAPI: this.languageService.translate('apis.creation.importV2.tabs.swaggerOpenApi'),
+      ApiDefinition: this.languageService.translate('apis.creation.importV2.tabs.apiDefinition'),
+      WSDL: this.languageService.translate('apis.creation.importV2.tabs.wsdl'),
+    };
+  }
   importType: string;
   policies = [];
   isUpdateMode = false;
@@ -68,6 +71,7 @@ export class GioApiImportDialogComponent implements OnDestroy {
     private readonly apiService: ApiService,
     private readonly apiV2Service: ApiV2Service,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {
     this.policies = dialogData?.policies ?? [];
     this.isUpdateMode = !!dialogData?.apiId;
@@ -127,23 +131,23 @@ export class GioApiImportDialogComponent implements OnDestroy {
       }
     };
 
-    switch (event.tab.textLabel) {
-      case this.tabLabels.UploadFile:
+    switch (event.index) {
+      case 0:
         this.resetImportFile();
         this.descriptorUrlForm = new UntypedFormControl();
         break;
 
-      case this.tabLabels.SwaggerOpenAPI:
+      case 1:
         this.importType = 'SWAGGER';
         initUrlDescriptor();
         break;
 
-      case this.tabLabels.ApiDefinition:
+      case 2:
         this.importType = 'GRAVITEE';
         initUrlDescriptor();
         break;
 
-      case this.tabLabels.WSDL:
+      case 3:
         this.importType = 'WSDL';
         initUrlDescriptor();
         break;
@@ -211,10 +215,10 @@ export class GioApiImportDialogComponent implements OnDestroy {
 
     importRequest$
       .pipe(
-        tap(() => this.snackBarService.success('API imported successfully')),
+        tap(() => this.snackBarService.success(this.languageService.translate('apis.creation.importV2.success'))),
         catchError(({ error }) => {
           this.isImportingApi.set(false);
-          this.snackBarService.error(error.message ?? 'An error occurred while importing the API');
+          this.snackBarService.error(error.message ?? this.languageService.translate('apis.creation.importV2.error'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

@@ -31,6 +31,7 @@ import { GioApiImportDialogComponent } from './gio-api-import-dialog.component';
 import { GioApiImportDialogModule } from './gio-api-import-dialog.module';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../shared/testing';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('GioApiImportDialogComponent', () => {
   let component: GioApiImportDialogComponent;
@@ -54,6 +55,8 @@ describe('GioApiImportDialogComponent', () => {
   ];
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
+
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, GioApiImportDialogModule, MatIconTestingModule],
       providers: [
@@ -78,6 +81,7 @@ describe('GioApiImportDialogComponent', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 
@@ -349,6 +353,33 @@ describe('GioApiImportDialogComponent', () => {
         with_policies: [],
         with_policy_paths: false,
       });
+    });
+  });
+
+  describe('localization', () => {
+    it('should switch chrome to Russian and back without recreating the component', async () => {
+      expect(fixture.nativeElement.textContent).toContain('Import an API');
+      expect(fixture.nativeElement.textContent).toContain('Upload a file');
+      expect(fixture.nativeElement.textContent).toContain('Drag and drop a file to upload it.');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import' }))).toBeTruthy();
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Импортировать API');
+      expect(fixture.nativeElement.textContent).toContain('Загрузить файл');
+      expect(fixture.nativeElement.textContent).toContain('Перетащите файл сюда, чтобы загрузить его.');
+      expect(fixture.nativeElement.textContent).not.toContain('Import an API');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Отмена' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать' }))).toBeTruthy();
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Import an API');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import' }))).toBeTruthy();
     });
   });
 });

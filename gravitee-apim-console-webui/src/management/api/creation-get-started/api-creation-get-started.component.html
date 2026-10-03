@@ -18,50 +18,22 @@
 <mat-card>
   <mat-card-content>
     <div class="api-creation-get-started__header">
-      <h1 class="api-creation-get-started__header__title mat-headline-6">Choose API creation method</h1>
-      <span class="api-creation-get-started__header__description mat-body">Choose from the main options to start building your API.</span>
+      <h1 class="api-creation-get-started__header__title mat-headline-6">{{ 'apis.creation.title' | translate }}</h1>
+      <span class="api-creation-get-started__header__description mat-body">{{ 'apis.creation.subtitle' | translate }}</span>
     </div>
 
     <div class="api-creation-get-started__row">
       <div class="api-creation-get-started__row__card">
         <div>
           <mat-icon svgIcon="gio:rocket"></mat-icon>
-          <div class="mat-subtitle-1">Create Classic API</div>
-          <div class="mat-body">Proxy an HTTP service using the classic (V2) version of Gravitee's API definition.</div>
+          <div class="mat-subtitle-1">{{ 'apis.creation.classic.title' | translate }}</div>
+          <div class="mat-body">{{ 'apis.creation.classic.description' | translate }}</div>
         </div>
 
         <div class="api-creation-get-started__row__card__action">
-          <button mat-flat-button [routerLink]="'./v2'" color="primary">Create V2 API</button>
-          <button mat-stroked-button (click)="goToApiImport()">Import V2 API</button>
-          <div *ngIf="!isLoading && !isOEM">
-            <a [href]="cockpitLink" target="_blank" rel="noopener noreferrer" mat-stroked-button
-              >Design API<mat-icon iconPositionEnd svgIcon="gio:external-link"></mat-icon
-            ></a>
-          </div>
+          <button mat-flat-button [routerLink]="'./v2'" color="primary">{{ 'apis.creation.classic.createV2' | translate }}</button>
+          <button mat-stroked-button (click)="goToApiImport()">{{ 'apis.creation.classic.importV2' | translate }}</button>
         </div>
-      </div>
-
-      <div class="api-creation-get-started__row__card">
-        <div>
-          <mat-icon svgIcon="gio:rocket"></mat-icon>
-          <div class="mat-subtitle-1">Create New API</div>
-          <div class="mat-body">
-            Proxy an HTTP service, mediate between message brokers and HTTP, and expose the native Kafka protocol using the new (V4) version
-            of Gravitee's API definition.
-          </div>
-        </div>
-
-        <div class="api-creation-get-started__row__card__action">
-          <button mat-flat-button [routerLink]="'./v4'" color="primary" data-testid="api_create_v4_button">Create V4 API</button>
-          <button mat-stroked-button [routerLink]="'../import/v4'" data-testid="api_import_v4_button">Import V4 API</button>
-        </div>
-      </div>
-    </div>
-
-    <div class="api-creation-get-started__row">
-      <div class="api-creation-get-started__row--v2">
-        <div class="mat-body">Not sure which version to pick? V4 contains most of V2 functionality, but has some limitations.</div>
-        <button type="button" mat-stroked-button (click)="onMoreInfoClick($event)">Learn More</button>
       </div>
     </div>
   </mat-card-content>
