@@ -32,6 +32,7 @@ import { Api, ApiV4, fakeApiV2, fakeApiV4, fakePagedResult, fakeProxyApiV4 } fro
 import { GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
 import { Constants } from '../../../entities/Constants';
 import { fakeKafkaListener } from '../../../entities/management-api-v2/api/v4/listener.fixture';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApisListComponent', () => {
   let fixture: ComponentFixture<ApiListComponent>;
@@ -608,6 +609,102 @@ describe('ApisListComponent', () => {
         fixture.detectChanges();
       }
     });
+  });
+
+  describe('i18n', () => {
+    beforeEach(() => {
+      localStorage.removeItem('gio-console-lang');
+      fakeConstants.env.settings.apiQualityMetrics.enabled = false;
+
+      TestBed.configureTestingModule({
+        imports: [ApiListModule, MatIconTestingModule, NoopAnimationsModule, GioTestingModule],
+        providers: [
+          { provide: GioTestingPermissionProvider, useValue: ['environment-api-c'] },
+          { provide: Constants, useValue: fakeConstants },
+        ],
+      }).compileComponents();
+
+      fixture = TestBed.createComponent(ApiListComponent);
+      httpTestingController = TestBed.inject(HttpTestingController);
+    });
+
+    afterEach(() => {
+      localStorage.removeItem('gio-console-lang');
+    });
+
+    it('should show English chrome by default', fakeAsync(async () => {
+      await initComponent([]);
+
+      const { headerCells } = await computeApisTableCells();
+      expect(headerCells).toEqual([
+        {
+          actions: '',
+          access: 'Access',
+          categories: 'Categories',
+          apiType: 'API Type',
+          name: 'Name',
+          owner: 'Owner',
+          picture: '',
+          portalStatus: 'Portal Status',
+          states: 'API Status',
+          tags: 'Sharding Tags',
+          visibility: 'Portal Visibility',
+        },
+      ]);
+
+      const table = await loader.getHarness(MatTableHarness.with({ selector: '#apisTable' }));
+      expect(await (await table.host()).text()).toContain('There is no API (yet).');
+      expect(fixture.nativeElement.querySelector('h1').textContent).toContain('APIs');
+      expect(fixture.nativeElement.querySelector('[data-testid="api_list_addApi_button"]').textContent).toContain('Add API');
+      expect(fixture.nativeElement.querySelector('[data-testid="search"]').textContent).toContain('Search');
+    }));
+
+    it('should switch chrome to Russian and back without recreating the component', fakeAsync(async () => {
+      const api = fakeApiV2({
+        proxy: {
+          virtualHosts: [{ path: '/test/ws' }, { path: '/preprod/ws' }],
+        },
+      });
+      await initComponent([api]);
+
+      const { rowCells: enRows, headerCells: enHeaders } = await computeApisTableCells();
+      expect(enHeaders[0].name).toEqual('Name');
+      expect(enRows[0][2]).toContain('V2 HTTP Proxy');
+      expect(enRows[0][4]).toContain('1 more');
+      expect(fixture.nativeElement.querySelector('[data-testid="search"]').textContent).toContain('Search');
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+
+      const { rowCells: ruRows, headerCells: ruHeaders } = await computeApisTableCells();
+      expect(ruHeaders[0].name).toEqual('Название');
+      expect(ruHeaders[0].apiType).toEqual('Тип API');
+      expect(ruHeaders[0].states).toEqual('Статус API');
+      expect(ruHeaders[0].access).toEqual('Доступ');
+      expect(ruHeaders[0].owner).toEqual('Владелец');
+      expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toEqual('API');
+      expect(fixture.nativeElement.querySelector('[data-testid="api_list_addApi_button"]').textContent).toContain('Добавить API');
+      expect(fixture.nativeElement.querySelector('[data-testid="search"]').textContent).toContain('Поиск');
+      expect(ruRows[0][2]).toContain('HTTP Proxy V2');
+      expect(ruRows[0][4]).toContain('ещё 1');
+      expect(ruRows[0][2]).not.toContain('V2 HTTP Proxy');
+      expect(enRows[0][7]).toEqual(ruRows[0][7]);
+
+      TestBed.inject(LanguageService).setLanguage('en');
+      fixture.detectChanges();
+
+      const { rowCells: enAgain, headerCells: enHeadersAgain } = await computeApisTableCells();
+      expect(enHeadersAgain[0].name).toEqual('Name');
+      expect(enAgain[0][2]).toContain('V2 HTTP Proxy');
+      expect(enAgain[0][4]).toContain('1 more');
+      expect(fixture.nativeElement.querySelector('[data-testid="search"]').textContent).toContain('Search');
+    }));
+
+    async function initComponent(apis: Api[]) {
+      expectApisListRequest(apis, 'name');
+      loader = TestbedHarnessEnvironment.loader(fixture);
+      fixture.detectChanges();
+    }
   });
 
   async function computeApisTableCells() {
