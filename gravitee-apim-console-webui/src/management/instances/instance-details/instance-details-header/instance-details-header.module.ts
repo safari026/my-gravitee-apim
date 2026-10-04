@@ -22,9 +22,11 @@ import { RouterModule } from '@angular/router';
 
 import { InstanceDetailsHeaderComponent } from './instance-details-header.component';
 
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [InstanceDetailsHeaderComponent],
   exports: [InstanceDetailsHeaderComponent],
-  imports: [CommonModule, RouterModule, MatCardModule, MatTabsModule],
+  imports: [CommonModule, RouterModule, MatCardModule, MatTabsModule, TranslatePipe],
 })
 export class InstanceDetailsHeaderModule {}

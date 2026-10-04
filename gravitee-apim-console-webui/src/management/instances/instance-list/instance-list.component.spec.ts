@@ -27,6 +27,7 @@ import { InstanceListModule } from './instance-list.module';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
 import { InstanceListItem } from '../../../entities/instance/instanceListItem';
 import { fakeInstanceListItem } from '../../../entities/instance/instanceListItem.fixture';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('InstanceListComponent', () => {
   let fixture: ComponentFixture<InstanceListComponent>;
@@ -57,6 +58,25 @@ describe('InstanceListComponent', () => {
 
     const tableElement = await table.host();
     expect(await tableElement.text()).toContain('There are no Gateway instances (yet).');
+  }));
+
+  it('should switch list chrome EN → RU → EN without reload', fakeAsync(async () => {
+    expectInstancesSearchRequest([]);
+    const languageService = TestBed.inject(LanguageService);
+
+    expect(fixture.nativeElement.textContent).toContain('Gateways');
+    expect(fixture.nativeElement.textContent).toContain('There are no Gateway instances (yet).');
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Шлюзы');
+    expect(fixture.nativeElement.textContent).toContain('Экземпляров Gateway пока нет.');
+    expect(fixture.nativeElement.textContent).not.toContain('There are no Gateway instances (yet).');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Gateways');
+    expect(fixture.nativeElement.textContent).toContain('There are no Gateway instances (yet).');
   }));
 
   it('should display gateway instances', fakeAsync(async () => {

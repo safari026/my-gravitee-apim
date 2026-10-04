@@ -16,11 +16,11 @@
 
 -->
 
-<gio-header title="Logs" subtitle="Inspect and analyze API runtime logs." />
+<gio-header [title]="'observability.logs.title' | translate" [subtitle]="'observability.logs.subtitle' | translate" />
 <gio-banner-info class="banner-warning">
   <div class="banner-warning__content">
-    Currently, only HTTP Proxy is supported.
-    <span class="mat-body">Message APIs, SSEs, and webhook support are coming soon.</span>
+    {{ 'observability.logs.httpProxyOnly' | translate }}
+    <span class="mat-body">{{ 'observability.logs.comingSoonApis' | translate }}</span>
   </div>
 </gio-banner-info>
 

@@ -24,6 +24,12 @@ export const ruCommon = {
   refresh: 'Обновить',
   clear: 'Очистить',
   copyToClipboard: 'Копировать в буфер обмена',
+  copy: 'Копировать',
+  open: 'Открыть',
+  comingSoon: 'Скоро!',
+  loading: 'Загрузка...',
+  noDataToDisplay: 'Нет данных для отображения',
+  tryWideningTimeframe: 'Могут быть доступны дополнительные данные. Расширьте интервал или измените фильтры.',
 
   language: {
     switch: 'Переключить язык',

@@ -13,20 +13,26 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Dashboard } from '@gravitee/gravitee-dashboard';
-
-import { Component, inject } from '@angular/core';
+import { Component, computed, inject } from '@angular/core';
 
 import { DashboardService } from '../data-access/dashboard.service';
 import { DashboardViewerComponent } from '../dashboards/ui/dashboard-viewer/dashboard-viewer.component';
 import { GioHeaderComponent } from '../../../shared/components/gio-header/gio-header.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'overview',
-  imports: [DashboardViewerComponent, GioHeaderComponent],
+  imports: [DashboardViewerComponent, GioHeaderComponent, TranslatePipe],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss',
 })
 export class OverviewComponent {
-  readonly overviewDashboard: Dashboard = inject(DashboardService).overviewDashboard();
+  private readonly dashboardService = inject(DashboardService);
+  private readonly languageService = inject(LanguageService);
+
+  readonly overviewDashboard = computed(() => {
+    this.languageService.currentLanguage();
+    return this.dashboardService.localizeDashboard(this.dashboardService.overviewDashboard());
+  });
 }

@@ -14,21 +14,25 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { formatDate } from '@angular/common';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
 import { Instance } from '../../../../entities/instance/instance';
 import { InstanceService } from '../../../../services-ngx/instance.service';
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 type InformationItemDS = {
   icon: string;
+  typeKey: string;
   type: string;
   value: string;
+  displayValue?: string;
   class?: string;
 }[];
 
@@ -85,6 +89,8 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly instanceService: InstanceService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit(): void {
@@ -104,6 +110,16 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
         this.onPluginsFiltersChanged(this.pluginsTableFilters);
         this.onPropertiesFiltersChanged(this.propertiesTableFilters);
       });
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        if (!this.instance) {
+          return;
+        }
+        this.initInformationTable();
+        this.onInformationFiltersChanged(this.informationTableFilters);
+      });
   }
 
   ngOnDestroy() {
@@ -111,42 +127,64 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     this.unsubscribe$.unsubscribe();
   }
 
+  get tocSectionNames(): Record<string, string> {
+    return { '': this.languageService.translate('gateways.details.tabs.environment') };
+  }
+
+  private infoLabel(key: string): string {
+    return this.languageService.translate(`gateways.environment.info.${key}`);
+  }
+
+  private statusLabel(state: string): string {
+    const key = `gateways.status.${state.toLowerCase()}`;
+    const translated = this.languageService.translate(key);
+    return translated === key ? state : translated;
+  }
+
   private initInformationTable() {
     this.informationItemsDS = [
       {
         icon: 'gio:building',
-        type: 'Hostname',
+        typeKey: 'hostname',
+        type: this.infoLabel('hostname'),
         value: this.instance.hostname,
       },
       {
         icon: 'gio:wifi',
-        type: 'IP',
+        typeKey: 'ip',
+        type: this.infoLabel('ip'),
         value: this.instance.ip,
       },
       {
         icon: 'gio:wifi',
-        type: 'Port',
+        typeKey: 'port',
+        type: this.infoLabel('port'),
         value: this.instance.port,
       },
       {
         icon: this.getIconFromState(this.instance.state),
-        type: 'State',
+        typeKey: 'state',
+        type: this.infoLabel('state'),
         value: this.instance.state,
+        displayValue: this.statusLabel(this.instance.state),
         class: this.getClassFromState(this.instance.state),
       },
       {
         icon: 'gio:flag',
-        type: 'Version',
+        typeKey: 'version',
+        type: this.infoLabel('version'),
         value: this.instance.version,
       },
       {
         icon: 'gio:clock-outline',
-        type: 'Started at',
+        typeKey: 'startedAt',
+        type: this.infoLabel('startedAt'),
         value: formatDate(this.instance.started_at, 'medium', 'en-US'),
       },
       {
         icon: 'gio:heart',
-        type: 'Last heartbeat at',
+        typeKey: 'lastHeartbeatAt',
+        type: this.infoLabel('lastHeartbeatAt'),
         value: formatDate(this.instance.last_heartbeat_at, 'medium', 'en-US'),
       },
     ];
@@ -154,7 +192,8 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.tags?.length > 0) {
       this.informationItemsDS.push({
         icon: 'gio:label-outline',
-        type: 'Sharding tags',
+        typeKey: 'shardingTags',
+        type: this.infoLabel('shardingTags'),
         value: this.instance.tags.join(', '),
       });
     }
@@ -162,7 +201,8 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.tenant) {
       this.informationItemsDS.push({
         icon: 'gio:data-transfer-both',
-        type: 'Tenant',
+        typeKey: 'tenant',
+        type: this.infoLabel('tenant'),
         value: this.instance.tenant,
       });
     }
@@ -170,7 +210,8 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.organizations_hrids?.length > 0) {
       this.informationItemsDS.push({
         icon: 'gio:product-apim',
-        type: 'Organizations',
+        typeKey: 'organizations',
+        type: this.infoLabel('organizations'),
         value: this.instance.organizations_hrids.join(', '),
       });
     }
@@ -178,7 +219,8 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.environments_hrids?.length > 0) {
       this.informationItemsDS.push({
         icon: 'gio:server',
-        type: 'Environments',
+        typeKey: 'environments',
+        type: this.infoLabel('environments'),
         value: this.instance.environments_hrids.join(', '),
       });
     }
@@ -186,7 +228,8 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.stopped_at) {
       this.informationItemsDS.push({
         icon: 'gio:power',
-        type: 'Stopped at',
+        typeKey: 'stoppedAt',
+        type: this.infoLabel('stoppedAt'),
         value: formatDate(this.instance.stopped_at, 'medium', 'en-US'),
       });
     }

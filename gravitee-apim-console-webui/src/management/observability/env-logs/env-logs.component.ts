@@ -53,6 +53,8 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioTableWrapperPagination } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { Pagination } from '../../../entities/management-api-v2';
 import { GioHeaderComponent } from '../../../shared/components/gio-header/gio-header.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 const EMPTY_FIELD = '—';
 const DEFAULT_PER_PAGE = 10;
@@ -75,6 +77,7 @@ const API_TYPE_LABELS: Record<LogApiType, string> = {
     MatCardModule,
     GioBannerModule,
     GioHeaderComponent,
+    TranslatePipe,
   ],
   providers: [
     DatePipe,
@@ -90,6 +93,7 @@ const API_TYPE_LABELS: Record<LogApiType, string> = {
 export class EnvLogsComponent {
   private readonly environmentLogsService = inject(EnvironmentLogsService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly datePipe = inject(DatePipe);
   private readonly dialog = inject(MatDialog);
   // Required so dialogs can resolve DashboardFiltersStore from this component's injector scope
@@ -217,8 +221,11 @@ export class EnvLogsComponent {
         this.loading.set(false);
         const message =
           err instanceof HttpErrorResponse
-            ? `Request failed: ${err.status} ${err.statusText}`
-            : 'An unexpected error occurred while loading logs.';
+            ? this.languageService.translate('observability.logs.requestFailed', {
+                status: err.status,
+                statusText: err.statusText,
+              })
+            : this.languageService.translate('observability.logs.loadError');
         this.error.set(message);
         this.snackBarService.error(message);
         return EMPTY;

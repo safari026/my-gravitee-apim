@@ -16,14 +16,14 @@
 
 -->
 <div class="title">
-  <h1>Gateways</h1>
+  <h1>{{ 'gateways.list.title' | translate }}</h1>
 </div>
 
 <gio-table-wrapper [disableSearchInput]="true" [length]="nbTotalInstances" [filters]="filters" (filtersChange)="onFiltersChanged($event)">
-  <table mat-table [dataSource]="filteredTableData" id="instancesTable" aria-label="Gateways table">
+  <table mat-table [dataSource]="filteredTableData" id="instancesTable" [attr.aria-label]="'gateways.list.tableAria' | translate">
     <!-- Display name Column -->
     <ng-container matColumnDef="hostname">
-      <th mat-header-cell *matHeaderCellDef id="hostname">Name</th>
+      <th mat-header-cell *matHeaderCellDef id="hostname">{{ 'gateways.list.columns.name' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <a [routerLink]="['.', element.id]" title="{{ element.hostname }}" data-testid="instance-list-row-instance-details-link">{{
           element.hostname
@@ -33,7 +33,7 @@
 
     <!-- Display version Column -->
     <ng-container matColumnDef="version">
-      <th mat-header-cell *matHeaderCellDef id="version">Version</th>
+      <th mat-header-cell *matHeaderCellDef id="version">{{ 'gateways.list.columns.version' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.version }}
       </td>
@@ -41,25 +41,25 @@
 
     <!-- Display State Column -->
     <ng-container matColumnDef="state">
-      <th mat-header-cell *matHeaderCellDef id="state">Status</th>
+      <th mat-header-cell *matHeaderCellDef id="state">{{ 'gateways.list.columns.status' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <mat-icon
           *ngIf="element.state === 'STARTED'"
-          matTooltip="Started"
+          [matTooltip]="'gateways.status.started' | translate"
           class="state__instance-started"
           size="20"
           svgIcon="gio:play-circle"
         ></mat-icon>
         <mat-icon
           *ngIf="element.state === 'STOPPED'"
-          matTooltip="Stopped"
+          [matTooltip]="'gateways.status.stopped' | translate"
           class="state__instance-stopped"
           size="20"
           svgIcon="gio:stop-circle"
         ></mat-icon>
         <mat-icon
           *ngIf="element.state === 'UNKNOWN'"
-          matTooltip="Unknown"
+          [matTooltip]="'gateways.status.unknown' | translate"
           class="state__instance-unknown"
           size="20"
           svgIcon="gio:question-mark-circle"
@@ -69,7 +69,7 @@
 
     <!-- Display Last Heartbeat Column -->
     <ng-container matColumnDef="lastHeartbeat">
-      <th mat-header-cell *matHeaderCellDef id="lastHeartbeat">Last Heartbeat</th>
+      <th mat-header-cell *matHeaderCellDef id="lastHeartbeat">{{ 'gateways.list.columns.lastHeartbeat' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.lastHeartbeat | date: 'medium' }}
       </td>
@@ -77,13 +77,13 @@
 
     <!-- Display IP and port Column -->
     <ng-container matColumnDef="ip-port">
-      <th mat-header-cell *matHeaderCellDef id="ip-port">IP and Port</th>
+      <th mat-header-cell *matHeaderCellDef id="ip-port">{{ 'gateways.list.columns.ipPort' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.ip }}:{{ element.port }}</td>
     </ng-container>
 
     <!-- Display OS Column -->
     <ng-container matColumnDef="os">
-      <th mat-header-cell *matHeaderCellDef id="os">OS</th>
+      <th mat-header-cell *matHeaderCellDef id="os">{{ 'gateways.list.columns.os' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.os }}
       </td>
@@ -91,7 +91,7 @@
 
     <!-- Display Tenant Column -->
     <ng-container matColumnDef="tenant">
-      <th mat-header-cell *matHeaderCellDef id="tenant">Tenant</th>
+      <th mat-header-cell *matHeaderCellDef id="tenant">{{ 'gateways.list.columns.tenant' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.tenant }}
       </td>
@@ -99,7 +99,7 @@
 
     <!-- Display Tags Column -->
     <ng-container matColumnDef="tags">
-      <th mat-header-cell *matHeaderCellDef id="tags">Sharding Tags</th>
+      <th mat-header-cell *matHeaderCellDef id="tags">{{ 'gateways.list.columns.shardingTags' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.tags }}
       </td>
@@ -111,7 +111,7 @@
     <!-- Row shown when there is no data -->
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
       <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-        {{ 'There are no Gateway instances (yet).' }}
+        {{ 'gateways.list.empty' | translate }}
       </td>
     </tr>
   </table>

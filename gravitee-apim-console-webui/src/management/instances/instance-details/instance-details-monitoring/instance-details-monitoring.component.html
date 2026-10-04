@@ -16,7 +16,7 @@
 
 -->
 <div *ngIf="!instanceStarted">
-  <h1><mat-icon svgIcon="gio:alert-circle"></mat-icon> There is no data for stopped gateway instance</h1>
+  <h1><mat-icon svgIcon="gio:alert-circle"></mat-icon> {{ 'gateways.monitoring.noData' | translate }}</h1>
 </div>
 <div *ngIf="instanceStarted" class="gio-instance-details-monitoring">
   <div class="gio-instance-details-monitoring__main-indicators">
@@ -25,7 +25,7 @@
         <div class="gio-instance-details-monitoring__main-indicators__card__percentage">
           <gio-circular-percentage [score]="monitoringData?.process?.cpu_percent / 100" [reverseColor]="true"></gio-circular-percentage>
         </div>
-        <h4>CPU</h4>
+        <h4>{{ 'gateways.monitoring.cpu' | translate }}</h4>
       </mat-card-content>
     </mat-card>
     <mat-card class="gio-instance-details-monitoring__main-indicators__card">
@@ -33,7 +33,7 @@
         <div class="gio-instance-details-monitoring__main-indicators__card__percentage">
           <gio-circular-percentage [score]="monitoringData?.jvm?.heap_used_percent / 100" [reverseColor]="true"></gio-circular-percentage>
         </div>
-        <h4>Heap</h4>
+        <h4>{{ 'gateways.monitoring.heap' | translate }}</h4>
       </mat-card-content>
     </mat-card>
     <mat-card class="gio-instance-details-monitoring__main-indicators__card">
@@ -41,7 +41,7 @@
         <div class="gio-instance-details-monitoring__main-indicators__card__value">
           {{ monitoringData?.gc?.old_collection_count }}
         </div>
-        <h4>GC collections</h4>
+        <h4>{{ 'gateways.monitoring.gcCollections' | translate }}</h4>
       </mat-card-content>
     </mat-card>
     <mat-card class="gio-instance-details-monitoring__main-indicators__card">
@@ -49,7 +49,7 @@
         <div class="gio-instance-details-monitoring__main-indicators__card__value">
           {{ monitoringData?.process?.open_file_descriptors }}
         </div>
-        <h4>File Descriptors</h4>
+        <h4>{{ 'gateways.monitoring.fileDescriptors' | translate }}</h4>
       </mat-card-content>
     </mat-card>
   </div>
@@ -59,33 +59,33 @@
       <mat-card-content>
         <h2 class="gio-instance-details-monitoring__card-title">
           <mat-icon svgIcon="gio:cpu"></mat-icon>
-          <span>JVM</span>
+          <span>{{ 'gateways.monitoring.jvm' | translate }}</span>
         </h2>
         <dl class="gio-description-list">
-          <dt>Date</dt>
+          <dt>{{ 'gateways.monitoring.date' | translate }}</dt>
           <dd>{{ monitoringData?.jvm?.timestamp | date: 'medium' }}</dd>
-          <dt>Uptime</dt>
+          <dt>{{ 'gateways.monitoring.uptime' | translate }}</dt>
           <dd>{{ humanizeDuration(monitoringData?.jvm?.uptime_in_millis) }}</dd>
-          <dt>Heap used</dt>
+          <dt>{{ 'gateways.monitoring.heapUsed' | translate }}</dt>
           <dd>{{ humanizeSize(monitoringData?.jvm?.heap_used_in_bytes) }}</dd>
-          <dt>Percent of heap used</dt>
+          <dt>{{ 'gateways.monitoring.percentHeapUsed' | translate }}</dt>
           <dd>{{ monitoringData?.jvm?.heap_used_percent + '%' }}</dd>
-          <dt>Heap committed</dt>
+          <dt>{{ 'gateways.monitoring.heapCommitted' | translate }}</dt>
           <dd>{{ humanizeSize(monitoringData?.jvm?.heap_committed_in_bytes) }}</dd>
-          <dt>Heap max</dt>
+          <dt>{{ 'gateways.monitoring.heapMax' | translate }}</dt>
           <dd>{{ humanizeSize(monitoringData?.jvm?.heap_max_in_bytes) }}</dd>
-          <dt>Non heap used</dt>
+          <dt>{{ 'gateways.monitoring.nonHeapUsed' | translate }}</dt>
           <dd>{{ humanizeSize(monitoringData?.jvm?.non_heap_used_in_bytes) }}</dd>
-          <dt>Non heap committed</dt>
+          <dt>{{ 'gateways.monitoring.nonHeapCommitted' | translate }}</dt>
           <dd>{{ humanizeSize(monitoringData?.jvm?.non_heap_committed_in_bytes) }}</dd>
         </dl>
         <div class="gio-instance-details-monitoring__jvm__pool">
           <mat-card>
             <mat-card-content>
               <dl class="gio-description-list">
-                <dt>Young pool used</dt>
+                <dt>{{ 'gateways.monitoring.youngPoolUsed' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.young_pool_used_in_bytes) }}</dd>
-                <dt>Young pool max</dt>
+                <dt>{{ 'gateways.monitoring.youngPoolMax' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.young_pool_max_in_bytes) }}</dd>
               </dl>
               <div class="gio-instance-details-monitoring__jvm__pool__progress-bar">
@@ -98,9 +98,9 @@
                 ></mat-progress-bar>
               </div>
               <dl class="gio-description-list">
-                <dt>Young pool peak used</dt>
+                <dt>{{ 'gateways.monitoring.youngPoolPeakUsed' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.young_pool_peak_used_in_bytes) }}</dd>
-                <dt>Young pool peak max</dt>
+                <dt>{{ 'gateways.monitoring.youngPoolPeakMax' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.young_pool_peak_max_in_bytes) }}</dd>
               </dl>
               <div class="gio-instance-details-monitoring__jvm__pool__progress-bar">
@@ -117,9 +117,9 @@
           <mat-card>
             <mat-card-content>
               <dl class="gio-description-list">
-                <dt>Survivor pool used</dt>
+                <dt>{{ 'gateways.monitoring.survivorPoolUsed' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.survivor_pool_used_in_bytes) }}</dd>
-                <dt>Survivor pool max</dt>
+                <dt>{{ 'gateways.monitoring.survivorPoolMax' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.survivor_pool_max_in_bytes) }}</dd>
               </dl>
               <div class="gio-instance-details-monitoring__jvm__pool__progress-bar">
@@ -132,9 +132,9 @@
                 ></mat-progress-bar>
               </div>
               <dl class="gio-description-list">
-                <dt>Survivor pool peak used</dt>
+                <dt>{{ 'gateways.monitoring.survivorPoolPeakUsed' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.survivor_pool_peak_used_in_bytes) }}</dd>
-                <dt>Survivor pool peak max</dt>
+                <dt>{{ 'gateways.monitoring.survivorPoolPeakMax' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.survivor_pool_peak_max_in_bytes) }}</dd>
               </dl>
               <div class="gio-instance-details-monitoring__jvm__pool__progress-bar">
@@ -153,9 +153,9 @@
           <mat-card>
             <mat-card-content>
               <dl class="gio-description-list">
-                <dt>Old pool used</dt>
+                <dt>{{ 'gateways.monitoring.oldPoolUsed' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.old_pool_used_in_bytes) }}</dd>
-                <dt>Old pool max</dt>
+                <dt>{{ 'gateways.monitoring.oldPoolMax' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.old_pool_max_in_bytes) }}</dd>
               </dl>
               <div class="gio-instance-details-monitoring__jvm__pool__progress-bar">
@@ -166,9 +166,9 @@
                 ></mat-progress-bar>
               </div>
               <dl class="gio-description-list">
-                <dt>Old pool peak used</dt>
+                <dt>{{ 'gateways.monitoring.oldPoolPeakUsed' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.old_pool_peak_used_in_bytes) }}</dd>
-                <dt>Old pool peak max</dt>
+                <dt>{{ 'gateways.monitoring.oldPoolPeakMax' | translate }}</dt>
                 <dd>{{ humanizeSize(monitoringData?.jvm?.old_pool_peak_max_in_bytes) }}</dd>
               </dl>
               <div class="gio-instance-details-monitoring__jvm__pool__progress-bar">
@@ -192,12 +192,12 @@
       <mat-card-content>
         <h2 class="gio-instance-details-monitoring__card-title">
           <mat-icon svgIcon="gio:cpu"></mat-icon>
-          <span>CPU</span>
+          <span>{{ 'gateways.monitoring.cpu' | translate }}</span>
         </h2>
         <dl class="gio-description-list">
-          <dt>Percent of use</dt>
+          <dt>{{ 'gateways.monitoring.percentOfUse' | translate }}</dt>
           <dd>{{ monitoringData?.cpu?.percent_use + '%' }}</dd>
-          <dt>Load average</dt>
+          <dt>{{ 'gateways.monitoring.loadAverage' | translate }}</dt>
           <dd>
             <div class="gio-instance-details-monitoring__load-average">
               <ng-container *ngFor="let loadAverage of monitoringData?.cpu?.load_average | keyvalue: originalOrder">
@@ -213,12 +213,12 @@
       <mat-card-content>
         <h2 class="gio-instance-details-monitoring__card-title">
           <mat-icon svgIcon="gio:cpu"></mat-icon>
-          <span>Process</span>
+          <span>{{ 'gateways.monitoring.process' | translate }}</span>
         </h2>
         <dl class="gio-description-list">
-          <dt>Open file descriptors</dt>
+          <dt>{{ 'gateways.monitoring.openFileDescriptors' | translate }}</dt>
           <dd>{{ monitoringData?.process?.open_file_descriptors }}</dd>
-          <dt>Max file descriptors</dt>
+          <dt>{{ 'gateways.monitoring.maxFileDescriptors' | translate }}</dt>
           <dd>{{ monitoringData?.process?.max_file_descriptors }}</dd>
         </dl>
       </mat-card-content>
@@ -227,12 +227,12 @@
       <mat-card-content>
         <h2 class="gio-instance-details-monitoring__card-title">
           <mat-icon svgIcon="gio:cpu"></mat-icon>
-          <span>Thread</span>
+          <span>{{ 'gateways.monitoring.thread' | translate }}</span>
         </h2>
         <dl class="gio-description-list">
-          <dt>Count</dt>
+          <dt>{{ 'gateways.monitoring.count' | translate }}</dt>
           <dd>{{ monitoringData?.thread?.count }}</dd>
-          <dt>Peak count</dt>
+          <dt>{{ 'gateways.monitoring.peakCount' | translate }}</dt>
           <dd>{{ monitoringData?.thread?.peak_count }}</dd>
         </dl>
       </mat-card-content>
@@ -241,16 +241,16 @@
       <mat-card-content>
         <h2 class="gio-instance-details-monitoring__card-title">
           <mat-icon svgIcon="gio:cpu"></mat-icon>
-          <span>Garbage collector</span>
+          <span>{{ 'gateways.monitoring.garbageCollector' | translate }}</span>
         </h2>
         <dl class="gio-description-list">
-          <dt>Young collection count</dt>
+          <dt>{{ 'gateways.monitoring.youngCollectionCount' | translate }}</dt>
           <dd>{{ monitoringData?.gc?.young_collection_count }}</dd>
-          <dt>Young collection time</dt>
+          <dt>{{ 'gateways.monitoring.youngCollectionTime' | translate }}</dt>
           <dd>{{ monitoringData?.gc?.young_collection_time_in_millis + ' ms' }}</dd>
-          <dt>Old collection count</dt>
+          <dt>{{ 'gateways.monitoring.oldCollectionCount' | translate }}</dt>
           <dd>{{ monitoringData?.gc?.old_collection_count }}</dd>
-          <dt>Old collection time</dt>
+          <dt>{{ 'gateways.monitoring.oldCollectionTime' | translate }}</dt>
           <dd>{{ monitoringData?.gc?.old_collection_time_in_millis + ' ms' }}</dd>
         </dl>
       </mat-card-content>

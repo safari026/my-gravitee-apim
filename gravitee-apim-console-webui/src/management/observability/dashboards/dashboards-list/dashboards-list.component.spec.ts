@@ -26,6 +26,7 @@ import { DashboardsListComponent } from './dashboards-list.component';
 
 import { Constants } from '../../../../entities/Constants';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../shared/testing';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('DashboardsListComponent', () => {
   let component: DashboardsListComponent;
@@ -84,5 +85,28 @@ describe('DashboardsListComponent', () => {
     const table = await loader.getHarness(MatTableHarness);
     const rows = await table.getRows();
     expect(rows.length).toBe(8);
+  }));
+
+  it('should switch dashboards chrome EN → RU → EN without reload', fakeAsync(async () => {
+    fixture.detectChanges();
+    tick(200);
+    fixture.detectChanges();
+    httpTestingController.expectOne(req => req.url.includes('/analytics/dashboards')).flush({ data: [], pagination: { totalCount: 0 } });
+    fixture.detectChanges();
+
+    const languageService = TestBed.inject(LanguageService);
+    expect(fixture.nativeElement.textContent).toContain('Dashboards');
+    expect(fixture.nativeElement.textContent).toContain('No dashboards to display');
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Дашборды');
+    expect(fixture.nativeElement.textContent).toContain('Нет дашбордов для отображения');
+    expect(fixture.nativeElement.textContent).not.toContain('No dashboards to display');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Dashboards');
+    expect(fixture.nativeElement.textContent).toContain('No dashboards to display');
   }));
 });

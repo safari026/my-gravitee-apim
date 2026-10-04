@@ -18,6 +18,7 @@ import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { OverviewComponent } from './overview.component';
 
 import { GioTestingModule } from '../../../shared/testing';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('OverviewComponent', () => {
   let component: OverviewComponent;
@@ -35,5 +36,23 @@ describe('OverviewComponent', () => {
 
   it('should create', () => {
     expect(component).toBeTruthy();
+  });
+
+  it('should switch overview chrome EN → RU → EN without reload', () => {
+    const languageService = TestBed.inject(LanguageService);
+
+    expect(fixture.nativeElement.textContent).toContain('Overview');
+    expect(fixture.nativeElement.textContent).toContain("Get a quick overview of what's happening across your platform.");
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Обзор');
+    expect(fixture.nativeElement.textContent).toContain('Краткий обзор того, что происходит на платформе.');
+    expect(fixture.nativeElement.textContent).not.toContain("Get a quick overview of what's happening across your platform.");
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Overview');
+    expect(fixture.nativeElement.textContent).toContain("Get a quick overview of what's happening across your platform.");
   });
 });

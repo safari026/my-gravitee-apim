@@ -28,6 +28,7 @@ import { InstanceDetailsEnvironmentComponent } from './instance-details-environm
 
 import { fakeInstance } from '../../../../entities/instance/instance.fixture';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../shared/testing';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('InstanceDetailsEnvironmentComponent', () => {
   let fixture: ComponentFixture<InstanceDetailsEnvironmentComponent>;
@@ -90,7 +91,7 @@ describe('InstanceDetailsEnvironmentComponent', () => {
       {
         icon: '',
         type: 'State',
-        value: 'STARTED',
+        value: 'Started',
       },
       {
         icon: '',
@@ -108,6 +109,39 @@ describe('InstanceDetailsEnvironmentComponent', () => {
         value: formatDate('1667813521610', 'medium', 'en-US'),
       },
     ]);
+  });
+
+  it('should switch information labels EN → RU → EN without changing backend state', async () => {
+    const fakeInstanceObject = fakeInstance();
+    fixture.detectChanges();
+    httpTestingController
+      .expectOne({
+        method: 'GET',
+        url: `${CONSTANTS_TESTING.env.baseURL}/instances/${instanceId}`,
+      })
+      .flush(fakeInstanceObject);
+
+    const languageService = TestBed.inject(LanguageService);
+    const table = await loader.getHarness(MatTableHarness.with({ selector: '#informationTable' }));
+
+    expect(fixture.nativeElement.textContent).toContain('Hostname');
+    expect(fixture.componentInstance.informationItemsDS.find(item => item.typeKey === 'state')?.value).toBe('STARTED');
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    const ruTableRows = await table.getRows();
+    const ruCells = await parallel(() => ruTableRows.map(row => row.getCellTextByColumnName()));
+    expect(ruCells[0].type).toBe('Имя хоста');
+    expect(ruCells[3].type).toBe('Состояние');
+    expect(ruCells[3].value).toBe('Запущен');
+    expect(fixture.componentInstance.informationItemsDS.find(item => item.typeKey === 'state')?.value).toBe('STARTED');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    const enTableRows = await table.getRows();
+    const enCells = await parallel(() => enTableRows.map(row => row.getCellTextByColumnName()));
+    expect(enCells[0].type).toBe('Hostname');
+    expect(enCells[3].value).toBe('Started');
   });
 
   it('should display plugins table', async () => {

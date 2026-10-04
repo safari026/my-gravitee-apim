@@ -23,6 +23,7 @@ import { EnvLogsDetailsComponent } from './env-logs-details.component';
 import { EnvLogsDetailsHarness } from './env-logs-details.harness';
 
 import { GioTestingModule } from '../../../../../shared/testing/gio-testing.module';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import { fakeConnectionLogDetail } from '../../../../../entities/management-api-v2/log/connectionLog.fixture';
 import { fakeApiMetricResponse } from '../../../../../entities/management-api-v2/analytics/apiMetricsDetailResponse.fixture';
 import { SearchLogsResponse } from '../../../../../services-ngx/environment-logs.service';
@@ -147,6 +148,21 @@ describe('EnvLogsDetailsComponent', () => {
   it('should show "Log not found" banner when logId is missing', async () => {
     const { harness } = await createComponent({}, { apiId });
 
+    expect(await harness.getNotFoundBannerText()).toContain('Log not found');
+  });
+
+  it('should switch not-found chrome EN → RU → EN without reload', async () => {
+    const { fixture: f, harness } = await createComponent({}, { apiId });
+    const languageService = TestBed.inject(LanguageService);
+
+    expect(await harness.getNotFoundBannerText()).toContain('Log not found');
+
+    languageService.setLanguage('ru');
+    f.detectChanges();
+    expect(await harness.getNotFoundBannerText()).toContain('Лог не найден');
+
+    languageService.setLanguage('en');
+    f.detectChanges();
     expect(await harness.getNotFoundBannerText()).toContain('Log not found');
   });
 

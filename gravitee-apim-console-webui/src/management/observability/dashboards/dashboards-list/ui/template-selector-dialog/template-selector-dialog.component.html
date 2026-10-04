@@ -17,7 +17,7 @@
 -->
 <div class="template-selector-dialog">
   <div class="template-selector-dialog__header">
-    <h1>Create from template</h1>
+    <h1>{{ 'observability.templateSelector.title' | translate }}</h1>
   </div>
 
   <mat-dialog-content class="template-selector-dialog__content">
@@ -31,9 +31,9 @@
             (click)="selectTemplate(template)"
             [attr.aria-pressed]="isSelected(template)"
           >
-            <h5 class="template-card__title">{{ template.name }}</h5>
+            <h5 class="template-card__title">{{ 'observability.templates.' + template.id + '.name' | translate }}</h5>
             <div class="template-card__body">
-              <p class="template-card__description">{{ template.shortDescription }}</p>
+              <p class="template-card__description">{{ 'observability.templates.' + template.id + '.shortDescription' | translate }}</p>
             </div>
           </button>
         }
@@ -45,18 +45,20 @@
           <div class="preview-panel">
             <div class="preview-panel__header">
               <div class="preview-panel__title-row">
-                <h2 class="preview-panel__title">{{ selected.name }}</h2>
+                <h2 class="preview-panel__title">{{ 'observability.templates.' + selected.id + '.name' | translate }}</h2>
               </div>
               @if (selected.info) {
                 <p class="preview-panel__info">
-                  <span class="gio-badge preview-panel__info-badge"> <mat-icon svgIcon="gio:info" class="gio-left"></mat-icon>Info </span>
-                  {{ selected.info }}
+                  <span class="gio-badge preview-panel__info-badge">
+                    <mat-icon svgIcon="gio:info" class="gio-left"></mat-icon>{{ 'observability.templateSelector.info' | translate }}
+                  </span>
+                  {{ 'observability.templates.' + selected.id + '.info' | translate }}
                 </p>
               }
-              <p class="preview-panel__description">{{ selected.description }}</p>
+              <p class="preview-panel__description">{{ 'observability.templates.' + selected.id + '.description' | translate }}</p>
               @if (selected.initialConfig?.labels) {
                 <p class="preview-panel__labels">
-                  <em class="mat-caption">Labels:</em>
+                  <em class="mat-caption">{{ 'observability.templateSelector.labels' | translate }}</em>
                   @for (label of selected.initialConfig.labels | keyvalue; track label.key) {
                     <span class="gio-badge-neutral">{{ label.key }}:{{ label.value }}</span>
                   }
@@ -64,7 +66,12 @@
               }
             </div>
             <div class="preview-panel__image">
-              <img [ngSrc]="selected.previewImage" [alt]="selected.name + ' preview'" width="1200" height="800" />
+              <img
+                [ngSrc]="selected.previewImage"
+                [alt]="'observability.templateSelector.previewAlt' | translate: { name: ('observability.templates.' + selected.id + '.name' | translate) }"
+                width="1200"
+                height="800"
+              />
             </div>
           </div>
         }
@@ -73,7 +80,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-stroked-button (click)="onCancel()">Cancel</button>
-    <button mat-raised-button color="primary" (click)="onCreate()" [disabled]="!selectedTemplate()">Use template</button>
+    <button mat-stroked-button (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
+    <button mat-raised-button color="primary" (click)="onCreate()" [disabled]="!selectedTemplate()">
+      {{ 'observability.templateSelector.useTemplate' | translate }}
+    </button>
   </mat-dialog-actions>
 </div>

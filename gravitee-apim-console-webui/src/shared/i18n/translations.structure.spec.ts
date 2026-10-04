@@ -111,6 +111,10 @@ describe('i18n translations', () => {
     expect(languageService.translate('applications.subscriptions.title')).toBe('Subscriptions');
     expect(languageService.translate('applications.analytics.filters')).toBe('Filters');
     expect(languageService.translate('applications.metadata.dialog.createTitle')).toBe('Create Application metadata');
+    expect(languageService.translate('gateways.list.title')).toBe('Gateways');
+    expect(languageService.translate('gateways.status.started')).toBe('Started');
+    expect(languageService.translate('observability.overview.title')).toBe('Overview');
+    expect(languageService.translate('observability.logs.title')).toBe('Logs');
 
     languageService.setLanguage('ru');
     expect(languageService.translate('common.cancel')).toBe('Отмена');
@@ -130,11 +134,17 @@ describe('i18n translations', () => {
     expect(languageService.translate('applications.analytics.filters')).toBe('Фильтры');
     expect(languageService.translate('applications.metadata.dialog.createTitle')).toBe('Создать метаданные приложения');
     expect(languageService.translate('applications.navigation.globalSettings')).toBe('Общие настройки');
+    expect(languageService.translate('gateways.list.title')).toBe('Шлюзы');
+    expect(languageService.translate('gateways.status.started')).toBe('Запущен');
+    expect(languageService.translate('observability.overview.title')).toBe('Обзор');
+    expect(languageService.translate('observability.logs.title')).toBe('Логи');
 
     languageService.setLanguage('en');
     expect(languageService.translate('common.cancel')).toBe('Cancel');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('NEXT');
     expect(languageService.translate('applications.creation.title')).toBe('Application creation');
     expect(languageService.translate('applications.navigation.globalSettings')).toBe('Global settings');
+    expect(languageService.translate('gateways.list.title')).toBe('Gateways');
+    expect(languageService.translate('observability.overview.title')).toBe('Overview');
   });
 });

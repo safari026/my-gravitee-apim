@@ -24,6 +24,12 @@ export const enCommon = {
   refresh: 'Refresh',
   clear: 'Clear',
   copyToClipboard: 'Copy to clipboard',
+  copy: 'Copy',
+  open: 'Open',
+  comingSoon: 'Coming soon!',
+  loading: 'Loading...',
+  noDataToDisplay: 'No data to display',
+  tryWideningTimeframe: 'More data may be available. Try widening your timeframe or adjusting your filters.',
 
   language: {
     switch: 'Switch language',

@@ -25,23 +25,25 @@ import { GioPermissionService } from '../../../../shared/components/gio-permissi
 import { DashboardService } from '../../data-access/dashboard.service';
 import { DashboardViewerComponent } from '../ui/dashboard-viewer/dashboard-viewer.component';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'dashboard-detail',
-  imports: [DashboardViewerComponent],
+  imports: [DashboardViewerComponent, TranslatePipe],
   providers: [
     {
       provide: DASHBOARD_PERSISTENCE,
-      useFactory: (svc: DashboardService, snackBar: SnackBarService) => ({
+      useFactory: (svc: DashboardService, snackBar: SnackBarService, language: LanguageService) => ({
         update: (d: Dashboard) =>
           svc.update(d).pipe(
             catchError(({ error }) => {
-              snackBar.error(error?.message ?? 'Failed to save dashboard.');
+              snackBar.error(error?.message ?? language.translate('observability.dashboards.saveFailed'));
               return EMPTY;
             }),
           ),
       }),
-      deps: [DashboardService, SnackBarService],
+      deps: [DashboardService, SnackBarService, LanguageService],
     },
   ],
   templateUrl: './dashboard-detail.component.html',
@@ -53,6 +55,7 @@ export class DashboardDetailComponent {
   private readonly dashboardService = inject(DashboardService);
   private readonly permissionService = inject(GioPermissionService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
 
   readonly dashboard = toSignal(this.route.params.pipe(switchMap(params => this.dashboardService.getById(params['dashboardId']))));
 
@@ -74,7 +77,7 @@ export class DashboardDetailComponent {
 
   onSaveStateChange(state: SaveState): void {
     if (state === 'saved') {
-      this.snackBarService.success('Dashboard updated');
+      this.snackBarService.success(this.languageService.translate('observability.dashboards.updated'));
     }
   }
 }

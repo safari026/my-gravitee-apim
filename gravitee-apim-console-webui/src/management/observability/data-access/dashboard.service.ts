@@ -27,6 +27,7 @@ import { DashboardTemplate, HTTP_PROXY_TEMPLATE } from './templates';
 import { Constants } from '../../../entities/Constants';
 import { PagedResult } from '../../../entities/management-api-v2';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,6 +38,7 @@ export class DashboardService {
     @Inject(Constants) private readonly constants: Constants,
     private readonly dialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   readonly overviewDashboard = computed(() => {
@@ -77,9 +79,11 @@ export class DashboardService {
     return this.dialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete Dashboard',
-          content: `Are you sure you want to delete the dashboard "<strong>${this.escapeHtml(dashboard.name)}</strong>"?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('observability.dashboards.deleteTitle'),
+          content: this.languageService.translate('observability.dashboards.deleteContent', {
+            name: this.escapeHtml(dashboard.name),
+          }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteDashboardConfirmDialog',
@@ -88,9 +92,13 @@ export class DashboardService {
       .pipe(
         filter(confirmed => confirmed === true),
         switchMap(() => this.delete(dashboard.id)),
-        tap(() => this.snackBarService.success(`Dashboard "${dashboard.name}" deleted successfully.`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('observability.dashboards.deleteSuccess', { name: dashboard.name }),
+          ),
+        ),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'An error occurred while deleting the dashboard.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('observability.dashboards.deleteError'));
           return EMPTY;
         }),
       );
@@ -113,23 +121,52 @@ export class DashboardService {
     const defaultInterval = Math.floor((5 * 60 * 1000) / 30); // 5 min / 30 buckets = 10000ms
 
     const widgets = (template.initialConfig.widgets ?? []).map(widget => {
+      const localized = this.localizeWidget(widget);
       const id = crypto.randomUUID();
-      if (!widget.request) return { ...widget, id };
+      if (!localized.request) return { ...localized, id };
 
-      const request = { ...widget.request, timeRange: widget.request.timeRange ?? defaultTimeRange };
+      const request = { ...localized.request, timeRange: localized.request.timeRange ?? defaultTimeRange };
 
       if (request.type === 'time-series') {
-        return { ...widget, id, request: { ...request, interval: (request as any).interval ?? defaultInterval } };
+        return { ...localized, id, request: { ...request, interval: (request as any).interval ?? defaultInterval } };
       }
 
-      return { ...widget, id, request };
+      return { ...localized, id, request };
     });
 
     return {
-      name: `${template.name} - ${new Date().toLocaleString()}`,
+      name: `${this.templateDisplayName(template)} - ${new Date().toLocaleString()}`,
       labels: template.initialConfig.labels ?? {},
       widgets,
     };
+  }
+
+  public localizeDashboard(dashboard: Dashboard): Dashboard {
+    return {
+      ...dashboard,
+      name: this.translateOrFallback(`observability.templates.http-proxy.name`, dashboard.name),
+      widgets: (dashboard.widgets ?? []).map(widget => this.localizeWidget(widget)),
+    };
+  }
+
+  private templateDisplayName(template: DashboardTemplate): string {
+    return this.translateOrFallback(`observability.templates.${template.id}.name`, template.name);
+  }
+
+  private localizeWidget<T extends { id?: string; title?: string; description?: string }>(widget: T): T {
+    if (!widget.id) {
+      return widget;
+    }
+    return {
+      ...widget,
+      title: this.translateOrFallback(`observability.widgets.${widget.id}.title`, widget.title ?? ''),
+      description: this.translateOrFallback(`observability.widgets.${widget.id}.description`, widget.description ?? ''),
+    };
+  }
+
+  private translateOrFallback(key: string, fallback: string): string {
+    const translated = this.languageService.translate(key);
+    return translated === key ? fallback : translated;
   }
 
   private createInitialOverview(): Dashboard {

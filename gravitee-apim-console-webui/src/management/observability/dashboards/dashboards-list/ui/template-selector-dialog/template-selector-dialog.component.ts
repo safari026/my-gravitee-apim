@@ -21,6 +21,7 @@ import { CommonModule, KeyValuePipe, NgOptimizedImage } from '@angular/common';
 import { GioIconsModule } from '@gravitee/ui-particles-angular';
 
 import { ALL_DASHBOARD_TEMPLATES, DashboardTemplate } from '../../../../data-access/templates';
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 
 export interface TemplateSelectorDialogResult {
   template: DashboardTemplate;
@@ -31,7 +32,7 @@ export interface TemplateSelectorDialogResult {
   templateUrl: './template-selector-dialog.component.html',
   styleUrls: ['./template-selector-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [CommonModule, KeyValuePipe, MatDialogModule, MatButtonModule, MatIconModule, GioIconsModule, NgOptimizedImage],
+  imports: [CommonModule, KeyValuePipe, MatDialogModule, MatButtonModule, MatIconModule, GioIconsModule, NgOptimizedImage, TranslatePipe],
 })
 export class TemplateSelectorDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<TemplateSelectorDialogComponent>);

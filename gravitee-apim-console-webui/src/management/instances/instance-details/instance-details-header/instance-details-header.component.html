@@ -23,8 +23,8 @@
         <small>( {{ instance.ip }}:{{ instance.port }} )</small>
       </h3>
       <h4>{{ instance.version }}</h4>
-      <div *ngIf="instance.tags?.length > 0">Tags: {{ instance.tags }}</div>
-      <div *ngIf="!instance.tags || instance.tags.length === 0">No tag configured</div>
+      <div *ngIf="instance.tags?.length > 0">{{ 'gateways.details.tags' | translate }} {{ instance.tags }}</div>
+      <div *ngIf="!instance.tags || instance.tags.length === 0">{{ 'gateways.details.noTag' | translate }}</div>
     </mat-card-content>
   </mat-card>
 
@@ -38,7 +38,7 @@
       [active]="rla.isActive"
       [attr.data-testid]="menuItem.testId"
       class="gio-instance-details-header__navigation-tabs__link"
-      >{{ menuItem.displayName }}</a
+      >{{ menuItem.displayNameKey | translate }}</a>
     >
   </nav>
 </div>

@@ -19,7 +19,7 @@ import { Component, Input, OnInit } from '@angular/core';
 import { Instance } from '../../../../entities/instance/instance';
 
 interface MenuItem {
-  displayName: string;
+  displayNameKey: string;
   routerLink: string;
   testId?: string;
 }
@@ -39,12 +39,12 @@ export class InstanceDetailsHeaderComponent implements OnInit {
   ngOnInit(): void {
     this.tabMenuItems = [
       {
-        displayName: 'Environment',
+        displayNameKey: 'gateways.details.tabs.environment',
         routerLink: 'environment',
         testId: 'instances-detail-environment',
       },
       {
-        displayName: 'Monitoring',
+        displayNameKey: 'gateways.details.tabs.monitoring',
         routerLink: 'monitoring',
         testId: 'instances-detail-monitoring',
       },

@@ -15,15 +15,17 @@
     limitations under the License.
 
 -->
-<gio-header title="Dashboards" subtitle="Monitor and visualize your API analytics with custom dashboards." [showActions]="true">
+<gio-header [title]="'observability.dashboards.title' | translate" [subtitle]="'observability.dashboards.subtitle' | translate" [showActions]="true">
   <ng-container additionalActions>
     <button *gioPermission="{ anyOf: ['environment-dashboard-c'] }" mat-raised-button color="primary" [matMenuTriggerFor]="createMenu">
-      Create dashboard
+      {{ 'observability.dashboards.create' | translate }}
       <mat-icon>keyboard_arrow_down</mat-icon>
     </button>
     <mat-menu #createMenu="matMenu">
-      <button mat-menu-item (click)="openTemplateDialog()">Create from template</button>
-      <button mat-menu-item [disabled]="true" [matTooltip]="'Coming soon!'" [matTooltipPosition]="'before'">Create from scratch</button>
+      <button mat-menu-item (click)="openTemplateDialog()">{{ 'observability.dashboards.createFromTemplate' | translate }}</button>
+      <button mat-menu-item [disabled]="true" [matTooltip]="'common.comingSoon' | translate" [matTooltipPosition]="'before'">
+        {{ 'observability.dashboards.createFromScratch' | translate }}
+      </button>
     </mat-menu>
   </ng-container>
 </gio-header>
@@ -32,7 +34,7 @@
   <table mat-table [dataSource]="dashboardItems()">
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'observability.dashboards.columns.name' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <span class="name">{{ element.name }}</span>
       </td>
@@ -40,12 +42,12 @@
 
     <!-- Last modified Column -->
     <ng-container matColumnDef="lastModified">
-      <th mat-header-cell *matHeaderCellDef>Last modified</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'observability.dashboards.columns.lastModified' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.lastModified | date: 'medium' }}</td>
     </ng-container>
 
     <ng-container matColumnDef="labels">
-      <th mat-header-cell *matHeaderCellDef>Labels</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'observability.dashboards.columns.labels' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         @if (element.labels) {
           @for (label of element.labels | keyvalue; track label.key) {
@@ -63,12 +65,12 @@
         <a class="row-link" [routerLink]="'./' + element.id" [attr.aria-label]="element.name"></a>
         <div class="actions-buttons">
           <gio-action-menu [icon]="'more_vert'">
-            <gio-action-menu-item icon="gio:nav-arrow-right" label="Open" [routerLink]="'./' + element.id"></gio-action-menu-item>
+            <gio-action-menu-item icon="gio:nav-arrow-right" [label]="'common.open' | translate" [routerLink]="'./' + element.id"></gio-action-menu-item>
             <gio-action-menu-item
               icon="gio:copy"
-              label="Copy"
+              [label]="'common.copy' | translate"
               [disabled]="true"
-              [matTooltip]="'Coming soon!'"
+              [matTooltip]="'common.comingSoon' | translate"
               [matTooltipPosition]="'before'"
             ></gio-action-menu-item>
             <mat-divider></mat-divider>
@@ -76,7 +78,7 @@
               *gioPermission="{ anyOf: ['environment-dashboard-d'] }"
               class="delete-action"
               icon="gio:trash"
-              label="Delete"
+              [label]="'common.delete' | translate"
               (click)="deleteDashboard(element)"
             ></gio-action-menu-item>
           </gio-action-menu>
@@ -89,7 +91,9 @@
 
     <!-- Row shown when there is no data -->
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No dashboards to display</td>
+      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+        {{ 'observability.dashboards.empty' | translate }}
+      </td>
     </tr>
   </table>
 </gio-table-wrapper>

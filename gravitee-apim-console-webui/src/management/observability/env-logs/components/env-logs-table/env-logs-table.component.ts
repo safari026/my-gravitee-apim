@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, computed, input, output, TemplateRef, viewChild } from '@angular/core';
+import { Component, computed, inject, input, output, TemplateRef, viewChild } from '@angular/core';
 import { RouterModule } from '@angular/router';
 import { MatIcon } from '@angular/material/icon';
 import { MatButtonModule } from '@angular/material/button';
@@ -27,15 +27,18 @@ import {
 import { GioTableWrapperPagination } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { Pagination } from '../../../../../entities/management-api-v2';
 import { EnvLog } from '../../models/env-log.model';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'env-logs-table',
   templateUrl: './env-logs-table.component.html',
   styleUrl: './env-logs-table.component.scss',
   standalone: true,
-  imports: [LogsListBaseComponent, RouterModule, MatIcon, MatButtonModule, MatTooltipModule],
+  imports: [LogsListBaseComponent, RouterModule, MatIcon, MatButtonModule, MatTooltipModule, TranslatePipe],
 })
 export class EnvLogsTableComponent {
+  private readonly languageService = inject(LanguageService);
   logs = input.required<EnvLog[]>();
   pagination = input.required<Pagination>();
   showAssetTypeColumn = input<boolean>(false);
@@ -57,19 +60,23 @@ export class EnvLogsTableComponent {
   readonly issuesTemplate = viewChild.required<TemplateRef<EnvLog>>('issuesTemplate');
   readonly previewTemplate = viewChild.required<TemplateRef<EnvLog>>('previewTemplate');
 
-  readonly columns = computed<LogsListColumnDef[]>(() => [
-    { id: 'timestamp', label: 'Timestamp', template: this.timestampTemplate() },
-    ...(this.showAssetTypeColumn() ? [{ id: 'assetType', label: 'Asset Type', template: this.assetTypeTemplate() }] : []),
-    { id: 'method', label: 'Method', template: this.methodTemplate() },
-    { id: 'status', label: 'Status', template: this.statusTemplate() },
-    { id: 'api', label: 'API', template: this.apiTemplate() },
-    { id: 'path', label: 'Path', template: this.pathTemplate() },
-    { id: 'application', label: 'Application', template: this.applicationTemplate() },
-    { id: 'plan', label: 'Plan', template: this.planTemplate() },
-    { id: 'gateway', label: 'Gateway', template: this.gatewayTemplate() },
-    { id: 'responseTime', label: 'Response Time', template: this.responseTimeTemplate() },
-    { id: 'endpoint', label: 'Endpoint reached', template: this.endpointTemplate() },
-    { id: 'issues', label: 'Issues', template: this.issuesTemplate() },
-    { id: 'preview', label: '', template: this.previewTemplate() },
-  ]);
+  readonly columns = computed<LogsListColumnDef[]>(() => {
+    this.languageService.currentLanguage();
+    const t = (key: string) => this.languageService.translate(key);
+    return [
+      { id: 'timestamp', label: t('observability.logs.columns.timestamp'), template: this.timestampTemplate() },
+      ...(this.showAssetTypeColumn() ? [{ id: 'assetType', label: t('observability.logs.columns.assetType'), template: this.assetTypeTemplate() }] : []),
+      { id: 'method', label: t('observability.logs.columns.method'), template: this.methodTemplate() },
+      { id: 'status', label: t('observability.logs.columns.status'), template: this.statusTemplate() },
+      { id: 'api', label: t('observability.logs.columns.api'), template: this.apiTemplate() },
+      { id: 'path', label: t('observability.logs.columns.path'), template: this.pathTemplate() },
+      { id: 'application', label: t('observability.logs.columns.application'), template: this.applicationTemplate() },
+      { id: 'plan', label: t('observability.logs.columns.plan'), template: this.planTemplate() },
+      { id: 'gateway', label: t('observability.logs.columns.gateway'), template: this.gatewayTemplate() },
+      { id: 'responseTime', label: t('observability.logs.columns.responseTime'), template: this.responseTimeTemplate() },
+      { id: 'endpoint', label: t('observability.logs.columns.endpointReached'), template: this.endpointTemplate() },
+      { id: 'issues', label: t('observability.logs.columns.issues'), template: this.issuesTemplate() },
+      { id: 'preview', label: '', template: this.previewTemplate() },
+    ];
+  });
 }

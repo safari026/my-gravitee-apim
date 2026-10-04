@@ -35,6 +35,7 @@ import { OBSERVABILITY_FILTER_SIGNAL } from '../data-access/observability-filter
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing/gio-testing.module';
 import { EnvironmentApiLog, SearchLogsResponse } from '../../../services-ngx/environment-logs.service';
 import { DashboardFiltersStore } from '../dashboards/ui/dashboard-viewer/dashboard-filters.store';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('EnvLogsComponent', () => {
   let component: EnvLogsComponent;
@@ -376,6 +377,25 @@ describe('EnvLogsComponent', () => {
     expect(error()).toBe('Request failed: 500 Internal Server Error');
     expect(loading()).toBe(false);
     expect(logs().length).toBe(0);
+  }));
+
+  it('should switch logs chrome EN → RU → EN without reload', fakeAsync(() => {
+    initComponent();
+    const languageService = TestBed.inject(LanguageService);
+
+    expect(fixture.nativeElement.textContent).toContain('Logs');
+    expect(fixture.nativeElement.textContent).toContain('Currently, only HTTP Proxy is supported.');
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Логи');
+    expect(fixture.nativeElement.textContent).toContain('Сейчас поддерживается только HTTP Proxy.');
+    expect(fixture.nativeElement.textContent).not.toContain('Currently, only HTTP Proxy is supported.');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Logs');
+    expect(fixture.nativeElement.textContent).toContain('Currently, only HTTP Proxy is supported.');
   }));
 
   describe('mapToEnvLog edge cases', () => {

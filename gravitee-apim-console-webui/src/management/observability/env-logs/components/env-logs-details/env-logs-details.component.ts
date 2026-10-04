@@ -31,6 +31,8 @@ import { catchError, map, switchMap, tap } from 'rxjs/operators';
 import { EnvLog, STANDALONE_API_PRODUCT_NAME } from '../../models/env-log.model';
 import { EnvLogsDetailsRowComponent } from '../env-logs-details-row/env-logs-details-row.component';
 import { GioHeaderComponent } from '../../../../../shared/components/gio-header/gio-header.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import { EnvironmentLogsService } from '../../../../../services-ngx/environment-logs.service';
 import { ApiLogsV2Service } from '../../../../../services-ngx/api-logs-v2.service';
 import { ApiAnalyticsV2Service } from '../../../../../services-ngx/api-analytics-v2.service';
@@ -52,6 +54,7 @@ import { ApiAnalyticsV2Service } from '../../../../../services-ngx/api-analytics
     MatProgressSpinnerModule,
     EnvLogsDetailsRowComponent,
     GioHeaderComponent,
+    TranslatePipe,
   ],
   standalone: true,
 })
@@ -60,6 +63,7 @@ export class EnvLogsDetailsComponent {
   private readonly environmentLogsService = inject(EnvironmentLogsService);
   private readonly apiLogsV2Service = inject(ApiLogsV2Service);
   private readonly apiAnalyticsV2Service = inject(ApiAnalyticsV2Service);
+  private readonly languageService = inject(LanguageService);
   private readonly logId = this.activatedRoute.snapshot.params['logId'] as string | undefined;
   /**
    * The apiId query param acts as a guard: we only fetch data when both logId and apiId are present.
@@ -129,8 +133,11 @@ export class EnvLogsDetailsComponent {
         this.loaded.set(true);
         const message =
           err instanceof HttpErrorResponse
-            ? `Failed to load log: ${err.status} ${err.statusText}`
-            : 'An unexpected error occurred while loading the log.';
+            ? this.languageService.translate('observability.logs.details.loadFailed', {
+                status: err.status,
+                statusText: err.statusText,
+              })
+            : this.languageService.translate('observability.logs.details.loadError');
         this.error.set(message);
         return of(undefined);
       }),

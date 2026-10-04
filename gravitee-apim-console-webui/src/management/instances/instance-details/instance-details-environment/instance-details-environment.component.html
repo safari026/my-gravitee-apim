@@ -19,9 +19,13 @@
   <div class="gio-instance-details-environment__cards">
     <mat-card class="gio-instance-details-environment__cards__card">
       <mat-card-content>
-        <h2 gioTableOfContents gioTableOfContentsName="Information" class="gio-instance-details-environment__cards__card__title">
+        <h2
+          gioTableOfContents
+          [gioTableOfContentsName]="'gateways.environment.information' | translate"
+          class="gio-instance-details-environment__cards__card__title"
+        >
           <mat-icon svgIcon="gio:info"></mat-icon>
-          <span>Information</span>
+          <span>{{ 'gateways.environment.information' | translate }}</span>
         </h2>
       </mat-card-content>
       <gio-table-wrapper
@@ -36,7 +40,7 @@
           matSort
           class="information-table"
           id="informationTable"
-          aria-label="Information table"
+          [attr.aria-label]="'gateways.environment.tableAria.information' | translate"
         >
           <!-- Icon Column -->
           <ng-container matColumnDef="icon">
@@ -48,30 +52,40 @@
 
           <!-- Type Column -->
           <ng-container matColumnDef="type">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by type">Type</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [sortActionDescription]="'gateways.environment.sort.type' | translate">
+              {{ 'gateways.environment.columns.type' | translate }}
+            </th>
             <td mat-cell *matCellDef="let info">{{ info.type }}</td>
           </ng-container>
 
           <!-- Value Column -->
           <ng-container matColumnDef="value">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by value">Value</th>
-            <td mat-cell *matCellDef="let info" [ngClass]="info.class">{{ info.value }}</td>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [sortActionDescription]="'gateways.environment.sort.value' | translate">
+              {{ 'gateways.environment.columns.value' | translate }}
+            </th>
+            <td mat-cell *matCellDef="let info" [ngClass]="info.class">{{ info.displayValue || info.value }}</td>
           </ng-container>
 
           <tr mat-header-row *matHeaderRowDef="informationTableDisplayedColumns"></tr>
           <tr mat-row *matRowDef="let row; columns: informationTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="informationTableDisplayedColumns.length">No information</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="informationTableDisplayedColumns.length">
+              {{ 'gateways.environment.empty.information' | translate }}
+            </td>
           </tr>
         </table>
       </gio-table-wrapper>
     </mat-card>
     <mat-card class="gio-instance-details-environment__cards__card">
       <mat-card-content>
-        <h2 gioTableOfContents gioTableOfContentsName="Plugins" class="gio-instance-details-environment__cards__card__title">
+        <h2
+          gioTableOfContents
+          [gioTableOfContentsName]="'gateways.environment.plugins' | translate"
+          class="gio-instance-details-environment__cards__card__title"
+        >
           <mat-icon svgIcon="gio:puzzle"></mat-icon>
-          <span>Plugins</span>
+          <span>{{ 'gateways.environment.plugins' | translate }}</span>
         </h2>
       </mat-card-content>
       <gio-table-wrapper
@@ -80,7 +94,14 @@
         [filters]="pluginsTableFilters"
         (filtersChange)="onPluginsFiltersChanged($event)"
       >
-        <table mat-table [dataSource]="filteredPluginsItemsDS" matSort class="plugins-table" id="pluginsTable" aria-label="Plugin table">
+        <table
+          mat-table
+          [dataSource]="filteredPluginsItemsDS"
+          matSort
+          class="plugins-table"
+          id="pluginsTable"
+          [attr.aria-label]="'gateways.environment.tableAria.plugins' | translate"
+        >
           <!-- Icon Column -->
           <ng-container matColumnDef="icon">
             <th mat-header-cell *matHeaderCellDef></th>
@@ -91,19 +112,30 @@
 
           <!-- ID Column -->
           <ng-container matColumnDef="id">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by ID">ID</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [sortActionDescription]="'gateways.environment.sort.id' | translate">
+              {{ 'gateways.environment.columns.id' | translate }}
+            </th>
             <td mat-cell *matCellDef="let plugin">{{ plugin.id }}</td>
           </ng-container>
 
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name">Name</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [sortActionDescription]="'gateways.environment.sort.name' | translate">
+              {{ 'gateways.environment.columns.name' | translate }}
+            </th>
             <td mat-cell *matCellDef="let plugin">{{ plugin.name }}</td>
           </ng-container>
 
           <!-- Version Column -->
           <ng-container matColumnDef="version">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by version">Version</th>
+            <th
+              mat-header-cell
+              *matHeaderCellDef
+              mat-sort-header
+              [sortActionDescription]="'gateways.environment.sort.version' | translate"
+            >
+              {{ 'gateways.environment.columns.version' | translate }}
+            </th>
             <td mat-cell *matCellDef="let plugin">{{ plugin.version }}</td>
           </ng-container>
 
@@ -111,16 +143,22 @@
           <tr mat-row *matRowDef="let row; columns: pluginsTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="pluginsTableDisplayedColumns.length">No plugin</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="pluginsTableDisplayedColumns.length">
+              {{ 'gateways.environment.empty.plugin' | translate }}
+            </td>
           </tr>
         </table>
       </gio-table-wrapper>
     </mat-card>
     <mat-card class="gio-instance-details-environment__cards__card">
       <mat-card-content>
-        <h2 gioTableOfContents gioTableOfContentsName="System properties" class="gio-instance-details-environment__cards__card__title">
+        <h2
+          gioTableOfContents
+          [gioTableOfContentsName]="'gateways.environment.systemProperties' | translate"
+          class="gio-instance-details-environment__cards__card__title"
+        >
           <mat-icon svgIcon="gio:list"></mat-icon>
-          <span>System properties</span>
+          <span>{{ 'gateways.environment.systemProperties' | translate }}</span>
         </h2>
       </mat-card-content>
       <gio-table-wrapper
@@ -135,17 +173,21 @@
           matSort
           class="properties-table"
           id="propertiesTable"
-          aria-label="Properties table"
+          [attr.aria-label]="'gateways.environment.tableAria.properties' | translate"
         >
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by name">Name</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [sortActionDescription]="'gateways.environment.sort.name' | translate">
+              {{ 'gateways.environment.columns.name' | translate }}
+            </th>
             <td mat-cell *matCellDef="let property">{{ property.name }}</td>
           </ng-container>
 
           <!-- Version Column -->
           <ng-container matColumnDef="value">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header sortActionDescription="Sort by value">Value</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header [sortActionDescription]="'gateways.environment.sort.value' | translate">
+              {{ 'gateways.environment.columns.value' | translate }}
+            </th>
             <td mat-cell *matCellDef="let property">{{ property.value }}</td>
           </ng-container>
 
@@ -153,7 +195,9 @@
           <tr mat-row *matRowDef="let row; columns: propertiesTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="propertiesTableDisplayedColumns.length">No property</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="propertiesTableDisplayedColumns.length">
+              {{ 'gateways.environment.empty.property' | translate }}
+            </td>
           </tr>
         </table>
       </gio-table-wrapper>
@@ -162,7 +206,7 @@
 
   <gio-table-of-contents
     class="gio-instance-details-environment__toc"
-    [sectionNames]="{ '': 'Environment' }"
+    [sectionNames]="tocSectionNames"
     scrollingContainer="#gio-toc-scrolling-container"
   ></gio-table-of-contents>
 </div>

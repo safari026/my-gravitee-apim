@@ -16,5 +16,5 @@
 
 -->
 
-<gio-header title="Overview" subtitle="Get a quick overview of what's happening across your platform." />
-<dashboard-viewer [dashboard]="overviewDashboard" [showTitle]="false" />
+<gio-header [title]="'observability.overview.title' | translate" [subtitle]="'observability.overview.subtitle' | translate" />
+<dashboard-viewer [dashboard]="overviewDashboard()" [showTitle]="false" />
