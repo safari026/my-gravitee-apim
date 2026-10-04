@@ -34,10 +34,12 @@ const WidgetComponent: ng.IComponentOptions = {
     'AnalyticsService',
     'eventService',
     'ApiService',
-    function ($scope, AnalyticsService: AnalyticsService, eventService: EventService, ApiService: ApiService) {
+    'ngLanguageService',
+    function ($scope, AnalyticsService: AnalyticsService, eventService: EventService, ApiService: ApiService, ngLanguageService) {
       this.AnalyticsService = AnalyticsService;
       this.eventService = eventService;
       this.ApiService = ApiService;
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
 
       $scope.$on('gridster-resized', () => {
         $scope.$broadcast('onWidgetResize');

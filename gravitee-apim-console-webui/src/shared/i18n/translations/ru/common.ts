@@ -8,8 +8,42 @@ export const ruCommon = {
   hits: 'Число запросов',
   hitsTotal: 'Всего запросов',
   noStatus: 'Без статуса',
+  add: 'Добавить',
+  create: 'Создать',
+  edit: 'Изменить',
+  view: 'Просмотр',
+  restore: 'Восстановить',
+  revoke: 'Отозвать',
+  renew: 'Обновить',
+  transfer: 'Передать',
+  select: 'Выбрать',
+  reset: 'Сбросить',
+  remove: 'Удалить',
+  actions: 'Действия',
+  apply: 'Применить',
+  refresh: 'Обновить',
+  clear: 'Очистить',
+  copyToClipboard: 'Копировать в буфер обмена',
 
   language: {
     switch: 'Переключить язык',
+  },
+
+  daysLeft: {
+    expiresToday: 'Истекает сегодня',
+    one: 'Остался 1 день',
+    many: 'Осталось {count} дн.',
+  },
+
+  usersSelector: {
+    selectUsers: 'Выберите пользователей',
+    oneSelected: 'Выбран 1 пользователь',
+    manySelected: 'Выбрано пользователей: {count}',
+    searchLabel: 'Найдите пользователя по имени или email',
+    noMatch: 'Нет пользователя по этому запросу, или он уже выбран',
+    noSelected: 'Пользователи не выбраны',
+    removeAria: 'Удалить пользователя из выбора',
+    removeTooltip: 'Удалить пользователя из выбора',
+    invalidUser: 'Выберите пользователя из списка',
   },
 } as const;

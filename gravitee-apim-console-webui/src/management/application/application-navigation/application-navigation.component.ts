@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { GioMenuSearchService, GioMenuService, MenuSearchItem } from '@gravitee/ui-particles-angular';
 import { Subject } from 'rxjs';
-import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { flatMap } from 'lodash';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -25,6 +26,7 @@ import { cleanRouterLink, getPathFromRoot } from '../../../util/router-link.util
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { Application } from '../../../entities/application/Application';
 import { ApplicationService } from '../../../services-ngx/application.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 export interface MenuItem {
   displayName: string;
@@ -60,6 +62,9 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
     private readonly gioMenuService: GioMenuService,
     private readonly applicationService: ApplicationService,
     private readonly gioMenuSearchService: GioMenuSearchService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
 
   ngOnInit() {
@@ -72,77 +77,7 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
       .pipe(
         tap(application => {
           this.application = application;
-
-          this.subMenuItems = this.filterMenuByPermission([
-            {
-              displayName: 'Global settings',
-              routerLink: 'general',
-              permissions: ['application-definition-r'],
-            },
-            {
-              displayName: 'User and group access',
-              permissions: ['application-member-r'],
-              routerLink: 'members',
-              tabs: [
-                {
-                  displayName: 'Members',
-                  routerLink: 'members',
-                },
-                {
-                  displayName: 'Groups',
-                  routerLink: 'groups',
-                },
-                {
-                  displayName: 'Transfer ownership',
-                  routerLink: 'transfer-ownership',
-                },
-              ],
-            },
-            ...(application.api_key_mode === 'SHARED'
-              ? [
-                  {
-                    displayName: 'Subscriptions',
-                    permissions: ['application-member-r'],
-                    routerLink: 'subscriptions',
-                    tabs: [
-                      {
-                        displayName: 'Subscriptions',
-                        routerLink: 'subscriptions',
-                      },
-                      {
-                        displayName: 'Shared API Keys',
-                        routerLink: 'shared-api-keys',
-                      },
-                    ],
-                  },
-                ]
-              : [
-                  {
-                    displayName: 'Subscriptions',
-                    routerLink: 'subscriptions',
-                    permissions: ['application-subscription-r'],
-                  },
-                ]),
-            {
-              displayName: 'Analytics',
-              routerLink: 'analytics',
-              permissions: ['application-analytics-r'],
-            },
-            {
-              displayName: 'Logs',
-              routerLink: 'logs',
-              permissions: ['application-log-r'],
-            },
-            {
-              displayName: 'Notification settings',
-              routerLink: 'notifications',
-              permissions: ['application-notification-r', 'application-alert-r'],
-            },
-          ]);
-
-          this.selectedItemWithTabs = this.subMenuItems.find(item => item.tabs && this.isTabActive(item.tabs));
-
-          this.gioMenuSearchService.addMenuSearchItems(this.getApplicationNavigationSearchItems());
+          this.applyNavigation(application);
         }),
         switchMap(() => this.router.events),
         filter(event => event instanceof NavigationEnd),
@@ -152,6 +87,16 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        if (!this.application) {
+          return;
+        }
+        this.applyNavigation(this.application);
+        this.changeDetectorRef.markForCheck();
+      });
   }
 
   ngOnDestroy(): void {
@@ -188,6 +133,82 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
     return flatMap(tabs, tab => tab).some(tab => this.isActive(tab));
   }
 
+  private applyNavigation(application: Application): void {
+    this.subMenuItems = this.filterMenuByPermission(this.buildSubMenuItems(application));
+    this.selectedItemWithTabs = this.subMenuItems.find(item => item.tabs && this.isTabActive(item.tabs));
+    this.gioMenuSearchService.removeMenuSearchItems([this.activatedRoute.snapshot.params.applicationId]);
+    this.gioMenuSearchService.addMenuSearchItems(this.getApplicationNavigationSearchItems());
+  }
+
+  private buildSubMenuItems(application: Application): MenuItem[] {
+    return [
+      {
+        displayName: this.languageService.translate('applications.navigation.globalSettings'),
+        routerLink: 'general',
+        permissions: ['application-definition-r'],
+      },
+      {
+        displayName: this.languageService.translate('applications.navigation.userAndGroupAccess'),
+        permissions: ['application-member-r'],
+        routerLink: 'members',
+        tabs: [
+          {
+            displayName: this.languageService.translate('applications.navigation.members'),
+            routerLink: 'members',
+          },
+          {
+            displayName: this.languageService.translate('applications.navigation.groups'),
+            routerLink: 'groups',
+          },
+          {
+            displayName: this.languageService.translate('applications.navigation.transferOwnership'),
+            routerLink: 'transfer-ownership',
+          },
+        ],
+      },
+      ...(application.api_key_mode === 'SHARED'
+        ? [
+            {
+              displayName: this.languageService.translate('applications.navigation.subscriptions'),
+              permissions: ['application-member-r'],
+              routerLink: 'subscriptions',
+              tabs: [
+                {
+                  displayName: this.languageService.translate('applications.navigation.subscriptions'),
+                  routerLink: 'subscriptions',
+                },
+                {
+                  displayName: this.languageService.translate('applications.navigation.sharedApiKeys'),
+                  routerLink: 'shared-api-keys',
+                },
+              ],
+            },
+          ]
+        : [
+            {
+              displayName: this.languageService.translate('applications.navigation.subscriptions'),
+              routerLink: 'subscriptions',
+              permissions: ['application-subscription-r'],
+            },
+          ]),
+      {
+        displayName: this.languageService.translate('applications.navigation.analytics'),
+        routerLink: 'analytics',
+        permissions: ['application-analytics-r'],
+      },
+      {
+        displayName: this.languageService.translate('applications.navigation.logs'),
+        routerLink: 'logs',
+        permissions: ['application-log-r'],
+      },
+      {
+        displayName: this.languageService.translate('applications.navigation.notifications'),
+        routerLink: 'notifications',
+        permissions: ['application-notification-r', 'application-alert-r'],
+      },
+    ];
+  }
+
   private filterMenuByPermission(menuItems: MenuItem[]): MenuItem[] {
     if (menuItems) {
       return menuItems.filter(item => !item.permissions || this.permissionService.hasAnyMatching(item.permissions));
@@ -204,7 +225,7 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
       acc.push({
         name: item.displayName,
         routerLink: `${parentRouterLink}/${cleanRouterLink(item.routerLink)}`,
-        category: `Applications`,
+        category: this.languageService.translate('applications.navigation.applications'),
         groupIds: [environmentId, applicationId],
       });
 
@@ -212,7 +233,7 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
         acc.push({
           name: tab.displayName,
           routerLink: `${parentRouterLink}/${cleanRouterLink(tab.routerLink)}`,
-          category: `Applications / ${item.displayName}`,
+          category: `${this.languageService.translate('applications.navigation.applications')} / ${item.displayName}`,
           groupIds: [environmentId, applicationId],
         });
       });

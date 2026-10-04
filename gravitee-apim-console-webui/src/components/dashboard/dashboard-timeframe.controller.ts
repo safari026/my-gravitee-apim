@@ -18,6 +18,8 @@ import moment, { duration, Moment, unix } from 'moment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { find, findLast, forEach, last } from 'lodash';
 
+import { LanguageService } from '../../shared/i18n/language.service';
+
 // eslint:disable-next-line:interface-name
 interface Timeframe {
   id: string;
@@ -47,12 +49,31 @@ class DashboardTimeframeController {
   private unRegisterTimeframeZoom: () => void;
   private activatedRoute: ActivatedRoute;
 
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
+
+  autoRefreshLabel(interval: AutoRefreshInterval) {
+    if (interval.interval === -1) {
+      return this.translate('applications.analytics.autoRefreshDisabled');
+    }
+    if (interval.interval === 5000) {
+      return this.translate('applications.analytics.each5s');
+    }
+    if (interval.interval === 10000) {
+      return this.translate('applications.analytics.each10s');
+    }
+    if (interval.interval === 30000) {
+      return this.translate('applications.analytics.each30s');
+    }
+    return interval.label;
+  }
+
   constructor(
     private $scope,
     private $rootScope,
     private ngRouter: Router,
     private $timeout: ng.ITimeoutService,
     private $interval: ng.IIntervalService,
+    private ngLanguageService: LanguageService,
   ) {
     this.displayModes = [
       {
@@ -388,6 +409,6 @@ class DashboardTimeframeController {
     }
   }
 }
-DashboardTimeframeController.$inject = ['$scope', '$rootScope', 'ngRouter', '$timeout', '$interval'];
+DashboardTimeframeController.$inject = ['$scope', '$rootScope', 'ngRouter', '$timeout', '$interval', 'ngLanguageService'];
 
 export default DashboardTimeframeController;

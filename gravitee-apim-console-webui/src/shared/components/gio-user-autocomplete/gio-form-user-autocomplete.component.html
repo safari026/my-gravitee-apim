@@ -18,10 +18,10 @@
 
 <mat-form-field class="form-field">
   <mat-icon matPrefix>search</mat-icon>
-  <mat-label>Search a user by name or email</mat-label>
+  <mat-label>{{ 'common.usersSelector.searchLabel' | translate }}</mat-label>
 
   <input matInput type="search" [matAutocomplete]="auto" [formControl]="userSearchTerm" />
-  <button *ngIf="userSearchTerm.value && !isDisabled" matSuffix mat-icon-button aria-label="Clear" (click)="resetSearchTerm()">
+  <button *ngIf="userSearchTerm.value && !isDisabled" matSuffix mat-icon-button [attr.aria-label]="'common.clear' | translate" (click)="resetSearchTerm()">
     <mat-icon>close</mat-icon>
   </button>
   <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectUser($event)" [displayWith]="displayFn">
@@ -29,8 +29,8 @@
       {{ option.displayName }}
     </mat-option>
     <mat-option *ngIf="(users | async)?.length === 0 && userSearchTerm.value?.length > 0" disabled
-      >No user matching the term or user already selected</mat-option
+      >{{ 'common.usersSelector.noMatch' | translate }}</mat-option
     >
   </mat-autocomplete>
-  <mat-error *ngIf="userSearchTerm.hasError('invalidUser')"> Select a user from the list </mat-error>
+  <mat-error *ngIf="userSearchTerm.hasError('invalidUser')"> {{ 'common.usersSelector.invalidUser' | translate }} </mat-error>
 </mat-form-field>

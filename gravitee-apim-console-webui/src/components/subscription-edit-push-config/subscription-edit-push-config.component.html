@@ -18,28 +18,28 @@
 
 <mat-card>
   <mat-card-header>
-    <mat-card-title>Consumer Configuration</mat-card-title>
-    <mat-card-subtitle>View and edit the Push Plan consumer's subscription configuration</mat-card-subtitle>
+    <mat-card-title>{{ 'applications.subscriptions.consumerConfig.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'applications.subscriptions.consumerConfig.subtitle' | translate }}</mat-card-subtitle>
     <div class="subscription-edit-push-config__headerRightBtn">
       <button mat-stroked-button (click)="openConsumerConfigurationDialog()" data-testid="openConfiguration">
         <mat-icon [svgIcon]="canEdit ? 'gio:edit-pencil' : 'gio:eye-empty'"></mat-icon>
         @if (canEdit) {
-          Edit
+          {{ 'common.edit' | translate }}
         } @else {
-          View
+          {{ 'common.view' | translate }}
         }
       </button>
     </div>
   </mat-card-header>
   <mat-card-content>
     <dl class="gio-description-list">
-      <dt>Channel</dt>
+      <dt>{{ 'applications.subscriptions.consumerConfig.channel' | translate }}</dt>
       <dd gioClipboardCopyWrapper [contentToCopy]="pushConfig.channel">{{ pushConfig.channel }}</dd>
 
-      <dt>Callback URL</dt>
+      <dt>{{ 'applications.subscriptions.consumerConfig.callbackUrl' | translate }}</dt>
       <dd gioClipboardCopyWrapper [contentToCopy]="pushConfig.callbackUrl">{{ pushConfig.callbackUrl }}</dd>
 
-      <dt>Authentication Type</dt>
+      <dt>{{ 'applications.subscriptions.consumerConfig.authType' | translate }}</dt>
       <dd>{{ pushConfig.authType }}</dd>
     </dl>
   </mat-card-content>

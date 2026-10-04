@@ -27,6 +27,8 @@ import { GioAvatarModule } from '@gravitee/ui-particles-angular';
 
 import { GioFormUserAutocompleteComponent } from './gio-form-user-autocomplete.component';
 
+import { TranslatePipe } from '../../i18n/translate.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -39,6 +41,7 @@ import { GioFormUserAutocompleteComponent } from './gio-form-user-autocomplete.c
     GioAvatarModule,
     MatIconModule,
     MatTooltipModule,
+    TranslatePipe,
   ],
   declarations: [GioFormUserAutocompleteComponent],
   exports: [GioFormUserAutocompleteComponent],

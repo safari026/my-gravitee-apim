@@ -51,6 +51,7 @@ import { AddCertificateDialogComponent } from './add-certificate-dialog/add-cert
 import { CertificateDetailDialogComponent } from './certificate-detail-dialog/certificate-detail-dialog.component';
 
 import { GioPermissionModule } from '../../../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { DaysLeftPipe } from '../../../../shared/pipes/days-left.pipe';
 import { DATE_TIME_FORMATS } from '../../../../shared/utils/timeFrameRanges';
 
@@ -93,6 +94,7 @@ import { DATE_TIME_FORMATS } from '../../../../shared/utils/timeFrameRanges';
     RouterModule,
     GioBannerModule,
     GioFormHeadersModule,
+    TranslatePipe,
   ],
   providers: [{ provide: OWL_DATE_TIME_FORMATS, useValue: DATE_TIME_FORMATS }],
 })

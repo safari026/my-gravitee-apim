@@ -22,6 +22,8 @@ import { CertificateDetailDialogComponent } from './certificate-detail-dialog.co
 
 import { ApplicationGeneralModule } from '../application-general.module';
 import { ClientCertificate, ClientCertificateStatus } from '../../../../../entities/application/ClientCertificate';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
+import { GioTestingModule } from '../../../../../shared/testing';
 
 describe('CertificateDetailDialogComponent', () => {
   const MOCK_CERTIFICATE: ClientCertificate = {
@@ -37,8 +39,9 @@ describe('CertificateDetailDialogComponent', () => {
   let fixture: ComponentFixture<CertificateDetailDialogComponent>;
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, ApplicationGeneralModule, MatIconTestingModule],
+      imports: [NoopAnimationsModule, ApplicationGeneralModule, MatIconTestingModule, GioTestingModule],
       providers: [
         { provide: MatDialogRef, useValue: { close: jest.fn() } },
         { provide: MAT_DIALOG_DATA, useValue: MOCK_CERTIFICATE },
@@ -67,5 +70,27 @@ describe('CertificateDetailDialogComponent', () => {
   it('should_display_expiry_information', () => {
     const el = fixture.nativeElement.querySelector('[data-testid="certificate-detail-expires-value"]');
     expect(el.textContent.trim()).toContain('2027');
+  });
+
+  it('should switch chrome to Russian and back without recreating the component', () => {
+    expect(fixture.nativeElement.textContent).toContain('Certificate Details');
+    expect(fixture.nativeElement.textContent).toContain('Certificate Name:');
+    expect(fixture.nativeElement.textContent).toContain('Close');
+
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Сведения о сертификате');
+    expect(fixture.nativeElement.textContent).toContain('Название сертификата:');
+    expect(fixture.nativeElement.textContent).toContain('Закрыть');
+    expect(fixture.nativeElement.textContent).not.toContain('Certificate Details');
+    expect(fixture.nativeElement.textContent).not.toContain('Close');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Certificate Details');
+    expect(fixture.nativeElement.textContent).toContain('Close');
   });
 });

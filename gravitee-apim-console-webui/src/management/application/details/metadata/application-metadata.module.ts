@@ -20,10 +20,11 @@ import { MatDialogModule } from '@angular/material/dialog';
 import { ApplicationMetadataComponent } from './application-metadata.component';
 
 import { GioMetadataModule } from '../../../../components/gio-metadata/gio-metadata.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApplicationMetadataComponent],
   exports: [ApplicationMetadataComponent],
-  imports: [CommonModule, GioMetadataModule, MatDialogModule],
+  imports: [CommonModule, GioMetadataModule, MatDialogModule, TranslatePipe],
 })
 export class ApplicationMetadataModule {}

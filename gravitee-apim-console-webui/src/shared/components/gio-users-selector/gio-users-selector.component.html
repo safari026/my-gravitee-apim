@@ -16,19 +16,18 @@
 
 -->
 <h2 mat-dialog-title>
-  <ng-container *ngIf="selectedUsers.length === 0">Select users</ng-container>
-  <ng-container *ngIf="selectedUsers.length > 0"
-    >{{ selectedUsers.length }} user{{ selectedUsers.length > 1 ? 's' : '' }} selected</ng-container
-  >
+  <ng-container *ngIf="selectedUsers.length === 0">{{ 'common.usersSelector.selectUsers' | translate }}</ng-container>
+  <ng-container *ngIf="selectedUsers.length === 1">{{ 'common.usersSelector.oneSelected' | translate }}</ng-container>
+  <ng-container *ngIf="selectedUsers.length > 1">{{ 'common.usersSelector.manySelected' | translate: { count: selectedUsers.length } }}</ng-container>
 </h2>
 
 <mat-dialog-content>
   <div>
     <mat-form-field class="gio-users-selector__search-autocomplete">
       <mat-icon matPrefix>search</mat-icon>
-      <mat-label>Search a user by name or email</mat-label>
+      <mat-label>{{ 'common.usersSelector.searchLabel' | translate }}</mat-label>
       <input matInput type="search" [matAutocomplete]="auto" [formControl]="userSearchTerm" />
-      <button *ngIf="userSearchTerm.value" matSuffix mat-icon-button aria-label="Clear" (click)="resetSearchTerm()">
+      <button *ngIf="userSearchTerm.value" matSuffix mat-icon-button [attr.aria-label]="'common.clear' | translate" (click)="resetSearchTerm()">
         <mat-icon>close</mat-icon>
       </button>
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectUser($event)">
@@ -36,7 +35,7 @@
           {{ option.displayName }}
         </mat-option>
         <mat-option *ngIf="(users | async)?.length === 0 && userSearchTerm.value?.length > 0" disabled
-          >No user matching the term or user already selected</mat-option
+          >{{ 'common.usersSelector.noMatch' | translate }}</mat-option
         >
       </mat-autocomplete>
     </mat-form-field>
@@ -55,8 +54,8 @@
         <button
           (click)="onRemoveUserClicked(selectedUser)"
           mat-icon-button
-          aria-label="Button to remove user from selection"
-          matTooltip="Remove user from selection"
+          [attr.aria-label]="'common.usersSelector.removeAria' | translate"
+          [matTooltip]="'common.usersSelector.removeTooltip' | translate"
         >
           <mat-icon>close</mat-icon>
         </button>
@@ -64,12 +63,12 @@
     </mat-list-item>
     <div *ngIf="selectedUsers.length === 0" class="gio-users-selector__users__no-user">
       <mat-icon class="gio-users-selector__users__no-user__icon">group_add</mat-icon>
-      <div class="gio-users-selector__users__no-user__message">No selected user</div>
+      <div class="gio-users-selector__users__no-user__message">{{ 'common.usersSelector.noSelected' | translate }}</div>
     </div>
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="[]">Cancel</button>
-  <button color="primary" mat-button [mat-dialog-close]="selectedUsers">Select</button>
+  <button mat-button [mat-dialog-close]="[]">{{ 'common.cancel' | translate }}</button>
+  <button color="primary" mat-button [mat-dialog-close]="selectedUsers">{{ 'common.select' | translate }}</button>
 </mat-dialog-actions>

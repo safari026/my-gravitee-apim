@@ -43,6 +43,8 @@ import { ApplicationSubscriptionService } from '../../../../../services-ngx/appl
 import { SubscriptionApiKeysComponent } from '../components/subscription-api-keys/subscription-api-keys.component';
 import { SubscriptionEditPushConfigComponent } from '../../../../../components/subscription-edit-push-config/subscription-edit-push-config.component';
 import { SubscriptionMetadataViewerComponent } from '../../../../../shared/components/subscription-metadata-viewer/subscription-metadata-viewer.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 type PageVM = {
   application: Application;
@@ -67,6 +69,7 @@ type PageVM = {
     MatTooltip,
     SubscriptionEditPushConfigComponent,
     SubscriptionMetadataViewerComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,6 +80,7 @@ export class ApplicationSubscriptionComponent {
   private readonly applicationSubscriptionService = inject(ApplicationSubscriptionService);
   private readonly matDialog = inject(MatDialog);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
 
   private subscriptionChanges$ = new BehaviorSubject<void>(undefined);
 
@@ -96,17 +100,19 @@ export class ApplicationSubscriptionComponent {
 
   public closeSubscription(application: Application, subscription: Subscription) {
     const applicationId = this.activatedRoute.snapshot.params.applicationId;
-    const referenceLabel = subscription.referenceType === 'API_PRODUCT' ? 'API product' : 'API';
+    const referenceLabel = this.languageService.translate(
+      subscription.referenceType === 'API_PRODUCT' ? 'applications.subscriptions.referenceApiProduct' : 'applications.subscriptions.referenceApi',
+    );
 
-    let content = `Are you sure you want to close this subscription? <br> <br> The application will not be able to consume this ${referenceLabel} anymore.`;
+    let content = this.languageService.translate('applications.subscriptions.closeContent', { reference: referenceLabel });
     if (subscription.plan.security === PlanSecurityType.API_KEY && application.api_key_mode !== ApiKeyMode.SHARED) {
-      content += '<br/>All Api-keys associated to this subscription will be closed and could not be used.';
+      content += this.languageService.translate('applications.subscriptions.closeApiKeys');
     }
 
     return this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         data: {
-          title: 'Close subscription',
+          title: this.languageService.translate('applications.subscriptions.closeTitle'),
           content,
         },
         width: GIO_DIALOG_WIDTH.MEDIUM,
@@ -120,11 +126,11 @@ export class ApplicationSubscriptionComponent {
 
       .subscribe({
         next: () => {
-          this.snackBarService.success('The subscription has been closed');
+          this.snackBarService.success(this.languageService.translate('applications.subscriptions.closed'));
           this.subscriptionChanges$.next();
         },
         error: () => {
-          this.snackBarService.error('An error occurred while closing the subscription!');
+          this.snackBarService.error(this.languageService.translate('applications.subscriptions.closeError'));
         },
       });
   }
@@ -147,11 +153,11 @@ export class ApplicationSubscriptionComponent {
           ),
         ),
         tap(() => {
-          this.snackBarService.success('Consumer configuration updated.');
+          this.snackBarService.success(this.languageService.translate('applications.subscriptions.details.consumerUpdated'));
           this.subscriptionChanges$.next();
         }),
         catchError(err => {
-          this.snackBarService.error(err.error?.message || 'An error occurred while updating consumer configuration.');
+          this.snackBarService.error(err.error?.message || this.languageService.translate('applications.subscriptions.details.consumerUpdateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

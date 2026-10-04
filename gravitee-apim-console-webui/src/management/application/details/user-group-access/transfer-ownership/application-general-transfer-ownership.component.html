@@ -20,20 +20,20 @@
     <mat-card-content>
       <div class="card__header">
         <div>
-          <h3>Transfer ownership</h3>
+          <h3>{{ 'applications.transferOwnership.title' | translate }}</h3>
         </div>
       </div>
       <ng-container>
-        <p>Select your preferred method for granting complete application access</p>
-        <mat-button-toggle-group aria-label="Select preferred method" class="card__method__toggle-group" formControlName="method">
-          <mat-button-toggle class="card__method__toggle-group__toggle" value="applicationMember"> Application member </mat-button-toggle>
-          <mat-button-toggle class="card__method__toggle-group__toggle" value="user"> Other user </mat-button-toggle>
+        <p>{{ 'applications.transferOwnership.description' | translate }}</p>
+        <mat-button-toggle-group [attr.aria-label]="'applications.transferOwnership.methodAria' | translate" class="card__method__toggle-group" formControlName="method">
+          <mat-button-toggle class="card__method__toggle-group__toggle" value="applicationMember"> {{ 'applications.transferOwnership.applicationMember' | translate }} </mat-button-toggle>
+          <mat-button-toggle class="card__method__toggle-group__toggle" value="user"> {{ 'applications.transferOwnership.otherUser' | translate }} </mat-button-toggle>
         </mat-button-toggle-group>
       </ng-container>
 
       <div class="card__method" *ngIf="form.get('method').value === 'applicationMember'">
         <mat-form-field class="card__method__field">
-          <mat-label>Select application member</mat-label>
+          <mat-label>{{ 'applications.transferOwnership.selectMember' | translate }}</mat-label>
           <mat-select formControlName="user">
             <mat-option *ngFor="let member of applicationMembers" [value]="member">{{ member.displayName }}</mat-option>
           </mat-select>
@@ -46,7 +46,7 @@
 
       <div *ngIf="form.get('user').value" class="card__method">
         <mat-form-field class="card__method__field">
-          <mat-label>New role for current Primary Owner</mat-label>
+          <mat-label>{{ 'applications.transferOwnership.newRole' | translate }}</mat-label>
           <mat-select formControlName="roleId">
             <mat-option *ngFor="let role of roles" [value]="role.name">{{ role.name }}</mat-option>
           </mat-select>
@@ -54,7 +54,7 @@
       </div>
     </mat-card-content>
     <mat-card-actions align="end">
-      <button mat-raised-button color="primary" [disabled]="!form.valid">Transfer</button>
+      <button mat-raised-button color="primary" [disabled]="!form.valid">{{ 'applications.transferOwnership.transfer' | translate }}</button>
     </mat-card-actions>
   </mat-card>
 </form>

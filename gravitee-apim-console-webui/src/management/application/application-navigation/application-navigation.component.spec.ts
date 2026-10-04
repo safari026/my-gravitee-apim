@@ -27,6 +27,7 @@ import { GioPermissionService } from '../../../shared/components/gio-permission/
 import { ApiNavigationModule } from '../../api/api-navigation/api-navigation.module';
 import { Application } from '../../../entities/application/Application';
 import { fakeApplication } from '../../../entities/application/Application.fixture';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApplicationNavigationComponent', () => {
   let fixture: ComponentFixture<ApplicationNavigationComponent>;
@@ -37,6 +38,7 @@ describe('ApplicationNavigationComponent', () => {
   const menuSearchService = new GioMenuSearchService();
 
   function createComponent(hasAnyMatching: boolean) {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, CommonModule, GioTestingModule, ApiNavigationModule, GioLicenseTestingModule],
       providers: [
@@ -66,6 +68,7 @@ describe('ApplicationNavigationComponent', () => {
   }
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     jest.resetAllMocks();
     httpTestingController.verify();
   });
@@ -88,6 +91,14 @@ describe('ApplicationNavigationComponent', () => {
         'Analytics',
         'Logs',
         'Notification settings',
+      ]);
+      expect(component.subMenuItems.map(item => item.routerLink)).toEqual([
+        'general',
+        'members',
+        'subscriptions',
+        'analytics',
+        'logs',
+        'notifications',
       ]);
     });
 
@@ -113,6 +124,57 @@ describe('ApplicationNavigationComponent', () => {
           ),
         ),
       );
+    });
+
+    it('should switch menu labels to Russian and back without recreating the component', () => {
+      const routerLinks = component.subMenuItems.map(item => item.routerLink);
+      expect(component.subMenuItems.map(item => item.displayName)).toEqual([
+        'Global settings',
+        'User and group access',
+        'Subscriptions',
+        'Analytics',
+        'Logs',
+        'Notification settings',
+      ]);
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(component.subMenuItems).toHaveLength(6);
+      expect(component.subMenuItems.map(item => item.displayName)).toEqual([
+        'Общие настройки',
+        'Пользователи и группы',
+        'Подписки',
+        'Аналитика',
+        'Логи',
+        'Настройки уведомлений',
+      ]);
+      expect(component.subMenuItems.map(item => item.routerLink)).toEqual(routerLinks);
+      expect(component.subMenuItems.find(item => item.routerLink === 'members')?.tabs?.map(tab => tab.routerLink)).toEqual([
+        'members',
+        'groups',
+        'transfer-ownership',
+      ]);
+      expect(component.subMenuItems.find(item => item.routerLink === 'members')?.tabs?.map(tab => tab.displayName)).toEqual([
+        'Участники',
+        'Группы',
+        'Передать владение',
+      ]);
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(component.subMenuItems).toHaveLength(6);
+      expect(component.subMenuItems.map(item => item.displayName)).toEqual([
+        'Global settings',
+        'User and group access',
+        'Subscriptions',
+        'Analytics',
+        'Logs',
+        'Notification settings',
+      ]);
+      expect(component.subMenuItems.map(item => item.routerLink)).toEqual(routerLinks);
     });
   });
 

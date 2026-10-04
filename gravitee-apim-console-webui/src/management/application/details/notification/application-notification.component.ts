@@ -36,6 +36,7 @@ import { NotificationSettings } from '../../../../entities/notification/notifica
 import { ApplicationNotificationSettingsService } from '../../../../services-ngx/application-notification-settings.service';
 import { GioPermissionService } from '../../../../shared/components/gio-permission/gio-permission.service';
 import { Hooks } from '../../../../entities/notification/hooks';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'app-notification',
@@ -81,6 +82,7 @@ export class ApplicationNotificationComponent implements OnInit, OnDestroy {
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
     private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
   ) {}
 
   public ngOnInit(): void {
@@ -122,7 +124,7 @@ export class ApplicationNotificationComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(() => {
-          this.snackBarService.success('Notification created successfully');
+          this.snackBarService.success(this.languageService.translate('applications.notifications.created'));
           this.refreshList();
         }),
         switchMap(created => {
@@ -146,9 +148,9 @@ export class ApplicationNotificationComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Delete notification',
-          content: `Are you sure you want to delete the notification <strong>${notification.name}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('applications.notifications.deleteTitle'),
+          content: this.languageService.translate('applications.notifications.deleteContent', { name: notification.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteNotificationConfirmDialog',
@@ -158,7 +160,7 @@ export class ApplicationNotificationComponent implements OnInit, OnDestroy {
         filter(confirm => confirm === true),
         switchMap(() => this.notificationService.delete(this.applicationId, notification.id)),
         tap(() => {
-          this.snackBarService.success(`"${notification.name}" has been deleted`);
+          this.snackBarService.success(this.languageService.translate('applications.notifications.deleted', { name: notification.name }));
           this.refreshList();
         }),
         catchError(({ error }) => {
@@ -203,7 +205,7 @@ export class ApplicationNotificationComponent implements OnInit, OnDestroy {
         filter(result => !!result),
         switchMap(updated => this.notificationService.update(this.applicationId, notification.id ?? '', updated)),
         tap(() => {
-          this.snackBarService.success('Notification saved successfully');
+          this.snackBarService.success(this.languageService.translate('applications.notifications.saved'));
           this.refreshList();
         }),
       );

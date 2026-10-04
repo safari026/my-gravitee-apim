@@ -16,6 +16,7 @@
 const ApplicationAnalyticsComponentAjs: ng.IComponentOptions = {
   bindings: {
     application: '<',
+    language: '<',
     dashboards: '<',
     activatedRoute: '<',
   },

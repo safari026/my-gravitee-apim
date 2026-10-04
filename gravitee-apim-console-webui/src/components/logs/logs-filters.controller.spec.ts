@@ -77,7 +77,9 @@ describe('LogsFiltersController', () => {
 
     onFiltersChange = jest.fn();
 
-    controller = new LogsFiltersController($scope, $timeout, $log, ApiServiceMock, ApplicationServiceMock, ngRouter);
+    controller = new LogsFiltersController($scope, $timeout, $log, ApiServiceMock, ApplicationServiceMock, ngRouter, {
+      translate: (key: string) => key,
+    } as any);
 
     // Set up controller properties (using type assertion to access private properties)
     (controller as any).onFiltersChange = onFiltersChange;

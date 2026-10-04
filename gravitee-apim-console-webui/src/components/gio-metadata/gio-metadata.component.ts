@@ -25,6 +25,7 @@ import { GioMetadataDialogComponent, GioMetadataDialogData } from './dialog/gio-
 
 import { Metadata, MetadataFormat, NewMetadata, UpdateMetadata } from '../../entities/metadata/metadata';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 import { SearchApiMetadataParam } from '../../entities/management-api-v2';
 import { GioTableWrapperFilters, Sort } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
@@ -113,6 +114,7 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   constructor(
     private matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -186,9 +188,20 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
             value: metadata.value,
           }),
         ),
-        tap(_ => this.snackBarService.success(`'${element.name}' updated successfully`)),
+        tap(_ =>
+          this.snackBarService.success(
+            this.referenceType === 'Application'
+              ? this.languageService.translate('applications.metadata.updated', { name: element.name })
+              : `'${element.name}' updated successfully`,
+          ),
+        ),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Error during update');
+          this.snackBarService.error(
+            error?.message ??
+              (this.referenceType === 'Application'
+                ? this.languageService.translate('applications.metadata.updateError')
+                : 'Error during update'),
+          );
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),
@@ -198,11 +211,33 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   }
 
   deleteMetadata(element: MetadataVM): void {
-    const title = element.defaultValue ? 'Reset global metadata' : `Delete ${this.referenceType} metadata`;
-    const content = element.defaultValue
-      ? `Are you sure you want to reset '${element.name}' to its original value '${element.defaultValue}'?`
-      : `Are you sure you want to delete ${this.referenceType} metadata '${element.name}'?`;
-    const confirmButton = element.defaultValue ? 'Reset' : 'Delete';
+    const title =
+      this.referenceType === 'Application'
+        ? element.defaultValue
+          ? this.languageService.translate('applications.metadata.resetTitle')
+          : this.languageService.translate('applications.metadata.deleteTitle', { type: this.referenceType })
+        : element.defaultValue
+          ? 'Reset global metadata'
+          : `Delete ${this.referenceType} metadata`;
+    const content =
+      this.referenceType === 'Application'
+        ? element.defaultValue
+          ? this.languageService.translate('applications.metadata.resetContent', {
+              name: element.name,
+              defaultValue: element.defaultValue,
+            })
+          : this.languageService.translate('applications.metadata.deleteContent', { type: this.referenceType, name: element.name })
+        : element.defaultValue
+          ? `Are you sure you want to reset '${element.name}' to its original value '${element.defaultValue}'?`
+          : `Are you sure you want to delete ${this.referenceType} metadata '${element.name}'?`;
+    const confirmButton =
+      this.referenceType === 'Application'
+        ? element.defaultValue
+          ? this.languageService.translate('common.reset')
+          : this.languageService.translate('common.delete')
+        : element.defaultValue
+          ? 'Reset'
+          : 'Delete';
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
@@ -217,9 +252,20 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirmed => confirmed),
         switchMap(_ => this.metadataSaveServices.delete(element.key)),
-        tap(_ => this.snackBarService.success(`'${element.name}' deleted successfully`)),
+        tap(_ =>
+          this.snackBarService.success(
+            this.referenceType === 'Application'
+              ? this.languageService.translate('applications.metadata.deleted', { name: element.name })
+              : `'${element.name}' deleted successfully`,
+          ),
+        ),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Error during deletion');
+          this.snackBarService.error(
+            error?.message ??
+              (this.referenceType === 'Application'
+                ? this.languageService.translate('applications.metadata.deleteError')
+                : 'Error during deletion'),
+          );
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),
@@ -247,10 +293,20 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(metadata => {
-          this.snackBarService.success(`'${metadata.name}' created successfully`);
+          this.snackBarService.success(
+            this.referenceType === 'Application'
+              ? this.languageService.translate('applications.metadata.created', { name: metadata.name })
+              : `'${metadata.name}' created successfully`,
+          );
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during creation');
+          this.snackBarService.error(
+            error?.message
+              ? error.message
+              : this.referenceType === 'Application'
+                ? this.languageService.translate('applications.metadata.createError')
+                : 'Error during creation',
+          );
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),

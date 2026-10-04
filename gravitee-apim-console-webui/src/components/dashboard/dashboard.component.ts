@@ -28,7 +28,9 @@ const DashboardComponent: ng.IComponentOptions = {
   },
   controller: [
     '$scope',
-    function ($scope) {
+    'ngLanguageService',
+    function ($scope, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.initialEventCounter = 2;
       this.initialTimeFrame = undefined;
       this.initialQuery = undefined;

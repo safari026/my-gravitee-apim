@@ -18,32 +18,32 @@
 <form ng-submit="$ctrl.search()" name="logsFiltersForm">
   <div layout-gt-sm="row">
     <md-input-container class="md-block" flex-gt-sm flex="20">
-      <label>Request ID</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.requestId') }}</label>
       <input ng-model="$ctrl.filters.id" />
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20">
-      <label>Transaction ID</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.transactionId') }}</label>
       <input ng-model="$ctrl.filters.transaction" />
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20">
-      <label>Methods</label>
-      <md-select ng-model="$ctrl.filters.method" placeholder="Methods" multiple>
+      <label>{{ $ctrl.translate('applications.logs.filters.methods') }}</label>
+      <md-select ng-model="$ctrl.filters.method" placeholder="{{ $ctrl.translate('applications.logs.filters.methods') }}" multiple>
         <md-option ng-value="key" ng-repeat="(key, value) in $ctrl.methods">{{ value }}</md-option>
       </md-select>
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20">
-      <label>Path</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.path') }}</label>
       <input ng-model="$ctrl.filters.uri" />
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20">
-      <label>Response times</label>
-      <md-select ng-model="$ctrl.filters.responseTime" placeholder="Response times" multiple>
+      <label>{{ $ctrl.translate('applications.logs.filters.responseTimes') }}</label>
+      <md-select ng-model="$ctrl.filters.responseTime" placeholder="{{ $ctrl.translate('applications.logs.filters.responseTimes') }}" multiple>
         <md-option ng-value="key" ng-repeat="(key, value) in $ctrl.responseTimes">{{ value }}</md-option>
       </md-select>
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20">
-      <label>HTTP Status</label>
-      <md-select ng-model="$ctrl.filters.status" placeholder="HTTP Status" multiple>
+      <label>{{ $ctrl.translate('applications.logs.filters.httpStatus') }}</label>
+      <md-select ng-model="$ctrl.filters.status" placeholder="{{ $ctrl.translate('applications.logs.filters.httpStatus') }}" multiple>
         <md-option ng-value="key" ng-repeat="(key, value) in $ctrl.httpStatus">{{key}} - {{ value }}</md-option>
       </md-select>
     </md-input-container>
@@ -68,13 +68,13 @@
     </md-input-container>
 
     <md-input-container class="md-block" flex-gt-sm flex="20" ng-if="$ctrl.context === 'api'">
-      <label>Plans</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.plans') }}</label>
       <md-select ng-model="$ctrl.filters.plan" placeholder="Plan" multiple>
         <md-option ng-value="plan.id" ng-repeat="plan in $ctrl.metadata.plans">{{plan.name}}</md-option>
       </md-select>
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20" ng-if="$ctrl.metadata.tenants.length > 0">
-      <label>Tenants</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.tenants') }}</label>
       <md-select ng-model="$ctrl.filters.tenant" placeholder="Tenant" multiple>
         <md-option ng-value="tenant.id" ng-repeat="tenant in $ctrl.metadata.tenants">{{tenant.name}}</md-option>
       </md-select>
@@ -85,20 +85,20 @@
       </md-select>
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm>
-      <label>Search in payloads</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.payloads') }}</label>
       <input ng-model="$ctrl.filters.body" />
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm ng-if="$ctrl.context != 'platform'">
-      <label>Endpoint</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.endpoint') }}</label>
       <input ng-model="$ctrl.filters.endpoint" />
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm ng-if="$ctrl.context === 'api'">
-      <label>Remote Address</label>
+      <label>{{ $ctrl.translate('applications.logs.filters.remoteAddress') }}</label>
       <input ng-model="$ctrl.filters['remote-address']" />
     </md-input-container>
     <div>
-      <md-button type="submit" class="md-raised md-primary"> Search </md-button>
-      <md-button type="button" class="md-flat" ng-click="$ctrl.clearFilters()" ng-disabled="!$ctrl.hasFilters()"> Clear filters </md-button>
+      <md-button type="submit" class="md-raised md-primary"> {{ $ctrl.translate('applications.logs.filters.search') }} </md-button>
+      <md-button type="button" class="md-flat" ng-click="$ctrl.clearFilters()" ng-disabled="!$ctrl.hasFilters()"> {{ $ctrl.translate('applications.logs.filters.clear') }} </md-button>
     </div>
   </div>
 </form>

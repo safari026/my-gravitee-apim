@@ -19,11 +19,8 @@
 <form [formGroup]="applicationFormGroup" (ngSubmit)="onSubmit()" gioFormFocusInvalid>
   <mat-card>
     <mat-card-header class="header">
-      <mat-card-title>Application creation</mat-card-title>
-      <mat-card-subtitle
-        >An application is required to subscribe to API's plan. It is the intermediate link between a user (you) and an API managed by
-        someone else.</mat-card-subtitle
-      >
+      <mat-card-title>{{ 'applications.creation.title' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'applications.creation.subtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
 
     <mat-card-content class="content">

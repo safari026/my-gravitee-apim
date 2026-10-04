@@ -41,6 +41,7 @@ import { ApplicationService } from '../../../../services-ngx/application.service
 import { Application, ApplicationType } from '../../../../entities/application/Application';
 import { ClientCertificate, ClientCertificateStatus } from '../../../../entities/application/ClientCertificate';
 import { toDictionary, toGioFormHeader, uniqueKeysValidator } from '../../../../util/gio-form-header.util';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'application-general',
@@ -64,6 +65,7 @@ export class ApplicationGeneralComponent implements OnInit {
     private readonly activatedRoute: ActivatedRoute,
     private readonly applicationService: ApplicationService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
     private readonly matDialog: MatDialog,
     private readonly router: Router,
   ) {}
@@ -193,7 +195,7 @@ export class ApplicationGeneralComponent implements OnInit {
     this.applicationService
       .update(applicationToUpdate)
       .pipe(
-        tap(() => this.snackBarService.success('Application details successfully updated!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('applications.edit.updated'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.ngOnInit());
@@ -259,11 +261,11 @@ export class ApplicationGeneralComponent implements OnInit {
           return create$;
         }),
         tap(() => {
-          this.snackBarService.success('Certificate added successfully.');
+          this.snackBarService.success(this.languageService.translate('applications.edit.certificates.added'));
           this.loadCertificates();
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Failed to add certificate.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('applications.edit.certificates.addFailed'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -285,9 +287,9 @@ export class ApplicationGeneralComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Delete Certificate',
-          content: `Are you sure you want to delete the certificate "<b>${cert.name}</b>"?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('applications.edit.certificates.deleteTitle'),
+          content: this.languageService.translate('applications.edit.certificates.deleteContent', { certificateName: cert.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'confirmCertificateDeleteDialog',
@@ -297,11 +299,13 @@ export class ApplicationGeneralComponent implements OnInit {
         filter(confirm => confirm === true),
         switchMap(() => this.applicationService.deleteCertificate(this.activatedRoute.snapshot.params.applicationId, cert.id)),
         tap(() => {
-          this.snackBarService.success(`Certificate "${cert.name}" has been deleted.`);
+          this.snackBarService.success(
+            this.languageService.translate('applications.edit.certificates.deleted', { certificateName: cert.name }),
+          );
           this.loadCertificates();
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Failed to delete certificate.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('applications.edit.certificates.deleteFailed'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -314,12 +318,14 @@ export class ApplicationGeneralComponent implements OnInit {
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: `Delete Application`,
-          content: `Are you sure you want to delete the Application?`,
-          confirmButton: `Yes, delete it`,
-          validationMessage: `Please, type in the name of the application <code>${this.initialApplication.name}</code> to confirm.`,
+          title: this.languageService.translate('applications.edit.deleteTitle'),
+          content: this.languageService.translate('applications.edit.deleteContent'),
+          confirmButton: this.languageService.translate('applications.edit.deleteConfirm'),
+          validationMessage: this.languageService.translate('applications.edit.deleteValidation', {
+            applicationName: this.initialApplication.name,
+          }),
           validationValue: this.initialApplication.name,
-          warning: `This operation is irreversible.`,
+          warning: this.languageService.translate('applications.edit.deleteWarning'),
         },
         role: 'alertdialog',
         id: 'applicationDeleteDialog',
@@ -332,7 +338,7 @@ export class ApplicationGeneralComponent implements OnInit {
           this.snackBarService.error(error.message);
           return EMPTY;
         }),
-        map(() => this.snackBarService.success(`The Application has been deleted.`)),
+        map(() => this.snackBarService.success(this.languageService.translate('applications.edit.deleted'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {

@@ -33,11 +33,13 @@ const WidgetDataTableComponent: ng.IComponentOptions = {
     '$scope',
     'AnalyticsService',
     'ngRouter',
-    function (constants: Constants, $scope, AnalyticsService: AnalyticsService, ngRouter: Router) {
+    'ngLanguageService',
+    function (constants: Constants, $scope, AnalyticsService: AnalyticsService, ngRouter: Router, ngLanguageService) {
       this.constants = constants;
       this.$scope = $scope;
       this.AnalyticsService = AnalyticsService;
       this.ngRouter = ngRouter;
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.selected = [];
 
       this.$onInit = function () {

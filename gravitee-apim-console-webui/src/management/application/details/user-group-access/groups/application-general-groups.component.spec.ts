@@ -31,6 +31,7 @@ import { fakeApplication } from '../../../../../entities/application/Application
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../../shared/testing';
 import { fakeGroup, Group } from '../../../../../entities/management-api-v2';
 import { Application } from '../../../../../entities/application/Application';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('ApplicationGeneralGroupsComponent', () => {
   let fixture: ComponentFixture<ApplicationGeneralGroupsComponent>;
@@ -69,6 +70,20 @@ describe('ApplicationGeneralGroupsComponent', () => {
       expectGetGroupsListRequest(fakeGroups);
       const groupFormField = await loader.getHarness(MatFormFieldHarness.with({ floatingLabelText: 'Groups' }));
       expect(groupFormField).toBeTruthy();
+    });
+
+    it('switches groups chrome EN → RU → EN without reload', async () => {
+      expectGetApplication(fakeApplication());
+      expectGetGroupsListRequest([fakeGroup()]);
+      const languageService = TestBed.inject(LanguageService);
+
+      expect(await loader.getHarness(MatFormFieldHarness.with({ floatingLabelText: 'Groups' }))).toBeTruthy();
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(await loader.getHarness(MatFormFieldHarness.with({ floatingLabelText: 'Группы' }))).toBeTruthy();
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(await loader.getHarness(MatFormFieldHarness.with({ floatingLabelText: 'Groups' }))).toBeTruthy();
     });
 
     it('should disable form with kubernetes origin', async () => {

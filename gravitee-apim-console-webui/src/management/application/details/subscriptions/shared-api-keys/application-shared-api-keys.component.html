@@ -22,7 +22,7 @@
       class="subscriptions__apiKeys"
       [applicationId]="application.id"
       [readonly]="false"
-      [subtitleText]="'These API keys are shared with all application subscriptions with an API_KEY plan.'"
+      [subtitleText]="'applications.sharedApiKeys.subtitle' | translate"
     >
     </subscription-api-keys>
   } @else {

@@ -36,6 +36,7 @@ import { fakeApplication } from '../../../../../entities/application/Application
 import { fakeApplicationSubscriptionApiKey } from '../../../../../entities/subscription/ApplicationSubscriptionApiKey.fixture';
 import { SubscriptionEditPushConfigHarness } from '../../../../../components/subscription-edit-push-config/subscription-edit-push-config.harness';
 import { SubscriptionEditPushConfigDialogHarness } from '../../../../../components/subscription-edit-push-config-dialog/subscription-edit-push-config-dialog.harness';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('ApplicationSubscriptionComponent', () => {
   let fixture: ComponentFixture<ApplicationSubscriptionComponent>;
@@ -110,7 +111,7 @@ describe('ApplicationSubscriptionComponent', () => {
       ['ID', 'subscriptionId content_copy'],
       ['API', '🪐 Planets - 1.0 content_copy'],
       ['Plan', 'Free Spaceshuttle content_copy'],
-      ['Status', 'ACCEPTED content_copy'],
+      ['Status', 'Accepted content_copy'],
       ['Subscribed by', 'Bruce Wayne content_copy'],
       ['Created at', expect.any(String)],
       ['Processed at', expect.any(String)],
@@ -131,6 +132,19 @@ describe('ApplicationSubscriptionComponent', () => {
         actions: 'hasRevokeButton',
       },
     ]);
+  });
+
+  it('switches subscription details chrome EN → RU → EN without reload', async () => {
+    const languageService = TestBed.inject(LanguageService);
+    expect(fixture.nativeElement.textContent).toContain('Subscription details');
+    expect(fixture.nativeElement.textContent).toContain('Accepted');
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Сведения о подписке');
+    expect(fixture.nativeElement.textContent).not.toContain('Subscription details');
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Subscription details');
   });
 
   describe('metadata display', () => {
@@ -252,7 +266,7 @@ describe('ApplicationSubscriptionComponent', () => {
       expect.anything(),
       expect.objectContaining({
         data: expect.objectContaining({
-          content: expect.stringContaining('API product'),
+          content: expect.stringContaining('API Product'),
         }),
       }),
     );

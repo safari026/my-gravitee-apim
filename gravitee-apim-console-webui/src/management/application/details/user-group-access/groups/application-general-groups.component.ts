@@ -26,6 +26,7 @@ import { GroupV2Service } from '../../../../../services-ngx/group-v2.service';
 import { ApplicationService } from '../../../../../services-ngx/application.service';
 import { Application } from '../../../../../entities/application/Application';
 import { SnackBarService } from '../../../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 interface Pagination {
   page: number;
@@ -63,6 +64,7 @@ export class ApplicationGeneralGroupsComponent implements OnInit, OnDestroy {
     private readonly applicationService: ApplicationService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
     private readonly ngZone: NgZone,
     private readonly cdr: ChangeDetectorRef,
   ) {}
@@ -213,7 +215,7 @@ export class ApplicationGeneralGroupsComponent implements OnInit, OnDestroy {
       })
       .pipe(
         tap(() => {
-          this.snackBarService.success('Changes successfully saved!');
+          this.snackBarService.success(this.languageService.translate('applications.groups.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

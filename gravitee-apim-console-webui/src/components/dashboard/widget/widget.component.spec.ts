@@ -43,11 +43,17 @@ describe('WidgetComponent', () => {
       buildQueryParam: jest.fn((queryParam: string) => queryParam),
     };
 
-    type WidgetControllerFn = ($scope: unknown, analyticsService: unknown, eventService: unknown, apiService: unknown) => void;
+    type WidgetControllerFn = (
+      $scope: unknown,
+      analyticsService: unknown,
+      eventService: unknown,
+      apiService: unknown,
+      ngLanguageService: unknown,
+    ) => void;
     const controllerFn = (WidgetComponent.controller as (string | WidgetControllerFn)[])[
       WidgetComponent.controller.length - 1
     ] as WidgetControllerFn;
-    controllerFn.call(instance, $scope, analyticsServiceMock, eventServiceMock, ApiServiceMock);
+    controllerFn.call(instance, $scope, analyticsServiceMock, eventServiceMock, ApiServiceMock, { translate: (key: string) => key });
 
     return instance;
   };

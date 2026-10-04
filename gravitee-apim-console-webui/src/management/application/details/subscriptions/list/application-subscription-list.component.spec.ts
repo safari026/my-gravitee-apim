@@ -38,6 +38,7 @@ import { Api, fakeProxyApiV4 } from '../../../../../entities/management-api-v2';
 import { fakeSubscriptionPage } from '../../../../../entities/subscription/subscription.fixture';
 import { GioTestingPermissionProvider } from '../../../../../shared/components/gio-permission/gio-permission.service';
 import { Application } from '../../../../../entities/application/Application';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   template: ` <application-subscription-list #subscriptionListComponent></application-subscription-list> `,
@@ -164,6 +165,23 @@ describe('ApplicationSubscriptionListComponent', () => {
       const table = await loader.getHarness(MatTableHarness.with({ selector: '#subscriptionsTable' }));
       const tableElement = await table.host();
       expect(await tableElement.text()).toContain('There is no subscription (yet).');
+    }));
+
+    it('switches subscriptions chrome EN → RU → EN without reload', fakeAsync(async () => {
+      await initComponent([]);
+      const languageService = TestBed.inject(LanguageService);
+
+      expect(fixture.nativeElement.textContent).toContain('Subscriptions');
+      expect(fixture.nativeElement.textContent).toContain('Reset filters');
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Подписки');
+      expect(fixture.nativeElement.textContent).toContain('Сбросить фильтры');
+      expect(fixture.nativeElement.textContent).not.toContain('Reset filters');
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Subscriptions');
+      expect(fixture.nativeElement.textContent).toContain('Reset filters');
     }));
 
     it('should display a table with one row', fakeAsync(async () => {
@@ -293,7 +311,7 @@ describe('ApplicationSubscriptionListComponent', () => {
         expect.anything(),
         expect.objectContaining({
           data: expect.objectContaining({
-            content: expect.stringContaining('API product'),
+            content: expect.stringContaining('API Product'),
           }),
         }),
       );

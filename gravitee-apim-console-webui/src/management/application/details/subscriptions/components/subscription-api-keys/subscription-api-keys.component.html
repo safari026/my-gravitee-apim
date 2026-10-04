@@ -19,7 +19,7 @@
 @if (pageVM$ | async; as pageVM) {
   <mat-card>
     <mat-card-header>
-      <mat-card-title>API Keys</mat-card-title>
+      <mat-card-title>{{ 'applications.apiKeys.title' | translate }}</mat-card-title>
       <mat-card-subtitle *ngIf="subtitleText">{{ subtitleText }}</mat-card-subtitle>
     </mat-card-header>
 
@@ -31,12 +31,12 @@
         (filtersChange)="onFiltersChanged($event)"
         [paginationPageSizeOptions]="[10, 25, 50, 100]"
       >
-        <table mat-table [dataSource]="pageVM.apiKeys" matSort [matSortDisabled]="pageVM.apiKeys.length < 1" aria-label="API Keys Table">
+        <table mat-table [dataSource]="pageVM.apiKeys" matSort [matSortDisabled]="pageVM.apiKeys.length < 1" [attr.aria-label]="'applications.apiKeys.tableAria' | translate">
           <ng-container matColumnDef="active-icon">
             <th mat-header-cell *matHeaderCellDef mat-sort-header="isValid"></th>
             <td mat-cell *matCellDef="let apiKey">
               <mat-icon
-                [matTooltip]="apiKey.isValid ? 'Valid' : 'Revoked or Expired'"
+                [matTooltip]="apiKey.isValid ? ('applications.apiKeys.valid' | translate) : ('applications.apiKeys.revokedOrExpired' | translate)"
                 [ngClass]="{
                   activeIcon: apiKey.isValid,
                   revokedIcon: !apiKey.isValid,
@@ -46,7 +46,7 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="key">
-            <th mat-header-cell *matHeaderCellDef>Key</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'applications.apiKeys.columns.key' | translate }}</th>
             <td mat-cell *matCellDef="let apiKey">
               <mat-form-field class="apiKeyCell">
                 <input matInput [value]="apiKey.key" readonly />
@@ -55,13 +55,13 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt">Created at</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt">{{ 'applications.apiKeys.columns.createdAt' | translate }}</th>
             <td mat-cell *matCellDef="let apiKey">
               {{ (apiKey.createdAt | date: 'medium') || '-' }}
             </td>
           </ng-container>
           <ng-container matColumnDef="endDate">
-            <th mat-header-cell *matHeaderCellDef mat-sort-header="endDate">Revoked/Expired at</th>
+            <th mat-header-cell *matHeaderCellDef mat-sort-header="endDate">{{ 'applications.apiKeys.columns.endDate' | translate }}</th>
             <td mat-cell *matCellDef="let apiKey">
               {{ (apiKey.endDate | date: 'medium') || '-' }}
             </td>
@@ -71,7 +71,7 @@
             <td mat-cell *matCellDef="let apiKey">
               @if (!readonly && apiKey.isValid) {
                 <div *gioPermission="{ anyOf: ['application-subscription-u'] }">
-                  <button (click)="revokeApiKey(apiKey)" mat-button aria-label="Button to revoke an API Key" matTooltip="Revoke">
+                  <button (click)="revokeApiKey(apiKey)" mat-button [attr.aria-label]="'applications.apiKeys.revokeAria' | translate" [matTooltip]="'common.revoke' | translate">
                     <mat-icon svgIcon="gio:x-circle"></mat-icon>
                   </button>
                 </div>
@@ -83,7 +83,7 @@
 
           <!-- Row shown when there is no data -->
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td *ngIf="!pageVM.loading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No API keys!</td>
+            <td *ngIf="!pageVM.loading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">{{ 'applications.apiKeys.empty' | translate }}</td>
             <td *ngIf="pageVM.loading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
               <gio-loader></gio-loader>
             </td>
@@ -96,7 +96,7 @@
         <div class="subscription__api-keys__footer" *gioPermission="{ anyOf: ['application-subscription-u'] }">
           <button mat-stroked-button (click)="renewApiKey()">
             <mat-icon svgIcon="gio:refresh-cw"></mat-icon>
-            Renew
+            {{ 'common.renew' | translate }}
           </button>
         </div>
       </mat-card-actions>

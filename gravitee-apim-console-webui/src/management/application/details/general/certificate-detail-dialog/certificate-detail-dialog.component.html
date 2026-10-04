@@ -15,28 +15,28 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>Certificate Details</span>
+<span mat-dialog-title>{{ 'applications.edit.certificates.detailsTitle' | translate }}</span>
 
 <mat-dialog-content>
   <div class="certificate-detail-dialog__summary" data-testid="certificate-detail-summary">
     <div class="certificate-detail-dialog__summary-row">
-      <span class="certificate-detail-dialog__summary-label">Certificate Name:</span>
+      <span class="certificate-detail-dialog__summary-label">{{ 'applications.edit.certificates.detailsName' | translate }}</span>
       <span class="certificate-detail-dialog__summary-value" data-testid="certificate-detail-name-value">{{ certificate.name }}</span>
     </div>
     <div class="certificate-detail-dialog__summary-row">
-      <span class="certificate-detail-dialog__summary-label">Subject:</span>
+      <span class="certificate-detail-dialog__summary-label">{{ 'applications.edit.certificates.detailsSubject' | translate }}</span>
       <span class="certificate-detail-dialog__summary-value" data-testid="certificate-detail-subject-value">{{
         certificate.subject ?? '—'
       }}</span>
     </div>
     <div class="certificate-detail-dialog__summary-row">
-      <span class="certificate-detail-dialog__summary-label">Issuer:</span>
+      <span class="certificate-detail-dialog__summary-label">{{ 'applications.edit.certificates.detailsIssuer' | translate }}</span>
       <span class="certificate-detail-dialog__summary-value" data-testid="certificate-detail-issuer-value">{{
         certificate.issuer ?? '—'
       }}</span>
     </div>
     <div class="certificate-detail-dialog__summary-row certificate-detail-dialog__summary-row--last">
-      <span class="certificate-detail-dialog__summary-label">Expires:</span>
+      <span class="certificate-detail-dialog__summary-label">{{ 'applications.edit.certificates.detailsExpires' | translate }}</span>
       <span class="certificate-detail-dialog__summary-value" data-testid="certificate-detail-expires-value">
         @if (certificate.certificateExpiration | daysLeft; as daysLeftLabel) {
           {{ daysLeftLabel }} ({{ certificate.certificateExpiration | date: 'medium' }})
@@ -49,5 +49,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-flat-button [mat-dialog-close]="undefined" type="button" data-testid="certificate-detail-close-button">Close</button>
+  <button mat-flat-button [mat-dialog-close]="undefined" type="button" data-testid="certificate-detail-close-button">
+    {{ 'common.close' | translate }}
+  </button>
 </mat-dialog-actions>

@@ -18,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { now } from 'lodash';
 
 import ApplicationService, { LogsQuery } from '../../../../services/application.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 class ApplicationLogsController {
   private logs: { total: string; logs: any[]; metadata: any };
@@ -34,11 +35,14 @@ class ApplicationLogsController {
     private ApplicationService: ApplicationService,
     private $scope: IScope,
     private ngRouter: Router,
+    private ngLanguageService: LanguageService,
   ) {
     this.ApplicationService = ApplicationService;
 
     this.onPaginate = this.onPaginate.bind(this);
   }
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     this.query = new LogsQuery();
@@ -135,6 +139,6 @@ class ApplicationLogsController {
     );
   }
 }
-ApplicationLogsController.$inject = ['ApplicationService', '$scope', 'ngRouter'];
+ApplicationLogsController.$inject = ['ApplicationService', '$scope', 'ngRouter', 'ngLanguageService'];
 
 export default ApplicationLogsController;

@@ -27,6 +27,8 @@ import { GioAvatarModule } from '@gravitee/ui-particles-angular';
 
 import { GioUsersSelectorComponent } from './gio-users-selector.component';
 
+import { TranslatePipe } from '../../i18n/translate.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -39,6 +41,7 @@ import { GioUsersSelectorComponent } from './gio-users-selector.component';
     GioAvatarModule,
     MatIconModule,
     MatTooltipModule,
+    TranslatePipe,
   ],
   declarations: [GioUsersSelectorComponent],
   exports: [GioUsersSelectorComponent],

@@ -34,11 +34,11 @@
     />
   </md-select-header>
 
-  <md-option ng-if="$ctrl.api === null" disabled>Loading...</md-option>
+  <md-option ng-if="$ctrl.api === null" disabled>{{ $ctrl.translate('applications.logs.filters.loading') }}</md-option>
 
   <md-option ng-value="item.id" ng-repeat="item in $ctrl.options track by item.id">{{ item.name }}</md-option>
 
-  <md-optgroup ng-if="$ctrl.hasSelection()" label="Selected">
+  <md-optgroup ng-if="$ctrl.hasSelection()" label="{{ $ctrl.translate('applications.logs.filters.selected') }}">
     <md-option ng-value="item.id" ng-repeat="item in $ctrl.selection track by item.id">{{ item.name }}</md-option>
   </md-optgroup>
 </md-select>

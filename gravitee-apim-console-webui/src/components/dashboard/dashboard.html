@@ -26,7 +26,7 @@
       on-filter-change="$ctrl.queryFilterChange(query, widget)"
     ></gv-dashboard-filter>
     <div layout="row" flex="100" layout-align="end center" ng-if="$ctrl.accessLogs">
-      <md-button md-no-ink class="md-primary" ng-click="$ctrl.viewLogs()">View logs</md-button>
+      <md-button md-no-ink class="md-primary" ng-click="$ctrl.viewLogs()">{{ $ctrl.translate('applications.analytics.viewLogs') }}</md-button>
     </div>
   </div>
 
@@ -47,5 +47,5 @@
   ng-if="!$ctrl.model.definition || !$ctrl.model.definition.length"
   icon="insert_chart"
   model="Dashboard"
-  message="{{$ctrl.updateMode?'Start adding widgets': 'No widget defined'}}"
+  message="{{$ctrl.updateMode?'Start adding widgets': $ctrl.translate('applications.analytics.noWidget')}}"
 ></gravitee-empty-state>

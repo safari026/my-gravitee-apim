@@ -19,26 +19,26 @@
 <div class="md-actions" layout="row">
   <md-button ng-click="$ctrl.goBackToLogList()">
     <ng-md-icon icon="reply"></ng-md-icon>
-    <span style="color: rgba(0, 0, 0, 0.54)">Back to logs</span>
+    <span style="color: rgba(0, 0, 0, 0.54)">{{ $ctrl.translate('applications.logs.back') }}</span>
   </md-button>
 </div>
 
 <div class="log-table" layout="row" flex layout-padding layout-align="space-around center">
   <div layout="column" flex="33">
-    <span class="log-header" style="text-align: center">Request</span>
+    <span class="log-header" style="text-align: center">{{ $ctrl.translate('applications.logs.request') }}</span>
     <md-table-container class="gv-log-request-header">
       <table md-table class="gv-table-dense">
         <tbody md-body>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Date</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.date') }}</span></td>
             <td md-cell>{{$ctrl.log.timestamp | date:'MMM d, y h:mm:ss.sss a'}}</td>
           </tr>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Request ID</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.requestId') }}</span></td>
             <td md-cell>{{$ctrl.log.id}}</td>
           </tr>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Transaction ID</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.transactionId') }}</span></td>
             <td md-cell>{{$ctrl.log.transactionId}}</td>
           </tr>
         </tbody>
@@ -47,24 +47,24 @@
   </div>
 
   <div layout="column" flex="33">
-    <span class="log-header" style="text-align: center">Context</span>
+    <span class="log-header" style="text-align: center">{{ $ctrl.translate('applications.logs.context') }}</span>
     <md-table-container ng-class="{'gv-log-response-header-{{$ctrl.log.status / 100 | number:0}}': true}">
       <table md-table class="gv-table-dense">
         <tbody md-body>
           <tr md-row ng-if="$ctrl.log.apiKey">
-            <td md-cell><span style="font-weight: bold">API Key</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.apiKey') }}</span></td>
             <td md-cell>{{$ctrl.log.apiKey}}</td>
           </tr>
           <tr md-row ng-if="$ctrl.log.api">
-            <td md-cell><span style="font-weight: bold">API</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.api') }}</span></td>
             <td md-cell>{{$ctrl.log.metadata[$ctrl.log.api].name}}</td>
           </tr>
           <tr md-row ng-if="$ctrl.log.plan">
-            <td md-cell><span style="font-weight: bold">Plan</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.plan') }}</span></td>
             <td md-cell>{{$ctrl.log.metadata[$ctrl.log.plan].name}}</td>
           </tr>
           <tr md-row ng-if="$ctrl.log.user && $ctrl.Constants.org.settings.logging.user.displayed">
-            <td md-cell><span style="font-weight: bold">User</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.user') }}</span></td>
             <td md-cell>{{$ctrl.log.user}}</td>
           </tr>
         </tbody>
@@ -78,14 +78,14 @@
 <div class="log-table" layout="row" flex layout-padding layout-align="center">
   <div layout="column" layout-padding style="background-color: #e1f5fe; border: 1px solid #b3e5fc" flex="50">
     <div layout="row" style="background-color: #b3e5fc" layout-align="center center">
-      <span class="log-header" style="text-align: center">REQUEST</span>
+      <span class="log-header" style="text-align: center">{{ $ctrl.translate('applications.logs.requestUpper') }}</span>
     </div>
 
     <md-table-container>
       <table md-table class="gv-table-dense">
         <tbody md-body>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Method</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.method') }}</span></td>
             <td md-cell>
               <span class="badge gravitee-policy-method-badge-info gravitee-policy-method-badge-{{$ctrl.log.method | uppercase}}-selected">
                 {{$ctrl.log.method | uppercase}}
@@ -93,11 +93,11 @@
             </td>
           </tr>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">URI</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.uri') }}</span></td>
             <td md-cell>{{$ctrl.log.uri}}</td>
           </tr>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Content-length</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.contentLength') }}</span></td>
             <td md-cell>{{$ctrl.log.requestContentLength | number}}</td>
           </tr>
         </tbody>
@@ -126,7 +126,7 @@
         ng-model="$ctrl.log.request.body"
       ></div>
       <button class="copy">
-        <md-tooltip md-direction="top">Copy to clipboard</md-tooltip>
+        <md-tooltip md-direction="top">{{ $ctrl.translate('common.copyToClipboard') }}</md-tooltip>
         <ng-md-icon
           icon="content_copy"
           ngclipboard
@@ -142,22 +142,22 @@
 
   <div layout="column" layout-padding ng-class="{'gv-log-response-panel-{{$ctrl.log.status / 100 | number:0}}': true}" flex="50">
     <div layout="row" layout-align="center center">
-      <span class="log-header" style="text-align: center">RESPONSE</span>
+      <span class="log-header" style="text-align: center">{{ $ctrl.translate('applications.logs.responseUpper') }}</span>
     </div>
 
     <md-table-container>
       <table md-table class="gv-table-dense">
         <tbody md-body>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Status</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.status') }}</span></td>
             <td md-cell><span class="gv-statuscode-{{$ctrl.log.status / 100 | number:0}}xx">{{$ctrl.log.status | number}}</span></td>
           </tr>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Content-length</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.contentLength') }}</span></td>
             <td md-cell>{{$ctrl.log.responseContentLength | number}}</td>
           </tr>
           <tr md-row>
-            <td md-cell><span style="font-weight: bold">Response time</span></td>
+            <td md-cell><span style="font-weight: bold">{{ $ctrl.translate('applications.logs.responseTime') }}</span></td>
             <td md-cell>{{$ctrl.log.responseTime | number}} ms</td>
           </tr>
         </tbody>
@@ -184,7 +184,7 @@
         ng-model="$ctrl.log.response.body"
       ></div>
       <button class="copy">
-        <md-tooltip md-direction="top">Copy to clipboard</md-tooltip>
+        <md-tooltip md-direction="top">{{ $ctrl.translate('common.copyToClipboard') }}</md-tooltip>
         <ng-md-icon
           icon="content_copy"
           ngclipboard
@@ -201,23 +201,23 @@
 <div ng-if="$ctrl.log.errorKey != null" class="diagnostic-section diagnostic-section--failure">
   <div class="diagnostic-section__header">
     <div class="diagnostic-section__icon">❌</div>
-    <div class="diagnostic-section__title">Failure</div>
+    <div class="diagnostic-section__title">{{ $ctrl.translate('applications.logs.failure') }}</div>
   </div>
   <div class="diagnostic-section__content">
     <div class="diagnostic-item" ng-if="$ctrl.log.errorKey">
-      <div class="diagnostic-item__label">Key</div>
+      <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticKey') }}</div>
       <div class="diagnostic-item__value">{{$ctrl.log.errorKey}}</div>
     </div>
     <div class="diagnostic-item" ng-if="$ctrl.log.errorComponentType">
-      <div class="diagnostic-item__label">Component</div>
+      <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticComponent') }}</div>
       <div class="diagnostic-item__value">{{$ctrl.log.errorComponentType}}</div>
     </div>
     <div class="diagnostic-item" ng-if="$ctrl.log.errorComponentName">
-      <div class="diagnostic-item__label">Name</div>
+      <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticName') }}</div>
       <div class="diagnostic-item__value">{{$ctrl.log.errorComponentName}}</div>
     </div>
     <div class="diagnostic-item diagnostic-item--message" ng-if="$ctrl.log.message">
-      <div class="diagnostic-item__label">message</div>
+      <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticMessage') }}</div>
       <div class="diagnostic-item__value">
         <div class="diagnostic-item__message-text">{{$ctrl.log.message}}</div>
       </div>
@@ -229,24 +229,24 @@
 <div ng-if="$ctrl.log.warnings != null && $ctrl.log.warnings.length > 0" class="diagnostic-section diagnostic-section--warning">
   <div class="diagnostic-section__header">
     <div class="diagnostic-section__icon">⚠️</div>
-    <div class="diagnostic-section__title">Warnings</div>
+    <div class="diagnostic-section__title">{{ $ctrl.translate('applications.logs.warnings') }}</div>
   </div>
   <div class="diagnostic-section__content">
     <div ng-repeat="warning in $ctrl.log.warnings" class="diagnostic-warning">
       <div class="diagnostic-item" ng-if="warning.key">
-        <div class="diagnostic-item__label">Key</div>
+        <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticKey') }}</div>
         <div class="diagnostic-item__value">{{warning.key}}</div>
       </div>
       <div class="diagnostic-item" ng-if="warning.componentType">
-        <div class="diagnostic-item__label">Component</div>
+        <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticComponent') }}</div>
         <div class="diagnostic-item__value">{{warning.componentType}}</div>
       </div>
       <div class="diagnostic-item" ng-if="warning.componentName">
-        <div class="diagnostic-item__label">Name</div>
+        <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticName') }}</div>
         <div class="diagnostic-item__value">{{warning.componentName}}</div>
       </div>
       <div class="diagnostic-item diagnostic-item--message" ng-if="warning.message">
-        <div class="diagnostic-item__label">message</div>
+        <div class="diagnostic-item__label">{{ $ctrl.translate('applications.logs.diagnosticMessage') }}</div>
         <div class="diagnostic-item__value">
           <div class="diagnostic-item__message-text">{{warning.message}}</div>
         </div>

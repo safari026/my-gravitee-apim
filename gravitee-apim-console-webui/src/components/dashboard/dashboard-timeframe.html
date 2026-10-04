@@ -31,14 +31,14 @@
 
             <md-button class="md-primary" ng-click="$ctrl.refresh()">
               <ng-md-icon icon="refresh" size="20"></ng-md-icon>
-              Refresh
+              {{ $ctrl.translate('applications.analytics.refresh') }}
             </md-button>
 
             <div>
               <ng-md-icon icon="autorenew" size="20"></ng-md-icon>
               <md-input-container>
-                <md-select ng-model="$ctrl.autoRefreshInterval" ng-change="$ctrl.autoRefreshChange()" aria-label="Auto refresh">
-                  <md-option ng-repeat="interval in $ctrl.arIntervals" ng-value="interval.interval"> {{interval.label}} </md-option>
+                <md-select ng-model="$ctrl.autoRefreshInterval" ng-change="$ctrl.autoRefreshChange()" aria-label="{{ $ctrl.translate('applications.analytics.autoRefreshAria') }}">
+                  <md-option ng-repeat="interval in $ctrl.arIntervals" ng-value="interval.interval"> {{ $ctrl.autoRefreshLabel(interval) }} </md-option>
                 </md-select>
               </md-input-container>
             </div>
@@ -57,13 +57,13 @@
           ng-click="$ctrl.updateTimeframe(timeframe.id)"
           ng-class="{'gravitee-analytics-timeframe-active' : timeframe === $ctrl.timeframe}"
         >
-          {{timeframe.title}}
+          {{ $ctrl.translate('applications.logs.timeframes.' + timeframe.id) }}
         </button>
       </div>
 
       <div class="gv-log-filter-dates">
         <md-input-container style="margin-bottom: 0">
-          <label>from</label>
+          <label>{{ $ctrl.translate('applications.analytics.from') }}</label>
           <input
             moment-picker="$ctrl.pickerStartDateFormated"
             format="YYYY-MM-DD HH:mm"
@@ -73,7 +73,7 @@
           />
         </md-input-container>
         <md-input-container style="margin-bottom: 0">
-          <label>to</label>
+          <label>{{ $ctrl.translate('applications.analytics.to') }}</label>
           <input
             moment-picker="$ctrl.pickerEndDateFormated"
             format="YYYY-MM-DD HH:mm"
@@ -82,7 +82,7 @@
             ng-model-options="{ updateOn: 'blur' }"
           />
         </md-input-container>
-        <md-button type="button" class="md-raised" ng-click="$ctrl.updateRangeDate()">Apply</md-button>
+        <md-button type="button" class="md-raised" ng-click="$ctrl.updateRangeDate()">{{ $ctrl.translate('common.apply') }}</md-button>
       </div>
     </div>
   </md-card-content>

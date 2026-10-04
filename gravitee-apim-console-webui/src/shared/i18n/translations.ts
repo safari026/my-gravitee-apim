@@ -6,6 +6,7 @@ import { enDashboard } from './translations/en/dashboard';
 import { enTasks } from './translations/en/tasks';
 import { enMessages } from './translations/en/messages';
 import { enApis } from './translations/en/apis';
+import { enApplications } from './translations/en/applications';
 import { ruAuth } from './translations/ru/auth';
 import { ruCommon } from './translations/ru/common';
 import { ruNavigation } from './translations/ru/navigation';
@@ -14,6 +15,7 @@ import { ruDashboard } from './translations/ru/dashboard';
 import { ruTasks } from './translations/ru/tasks';
 import { ruMessages } from './translations/ru/messages';
 import { ruApis } from './translations/ru/apis';
+import { ruApplications } from './translations/ru/applications';
 
 export type Language = 'en' | 'ru';
 
@@ -27,6 +29,7 @@ export const translations = {
     tasks: enTasks,
     messages: enMessages,
     apis: enApis,
+    applications: enApplications,
   },
   ru: {
     auth: ruAuth,
@@ -37,5 +40,6 @@ export const translations = {
     tasks: ruTasks,
     messages: ruMessages,
     apis: ruApis,
+    applications: ruApplications,
   },
 } as const;

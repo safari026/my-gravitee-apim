@@ -29,6 +29,7 @@ import { AddCertificateDialogComponent, AddCertificateDialogData } from './add-c
 import { ApplicationGeneralModule } from '../application-general.module';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../../shared/testing';
 import { ValidateCertificateResponse } from '../../../../../entities/application/ClientCertificate';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('AddCertificateDialogComponent', () => {
   const APPLICATION_ID = 'app-test-id';
@@ -44,10 +45,11 @@ describe('AddCertificateDialogComponent', () => {
   let dialogRef: { close: jest.Mock };
   let httpTestingController: HttpTestingController;
 
-  const createComponent = (data: Partial<AddCertificateDialogData> & Pick<AddCertificateDialogData, 'hasActiveCertificates'>) => {
+    const createComponent = (data: Partial<AddCertificateDialogData> & Pick<AddCertificateDialogData, 'hasActiveCertificates'>) => {
     const fullData: AddCertificateDialogData = { applicationId: APPLICATION_ID, ...data };
     dialogRef = { close: jest.fn() };
 
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, ApplicationGeneralModule, MatIconTestingModule, GioTestingModule],
       providers: [
@@ -63,6 +65,7 @@ describe('AddCertificateDialogComponent', () => {
   };
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 
@@ -190,7 +193,7 @@ describe('AddCertificateDialogComponent', () => {
       failValidation();
       fixture.detectChanges();
 
-      expect(fixture.componentInstance.validationError).toBe('Invalid certificate format');
+      expect(fixture.componentInstance.validationError).toBe('applications.edit.certificates.invalidFormat');
       const errorBanner = fixture.nativeElement.querySelector('[data-testid="validation-error-banner"]');
       expect(errorBanner).toBeTruthy();
       expect(errorBanner.textContent).toContain('Invalid certificate format');
@@ -343,6 +346,35 @@ describe('AddCertificateDialogComponent', () => {
           activeCertificateId: ACTIVE_CERT_ID,
         }),
       );
+    });
+  });
+
+  describe('localization', () => {
+    beforeEach(() => {
+      createComponent({ hasActiveCertificates: false });
+    });
+
+    it('should switch chrome to Russian and back without recreating the component', async () => {
+      expect(fixture.nativeElement.textContent).toContain('Add certificate');
+      expect(fixture.nativeElement.textContent).toContain('Certificate Name');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Cancel' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }))).toBeTruthy();
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Добавить сертификат');
+      expect(fixture.nativeElement.textContent).toContain('Название сертификата');
+      expect(fixture.nativeElement.textContent).not.toContain('Certificate Name');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Отмена' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Продолжить' }))).toBeTruthy();
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Add certificate');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Continue' }))).toBeTruthy();
     });
   });
 });

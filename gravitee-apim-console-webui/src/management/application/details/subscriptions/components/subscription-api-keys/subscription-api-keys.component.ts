@@ -43,6 +43,8 @@ import { GioPermissionModule } from '../../../../../../shared/components/gio-per
 import { GioTableWrapperFilters } from '../../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { GioTableWrapperModule } from '../../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { ApplicationService } from '../../../../../../services-ngx/application.service';
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../../../shared/i18n/language.service';
 
 type ApiKeyVM = {
   id: string;
@@ -70,6 +72,7 @@ type ApiKeyVM = {
     GioTableWrapperModule,
     GioClipboardModule,
     GioPermissionModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -77,6 +80,7 @@ export class SubscriptionApiKeysComponent implements OnChanges {
   private readonly destroyRef = inject(DestroyRef);
   private readonly matDialog = inject(MatDialog);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly applicationSubscriptionService = inject(ApplicationSubscriptionService);
   private readonly applicationService = inject(ApplicationService);
 
@@ -167,8 +171,8 @@ export class SubscriptionApiKeysComponent implements OnChanges {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Revoke API Key',
-          content: `Are you sure you want to revoke API Key <code>${apiKeyVM.key}</code>?`,
+          title: this.languageService.translate('applications.apiKeys.revokeTitle'),
+          content: this.languageService.translate('applications.apiKeys.revokeContent', { key: apiKeyVM.key }),
         },
         role: 'alertdialog',
         id: 'revokeApiKeysDialog',
@@ -181,7 +185,7 @@ export class SubscriptionApiKeysComponent implements OnChanges {
       )
       .subscribe({
         next: () => {
-          this.snackBarService.success(`API Key revoked`);
+          this.snackBarService.success(this.languageService.translate('applications.apiKeys.revoked'));
           this.filters$.next(this.filters$.value);
         },
         error: err => this.snackBarService.error(err.message),
@@ -197,8 +201,8 @@ export class SubscriptionApiKeysComponent implements OnChanges {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Renew API Key',
-          content: `Are you sure you want to renew API Key ?`,
+          title: this.languageService.translate('applications.apiKeys.renewTitle'),
+          content: this.languageService.translate('applications.apiKeys.renewContent'),
         },
         role: 'alertdialog',
         id: 'renewApiKeysDialog',
@@ -212,7 +216,7 @@ export class SubscriptionApiKeysComponent implements OnChanges {
 
       .subscribe({
         next: () => {
-          this.snackBarService.success(`API Key renewed`);
+          this.snackBarService.success(this.languageService.translate('applications.apiKeys.renewed'));
           this.filters$.next(this.filters$.value);
         },
         error: err => this.snackBarService.error(err.message),

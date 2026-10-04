@@ -17,6 +17,8 @@ import { IPromise } from 'angular';
 
 import { Identifiable, Selector } from './selector';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 interface SearchParam {
   term: string;
 }
@@ -33,17 +35,24 @@ export class SearchAndSelectController {
   public context: string;
   public selectModel: string[];
 
-  // search model
   private searchTerm = '';
-
-  // select handler
   private selector = new Selector();
 
+  constructor(private ngLanguageService: LanguageService) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
+
   get label() {
+    if (this.context === 'API') {
+      return this.translate('applications.subscriptions.filters.api');
+    }
     return this.context;
   }
 
   get placeholder() {
+    if (this.context === 'API') {
+      return this.translate('applications.logs.filters.searchApi');
+    }
     if (this.context.toUpperCase() === this.context) {
       return `Search ${this.context}`;
     }
@@ -109,3 +118,4 @@ export class SearchAndSelectController {
     return this.selection.length > 0;
   }
 }
+SearchAndSelectController.$inject = ['ngLanguageService'];

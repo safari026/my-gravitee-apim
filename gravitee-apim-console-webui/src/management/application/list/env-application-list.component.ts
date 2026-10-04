@@ -27,6 +27,8 @@ import { ApplicationService } from '../../../services-ngx/application.service';
 import { Application } from '../../../entities/application/Application';
 import { GioRoleService } from '../../../shared/components/gio-role/gio-role.service';
 import { toOrder, toSort } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { APPLICATION_TYPE_I18N_KEYS } from '../creation/components/application-creation-form.component';
 
 interface ApplicationTableFilters extends GioTableWrapperFilters {
   status?: 'ACTIVE' | 'ARCHIVED';
@@ -70,6 +72,7 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
   };
   statusFilters: string[] = ['ACTIVE', 'ARCHIVED'];
   currentStatus: 'ACTIVE' | 'ARCHIVED';
+  readonly typeI18nKeys = APPLICATION_TYPE_I18N_KEYS;
 
   // Create filters stream
   private filtersStream = new BehaviorSubject<ApplicationTableFilters>(this.defaultFilters);
@@ -81,6 +84,7 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
     private readonly applicationService: ApplicationService,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnDestroy(): void {
@@ -168,11 +172,9 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '620px',
         data: {
-          title: `Would you like to restore the application "${application.name}"?`,
-          content: `Every subscription belonging to this application will be restored in PENDING status.
-                        Subscriptions can be reactivated as per requirements.
-                        `,
-          confirmButton: 'Restore',
+          title: this.languageService.translate('applications.list.restoreTitle', { name: application.name }),
+          content: this.languageService.translate('applications.list.restoreContent'),
+          confirmButton: this.languageService.translate('applications.list.restoreConfirm'),
         },
         role: 'alertdialog',
         id: 'restoreApplicationConfirmDialog',
@@ -181,7 +183,7 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.applicationService.restore(application.applicationId)),
-        tap(() => this.snackBarService.success(`Application ${application.name} has been restored`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('applications.list.restored', { name: application.name }))),
         switchMap(() =>
           this.applicationService
             .list(

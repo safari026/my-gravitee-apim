@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Pipe, PipeTransform } from '@angular/core';
+import { inject, Pipe, PipeTransform } from '@angular/core';
+
+import { LanguageService } from '../i18n/language.service';
 
 const MS_PER_DAY = 86_400_000;
 
 @Pipe({
   name: 'daysLeft',
-  pure: true,
+  pure: false,
   standalone: false,
 })
 export class DaysLeftPipe implements PipeTransform {
+  private readonly languageService = inject(LanguageService);
+
   transform(value: string | number | Date | null | undefined, threshold?: number): string | null {
     if (!value) {
       return null;
@@ -32,8 +36,10 @@ export class DaysLeftPipe implements PipeTransform {
       return null;
     }
     if (days <= 0) {
-      return 'Expires today';
+      return this.languageService.translate('common.daysLeft.expiresToday');
     }
-    return days === 1 ? '1 day left' : `${days} days left`;
+    return days === 1
+      ? this.languageService.translate('common.daysLeft.one')
+      : this.languageService.translate('common.daysLeft.many', { count: days });
   }
 }

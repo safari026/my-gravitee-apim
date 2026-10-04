@@ -38,6 +38,7 @@ import { GroupV2Service } from '../../../../../services-ngx/group-v2.service';
 import { Member } from '../../../../../entities/members/members';
 import { Application } from '../../../../../entities/application/Application';
 import { ApplicationMembersService } from '../../../../../services-ngx/application-members.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 class MemberDataSource {
   id: string;
@@ -79,6 +80,7 @@ export class ApplicationGeneralMembersComponent {
     private readonly permissionService: GioPermissionService,
     private readonly snackBarService: SnackBarService,
     private readonly applicationService: ApplicationService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -193,9 +195,9 @@ export class ApplicationGeneralMembersComponent {
         .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
           width: '500px',
           data: {
-            title: `Remove Application member`,
-            content: `Are you sure you want to remove "<b>${member.displayName}</b>" from this Application members? <br>This action cannot be undone!`,
-            confirmButton: 'Remove',
+            title: this.languageService.translate('applications.members.removeTitle'),
+            content: this.languageService.translate('applications.members.removeContent', { name: member.displayName }),
+            confirmButton: this.languageService.translate('common.remove'),
           },
           role: 'alertdialog',
           id: 'confirmMemberDeleteDialog',
@@ -205,7 +207,7 @@ export class ApplicationGeneralMembersComponent {
           filter(confirm => confirm === true),
           switchMap(() => this.applicationMembersService.delete(this.activatedRoute.snapshot.params.applicationId, member.id)),
           tap(() => {
-            this.snackBarService.success(`"${member.displayName}" has been deleted`);
+            this.snackBarService.success(this.languageService.translate('applications.members.removed', { name: member.displayName }));
           }),
           catchError(({ error }) => {
             this.snackBarService.error(error.message);
@@ -297,7 +299,7 @@ export class ApplicationGeneralMembersComponent {
     combineLatest(queries)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Changes successfully saved!');
+          this.snackBarService.success(this.languageService.translate('applications.members.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

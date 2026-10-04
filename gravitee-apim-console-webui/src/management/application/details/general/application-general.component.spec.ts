@@ -37,6 +37,7 @@ import { fakeApplication, fakeApplicationType } from '../../../../entities/appli
 import { Application, ApplicationType } from '../../../../entities/application/Application';
 import { GioTestingPermissionProvider } from '../../../../shared/components/gio-permission/gio-permission.service';
 import { ClientCertificate, ClientCertificateStatus } from '../../../../entities/application/ClientCertificate';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('ApplicationGeneralInfoComponent', () => {
   const APPLICATION_ID = 'id_test';
@@ -47,6 +48,7 @@ describe('ApplicationGeneralInfoComponent', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, ApplicationGeneralModule, MatIconTestingModule],
       providers: [
@@ -74,6 +76,7 @@ describe('ApplicationGeneralInfoComponent', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     jest.clearAllMocks();
     httpTestingController.verify();
   });
@@ -481,6 +484,52 @@ describe('ApplicationGeneralInfoComponent', () => {
 
       const addButton = fixture.nativeElement.querySelector('[data-testid="add-certificate-button"]');
       expect(addButton).toBeFalsy();
+    });
+  });
+
+  describe('localization', () => {
+    it('should switch chrome to Russian and back without recreating the component', async () => {
+      const applicationDetails = fakeApplication({ type: 'SIMPLE' });
+      const applicationType = fakeApplicationType();
+      expectListApplicationRequest(applicationDetails);
+      expectApplicationTypeRequest(applicationType);
+      expectListCertificatesRequest([]);
+      fixture.detectChanges();
+      await waitImageCheck();
+
+      expect(fixture.nativeElement.textContent).toContain('Application name');
+      expect(fixture.nativeElement.textContent).toContain('OAuth2 Integration');
+      expect(fixture.nativeElement.textContent).toContain('Certificates');
+      expect(fixture.nativeElement.textContent).toContain('Danger Zone');
+      expect(fixture.nativeElement.textContent).toContain('No mTLS certificates added');
+      expect(fixture.nativeElement.textContent).toContain('Subscribe to APIs');
+      expect(fixture.nativeElement.textContent).toContain('Add certificate');
+      expect(fixture.nativeElement.textContent).toContain('Delete this Application.');
+      expect(fixture.nativeElement.textContent).toContain('Delete');
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Название приложения');
+      expect(fixture.nativeElement.textContent).toContain('Интеграция OAuth2');
+      expect(fixture.nativeElement.textContent).toContain('Сертификаты');
+      expect(fixture.nativeElement.textContent).toContain('Опасная зона');
+      expect(fixture.nativeElement.textContent).toContain('mTLS-сертификаты не добавлены');
+      expect(fixture.nativeElement.textContent).toContain('Подписаться на API');
+      expect(fixture.nativeElement.textContent).toContain('Добавить сертификат');
+      expect(fixture.nativeElement.textContent).toContain('Удалить это приложение.');
+      expect(fixture.nativeElement.textContent).toContain('Удалить');
+      expect(fixture.nativeElement.textContent).not.toContain('Application name');
+      expect(fixture.nativeElement.textContent).not.toContain('Danger Zone');
+      expect(fixture.nativeElement.textContent).not.toContain('Subscribe to APIs');
+      expect(fixture.nativeElement.textContent).not.toContain('Add certificate');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Application name');
+      expect(fixture.nativeElement.textContent).toContain('Danger Zone');
     });
   });
 

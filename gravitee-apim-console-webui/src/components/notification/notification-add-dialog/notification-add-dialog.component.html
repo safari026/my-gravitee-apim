@@ -16,18 +16,18 @@
 
 -->
 
-<h2 mat-dialog-title class="title">New notification</h2>
+<h2 mat-dialog-title class="title">{{ 'applications.notifications.addDialog.title' | translate }}</h2>
 
 <form autocomplete="off" [formGroup]="notificationForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <div class="form">
       <mat-form-field>
-        <mat-label>Name</mat-label>
+        <mat-label>{{ 'applications.notifications.addDialog.name' | translate }}</mat-label>
         <input matInput formControlName="name" required />
-        <mat-error *ngIf="notificationForm.get('name').hasError('required')">Name is required.</mat-error>
+        <mat-error *ngIf="notificationForm.get('name').hasError('required')">{{ 'applications.notifications.addDialog.nameRequired' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Notifier</mat-label>
+        <mat-label>{{ 'applications.notifications.addDialog.notifier' | translate }}</mat-label>
         <mat-select formControlName="notifierId">
           <mat-option *ngFor="let notifier of notifiersList" [value]="notifier.id">{{ notifier.name }}</mat-option>
         </mat-select>
@@ -36,9 +36,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions class="actions">
-    <button mat-flat-button [mat-dialog-close]="" data-testid="cancel-button">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="" data-testid="cancel-button">{{ 'common.cancel' | translate }}</button>
     <button mat-raised-button [disabled]="notificationForm.invalid" color="primary" type="submit" data-testid="create-button">
-      Create
+      {{ 'common.create' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

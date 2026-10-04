@@ -21,11 +21,13 @@ const ApplicationLogComponentAjs: ng.IComponentOptions = {
   bindings: {
     log: '<',
     activatedRoute: '<',
+    language: '<',
   },
   controller: [
     'NotificationService',
     'Constants',
     'ngRouter',
+    'ngLanguageService',
     class {
       private activatedRoute: ActivatedRoute;
 
@@ -33,7 +35,10 @@ const ApplicationLogComponentAjs: ng.IComponentOptions = {
         private NotificationService: NotificationService,
         private Constants: any,
         private ngRouter: Router,
+        private ngLanguageService: any,
       ) {}
+
+      translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
       getMimeType(log: any) {
         if (log.headers['Content-Type'] !== undefined) {
@@ -44,7 +49,7 @@ const ApplicationLogComponentAjs: ng.IComponentOptions = {
       }
 
       onCopyBodySuccess(evt: any) {
-        this.NotificationService.show('Body has been copied to clipboard');
+        this.NotificationService.show(this.translate('applications.logs.bodyCopied'));
         evt.clearSelection();
       }
 

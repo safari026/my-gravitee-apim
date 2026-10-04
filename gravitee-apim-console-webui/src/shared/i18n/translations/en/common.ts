@@ -8,8 +8,42 @@ export const enCommon = {
   hits: 'Nb hits',
   hitsTotal: 'Nb hits total',
   noStatus: 'No status',
+  add: 'Add',
+  create: 'Create',
+  edit: 'Edit',
+  view: 'View',
+  restore: 'Restore',
+  revoke: 'Revoke',
+  renew: 'Renew',
+  transfer: 'Transfer',
+  select: 'Select',
+  reset: 'Reset',
+  remove: 'Remove',
+  actions: 'Actions',
+  apply: 'Apply',
+  refresh: 'Refresh',
+  clear: 'Clear',
+  copyToClipboard: 'Copy to clipboard',
 
   language: {
     switch: 'Switch language',
+  },
+
+  daysLeft: {
+    expiresToday: 'Expires today',
+    one: '1 day left',
+    many: '{count} days left',
+  },
+
+  usersSelector: {
+    selectUsers: 'Select users',
+    oneSelected: '1 user selected',
+    manySelected: '{count} users selected',
+    searchLabel: 'Search a user by name or email',
+    noMatch: 'No user matching the term or user already selected',
+    noSelected: 'No selected user',
+    removeAria: 'Button to remove user from selection',
+    removeTooltip: 'Remove user from selection',
+    invalidUser: 'Select a user from the list',
   },
 } as const;

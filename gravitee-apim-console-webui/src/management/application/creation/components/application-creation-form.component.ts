@@ -35,6 +35,7 @@ import { Observable } from 'rxjs';
 import { ApplicationType } from '../../../../entities/application-type/ApplicationType';
 import { Group } from '../../../../entities/group/group';
 import { GroupService } from '../../../../services-ngx/group.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type ApplicationForm = {
   name: FormControl<string>;
@@ -51,6 +52,14 @@ export type ApplicationForm = {
 
   additionalClientMetadata: FormControl<Header[]>;
   groups: FormControl<string[]>;
+};
+
+export const APPLICATION_TYPE_I18N_KEYS: Record<string, { title: string; subtitle: string }> = {
+  SIMPLE: { title: 'applications.types.simple', subtitle: 'applications.typeDescriptions.simple' },
+  BROWSER: { title: 'applications.types.spa', subtitle: 'applications.typeDescriptions.spa' },
+  WEB: { title: 'applications.types.web', subtitle: 'applications.typeDescriptions.web' },
+  NATIVE: { title: 'applications.types.native', subtitle: 'applications.typeDescriptions.native' },
+  BACKEND_TO_BACKEND: { title: 'applications.types.backendToBackend', subtitle: 'applications.typeDescriptions.backendToBackend' },
 };
 
 export type ApplicationCreationFormApplicationType = ApplicationType & {
@@ -74,6 +83,7 @@ export type ApplicationCreationFormApplicationType = ApplicationType & {
     GioFormTagsInputModule,
     GioBannerModule,
     GioFormHeadersModule,
+    TranslatePipe,
   ],
   styleUrls: ['./application-creation-form.component.scss'],
   templateUrl: './application-creation-form.component.html',
@@ -88,6 +98,7 @@ export class ApplicationCreationFormComponent implements OnInit {
   @Input({ required: true })
   public requireUserGroups: boolean;
   hasGroupsToAdd: boolean = true;
+  readonly typeI18nKeys = APPLICATION_TYPE_I18N_KEYS;
 
   public applicationType$?: Observable<
     ApplicationType & {

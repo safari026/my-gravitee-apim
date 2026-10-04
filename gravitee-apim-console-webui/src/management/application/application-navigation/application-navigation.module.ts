@@ -23,8 +23,10 @@ import { RouterModule } from '@angular/router';
 import { ApplicationNavigationComponent } from './application-navigation.component';
 import { ApplicationNavigationTabsComponent } from './application-navigation-tabs/application-navigation-tabs.component';
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+
 @NgModule({
-  imports: [CommonModule, GioSubmenuModule, GioBreadcrumbModule, RouterModule, MatTabsModule, MatTooltipModule, GioIconsModule],
+  imports: [CommonModule, GioSubmenuModule, GioBreadcrumbModule, RouterModule, MatTabsModule, MatTooltipModule, GioIconsModule, TranslatePipe],
   declarations: [ApplicationNavigationComponent, ApplicationNavigationTabsComponent],
   exports: [ApplicationNavigationComponent],
 })

@@ -85,7 +85,7 @@
 
     <div ng-if="!$ctrl.fetchData && !$ctrl.results" layout="column" layout-align="center center" flex>
       <p><ng-md-icon icon="block" style="fill: grey"></ng-md-icon></p>
-      <p>No data</p>
+      <p>{{ $ctrl.translate('applications.analytics.noData') }}</p>
     </div>
   </md-card-content>
 </div>

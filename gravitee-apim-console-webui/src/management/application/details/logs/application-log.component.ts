@@ -15,11 +15,13 @@
  */
 import { UpgradeComponent } from '@angular/upgrade/static';
 import { Component, ElementRef, Injector, SimpleChange } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 
 import { ApplicationService } from '../../../../services-ngx/application.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   template: '',
@@ -37,8 +39,16 @@ export class ApplicationLogComponent extends UpgradeComponent {
     injector: Injector,
     private readonly activatedRoute: ActivatedRoute,
     private readonly applicationService: ApplicationService,
+    private readonly languageService: LanguageService,
   ) {
     super('applicationLog', elementRef, injector);
+    toObservable(this.languageService.currentLanguage, { injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
   }
 
   override ngOnInit() {

@@ -19,6 +19,7 @@ import { filter, forEach, isEmpty } from 'lodash';
 
 import { ApiService } from '../../services/api.service';
 import ApplicationService from '../../services/application.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 interface ILogsFiltersScope extends IScope {
   logsFiltersForm: any;
@@ -160,9 +161,12 @@ class LogsFiltersController {
     private ApiService: ApiService,
     private ApplicationService: ApplicationService,
     private ngRouter: Router,
+    private ngLanguageService: LanguageService,
   ) {
     this.$scope = $scope;
   }
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     // init filters based on stateParams
@@ -426,6 +430,6 @@ class LogsFiltersController {
     return applications;
   }
 }
-LogsFiltersController.$inject = ['$scope', '$timeout', '$log', 'ApiService', 'ApplicationService', 'ngRouter'];
+LogsFiltersController.$inject = ['$scope', '$timeout', '$log', 'ApiService', 'ApplicationService', 'ngRouter', 'ngLanguageService'];
 
 export default LogsFiltersController;

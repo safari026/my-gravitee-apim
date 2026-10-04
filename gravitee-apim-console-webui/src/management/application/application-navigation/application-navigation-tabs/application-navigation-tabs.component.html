@@ -34,7 +34,7 @@
       [active]="rla.isActive"
       >{{ menuItem.displayName }}</a
     >
-    <a *ngIf="menuItem.routerLink === 'DISABLED'" mat-tab-link matTooltip="Coming soon for V4 APIs" matTooltipPosition="below"
+    <a *ngIf="menuItem.routerLink === 'DISABLED'" mat-tab-link [matTooltip]="'applications.navigation.comingSoon' | translate" matTooltipPosition="below"
       >{{ menuItem.displayName }} <mat-icon class="application-navigation-tabs__link__icon" svgIcon="gio:info"></mat-icon
     ></a>
   </ng-container>

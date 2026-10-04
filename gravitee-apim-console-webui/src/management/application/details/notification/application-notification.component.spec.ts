@@ -39,6 +39,7 @@ import { Application } from '../../../../entities/application/Application';
 import { Metadata } from '../../../../entities/metadata/metadata';
 import { fakeMetadata } from '../../../../entities/metadata/metadata.fixture';
 import { fakeApplication } from '../../../../entities/application/Application.fixture';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('AppNotificationComponent', () => {
   const APPLICATION_ID = 'an-app-id';
@@ -143,6 +144,18 @@ describe('AppNotificationComponent', () => {
         actions: '',
       },
     ]);
+  });
+
+  it('switches notifications chrome EN → RU → EN without reload', async () => {
+    const languageService = TestBed.inject(LanguageService);
+    expect(fixture.nativeElement.textContent).toContain('Add notification');
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Добавить уведомление');
+    expect(fixture.nativeElement.textContent).not.toContain('Add notification');
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Add notification');
   });
 
   describe('Add new notification', () => {

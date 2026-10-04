@@ -49,6 +49,17 @@ export class GioMetadataDialogComponent implements OnInit, AfterViewChecked {
   mailPattern = MAIL_PATTERN;
   urlPattern = URL_PATTERN;
 
+  get isApplication(): boolean {
+    return this.metadata.referenceType === 'Application';
+  }
+
+  get titleKey(): string {
+    if (this.metadata.defaultValue) {
+      return 'applications.metadata.dialog.overrideTitle';
+    }
+    return this.metadata.action === 'Create' ? 'applications.metadata.dialog.createTitle' : 'applications.metadata.dialog.updateTitle';
+  }
+
   constructor(
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly dialogRef: MatDialogRef<GioMetadataDialogData, GioMetadataDialogData>,

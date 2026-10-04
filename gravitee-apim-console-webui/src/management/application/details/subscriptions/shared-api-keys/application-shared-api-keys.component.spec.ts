@@ -30,6 +30,7 @@ import { fakeApplicationSubscriptionApiKey } from '../../../../../entities/subsc
 import { ApiKeyMode, Application } from '../../../../../entities/application/Application';
 import { fakeApplication } from '../../../../../entities/application/Application.fixture';
 import { GioTestingPermissionProvider } from '../../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('ApplicationSharedApiKeysComponent', () => {
   let fixture: ComponentFixture<ApplicationSharedApiKeysComponent>;
@@ -91,6 +92,19 @@ describe('ApplicationSharedApiKeysComponent', () => {
         actions: 'hasRevokeButton',
       },
     ]);
+  });
+
+  it('switches shared API keys chrome EN → RU → EN without reload', async () => {
+    expectApplicationApiKeysGetRequest();
+    const languageService = TestBed.inject(LanguageService);
+    expect(fixture.nativeElement.textContent).toContain('API Keys');
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('API-ключи');
+    expect(fixture.nativeElement.textContent).not.toContain('API Keys');
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('API Keys');
   });
 
   it('should revoke API key', async () => {

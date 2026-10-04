@@ -17,6 +17,8 @@ import moment, { duration, Moment, unix } from 'moment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { find, findLast } from 'lodash';
 
+import { LanguageService } from '../../shared/i18n/language.service';
+
 // eslint:disable-next-line:interface-name
 interface Timeframe {
   id: string;
@@ -35,10 +37,13 @@ class LogsTimeframeController {
   private onTimeframeChange: any;
   private unRegisterTimeframeZoom: () => void;
 
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
+
   constructor(
     private ngRouter: Router,
     private $rootScope,
     private $timeout: ng.ITimeoutService,
+    private ngLanguageService: LanguageService,
   ) {
     this.timeframes = [
       {
@@ -265,6 +270,6 @@ class LogsTimeframeController {
     });
   }
 }
-LogsTimeframeController.$inject = ['ngRouter', '$rootScope', '$timeout'];
+LogsTimeframeController.$inject = ['ngRouter', '$rootScope', '$timeout', 'ngLanguageService'];
 
 export default LogsTimeframeController;

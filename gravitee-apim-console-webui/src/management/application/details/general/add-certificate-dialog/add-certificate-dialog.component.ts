@@ -126,7 +126,7 @@ export class AddCertificateDialogComponent {
         },
         error: () => {
           this.isValidating = false;
-          this.validationError = 'Invalid certificate format';
+          this.validationError = 'applications.edit.certificates.invalidFormat';
         },
       });
   }

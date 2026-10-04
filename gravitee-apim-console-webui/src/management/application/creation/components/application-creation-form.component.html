@@ -27,8 +27,10 @@
         required
         data-testid="application_creation_v4_name_input"
       />
-      <mat-label>Name</mat-label>
-      <mat-error *ngIf="applicationFormGroup.controls.name.errors?.required">Application name is required</mat-error>
+      <mat-label>{{ 'applications.common.name' | translate }}</mat-label>
+      <mat-error *ngIf="applicationFormGroup.controls.name.errors?.required">{{
+        'applications.creation.nameRequired' | translate
+      }}</mat-error>
     </mat-form-field>
 
     <mat-form-field>
@@ -41,36 +43,33 @@
         rows="4"
         data-testid="application_creation_v4_description_input"
       ></textarea>
-      <mat-label>Description</mat-label>
-      <mat-hint>Provide a description of your application, what it does, ...</mat-hint>
+      <mat-label>{{ 'applications.common.description' | translate }}</mat-label>
+      <mat-hint>{{ 'applications.common.descriptionHint' | translate }}</mat-hint>
     </mat-form-field>
 
     <mat-form-field>
       <input id="domain" type="text" matInput formControlName="domain" maxlength="512" data-testid="application_creation_v4_domain_input" />
-      <mat-label>Domain</mat-label>
+      <mat-label>{{ 'applications.common.domain' | translate }}</mat-label>
     </mat-form-field>
 
     @if (hasGroupsToAdd || requireUserGroups) {
       <mat-form-field>
-        <mat-label>Select Groups</mat-label>
+        <mat-label>{{ 'applications.creation.groups.label' | translate }}</mat-label>
         <mat-select formControlName="groups" multiple>
           @for (group of groupsList | async; track group) {
             <mat-option [value]="group.id">{{ group.name }}</mat-option>
           }
         </mat-select>
-        <mat-hint>Select user groups to add to the application</mat-hint>
+        <mat-hint>{{ 'applications.creation.groups.hint' | translate }}</mat-hint>
       </mat-form-field>
     }
     @if (!hasGroupsToAdd && requireUserGroups) {
-      <gio-banner-error
-        >The current user is not associated to any groups. Add the user to one or more groups or disable the option to make group selection
-        mandatory while creating applications.</gio-banner-error
-      >
+      <gio-banner-error>{{ 'applications.creation.groups.requiredError' | translate }}</gio-banner-error>
     }
 
-    <h3 class="form__securityTitle">Security</h3>
+    <h3 class="form__securityTitle">{{ 'applications.creation.security' | translate }}</h3>
     @if (applicationTypes.length === 0) {
-      <gio-banner-warning>No application type available, please check Client Registration configuration.</gio-banner-warning>
+      <gio-banner-warning>{{ 'applications.creation.noTypeWarning' | translate }}</gio-banner-warning>
     }
 
     @if (applicationTypes.length > 1) {
@@ -78,8 +77,12 @@
         @for (type of applicationTypes; track type.id) {
           <gio-form-selection-inline-card [value]="type.id">
             <gio-form-selection-inline-card-content [icon]="type.icon">
-              <gio-card-content-title>{{ type.title }}</gio-card-content-title>
-              <gio-card-content-subtitle>{{ type.subtitle }}</gio-card-content-subtitle>
+              <gio-card-content-title>{{
+                typeI18nKeys[type.id] ? (typeI18nKeys[type.id].title | translate) : type.title
+              }}</gio-card-content-title>
+              <gio-card-content-subtitle>{{
+                typeI18nKeys[type.id] ? (typeI18nKeys[type.id].subtitle | translate) : type.subtitle
+              }}</gio-card-content-subtitle>
             </gio-form-selection-inline-card-content>
           </gio-form-selection-inline-card>
         }
@@ -89,50 +92,46 @@
     @if (applicationType$ | async; as applicationType) {
       @if (applicationType.isOauth) {
         <mat-form-field>
-          <mat-label>Allowed grant types</mat-label>
+          <mat-label>{{ 'applications.common.grantTypes' | translate }}</mat-label>
           <mat-select formControlName="oauthGrantTypes" multiple>
             @for (grantType of applicationType.allowedGrantTypesVM; track grantType.value) {
               <mat-option [value]="grantType.value" [disabled]="grantType.disabled"
                 >{{ grantType.label }}
                 @if (grantType.disabled) {
-                  - <i>(Mandatory)</i>
+                  - <i>{{ 'applications.creation.mandatory' | translate }}</i>
                 }
               </mat-option>
             }
           </mat-select>
-          <mat-hint>Grant types allowed for the client. Please set only grant types you need for security reasons</mat-hint>
+          <mat-hint>{{ 'applications.creation.grantTypesHint' | translate }}</mat-hint>
         </mat-form-field>
 
         <mat-form-field *ngIf="applicationType.requiresRedirectUris">
-          <mat-label>Redirect URIs *</mat-label>
-          <gio-form-tags-input formControlName="oauthRedirectUris" placeholder="Enter a redirect URI"> </gio-form-tags-input>
-          <mat-hint align="start">URIs where the authorization server will send OAuth responses</mat-hint>
+          <mat-label>{{ 'applications.common.redirectUrisRequired' | translate }}</mat-label>
+          <gio-form-tags-input formControlName="oauthRedirectUris" [placeholder]="'applications.common.redirectUrisPlaceholder' | translate">
+          </gio-form-tags-input>
+          <mat-hint align="start">{{ 'applications.common.redirectUrisHint' | translate }}</mat-hint>
         </mat-form-field>
         <gio-form-headers formControlName="additionalClientMetadata" [autocompleteDisabled]="true">
-          <gio-form-headers-label>Additional Client Metadata (optional)</gio-form-headers-label>
+          <gio-form-headers-label>{{ 'applications.common.additionalClientMetadata' | translate }}</gio-form-headers-label>
         </gio-form-headers>
       } @else {
         <mat-form-field>
           <input id="appType" type="text" matInput formControlName="appType" maxlength="64" />
-          <mat-label>Type</mat-label>
-          <mat-hint>Type of the application (mobile, web, ...)</mat-hint>
+          <mat-label>{{ 'applications.creation.simpleType' | translate }}</mat-label>
+          <mat-hint>{{ 'applications.creation.simpleTypeHint' | translate }}</mat-hint>
         </mat-form-field>
 
         <mat-form-field>
           <input id="appClientId" type="text" matInput formControlName="appClientId" maxlength="300" />
-          <mat-label>Client ID</mat-label>
-          <mat-hint
-            >The <code>client_id</code> of the application. This field is required to subscribe to certain type of API Plan (OAuth2,
-            JWT)</mat-hint
-          >
+          <mat-label>{{ 'applications.common.clientId' | translate }}</mat-label>
+          <mat-hint [innerHTML]="'applications.creation.clientIdHint' | translate"></mat-hint>
         </mat-form-field>
       }
       <mat-form-field>
         <textarea id="appClientCertificate" type="text" matInput formControlName="appClientCertificate"></textarea>
-        <mat-label>Client Certificate (PEM Only)</mat-label>
-        <mat-hint
-          >The <code>client_certificate</code> of the application. This field is required to subscribe to certain mTLS plans.</mat-hint
-        >
+        <mat-label>{{ 'applications.creation.clientCertificate' | translate }}</mat-label>
+        <mat-hint [innerHTML]="'applications.creation.clientCertificateHint' | translate"></mat-hint>
       </mat-form-field>
     }
   </div>

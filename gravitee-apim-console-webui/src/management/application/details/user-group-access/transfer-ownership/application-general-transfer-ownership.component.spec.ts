@@ -40,6 +40,7 @@ import { SearchableUser } from '../../../../../entities/user/searchableUser';
 import { fakeSearchableUser } from '../../../../../entities/user/searchableUser.fixture';
 import { Application } from '../../../../../entities/application/Application';
 import { fakeApplication } from '../../../../../entities/application/Application.fixture';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('ApplicationGeneralTransferOwnershipComponent', () => {
   let fixture: ComponentFixture<ApplicationGeneralTransferOwnershipComponent>;
@@ -104,6 +105,28 @@ describe('ApplicationGeneralTransferOwnershipComponent', () => {
     const methodRadio = await loader.getHarness(MatButtonToggleGroupHarness.with({ selector: '[formControlName="method"' }));
     const disabled = await methodRadio.isDisabled();
     expect(disabled).toBe(false);
+  });
+
+  it('switches transfer ownership chrome EN → RU → EN without reload', async () => {
+    expectGetApplication(fakeApplication());
+    expectGetMembers([fakeMembers()]);
+    expectApplicationRoleGetRequest([
+      fakeRole({ name: 'TEST_ROLE1', default: false }),
+      fakeRole({ name: 'PRIMARY_OWNER' }),
+      fakeRole({ name: 'DEFAULT_ROLE', default: true }),
+    ]);
+    fixture.detectChanges();
+    const languageService = TestBed.inject(LanguageService);
+
+    expect(fixture.nativeElement.textContent).toContain('Transfer ownership');
+    expect(fixture.nativeElement.textContent).toContain('Other user');
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Передать владение');
+    expect(fixture.nativeElement.textContent).not.toContain('Transfer ownership');
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Transfer ownership');
   });
 
   it('should transfer ownership to user', async () => {

@@ -18,6 +18,7 @@ import { filter, find, forEach, merge } from 'lodash';
 
 import ApplicationService from '../../../../services/application.service';
 import DashboardService from '../../../../services/dashboard.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 class ApplicationAnalyticsController {
   private application: any;
@@ -29,7 +30,10 @@ class ApplicationAnalyticsController {
     private ApplicationService: ApplicationService,
     private DashboardService: DashboardService,
     private ngRouter: Router,
+    private ngLanguageService: LanguageService,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     this.DashboardService.list('APPLICATION', true).then(response => {
@@ -89,6 +93,6 @@ class ApplicationAnalyticsController {
     });
   }
 }
-ApplicationAnalyticsController.$inject = ['ApplicationService', 'DashboardService', 'ngRouter'];
+ApplicationAnalyticsController.$inject = ['ApplicationService', 'DashboardService', 'ngRouter', 'ngLanguageService'];
 
 export default ApplicationAnalyticsController;

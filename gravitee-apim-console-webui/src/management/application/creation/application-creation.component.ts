@@ -31,6 +31,8 @@ import { ApplicationService } from '../../../services-ngx/application.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { toDictionary } from '../../../util/gio-form-header.util';
 import { Constants } from '../../../entities/Constants';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 const TYPES_INFOS = {
   SIMPLE: {
@@ -52,7 +54,15 @@ const TYPES_INFOS = {
 
 @Component({
   selector: 'application-creation',
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatSnackBarModule, ApplicationCreationFormComponent, GioSaveBarModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatCardModule,
+    MatSnackBarModule,
+    ApplicationCreationFormComponent,
+    GioSaveBarModule,
+    TranslatePipe,
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   styleUrls: ['./application-creation.component.scss'],
   templateUrl: './application-creation.component.html',
@@ -101,6 +111,7 @@ export class ApplicationCreationComponent implements OnInit {
     private readonly applicationTypesService: ApplicationTypesService,
     private readonly applicationService: ApplicationService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
     private readonly activatedRoute: ActivatedRoute,
     private readonly router: Router,
     @Inject(Constants) private readonly constants: Constants,
@@ -147,11 +158,11 @@ export class ApplicationCreationComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: application => {
-          this.snackBarService.success('Application created');
+          this.snackBarService.success(this.languageService.translate('applications.creation.success'));
           this.router.navigate(['../', application.id], { relativeTo: this.activatedRoute });
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'An error occurred while creating the application!');
+          this.snackBarService.error(error?.error?.message ?? this.languageService.translate('applications.creation.error'));
           this.isCreating = false;
         },
       });

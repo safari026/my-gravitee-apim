@@ -18,6 +18,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GioFormJsonSchemaModule, GioJsonSchema } from '@gravitee/ui-particles-angular';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { MatFormField, MatHint, MatLabel } from '@angular/material/form-field';
 import { MatInput } from '@angular/material/input';
 import { AsyncPipe, NgIf } from '@angular/common';
@@ -53,6 +54,7 @@ export type SubscriptionEditPushConfigDialogResult = {
     ReactiveFormsModule,
     AsyncPipe,
     NgIf,
+    TranslatePipe,
   ],
 })
 export class SubscriptionEditPushConfigDialogComponent {

@@ -17,17 +17,17 @@
 -->
 <div class="title">
   <div class="title__status">
-    <h1>Applications</h1>
+    <h1>{{ 'applications.list.title' | translate }}</h1>
 
     <mat-radio-group
       *gioRole="{ anyOf: [{ scope: 'ORGANIZATION', name: 'ADMIN' }] }"
       class="status__radio-group"
-      aria-label="Select a status"
+      [attr.aria-label]="'applications.list.statusAria' | translate"
       (change)="onStatusChange()"
       [(ngModel)]="currentStatus"
     >
       <mat-radio-button class="status__radio-group__button" *ngFor="let status of statusFilters" [value]="status">
-        {{ status }}
+        {{ 'applications.list.status.' + status.toLowerCase() | translate }}
       </mat-radio-button>
     </mat-radio-group>
   </div>
@@ -39,7 +39,7 @@
     data-testid="add-application"
     *gioPermission="{ anyOf: ['environment-application-c'] }"
   >
-    <mat-icon>add</mat-icon> Add Application
+    <mat-icon>add</mat-icon> {{ 'applications.list.add' | translate }}
   </button>
 </div>
 
@@ -55,7 +55,7 @@
     [dataSource]="filteredTableData"
     [ngClass]="'applications-table-' + currentStatus.toLowerCase()"
     id="applicationsTable"
-    aria-label="Application table"
+    [attr.aria-label]="'applications.list.tableAria' | translate"
   >
     <!-- Picture Column -->
     <ng-container matColumnDef="applicationPicture">
@@ -66,12 +66,12 @@
 
     <!-- Display name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header id="name">Name</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header id="name">{{ 'applications.list.columns.name' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <div class="matt-column-name__withOrigin">
           <mat-icon
             *ngIf="element.origin === 'KUBERNETES'"
-            matTooltip="Kubernetes Origin"
+            [matTooltip]="'applications.list.kubernetesOrigin' | translate"
             class="matt-column-name__origin"
             svgIcon="gio:kubernetes"
           ></mat-icon>
@@ -82,21 +82,25 @@
 
     <!-- Type Column -->
     <ng-container matColumnDef="type">
-      <th mat-header-cell *matHeaderCellDef id="type" width="15%">Type</th>
+      <th mat-header-cell *matHeaderCellDef id="type" width="15%">{{ 'applications.list.columns.type' | translate }}</th>
       <td mat-cell *matCellDef="let element">
-        {{ element.type | titlecase }}
+        @if (typeI18nKeys[element.type]; as typeKeys) {
+          {{ typeKeys.title | translate }}
+        } @else {
+          {{ element.type | titlecase }}
+        }
       </td>
     </ng-container>
 
     <!-- Owner Column -->
     <ng-container matColumnDef="owner">
-      <th mat-header-cell *matHeaderCellDef id="owner" width="15%">Owner</th>
+      <th mat-header-cell *matHeaderCellDef id="owner" width="15%">{{ 'applications.list.columns.owner' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.owner.displayName }}</td>
     </ng-container>
 
     <!-- Archived at Column -->
     <ng-container matColumnDef="updated_at">
-      <th mat-header-cell *matHeaderCellDef mat-sort-header id="updated_at" width="15%">Archived at</th>
+      <th mat-header-cell *matHeaderCellDef mat-sort-header id="updated_at" width="15%">{{ 'applications.list.columns.archivedAt' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.updated_at | date: 'medium' }}</td>
     </ng-container>
 
@@ -109,8 +113,8 @@
             *ngIf="'ACTIVE' === element.status && element.origin === 'MANAGEMENT'"
             [routerLink]="[element.applicationId]"
             mat-icon-button
-            aria-label="Button to edit an application"
-            matTooltip="Edit application"
+            [attr.aria-label]="'applications.list.editAria' | translate"
+            [matTooltip]="'applications.list.editTooltip' | translate"
           >
             <mat-icon>edit</mat-icon>
           </button>
@@ -119,8 +123,8 @@
               *ngIf="'ARCHIVED' === element.status"
               (click)="onRestoreActionClicked(element)"
               mat-icon-button
-              aria-label="Button to restore an application"
-              matTooltip="Restore application"
+              [attr.aria-label]="'applications.list.restoreAria' | translate"
+              [matTooltip]="'applications.list.restoreTooltip' | translate"
             >
               <mat-icon svgIcon="gio:magic-wand"></mat-icon>
             </button>
@@ -135,7 +139,7 @@
     <!-- Row shown when there is no data -->
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
       <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-        {{ 'ACTIVE' === currentStatus ? 'There is no application (yet).' : 'There is no archived application.' }}
+        {{ ('ACTIVE' === currentStatus ? 'applications.list.emptyActive' : 'applications.list.emptyArchived') | translate }}
       </td>
     </tr>
   </table>

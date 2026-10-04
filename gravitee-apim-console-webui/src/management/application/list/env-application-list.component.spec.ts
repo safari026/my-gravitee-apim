@@ -28,6 +28,7 @@ import { EnvApplicationListComponent } from './env-application-list.component';
 
 import { ApplicationsModule } from '../applications.module';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { fakePagedResult } from '../../../entities/pagedResult';
 import { GioTableWrapperHarness } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.harness';
 import { Application } from '../../../entities/application/Application';
@@ -84,6 +85,26 @@ describe('EnvApplicationListComponent', () => {
 
         const tableElement = await table.host();
         expect(await tableElement.text()).toContain('There is no application (yet).');
+      }));
+
+      it('switches list chrome EN → RU → EN without reload', fakeAsync(async () => {
+        expectActiveApplicationsListRequest();
+        const languageService = TestBed.inject(LanguageService);
+        const title = fixture.nativeElement.querySelector('h1') as HTMLElement;
+
+        expect(title.textContent).toContain('Applications');
+        expect(fixture.nativeElement.textContent).toContain('Add Application');
+
+        languageService.setLanguage('ru');
+        fixture.detectChanges();
+        expect(title.textContent).toContain('Приложения');
+        expect(fixture.nativeElement.textContent).toContain('Добавить приложение');
+        expect(title.textContent).not.toContain('Applications');
+
+        languageService.setLanguage('en');
+        fixture.detectChanges();
+        expect(title.textContent).toContain('Applications');
+        expect(fixture.nativeElement.textContent).toContain('Add Application');
       }));
 
       it('should display table with data', fakeAsync(async () => {

@@ -37,6 +37,7 @@ import { ApplicationSubscriptionCreationDialogComponent } from '../creation';
 import { NewSubscriptionEntity } from '../../../../../entities/application';
 import { ApplicationSubscriptionService } from '../../../../../services-ngx/application-subscription.service';
 import { PlanSecurityType } from '../../../../../entities/plan';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 type SubscriptionsTableDS = {
   id: string;
@@ -54,6 +55,8 @@ type SubscriptionsTableDS = {
   status: string;
   statusBadge: string;
   origin: 'KUBERNETES' | 'MANAGEMENT';
+  statusId: string;
+  isApiProduct: boolean;
 };
 
 type SubscriptionsTableFilters = {
@@ -118,6 +121,7 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
     private readonly snackBarService: SnackBarService,
     private readonly permissionService: GioPermissionService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -175,7 +179,7 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
           ]);
         }),
         catchError(() => {
-          this.snackBarService.error('Unable to get subscriptions, please try again');
+          this.snackBarService.error(this.languageService.translate('applications.subscriptions.loadError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
@@ -197,8 +201,9 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
             apiName: apiMetadata['name']
               ? `${apiMetadata['name']} - ${apiMetadata['apiVersion'] ?? ''}`
               : (subscription.api ?? subscription.referenceId ?? ''),
-            apiPo: apiMetadata['apiPrimaryOwner'] ?? 'Unknown API owner',
+            apiPo: apiMetadata['apiPrimaryOwner'] ?? '',
             referenceTypeLabel: isApiProduct ? 'API Product' : 'API',
+            isApiProduct,
             createdAt: subscription.created_at,
             endAt: subscription.ending_at,
             planName: planMetadata['name'] ?? subscription.plan,
@@ -207,6 +212,7 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
             processedAt: subscription.processed_at,
             startingAt: subscription.starting_at,
             status: status?.name,
+            statusId: status?.id ?? subscription.status,
             statusBadge: status?.badge,
             origin: subscription.origin,
           };
@@ -226,17 +232,19 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
 
   public closeSubscription(subscription: SubscriptionsTableDS) {
     const applicationId = this.activatedRoute.snapshot.params.applicationId;
-    const referenceLabel = subscription.referenceTypeLabel === 'API Product' ? 'API product' : 'API';
+    const referenceLabel = this.languageService.translate(
+      subscription.isApiProduct ? 'applications.subscriptions.referenceApiProduct' : 'applications.subscriptions.referenceApi',
+    );
 
-    let content = `Are you sure you want to close this subscription? <br> <br> The application will not be able to consume this ${referenceLabel} anymore.`;
+    let content = this.languageService.translate('applications.subscriptions.closeContent', { reference: referenceLabel });
     if (subscription.securityType === PlanSecurityType.API_KEY && subscription.isSharedApiKey) {
-      content += '<br/>All Api-keys associated to this subscription will be closed and could not be used.';
+      content += this.languageService.translate('applications.subscriptions.closeApiKeys');
     }
 
     return this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         data: {
-          title: 'Close subscription',
+          title: this.languageService.translate('applications.subscriptions.closeTitle'),
           content,
         },
         width: GIO_DIALOG_WIDTH.MEDIUM,
@@ -250,11 +258,11 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
 
       .subscribe({
         next: () => {
-          this.snackBarService.success('The subscription has been closed');
+          this.snackBarService.success(this.languageService.translate('applications.subscriptions.closed'));
           this.ngOnInit();
         },
         error: () => {
-          this.snackBarService.error('An error occurred while closing the subscription!');
+          this.snackBarService.error(this.languageService.translate('applications.subscriptions.closeError'));
         },
       });
   }
@@ -341,10 +349,10 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
           );
         }),
         tap(() => {
-          this.snackBarService.success(`Subscription successfully created`);
+          this.snackBarService.success(this.languageService.translate('applications.subscriptions.created'));
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'An error occured during subscription creation');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('applications.subscriptions.createError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

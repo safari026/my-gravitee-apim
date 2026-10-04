@@ -26,6 +26,7 @@ import { ApplicationCreationFormHarness } from './components/application-creatio
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
 import { fakeApplicationTypes } from '../../../entities/application-type/ApplicationType.fixture';
 import { ApplicationType } from '../../../entities/application-type/ApplicationType';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApplicationCreationComponent', () => {
   let fixture: ComponentFixture<ApplicationCreationComponent>;
@@ -34,6 +35,7 @@ describe('ApplicationCreationComponent', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(async () => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, ApplicationCreationComponent, GioTestingModule],
     }).compileComponents();
@@ -42,6 +44,10 @@ describe('ApplicationCreationComponent', () => {
     loader = TestbedHarnessEnvironment.loader(fixture);
     httpTestingController = TestBed.inject(HttpTestingController);
     fixture.autoDetectChanges();
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('when multiple types available', () => {
@@ -212,6 +218,61 @@ describe('ApplicationCreationComponent', () => {
           },
         },
       });
+    });
+  });
+
+  describe('localization', () => {
+    beforeEach(async () => {
+      expectGetEnabledApplicationTypes(fakeApplicationTypes());
+      applicationCreationForm = await loader.getHarness(ApplicationCreationFormHarness);
+      expectGetEnvironmentGroups();
+    });
+
+    it('should show English chrome by default', () => {
+      expect(fixture.nativeElement.textContent).toContain('Application creation');
+      expect(fixture.nativeElement.textContent).toContain('Name');
+      expect(fixture.nativeElement.textContent).toContain('Description');
+      expect(fixture.nativeElement.textContent).toContain('Security');
+      expect(fixture.nativeElement.textContent).toContain('Simple');
+    });
+
+    it('should switch chrome to Russian and back without recreating the component', async () => {
+      const languageService = TestBed.inject(LanguageService);
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Создание приложения');
+      expect(fixture.nativeElement.textContent).toContain('Название');
+      expect(fixture.nativeElement.textContent).toContain('Описание');
+      expect(fixture.nativeElement.textContent).toContain('Безопасность');
+      expect(fixture.nativeElement.textContent).not.toContain('Application creation');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.textContent).toContain('Application creation');
+      expect(fixture.nativeElement.textContent).toContain('Security');
+    });
+
+    it('should keep application type ids in the create payload after switching language', async () => {
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      await applicationCreationForm.setGeneralInformation('name', 'description', 'domain');
+      await applicationCreationForm.setApplicationType('WEB');
+      await applicationCreationForm.setOAuthApplicationType(['Refresh Token'], ['redirectUri']);
+
+      const saveBar = await loader.getHarness(GioSaveBarHarness);
+      await saveBar.clickSubmit();
+
+      const req = httpTestingController.expectOne({
+        method: 'POST',
+        url: `${CONSTANTS_TESTING.env.baseURL}/applications`,
+      });
+      expect(req.request.body.settings.oauth.application_type).toEqual('WEB');
+      expect(req.request.body.settings.oauth.grant_types).toEqual(['authorization_code', 'refresh_token']);
     });
   });
 

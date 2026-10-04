@@ -21,17 +21,17 @@
     <div flex="70">
       <h1>{{$ctrl.application.name}}</h1>
       <md-content flex class="gravitee-api-header-description">
-        <div>Type: {{::$ctrl.application.type}}</div>
+        <div>{{ $ctrl.translate('applications.logs.type') }}: {{::$ctrl.application.type}}</div>
       </md-content>
     </div>
 
     <div flex="30" style="text-align: right">
       <p style="padding: 0; margin: 0">
-        <span>{{$ctrl.application.owner.displayName}}<md-tooltip md-direction="left">Owner</md-tooltip></span>
+        <span>{{$ctrl.application.owner.displayName}}<md-tooltip md-direction="left">{{ $ctrl.translate('applications.logs.owner') }}</md-tooltip></span>
         <span><ng-md-icon icon="person"></ng-md-icon></span>
       </p>
       <p style="padding: 0; margin: 0">
-        <span>{{$ctrl.application.created_at | humanDateFilter}}<md-tooltip md-direction="left">Created at</md-tooltip></span>
+        <span>{{$ctrl.application.created_at | humanDateFilter}}<md-tooltip md-direction="left">{{ $ctrl.translate('applications.logs.createdAt') }}</md-tooltip></span>
         <span><ng-md-icon icon="timer"></ng-md-icon></span>
       </p>
     </div>

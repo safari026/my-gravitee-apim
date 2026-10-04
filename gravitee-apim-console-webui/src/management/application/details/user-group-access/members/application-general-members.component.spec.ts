@@ -41,6 +41,7 @@ import { Application } from '../../../../../entities/application/Application';
 import { fakeSearchableUser } from '../../../../../entities/user/searchableUser.fixture';
 import { GioUsersSelectorHarness } from '../../../../../shared/components/gio-users-selector/gio-users-selector.harness';
 import { GioTestingPermissionProvider } from '../../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('ApplicationGeneralMembersComponent', () => {
   let fixture: ComponentFixture<ApplicationGeneralMembersComponent>;
@@ -119,6 +120,20 @@ describe('ApplicationGeneralMembersComponent', () => {
       );
       const isDisabled = await addMemberBtn.isDisabled();
       expect(isDisabled).toBe(false);
+    });
+
+    it('switches members chrome EN → RU → EN without reload', async () => {
+      expectRequests(fakeApplication(), [fakeMembers()]);
+      const languageService = TestBed.inject(LanguageService);
+
+      expect(fixture.nativeElement.textContent).toContain('Add members');
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Добавить участников');
+      expect(fixture.nativeElement.textContent).not.toContain('Add members');
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Add members');
     });
   });
 

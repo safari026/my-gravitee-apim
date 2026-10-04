@@ -18,11 +18,11 @@
 <div class="gv-forms gv-forms-fluid" layout="column">
   <application-header application="$ctrl.application"></application-header>
   <div layout="row">
-    <h1 flex>Overview</h1>
+    <h1 flex>{{ $ctrl.translate('applications.analytics.overview') }}</h1>
     <div layout="row" ng-if="$ctrl.dashboards.length">
-      <label style="padding: 27px">Select a dashboard</label>
+      <label style="padding: 27px">{{ $ctrl.translate('applications.analytics.selectDashboard') }}</label>
       <md-input-container>
-        <md-select ng-model="$ctrl.dashboard" ng-change="$ctrl.onDashboardChanged()" aria-label="Dashboard selection">
+        <md-select ng-model="$ctrl.dashboard" ng-change="$ctrl.onDashboardChanged()" aria-label="{{ $ctrl.translate('applications.analytics.dashboardAria') }}">
           <md-option ng-repeat="dashboard in $ctrl.dashboards" ng-value="dashboard"> {{dashboard.name}} </md-option>
         </md-select>
       </md-input-container>

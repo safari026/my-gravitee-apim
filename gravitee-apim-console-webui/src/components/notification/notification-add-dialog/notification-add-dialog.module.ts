@@ -24,9 +24,11 @@ import { MatSelectModule } from '@angular/material/select';
 
 import { NotificationAddDialogComponent } from './notification-add-dialog.component';
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [NotificationAddDialogComponent],
   exports: [NotificationAddDialogComponent],
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatButtonModule],
+  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatInputModule, MatFormFieldModule, MatSelectModule, MatButtonModule, TranslatePipe],
 })
 export class NotificationAddDialogModule {}

@@ -23,9 +23,11 @@ import { GioLoaderModule } from '@gravitee/ui-particles-angular';
 
 import { NotificationListComponent } from './notification-list.component';
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [NotificationListComponent],
   exports: [NotificationListComponent],
-  imports: [CommonModule, MatIconModule, MatButtonModule, MatTableModule, MatTooltipModule, GioLoaderModule],
+  imports: [CommonModule, MatIconModule, MatButtonModule, MatTableModule, MatTooltipModule, GioLoaderModule, TranslatePipe],
 })
 export class NotificationListModule {}

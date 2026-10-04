@@ -29,6 +29,7 @@ import {
   SubscriptionEditPushConfigDialogResult,
 } from '../subscription-edit-push-config-dialog/subscription-edit-push-config-dialog.component';
 import { SubscriptionConsumerConfiguration } from '../../entities/management-api-v2';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { GioPermissionService } from '../../shared/components/gio-permission/gio-permission.service';
 
 type PushConfigVM = {
@@ -41,7 +42,7 @@ type PushConfigVM = {
   selector: 'subscription-edit-push-config',
   templateUrl: './subscription-edit-push-config.component.html',
   styleUrls: ['./subscription-edit-push-config.component.scss'],
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIcon, GioClipboardModule, MatDialogModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIcon, GioClipboardModule, MatDialogModule, TranslatePipe],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SubscriptionEditPushConfigComponent implements OnInit {

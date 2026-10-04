@@ -22,35 +22,37 @@
         <div class="details-card__header__info-inputs" formGroupName="details">
           <div class="details-card__header__info-inputs__first-row">
             <mat-form-field class="details-card__header__info-inputs__first-row__name-field">
-              <mat-label>Application name</mat-label>
+              <mat-label>{{ 'applications.common.applicationName' | translate }}</mat-label>
               <input formControlName="name" matInput type="text" maxlength="512" required />
-              <mat-error *ngIf="applicationForm.get('details.name').hasError('required')">Application name is required. </mat-error>
+              <mat-error *ngIf="applicationForm.get('details.name').hasError('required')"
+                >{{ 'applications.edit.nameRequired' | translate }}
+              </mat-error>
             </mat-form-field>
           </div>
           <div class="details-card__header__info-inputs__second-row">
             <mat-form-field class="details-card__header__info-inputs__second-row__description-field">
-              <mat-label>Description</mat-label>
+              <mat-label>{{ 'applications.common.description' | translate }}</mat-label>
               <input formControlName="description" matInput type="text" required />
               <mat-error *ngIf="applicationForm.get('details.description').hasError('required')"
-                >Application description is required.
+                >{{ 'applications.edit.descriptionRequired' | translate }}
               </mat-error>
-              <mat-hint align="start">Provide a description of your application, what it does, ...</mat-hint>
+              <mat-hint align="start">{{ 'applications.common.descriptionHint' | translate }}</mat-hint>
             </mat-form-field>
 
             <mat-form-field class="details-card__header__info-inputs__second-row__domain-field">
-              <mat-label>Domain</mat-label>
+              <mat-label>{{ 'applications.common.domain' | translate }}</mat-label>
               <input formControlName="domain" matInput type="text" />
-              <mat-hint align="start">The domain your application will use, if relevant.</mat-hint>
+              <mat-hint align="start">{{ 'applications.edit.domainHint' | translate }}</mat-hint>
             </mat-form-field>
           </div>
         </div>
         <div class="details-card__header__right-coll" formGroupName="images">
           <div class="details-card__header__right-coll__media">
             <gio-form-file-picker class="details-card__header__right-coll__media__picture" formControlName="picture" accept="image/*">
-              <gio-form-file-picker-label>Application picture</gio-form-file-picker-label>
+              <gio-form-file-picker-label>{{ 'applications.edit.picture' | translate }}</gio-form-file-picker-label>
               <gio-form-file-picker-add-button class="details-card__header__right-coll__media__picture__btn">
                 <span class="details-card__header__right-coll__media__picture__btn__text">
-                  Click here or drag an image <br />Max 500KB</span
+                  {{ 'applications.edit.imageHint' | translate }} <br />{{ 'applications.edit.imageMaxSize' | translate }}</span
                 >
                 <gio-avatar class="details-card__header__right-coll__media__picture__btn__default-avatar" [size]="108"></gio-avatar>
               </gio-form-file-picker-add-button>
@@ -59,59 +61,63 @@
               </gio-form-file-picker-empty>
             </gio-form-file-picker>
             <gio-form-file-picker class="details-card__header__right-coll__media__background" formControlName="background" accept="image/*">
-              <gio-form-file-picker-label>Application background</gio-form-file-picker-label>
+              <gio-form-file-picker-label>{{ 'applications.edit.background' | translate }}</gio-form-file-picker-label>
               <gio-form-file-picker-add-button class="details-card__header__right-coll__media__background__btn">
                 <span class="details-card__header__right-coll__media__background__btn__text">
-                  Click here or drag an image <br />Max 500KB</span
+                  {{ 'applications.edit.imageHint' | translate }} <br />{{ 'applications.edit.imageMaxSize' | translate }}</span
                 >
               </gio-form-file-picker-add-button>
-              <gio-form-file-picker-empty><span>No background defined</span></gio-form-file-picker-empty>
+              <gio-form-file-picker-empty><span>{{ 'applications.edit.noBackground' | translate }}</span></gio-form-file-picker-empty>
             </gio-form-file-picker>
           </div>
           <div class="details-card__header__right-coll__info">
             <dl class="gio-description-list">
-              <dt>Owner</dt>
+              <dt>{{ 'applications.edit.owner' | translate }}</dt>
               <dd gioClipboardCopyWrapper [contentToCopy]="initialApplication.owner.displayName">
                 {{ initialApplication.owner.displayName }}
               </dd>
-              <dt>Created</dt>
+              <dt>{{ 'applications.edit.created' | translate }}</dt>
               <dd>{{ initialApplication.created_at | date: 'medium' }}</dd>
-              <dt>Type</dt>
+              <dt>{{ 'applications.edit.type' | translate }}</dt>
               <dd>
                 @switch (initialApplication.type) {
                   @case ('SIMPLE') {
-                    Simple
+                    {{ 'applications.types.simple' | translate }}
                   }
                   @case ('BROWSER') {
-                    SPA
+                    {{ 'applications.types.spa' | translate }}
                   }
                   @case ('WEB') {
-                    Web
+                    {{ 'applications.types.web' | translate }}
                   }
                   @case ('NATIVE') {
-                    Native
+                    {{ 'applications.types.native' | translate }}
                   }
                   @case ('BACKEND_TO_BACKEND') {
-                    Backend to backend
+                    {{ 'applications.types.backendToBackend' | translate }}
                   }
                   @default {
                     {{ initialApplication.type }}
                   }
                 }
               </dd>
-              <dt>API key mode</dt>
+              <dt>{{ 'applications.edit.apiKeyMode' | translate }}</dt>
               <dd>
                 @switch (initialApplication.api_key_mode) {
                   @case ('UNSPECIFIED') {
-                    <span matTooltip="From the 2nd apiKey subscription onwards, you can choose whether or not to share the api Key"
-                      >Unspecified</span
-                    >
+                    <span [matTooltip]="'applications.edit.apiKeyModeUnspecifiedTooltip' | translate">{{
+                      'applications.edit.apiKeyModeUnspecified' | translate
+                    }}</span>
                   }
                   @case ('SHARED') {
-                    <span matTooltip="Use the same API key in all application subscriptions">Shared</span>
+                    <span [matTooltip]="'applications.edit.apiKeyModeSharedTooltip' | translate">{{
+                      'applications.edit.apiKeyModeShared' | translate
+                    }}</span>
                   }
                   @case ('EXCLUSIVE') {
-                    <span matTooltip="Each application subscription has its own API key">Exclusive</span>
+                    <span [matTooltip]="'applications.edit.apiKeyModeExclusiveTooltip' | translate">{{
+                      'applications.edit.apiKeyModeExclusive' | translate
+                    }}</span>
                   }
                   @default {
                     {{ initialApplication.api_key_mode }}
@@ -130,7 +136,7 @@
           [routerLink]="'../subscriptions'"
         >
           <mat-icon svgIcon="gio:language"></mat-icon>
-          Subscribe to APIs
+          {{ 'applications.edit.subscribeToApis' | translate }}
         </button>
       </div>
     </mat-card-content>
@@ -140,17 +146,14 @@
     <mat-card class="details-card" formGroupName="OAuth2Form">
       <mat-card-content>
         <div class="details-card__header">
-          <h3>OAuth2 Integration</h3>
+          <h3>{{ 'applications.edit.oauth2Title' | translate }}</h3>
         </div>
         <div class="details-card__header__info-inputs">
           <div class="details-card__header__info-inputs__client_id-row">
             <mat-form-field>
-              <mat-label>Client ID</mat-label>
+              <mat-label>{{ 'applications.common.clientId' | translate }}</mat-label>
               <input formControlName="client_id" matInput type="text" maxlength="300" minlength="1" gioClipboardCopyWrapper />
-              <mat-hint align="start"
-                >The <code>Client_id</code> of the application. This field is required to subscribe to certain type of API Plan (OAuth2,
-                JWT).
-              </mat-hint>
+              <mat-hint align="start" [innerHTML]="'applications.edit.clientIdHint' | translate"></mat-hint>
             </mat-form-field>
           </div>
         </div>
@@ -159,35 +162,32 @@
   </ng-container>
 
   <ng-container *ngIf="initialApplication.type !== 'SIMPLE'">
-    <h2 class="details-title-openid">OpenID Connect Integration</h2>
+    <h2 class="details-title-openid">{{ 'applications.edit.openidTitle' | translate }}</h2>
     <mat-card class="details-card-openid" formGroupName="OpenIDForm">
       <mat-card-content>
         <div class="details-card__header">
-          <h3>OpenID Connect Integration</h3>
+          <h3>{{ 'applications.edit.openidTitle' | translate }}</h3>
         </div>
         <div class="details-card__header__info-inputs">
           <div class="details-card__header__right-coll__media coll-oauth">
             <mat-form-field class="oauth">
-              <mat-label>Client ID</mat-label>
+              <mat-label>{{ 'applications.common.clientId' | translate }}</mat-label>
               <input #clientIdInput formControlName="client_id" matInput type="text" maxlength="50" readonly />
               <gio-clipboard-copy-icon matIconSuffix [contentToCopy]="clientIdInput.value"></gio-clipboard-copy-icon>
             </mat-form-field>
 
             <mat-form-field class="oauth">
-              <mat-label>Client Secret</mat-label>
+              <mat-label>{{ 'applications.common.clientSecret' | translate }}</mat-label>
               <input #clientSecretInput formControlName="client_secret" matInput type="text" readonly />
               <gio-clipboard-copy-icon matIconSuffix [contentToCopy]="clientSecretInput.value"></gio-clipboard-copy-icon>
             </mat-form-field>
           </div>
           <div class="details-card__header__info-inputs__second-row">
             <gio-banner-info>
-              <p>
-                Some of the fields bellow might not be updated by Authorization Provider. Please refer to the Authorization Provider
-                documentation for more information.
-              </p>
+              <p>{{ 'applications.edit.oauthProviderBanner' | translate }}</p>
             </gio-banner-info>
             <mat-form-field>
-              <mat-label>Allowed grant types</mat-label>
+              <mat-label>{{ 'applications.common.grantTypes' | translate }}</mat-label>
               <mat-select formControlName="grant_types" multiple>
                 <mat-option *ngFor="let grantType of applicationType.allowed_grant_types" [value]="grantType.type">{{
                   grantType.name
@@ -195,16 +195,17 @@
               </mat-select>
             </mat-form-field>
             <mat-form-field class="example-chip-list" *ngIf="applicationType.requires_redirect_uris">
-              <mat-label>Redirect URIs</mat-label>
-              <gio-form-tags-input formControlName="redirect_uris" placeholder="Enter a redirect URI"> </gio-form-tags-input>
-              <mat-hint align="start">URIs where the authorization server will send OAuth responses</mat-hint>
+              <mat-label>{{ 'applications.common.redirectUris' | translate }}</mat-label>
+              <gio-form-tags-input formControlName="redirect_uris" [placeholder]="'applications.common.redirectUrisPlaceholder' | translate">
+              </gio-form-tags-input>
+              <mat-hint align="start">{{ 'applications.common.redirectUrisHint' | translate }}</mat-hint>
             </mat-form-field>
             <gio-form-headers formControlName="additional_client_metadata" [autocompleteDisabled]="true">
-              <gio-form-headers-label>Additional Client Metadata (optional)</gio-form-headers-label>
+              <gio-form-headers-label>{{ 'applications.common.additionalClientMetadata' | translate }}</gio-form-headers-label>
             </gio-form-headers>
-            <mat-error *ngIf="applicationForm.hasError('nonUniqueKeys', 'OpenIDForm.additional_client_metadata')"
-              >Keys must be unique</mat-error
-            >
+            <mat-error *ngIf="applicationForm.hasError('nonUniqueKeys', 'OpenIDForm.additional_client_metadata')">{{
+              'applications.common.uniqueKeys' | translate
+            }}</mat-error>
           </div>
         </div>
       </mat-card-content>
@@ -213,8 +214,8 @@
 
   <mat-card class="tls-card">
     <mat-card-header>
-      <mat-card-title>Certificates</mat-card-title>
-      <mat-card-subtitle>Manage mTLS certificates for this application</mat-card-subtitle>
+      <mat-card-title>{{ 'applications.edit.certificates.title' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'applications.edit.certificates.subtitle' | translate }}</mat-card-subtitle>
       @if (!isReadOnly) {
         <div class="tls-card__header__button">
           <button
@@ -224,63 +225,63 @@
             data-testid="add-certificate-button"
           >
             <mat-icon svgIcon="gio:plus"></mat-icon>
-            Add certificate
+            {{ 'applications.edit.certificates.add' | translate }}
           </button>
         </div>
       }
     </mat-card-header>
     <mat-card-content>
       @if (certificates.length > 0) {
-        <table mat-table [dataSource]="certificates" class="tls-card__table" aria-label="Client certificates table">
+        <table mat-table [dataSource]="certificates" class="tls-card__table" [attr.aria-label]="'applications.edit.certificates.tableAria' | translate">
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'applications.edit.certificates.columns.name' | translate }}</th>
             <td mat-cell *matCellDef="let cert">{{ cert.name }}</td>
           </ng-container>
 
           <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef>Uploaded</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'applications.edit.certificates.columns.uploaded' | translate }}</th>
             <td mat-cell *matCellDef="let cert">{{ cert.createdAt | date: 'medium' }}</td>
           </ng-container>
 
           <ng-container matColumnDef="endsAt">
-            <th mat-header-cell *matHeaderCellDef>Expiry date and time</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'applications.edit.certificates.columns.expiry' | translate }}</th>
             <td mat-cell *matCellDef="let cert">
               {{ cert.certificateExpiration ? (cert.certificateExpiration | date: 'medium') : '—' }}
             </td>
           </ng-container>
 
           <ng-container matColumnDef="status">
-            <th mat-header-cell *matHeaderCellDef>Status</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'applications.edit.certificates.columns.status' | translate }}</th>
             <td mat-cell *matCellDef="let cert">
               @switch (cert.status) {
                 @case ('ACTIVE') {
-                  <span class="gio-badge-success">Active</span>
+                  <span class="gio-badge-success">{{ 'applications.edit.certificates.status.active' | translate }}</span>
                 }
                 @case ('ACTIVE_WITH_END') {
                   @if (cert.endsAt | daysLeft: 15; as label) {
                     <span class="gio-badge-warning">{{ label }}</span>
                   } @else {
-                    <span class="gio-badge-success">Active</span>
+                    <span class="gio-badge-success">{{ 'applications.edit.certificates.status.active' | translate }}</span>
                   }
                 }
                 @case ('SCHEDULED') {
-                  <span class="gio-badge-neutral">Scheduled</span>
+                  <span class="gio-badge-neutral">{{ 'applications.edit.certificates.status.scheduled' | translate }}</span>
                 }
                 @case ('REVOKED') {
-                  <span class="gio-badge-neutral">Expired</span>
+                  <span class="gio-badge-neutral">{{ 'applications.edit.certificates.status.expired' | translate }}</span>
                 }
               }
             </td>
           </ng-container>
 
           <ng-container matColumnDef="actions">
-            <th mat-header-cell *matHeaderCellDef>Actions</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'applications.edit.certificates.columns.actions' | translate }}</th>
             <td mat-cell *matCellDef="let cert">
               <div class="tls-card__table__actions">
                 <button
                   mat-icon-button
-                  aria-label="View certificate details"
-                  matTooltip="View details"
+                  [attr.aria-label]="'applications.edit.certificates.viewDetails' | translate"
+                  [matTooltip]="'applications.edit.certificates.viewDetailsTooltip' | translate"
                   (click)="viewCertificateDetails(cert)"
                   data-testid="view-certificate-button"
                 >
@@ -290,8 +291,8 @@
                   <button
                     mat-icon-button
                     color="warn"
-                    aria-label="Revoke certificate"
-                    matTooltip="Revoke certificate"
+                    [attr.aria-label]="'applications.edit.certificates.revokeAria' | translate"
+                    [matTooltip]="'applications.edit.certificates.revokeTooltip' | translate"
                     (click)="deleteCertificate(cert)"
                     data-testid="delete-certificate-button"
                   >
@@ -313,8 +314,8 @@
             <mat-icon svgIcon="gio:folder-plus"></mat-icon>
           </div>
           <div class="tls-card__empty__text">
-            <h3 class="tls-card__empty__title">No mTLS certificates added</h3>
-            <p class="tls-card__empty__description">Add your first certificate to secure this application</p>
+            <h3 class="tls-card__empty__title">{{ 'applications.edit.certificates.emptyTitle' | translate }}</h3>
+            <p class="tls-card__empty__description">{{ 'applications.edit.certificates.emptyDescription' | translate }}</p>
           </div>
         </div>
       }
@@ -329,12 +330,12 @@
 
   <mat-card class="danger-card" *ngIf="!isReadOnly">
     <mat-card-content>
-      <h3 class="danger-card__title">Danger Zone</h3>
+      <h3 class="danger-card__title">{{ 'applications.edit.dangerZone' | translate }}</h3>
       <div class="danger-card__actions">
         <ng-container *gioPermission="{ anyOf: ['application-definition-d'] }">
           <div class="danger-card__actions__action">
-            <span class="gv-form-danger-text"> Delete this Application. </span>
-            <button mat-button color="warn" (click)="deleteApplication()">Delete</button>
+            <span class="gv-form-danger-text"> {{ 'applications.edit.deleteThis' | translate }} </span>
+            <button mat-button color="warn" (click)="deleteApplication()">{{ 'common.delete' | translate }}</button>
           </div>
         </ng-container>
       </div>

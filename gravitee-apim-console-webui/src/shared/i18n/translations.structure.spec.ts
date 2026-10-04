@@ -104,6 +104,13 @@ describe('i18n translations', () => {
     expect(languageService.translate('apis.list.add')).toBe('Add API');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('NEXT');
     expect(languageService.translate('apis.creation.importV2.import')).toBe('Import');
+    expect(languageService.translate('applications.creation.title')).toBe('Application creation');
+    expect(languageService.translate('applications.navigation.globalSettings')).toBe('Global settings');
+    expect(languageService.translate('applications.list.title')).toBe('Applications');
+    expect(languageService.translate('applications.members.add')).toBe('Add members');
+    expect(languageService.translate('applications.subscriptions.title')).toBe('Subscriptions');
+    expect(languageService.translate('applications.analytics.filters')).toBe('Filters');
+    expect(languageService.translate('applications.metadata.dialog.createTitle')).toBe('Create Application metadata');
 
     languageService.setLanguage('ru');
     expect(languageService.translate('common.cancel')).toBe('Отмена');
@@ -116,9 +123,18 @@ describe('i18n translations', () => {
     expect(languageService.translate('apis.list.add')).toBe('Добавить API');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('ДАЛЕЕ');
     expect(languageService.translate('apis.creation.importV2.import')).toBe('Импортировать');
+    expect(languageService.translate('applications.creation.title')).toBe('Создание приложения');
+    expect(languageService.translate('applications.list.title')).toBe('Приложения');
+    expect(languageService.translate('applications.members.add')).toBe('Добавить участников');
+    expect(languageService.translate('applications.subscriptions.title')).toBe('Подписки');
+    expect(languageService.translate('applications.analytics.filters')).toBe('Фильтры');
+    expect(languageService.translate('applications.metadata.dialog.createTitle')).toBe('Создать метаданные приложения');
+    expect(languageService.translate('applications.navigation.globalSettings')).toBe('Общие настройки');
 
     languageService.setLanguage('en');
     expect(languageService.translate('common.cancel')).toBe('Cancel');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('NEXT');
+    expect(languageService.translate('applications.creation.title')).toBe('Application creation');
+    expect(languageService.translate('applications.navigation.globalSettings')).toBe('Global settings');
   });
 });
