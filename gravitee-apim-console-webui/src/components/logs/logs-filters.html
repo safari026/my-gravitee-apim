@@ -75,7 +75,7 @@
     </md-input-container>
     <md-input-container class="md-block" flex-gt-sm flex="20" ng-if="$ctrl.metadata.tenants.length > 0">
       <label>{{ $ctrl.translate('applications.logs.filters.tenants') }}</label>
-      <md-select ng-model="$ctrl.filters.tenant" placeholder="Tenant" multiple>
+      <md-select ng-model="$ctrl.filters.tenant" placeholder="{{ $ctrl.translate('applications.logs.filters.tenants') }}" multiple>
         <md-option ng-value="tenant.id" ng-repeat="tenant in $ctrl.metadata.tenants">{{tenant.name}}</md-option>
       </md-select>
     </md-input-container>

@@ -18,7 +18,7 @@
 <div ng-if="$ctrl.isLoaded" class="gv-sub-content">
   <div class="gv-forms gv-forms-fluid" layout="column">
     <div class="gv-form">
-      <h1 flex>Platform Logs</h1>
+      <h1 flex>{{ $ctrl.translate('analytics.logs.title') }}</h1>
       <div class="gv-form-content" layout="column">
         <div layout="row">
           <gv-logs-timeframe
@@ -33,7 +33,7 @@
               ng-click="$ctrl.exportAsCSV()"
               ng-disabled="!$ctrl.logs.logs || $ctrl.logs.logs.length === 0"
             >
-              Export as CSV
+              {{ $ctrl.translate('analytics.logs.exportCsv') }}
             </md-button>
           </div>
         </div>
@@ -50,15 +50,15 @@
             <thead md-head md-order="$ctrl.query.field">
               <tr md-row>
                 <th md-column width="15px" nowrap>&nbsp;</th>
-                <th md-column width="1%" md-order-by="@timestamp" nowrap>Date</th>
-                <th md-column width="1%" md-order-by="status" nowrap>Status</th>
-                <th md-column width="1%" nowrap>API</th>
-                <th md-column width="1%" nowrap>Application</th>
-                <th ng-if="$ctrl.Constants.org.settings.logging.user.displayed" md-column width="1%" md-order-by="user" nowrap>User</th>
-                <th md-column width="1%" nowrap>Plan</th>
-                <th md-column width="1%" md-order-by="method" nowrap>Method</th>
-                <th md-column md-order-by="path">Path</th>
-                <th md-column width="1%" md-order-by="response-time" md-numeric nowrap>Response time</th>
+                <th md-column width="1%" md-order-by="@timestamp" nowrap>{{ $ctrl.translate('analytics.logs.columns.date') }}</th>
+                <th md-column width="1%" md-order-by="status" nowrap>{{ $ctrl.translate('analytics.logs.columns.status') }}</th>
+                <th md-column width="1%" nowrap>{{ $ctrl.translate('analytics.logs.columns.api') }}</th>
+                <th md-column width="1%" nowrap>{{ $ctrl.translate('analytics.logs.columns.application') }}</th>
+                <th ng-if="$ctrl.Constants.org.settings.logging.user.displayed" md-column width="1%" md-order-by="user" nowrap>{{ $ctrl.translate('analytics.logs.columns.user') }}</th>
+                <th md-column width="1%" nowrap>{{ $ctrl.translate('analytics.logs.columns.plan') }}</th>
+                <th md-column width="1%" md-order-by="method" nowrap>{{ $ctrl.translate('analytics.logs.columns.method') }}</th>
+                <th md-column md-order-by="path">{{ $ctrl.translate('analytics.logs.columns.path') }}</th>
+                <th md-column width="1%" md-order-by="response-time" md-numeric nowrap>{{ $ctrl.translate('analytics.logs.columns.responseTime') }}</th>
               </tr>
             </thead>
             <tbody md-body>
@@ -96,7 +96,7 @@
                 <td md-cell nowrap>{{log.responseTime}} ms</td>
               </tr>
               <tr ng-if="$ctrl.logs.total === 0">
-                <td md-cell colspan="8">No log</td>
+                <td md-cell colspan="8">{{ $ctrl.translate('analytics.logs.empty') }}</td>
               </tr>
             </tbody>
           </table>

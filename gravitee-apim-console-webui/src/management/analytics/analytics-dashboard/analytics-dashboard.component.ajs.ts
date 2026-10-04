@@ -18,9 +18,16 @@ import { filter, find, forEach, merge } from 'lodash';
 
 import { EventService } from '../../../services/event.service';
 import DashboardService from '../../../services/dashboard.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+
+const EVENT_LABEL_KEYS: Record<string, string> = {
+  start_api: 'analytics.events.start',
+  stop_api: 'analytics.events.stop',
+  publish_api: 'analytics.events.deploy',
+  unpublish_api: 'analytics.events.undeploy',
+};
 
 class AnalyticsDashboardControllerAjs {
-  private eventLabels: any;
   private eventTypes: any[];
   private selectedApplications: any[];
   private selectedEventTypes: any[];
@@ -42,21 +49,16 @@ class AnalyticsDashboardControllerAjs {
     private Constants,
     private dashboardService: DashboardService,
     private ngRouter: Router,
+    private ngLanguageService: LanguageService,
   ) {
-    this.eventLabels = {};
-    this.eventTypes = [];
     this.selectedApplications = [];
     this.selectedEventTypes = [];
-
-    // init events
-    this.eventLabels.start_api = 'Start';
-    this.eventLabels.stop_api = 'Stop';
-    this.eventLabels.publish_api = 'Deploy';
-    this.eventLabels.unpublish_api = 'Undeploy';
     this.eventTypes = ['START_API', 'STOP_API', 'PUBLISH_API', 'UNPUBLISH_API'];
 
     this.initPagination();
   }
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     this.dashboardService.list('PLATFORM').then(response => {
@@ -156,7 +158,8 @@ class AnalyticsDashboardControllerAjs {
   }
 
   getEventLabel(label) {
-    return this.eventLabels[label];
+    const key = EVENT_LABEL_KEYS[String(label ?? '').toLowerCase()];
+    return key ? this.translate(key) : label;
   }
 
   viewLogs() {
@@ -190,11 +193,13 @@ AnalyticsDashboardControllerAjs.$inject = [
   'Constants',
   'DashboardService',
   'ngRouter',
+  'ngLanguageService',
 ];
 
 const AnalyticsDashboardComponentAjs: ng.IComponentOptions = {
   bindings: {
     activatedRoute: '<',
+    language: '<',
   },
   template: require('html-loader!./analytics-dashboard.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: AnalyticsDashboardControllerAjs,

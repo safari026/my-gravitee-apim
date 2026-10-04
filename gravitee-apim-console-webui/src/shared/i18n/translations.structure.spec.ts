@@ -115,6 +115,8 @@ describe('i18n translations', () => {
     expect(languageService.translate('gateways.status.started')).toBe('Started');
     expect(languageService.translate('observability.overview.title')).toBe('Overview');
     expect(languageService.translate('observability.logs.title')).toBe('Logs');
+    expect(languageService.translate('analytics.dashboard.overview')).toBe('Platform Overview');
+    expect(languageService.translate('analytics.logs.title')).toBe('Platform Logs');
 
     languageService.setLanguage('ru');
     expect(languageService.translate('common.cancel')).toBe('Отмена');
@@ -138,6 +140,8 @@ describe('i18n translations', () => {
     expect(languageService.translate('gateways.status.started')).toBe('Запущен');
     expect(languageService.translate('observability.overview.title')).toBe('Обзор');
     expect(languageService.translate('observability.logs.title')).toBe('Логи');
+    expect(languageService.translate('analytics.dashboard.overview')).toBe('Обзор платформы');
+    expect(languageService.translate('analytics.logs.title')).toBe('Логи платформы');
 
     languageService.setLanguage('en');
     expect(languageService.translate('common.cancel')).toBe('Cancel');
@@ -146,5 +150,6 @@ describe('i18n translations', () => {
     expect(languageService.translate('applications.navigation.globalSettings')).toBe('Global settings');
     expect(languageService.translate('gateways.list.title')).toBe('Gateways');
     expect(languageService.translate('observability.overview.title')).toBe('Overview');
+    expect(languageService.translate('analytics.dashboard.overview')).toBe('Platform Overview');
   });
 });

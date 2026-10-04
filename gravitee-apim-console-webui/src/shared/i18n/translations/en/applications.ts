@@ -397,6 +397,7 @@ export const enApplications = {
     percent: 'Percent',
     noResult: 'No result',
     noDataToDisplay: 'No Data to display here',
+    removeWidget: 'Remove widget',
   },
   logs: {
     title: 'Logs',

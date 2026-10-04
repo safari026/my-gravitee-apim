@@ -4,6 +4,8 @@ export const enCommon = {
   delete: 'Delete',
   close: 'Close',
   search: 'Search',
+  application: 'Application',
+  searchApplication: 'Search Application',
   selectPage: 'Select page',
   hits: 'Nb hits',
   hitsTotal: 'Nb hits total',

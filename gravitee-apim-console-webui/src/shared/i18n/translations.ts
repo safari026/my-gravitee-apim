@@ -9,6 +9,7 @@ import { enApis } from './translations/en/apis';
 import { enApplications } from './translations/en/applications';
 import { enGateways } from './translations/en/gateways';
 import { enObservability } from './translations/en/observability';
+import { enAnalytics } from './translations/en/analytics';
 import { ruAuth } from './translations/ru/auth';
 import { ruCommon } from './translations/ru/common';
 import { ruNavigation } from './translations/ru/navigation';
@@ -20,6 +21,7 @@ import { ruApis } from './translations/ru/apis';
 import { ruApplications } from './translations/ru/applications';
 import { ruGateways } from './translations/ru/gateways';
 import { ruObservability } from './translations/ru/observability';
+import { ruAnalytics } from './translations/ru/analytics';
 
 export type Language = 'en' | 'ru';
 
@@ -36,6 +38,7 @@ export const translations = {
     applications: enApplications,
     gateways: enGateways,
     observability: enObservability,
+    analytics: enAnalytics,
   },
   ru: {
     auth: ruAuth,
@@ -49,5 +52,6 @@ export const translations = {
     applications: ruApplications,
     gateways: ruGateways,
     observability: ruObservability,
+    analytics: ruAnalytics,
   },
 } as const;

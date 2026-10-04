@@ -13,9 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, ElementRef, Injector, SimpleChange } from '@angular/core';
 import { UpgradeComponent } from '@angular/upgrade/static';
+import { Component, ElementRef, Injector, SimpleChange } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { skip, takeUntil } from 'rxjs/operators';
+
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   template: '',
@@ -26,20 +31,36 @@ import { ActivatedRoute } from '@angular/router';
   },
 })
 export class PlatformLogsComponent extends UpgradeComponent {
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     elementRef: ElementRef,
     injector: Injector,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly languageService: LanguageService,
   ) {
     super('platformLogsComponentAjs', elementRef, injector);
+    toObservable(this.languageService.currentLanguage, { injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
   }
 
   override ngOnInit() {
-    // Hack to Force the binding between Angular and AngularJS
     this.ngOnChanges({
       activatedRoute: new SimpleChange(null, this.activatedRoute, true),
     });
 
     super.ngOnInit();
+  }
+
+  override ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+
+    super.ngOnDestroy();
   }
 }

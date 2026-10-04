@@ -25,6 +25,8 @@ import { AnalyticsDashboardComponent } from './analytics-dashboard/analytics-das
 import { PlatformLogsComponent } from './logs/platform-logs.component';
 import { PlatformLogComponent } from './logs/platform-log.component';
 
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 const routes: Routes = [
   {
     path: '',
@@ -68,7 +70,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [EnvAnalyticsLayoutComponent, AnalyticsDashboardComponent, PlatformLogsComponent, PlatformLogComponent],
-  imports: [RouterModule.forChild(routes), MatTabsModule, MatCardModule, MatIconModule, GioIconsModule, GioBannerModule],
+  imports: [RouterModule.forChild(routes), MatTabsModule, MatCardModule, MatIconModule, GioIconsModule, GioBannerModule, TranslatePipe],
   exports: [RouterModule],
 })
 export class EnvAnalyticsLegacyModule {}

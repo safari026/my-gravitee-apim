@@ -18,11 +18,15 @@
 <div class="gv-sub-content">
   <div class="gv-forms gv-forms-fluid" layout="column">
     <div layout="row">
-      <h1 flex>Platform Overview</h1>
+      <h1 flex>{{ $ctrl.translate('analytics.dashboard.overview') }}</h1>
       <div layout="row" ng-if="$ctrl.dashboards.length">
-        <label style="padding: 27px">Select a dashboard</label>
+        <label style="padding: 27px">{{ $ctrl.translate('analytics.dashboard.selectDashboard') }}</label>
         <md-input-container>
-          <md-select ng-model="$ctrl.dashboard" ng-change="$ctrl.onDashboardChanged($ctrl.dashboard.id)" aria-label="Dashboard selection">
+          <md-select
+            ng-model="$ctrl.dashboard"
+            ng-change="$ctrl.onDashboardChanged($ctrl.dashboard.id)"
+            aria-label="{{ $ctrl.translate('analytics.dashboard.dashboardAria') }}"
+          >
             <md-option ng-repeat="dashboard in $ctrl.dashboards" ng-value="dashboard"> {{dashboard.name}} </md-option>
           </md-select>
         </md-input-container>
@@ -41,7 +45,7 @@
     </div>
 
     <div class="gv-form" ng-if="$ctrl.events.content.length > 0">
-      <h2>API Events</h2>
+      <h2>{{ $ctrl.translate('analytics.events.title') }}</h2>
       <div class="gv-form-content" layout="column">
         <md-list>
           <md-list-item class="eventType" ng-class="{eventTypeSelected: selection}" ng-repeat="eventType in $ctrl.eventTypes">
@@ -56,10 +60,10 @@
               <thead md-head>
                 <tr md-row>
                   <th md-column></th>
-                  <th md-column>Date</th>
-                  <th md-column>Label</th>
-                  <th md-column>Type</th>
-                  <th md-column>API</th>
+                  <th md-column>{{ $ctrl.translate('analytics.events.columns.date') }}</th>
+                  <th md-column>{{ $ctrl.translate('analytics.events.columns.label') }}</th>
+                  <th md-column>{{ $ctrl.translate('analytics.events.columns.type') }}</th>
+                  <th md-column>{{ $ctrl.translate('analytics.events.columns.api') }}</th>
                 </tr>
               </thead>
               <tbody md-body>
@@ -77,7 +81,7 @@
                   </td>
                 </tr>
                 <tr ng-if="$ctrl.events.content.length === 0">
-                  <td md-cell colspan="2">No event</td>
+                  <td md-cell colspan="2">{{ $ctrl.translate('analytics.events.empty') }}</td>
                 </tr>
               </tbody>
             </table>
@@ -97,7 +101,7 @@
         </div>
         <div ng-if="!eventsFetchData && $ctrl.events.content.length == 0" layout="column" layout-align="center center" flex>
           <p><ng-md-icon icon="block" style="fill: grey"></ng-md-icon></p>
-          <p>No data</p>
+          <p>{{ $ctrl.translate('analytics.events.noData') }}</p>
         </div>
       </div>
     </div>

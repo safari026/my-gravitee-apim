@@ -4,6 +4,8 @@ export const ruCommon = {
   delete: 'Удалить',
   close: 'Закрыть',
   search: 'Поиск',
+  application: 'Приложение',
+  searchApplication: 'Найти приложение',
   selectPage: 'Выбрать страницу',
   hits: 'Число запросов',
   hitsTotal: 'Всего запросов',

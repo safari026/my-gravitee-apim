@@ -46,12 +46,18 @@ export class SearchAndSelectController {
     if (this.context === 'API') {
       return this.translate('applications.subscriptions.filters.api');
     }
+    if (this.context === 'Application') {
+      return this.translate('common.application');
+    }
     return this.context;
   }
 
   get placeholder() {
     if (this.context === 'API') {
       return this.translate('applications.logs.filters.searchApi');
+    }
+    if (this.context === 'Application') {
+      return this.translate('common.searchApplication');
     }
     if (this.context.toUpperCase() === this.context) {
       return `Search ${this.context}`;

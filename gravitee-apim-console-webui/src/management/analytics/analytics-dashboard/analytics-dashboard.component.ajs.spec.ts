@@ -15,6 +15,8 @@
  */
 import AnalyticsDashboardComponentAjs from './analytics-dashboard.component.ajs';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 describe('AnalyticsDashboardControllerAjs', () => {
   let controller: any;
   let eventServiceMock: { search: jest.Mock };
@@ -22,6 +24,7 @@ describe('AnalyticsDashboardControllerAjs', () => {
   let dashboardServiceMock: { list: jest.Mock };
   let ngRouterMock: { navigate: jest.Mock };
   let activatedRouteMock: { snapshot: { queryParams: Record<string, string> } };
+  let languageService: LanguageService;
 
   const firstDashboard = {
     id: 'dashboard-1',
@@ -35,6 +38,7 @@ describe('AnalyticsDashboardControllerAjs', () => {
   };
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     eventServiceMock = {
       search: jest.fn().mockResolvedValue({ data: [{ id: 'event-1' }] }),
     };
@@ -55,6 +59,8 @@ describe('AnalyticsDashboardControllerAjs', () => {
       },
     };
 
+    languageService = new LanguageService();
+
     const ControllerClass = AnalyticsDashboardComponentAjs.controller as new (...args: unknown[]) => unknown;
     controller = new ControllerClass(
       eventServiceMock,
@@ -65,8 +71,13 @@ describe('AnalyticsDashboardControllerAjs', () => {
       {},
       dashboardServiceMock,
       ngRouterMock,
+      languageService,
     );
     controller.activatedRoute = activatedRouteMock;
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
   });
 
   const initDashboards = async () => {
@@ -198,6 +209,41 @@ describe('AnalyticsDashboardControllerAjs', () => {
       await Promise.resolve();
 
       expect(eventServiceMock.search).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('i18n', () => {
+    it('translates dashboard chrome EN → RU → EN without reload', () => {
+      expect(controller.translate('analytics.dashboard.overview')).toEqual('Platform Overview');
+      expect(controller.translate('analytics.dashboard.selectDashboard')).toEqual('Select a dashboard');
+      expect(controller.translate('analytics.events.title')).toEqual('API Events');
+      expect(controller.translate('analytics.events.columns.date')).toEqual('Date');
+      expect(controller.translate('analytics.events.empty')).toEqual('No event');
+      expect(controller.translate('analytics.events.noData')).toEqual('No data');
+
+      languageService.setLanguage('ru');
+      expect(controller.translate('analytics.dashboard.overview')).toEqual('Обзор платформы');
+      expect(controller.translate('analytics.events.title')).toEqual('События API');
+      expect(controller.translate('analytics.events.empty')).toEqual('Нет событий');
+
+      languageService.setLanguage('en');
+      expect(controller.translate('analytics.dashboard.overview')).toEqual('Platform Overview');
+      expect(controller.translate('analytics.events.title')).toEqual('API Events');
+    });
+
+    it('translates event labels at call time and keeps event type identifiers', () => {
+      expect(controller.getEventLabel('START_API')).toEqual('Start');
+      expect(controller.getEventLabel('stop_api')).toEqual('Stop');
+      expect(controller.getEventLabel('PUBLISH_API')).toEqual('Deploy');
+      expect(controller.getEventLabel('unpublish_api')).toEqual('Undeploy');
+
+      languageService.setLanguage('ru');
+      expect(controller.getEventLabel('START_API')).toEqual('Запуск');
+      expect(controller.getEventLabel('PUBLISH_API')).toEqual('Развёртывание');
+
+      languageService.setLanguage('en');
+      expect(controller.getEventLabel('UNPUBLISH_API')).toEqual('Undeploy');
+      expect(controller.eventTypes).toEqual(['START_API', 'STOP_API', 'PUBLISH_API', 'UNPUBLISH_API']);
     });
   });
 });

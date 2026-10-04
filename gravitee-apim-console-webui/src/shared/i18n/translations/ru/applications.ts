@@ -397,6 +397,7 @@ export const ruApplications = {
     percent: 'Процент',
     noResult: 'Нет результатов',
     noDataToDisplay: 'Нет данных для отображения',
+    removeWidget: 'Удалить виджет',
   },
   logs: {
     title: 'Логи',
