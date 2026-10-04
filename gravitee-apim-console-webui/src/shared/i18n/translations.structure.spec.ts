@@ -30,6 +30,17 @@ function prefixConflicts(paths: string[]): string[] {
   return conflicts;
 }
 
+function collectNodeKinds(node: TranslationNode, prefix = ''): Array<{ path: string; kind: 'string' | 'object' }> {
+  if (typeof node === 'string') {
+    return [{ path: prefix, kind: 'string' }];
+  }
+
+  return [
+    { path: prefix, kind: 'object' },
+    ...Object.entries(node).flatMap(([key, child]) => collectNodeKinds(child, prefix ? `${prefix}.${key}` : key)),
+  ];
+}
+
 describe('i18n translations', () => {
   const enLeaves = collectLeaves(translations.en);
   const ruLeaves = collectLeaves(translations.ru);
@@ -47,6 +58,19 @@ describe('i18n translations', () => {
   it('has no string/object path conflicts', () => {
     expect(prefixConflicts(enPaths)).toEqual([]);
     expect(prefixConflicts(ruPaths)).toEqual([]);
+  });
+
+  it('EN and RU use the same node types at every path', () => {
+    const enKinds = Object.fromEntries(collectNodeKinds(translations.en).map(node => [node.path, node.kind]));
+    const ruKinds = Object.fromEntries(collectNodeKinds(translations.ru).map(node => [node.path, node.kind]));
+
+    expect(Object.keys(enKinds).sort()).toEqual(Object.keys(ruKinds).sort());
+    expect(enKinds).toEqual(ruKinds);
+  });
+
+  it('leaf translations are strings', () => {
+    expect(enLeaves.every(leaf => typeof leaf.value === 'string')).toBe(true);
+    expect(ruLeaves.every(leaf => typeof leaf.value === 'string')).toBe(true);
   });
 
   it('uses the same placeholders for matching EN and RU keys', () => {
