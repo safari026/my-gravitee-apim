@@ -17,6 +17,7 @@ import { Injectable } from '@angular/core';
 import { MenuSearchItem } from '@gravitee/ui-particles-angular';
 
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { cleanRouterLink } from '../../../util/router-link.util';
 
 export interface MenuItem {
@@ -33,110 +34,114 @@ export interface GroupItem {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsNavigationService {
-  constructor(private readonly permissionService: GioPermissionService) {}
+  constructor(
+    private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
+  ) {}
 
   public getSettingsNavigationRoutes(): GroupItem[] {
+    const translate = (key: string) => this.languageService.translate(key);
     const items: GroupItem[] = [
       {
-        title: 'Portal',
+        title: translate('settings.navigation.groups.portal'),
         items: [
           {
-            displayName: 'Analytics',
+            displayName: translate('settings.navigation.items.analytics'),
             routerLink: './analytics',
             permissions: ['environment-dashboard-r'],
           },
           {
-            displayName: 'API Portal Information',
+            displayName: translate('settings.navigation.items.apiPortalHeader'),
             routerLink: './api-portal-header',
             permissions: ['environment-api_header-r'],
           },
           {
-            displayName: 'API Quality',
+            displayName: translate('settings.navigation.items.apiQuality'),
             routerLink: './api-quality-rules',
             permissions: ['environment-quality_rule-r'],
           },
           {
-            displayName: 'Authentication',
+            displayName: translate('settings.navigation.items.authentication'),
             routerLink: './identity-providers',
             permissions: ['organization-identity_provider-r', 'environment-identity_provider_activation-r'],
           },
           {
-            displayName: 'Categories',
+            displayName: translate('settings.navigation.items.categories'),
             routerLink: './categories',
             permissions: ['environment-category-r'],
           },
           {
-            displayName: 'Client Registration',
+            displayName: translate('settings.navigation.items.clientRegistration'),
             routerLink: './client-registration-providers',
             permissions: ['environment-client_registration_provider-r'],
           },
           {
-            displayName: 'Documentation',
+            displayName: translate('settings.navigation.items.documentation'),
             routerLink: './documentation',
             permissions: ['environment-documentation-r'],
           },
           {
-            displayName: 'Metadata',
+            displayName: translate('settings.navigation.items.metadata'),
             routerLink: './metadata',
             permissions: ['environment-metadata-r'],
           },
           {
-            displayName: 'Settings',
+            displayName: translate('settings.navigation.items.portal'),
             routerLink: './portal',
             permissions: ['environment-settings-r'],
           },
           {
-            displayName: 'Theme',
+            displayName: translate('settings.navigation.items.theme'),
             routerLink: './theme',
             permissions: ['environment-theme-r'],
           },
           {
-            displayName: 'Featured APIs',
+            displayName: translate('settings.navigation.items.topApis'),
             routerLink: './top-apis',
             permissions: ['environment-top_apis-r'],
           },
         ],
       },
       {
-        title: 'Gateway',
+        title: translate('settings.navigation.groups.gateway'),
         items: [
           {
-            displayName: 'API Logging',
+            displayName: translate('settings.navigation.items.apiLogging'),
             routerLink: './api-logging',
             permissions: ['organization-settings-r'],
           },
           {
-            displayName: 'Dictionaries',
+            displayName: translate('settings.navigation.items.dictionaries'),
             routerLink: './dictionaries',
             permissions: ['environment-dictionary-r'],
           },
           {
-            displayName: 'Shared Policy Groups',
+            displayName: translate('settings.navigation.items.sharedPolicyGroups'),
             routerLink: './shared-policy-groups',
             permissions: ['environment-shared_policy_group-r'],
           },
         ],
       },
       {
-        title: 'User Management',
+        title: translate('settings.navigation.groups.userManagement'),
         items: [
           {
-            displayName: 'User Fields',
+            displayName: translate('settings.navigation.items.userFields'),
             routerLink: './custom-user-fields',
             permissions: ['organization-custom_user_fields-r'],
           },
           {
-            displayName: 'Groups',
+            displayName: translate('settings.navigation.items.groups'),
             routerLink: './groups',
             permissions: ['environment-group-r'],
           },
         ],
       },
       {
-        title: 'Notifications',
+        title: translate('settings.navigation.groups.notifications'),
         items: [
           {
-            displayName: 'Notification settings',
+            displayName: translate('settings.navigation.items.notifications'),
             routerLink: './notifications',
             permissions: ['environment-notification-r'],
           },
@@ -157,7 +162,7 @@ export class SettingsNavigationService {
         return {
           name: item.displayName,
           routerLink: `/${environmentId}/settings/${cleanRouterLink(item.routerLink)}`,
-          category: `Environment / ${groupItem.title}`,
+          category: this.languageService.translate('settings.navigation.searchCategory', { group: groupItem.title }),
           groupIds: [environmentId],
         };
       }),

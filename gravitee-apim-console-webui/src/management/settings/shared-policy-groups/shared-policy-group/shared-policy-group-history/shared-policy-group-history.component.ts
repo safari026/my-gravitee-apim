@@ -14,16 +14,16 @@
  * limitations under the License.
  */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, Injector, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { MatTableModule } from '@angular/material/table';
 import { ActivatedRoute, Router } from '@angular/router';
-import { takeUntilDestroyed, toSignal } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
 import { BehaviorSubject, switchMap } from 'rxjs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSortModule } from '@angular/material/sort';
-import { debounceTime, filter, map, tap } from 'rxjs/operators';
+import { debounceTime, filter, map, skip, tap } from 'rxjs/operators';
 import { isEqual, isNil } from 'lodash';
 import { MatIcon } from '@angular/material/icon';
 import { GIO_DIALOG_WIDTH } from '@gravitee/ui-particles-angular';
@@ -50,11 +50,13 @@ import {
 import { GioTableWrapperFilters, Sort } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { SharedPolicyGroupsStateBadgeComponent } from '../../shared-policy-groups-state-badge/shared-policy-groups-state-badge.component';
 import { SharedPolicyGroupsService } from '../../../../../services-ngx/shared-policy-groups.service';
-import { SharedPolicyGroup, SharedPolicyGroupHistoriesSortByParam, toReadableFlowPhase } from '../../../../../entities/management-api-v2';
+import { SharedPolicyGroup, SharedPolicyGroupHistoriesSortByParam } from '../../../../../entities/management-api-v2';
 import { GioTableWrapperModule } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../../../shared/components/gio-permission/gio-permission.module';
 import { SnackBarService } from '../../../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 type PageTableVM = {
   items: {
@@ -83,6 +85,7 @@ type PageTableVM = {
     MatIcon,
     MatCheckbox,
     FormsModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -94,6 +97,9 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
   private readonly matDialog = inject(MatDialog);
   private readonly snackBarService = inject(SnackBarService);
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
 
   protected sharedPolicyGroup = toSignal(this.sharedPolicyGroupsService.get(this.activatedRoute.snapshot.params.sharedPolicyGroupId));
 
@@ -112,16 +118,18 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
     totalItems: 0,
     isLoading: true,
   });
-  protected readonly toReadableFlowPhase = toReadableFlowPhase;
   protected compareSPG?: [PageTableVM['items'][number], PageTableVM['items'][number]] = [null, null];
   protected get compareTwoSPGLabel(): string {
     if (this.compareSPG[0] === null) {
-      return 'Select two versions to compare';
+      return this.languageService.translate('settings.sharedPolicyGroups.compareSelectTwo');
     }
     if (this.compareSPG[1] === null) {
-      return `Select another version to compare`;
+      return this.languageService.translate('settings.sharedPolicyGroups.compareSelectAnother');
     }
-    return `Compare version ${this.compareSPG[0].sharedPolicyGroup.version} with ${this.compareSPG[1].sharedPolicyGroup.version}`;
+    return this.languageService.translate('settings.sharedPolicyGroups.compareVersionWith', {
+      left: this.compareSPG[0].sharedPolicyGroup.version,
+      right: this.compareSPG[1].sharedPolicyGroup.version,
+    });
   }
   protected get disableCompareTwoSPG(): boolean {
     return this.compareSPG.filter(e => !isNil(e)).length < 2;
@@ -129,14 +137,20 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
   protected get comparePendingSPGLabel(): string {
     const lastSelected = this.compareSPG.filter(e => !isNil(e))?.pop();
     return lastSelected
-      ? `Compare version ${lastSelected.sharedPolicyGroup.version} with version to be deployed`
-      : 'Select a version to compare with version to be deployed';
+      ? this.languageService.translate('settings.sharedPolicyGroups.compareVersionPending', {
+          version: lastSelected.sharedPolicyGroup.version,
+        })
+      : this.languageService.translate('settings.sharedPolicyGroups.compareSelectPending');
   }
   protected get disableComparePendingSPG(): boolean {
     return this.compareSPG.filter(e => !isNil(e)).length < 1;
   }
 
   ngOnInit() {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.changeDetectorRef.markForCheck());
+
     this.refreshPageTableVM$
       .pipe(
         debounceTime(200),
@@ -211,11 +225,11 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.snackBarService.success('Version has been restored. Review changes and click ‘Deploy’ to finalize the restoration.');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.restoreSuccess'));
           this.router.navigate(['../'], { relativeTo: this.activatedRoute });
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group restore!');
+          this.snackBarService.error(error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.restoreError'));
         },
       });
   }

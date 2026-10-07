@@ -20,19 +20,28 @@
     <mat-card-header>
       <mat-card-title
         >{{ sharedPolicyGroup.name }}
-        <span class="gio-badge-accent" matTooltip="API type">{{ sharedPolicyGroup.apiType | titlecase }}</span>
-        <span class="gio-badge-accent" matTooltip="Phase">{{ toReadableFlowPhase(sharedPolicyGroup.phase) }}</span>
+        <span class="gio-badge-accent" [matTooltip]="'settings.sharedPolicyGroups.apiTypeTooltip' | translate">{{
+          (sharedPolicyGroup.apiType === 'MESSAGE'
+            ? 'settings.sharedPolicyGroups.messageApi'
+            : sharedPolicyGroup.apiType === 'PROXY'
+              ? 'settings.sharedPolicyGroups.proxyApi'
+              : sharedPolicyGroup.apiType
+          ) | translate
+        }}</span>
+        <span class="gio-badge-accent" [matTooltip]="'settings.sharedPolicyGroups.phase' | translate">{{
+          ('settings.sharedPolicyGroups.phases.' + sharedPolicyGroup.phase) | translate
+        }}</span>
         <shared-policy-groups-state-badge [lifecycleState]="sharedPolicyGroup.lifecycleState"></shared-policy-groups-state-badge>
       </mat-card-title>
       <mat-card-subtitle>{{ sharedPolicyGroup.description }}</mat-card-subtitle>
       <div class="shared-policy-group-studio__headerRightBtn">
         @if (!isReadOnly && !sharedPolicyGroup.isKubernetesOrigin) {
-          <button mat-stroked-button (click)="onEdit()" matTooltip="Edit general info">
+          <button mat-stroked-button (click)="onEdit()" [matTooltip]="'settings.sharedPolicyGroups.editGeneralInfo' | translate">
             <mat-icon svgIcon="gio:edit-pencil">edit</mat-icon>
           </button>
           <button
             [disabled]="sharedPolicyGroup.lifecycleState === 'UNDEPLOYED'"
-            matTooltip="Undeploy"
+            [matTooltip]="'settings.sharedPolicyGroups.undeploy' | translate"
             mat-stroked-button
             (click)="onUndeploy()"
           >
@@ -40,7 +49,7 @@
           </button>
           <button
             *gioPermission="{ anyOf: ['environment-shared_policy_group-d'] }"
-            matTooltip="Delete"
+            [matTooltip]="'common.delete' | translate"
             mat-stroked-button
             (click)="onDelete()"
           >
@@ -53,9 +62,9 @@
             color="primary"
             mat-flat-button
             (click)="onSave()"
-            matTooltip="Don't forget to ensure that the Prerequisite message is updated with the latest changes."
+            [matTooltip]="'settings.sharedPolicyGroups.savePrerequisiteTooltip' | translate"
           >
-            Save
+            {{ 'common.save' | translate }}
           </button>
           <button
             [disabled]="sharedPolicyGroup.lifecycleState === 'DEPLOYED' || enableSaveButton"
@@ -63,7 +72,7 @@
             mat-flat-button
             (click)="onDeploy()"
           >
-            <mat-icon svgIcon="gio:rocket">deploy</mat-icon>Deploy
+            <mat-icon svgIcon="gio:rocket">deploy</mat-icon>{{ 'settings.sharedPolicyGroups.deploy' | translate }}
           </button>
         }
       </div>

@@ -31,6 +31,7 @@ import { CustomUserFieldsService } from '../../../services-ngx/custom-user-field
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { CustomUserField } from '../../../entities/customUserFields';
 import { gioTableFilterCollection } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'app-custom-user-fields',
@@ -55,6 +56,7 @@ export class CustomUserFieldsComponent implements OnInit {
     private readonly customUserFieldsService: CustomUserFieldsService,
     private readonly snackBarService: SnackBarService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -75,7 +77,7 @@ export class CustomUserFieldsComponent implements OnInit {
           this.runFilters(this.filters);
         },
         error: ({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error in list loading.');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('settings.userFields.loadError'));
           this.isLoading = false;
         },
       });
@@ -107,10 +109,10 @@ export class CustomUserFieldsComponent implements OnInit {
       .subscribe({
         next: customUserField => {
           this.initList();
-          this.snackBarService.success(`Field ${customUserField.key} created successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.userFields.created'));
         },
         error: ({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during field creation!');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('settings.userFields.createError'));
           this.isLoading = false;
         },
       });
@@ -136,10 +138,10 @@ export class CustomUserFieldsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.initList();
-          this.snackBarService.success(`Field ${customUserField.key} updated successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.userFields.updated'));
         },
         error: ({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during field update!');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('settings.userFields.updateError'));
           this.isLoading = false;
         },
       });
@@ -150,9 +152,9 @@ export class CustomUserFieldsComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Delete custom user field',
-          content: `Are you sure you want to delete ${field.key} field?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.userFields.deleteTitle'),
+          content: this.languageService.translate('settings.userFields.deleteContent'),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteConfirmDialog',
@@ -169,10 +171,10 @@ export class CustomUserFieldsComponent implements OnInit {
       .subscribe({
         next: () => {
           this.initList();
-          this.snackBarService.success(`Field ${field.key} deleted successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.userFields.deleted'));
         },
         error: ({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during field deletion!');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('settings.userFields.deleteError'));
           this.isLoading = false;
         },
       });

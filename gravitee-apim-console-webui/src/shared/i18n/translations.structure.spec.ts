@@ -117,6 +117,12 @@ describe('i18n translations', () => {
     expect(languageService.translate('observability.logs.title')).toBe('Logs');
     expect(languageService.translate('analytics.dashboard.overview')).toBe('Platform Overview');
     expect(languageService.translate('analytics.logs.title')).toBe('Platform Logs');
+    expect(languageService.translate('settings.navigation.root')).toBe('Settings');
+    expect(languageService.translate('settings.analytics.title')).toBe('Analytics');
+    expect(languageService.translate('alerts.list.title')).toBe('Alerts');
+    expect(languageService.translate('alerts.tabs.activity')).toBe('Activity');
+    expect(languageService.translate('audit.title')).toBe('Audit');
+    expect(languageService.translate('audit.columns.event')).toBe('Event');
 
     languageService.setLanguage('ru');
     expect(languageService.translate('common.cancel')).toBe('Отмена');
@@ -142,6 +148,12 @@ describe('i18n translations', () => {
     expect(languageService.translate('observability.logs.title')).toBe('Логи');
     expect(languageService.translate('analytics.dashboard.overview')).toBe('Обзор платформы');
     expect(languageService.translate('analytics.logs.title')).toBe('Логи платформы');
+    expect(languageService.translate('settings.navigation.root')).toBe('Настройки');
+    expect(languageService.translate('settings.analytics.title')).toBe('Аналитика');
+    expect(languageService.translate('alerts.list.title')).toBe('Оповещения');
+    expect(languageService.translate('alerts.tabs.activity')).toBe('Активность');
+    expect(languageService.translate('audit.title')).toBe('Аудит');
+    expect(languageService.translate('audit.columns.event')).toBe('Событие');
 
     languageService.setLanguage('en');
     expect(languageService.translate('common.cancel')).toBe('Cancel');
@@ -151,5 +163,8 @@ describe('i18n translations', () => {
     expect(languageService.translate('gateways.list.title')).toBe('Gateways');
     expect(languageService.translate('observability.overview.title')).toBe('Overview');
     expect(languageService.translate('analytics.dashboard.overview')).toBe('Platform Overview');
+    expect(languageService.translate('settings.navigation.root')).toBe('Settings');
+    expect(languageService.translate('alerts.list.title')).toBe('Alerts');
+    expect(languageService.translate('audit.title')).toBe('Audit');
   });
 });

@@ -44,6 +44,7 @@ import { ApiLoggingComponent } from './api-logging.component';
 import { GioGoBackButtonModule } from '../../../shared/components/gio-go-back-button/gio-go-back-button.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioTableOfContentsModule } from '../../../shared/components/gio-table-of-contents/gio-table-of-contents.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -75,6 +76,7 @@ import { GioTableOfContentsModule } from '../../../shared/components/gio-table-o
     GioFormTagsInputModule,
     GioPermissionModule,
     GioTableOfContentsModule,
+    TranslatePipe,
   ],
   declarations: [ApiLoggingComponent],
   exports: [ApiLoggingComponent],

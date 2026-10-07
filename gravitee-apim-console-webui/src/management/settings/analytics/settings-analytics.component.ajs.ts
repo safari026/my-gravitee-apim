@@ -21,6 +21,7 @@ import DashboardService from '../../../services/dashboard.service';
 import NotificationService from '../../../services/notification.service';
 import PortalSettingsService from '../../../services/portalSettings.service';
 import UserService from '../../../services/user.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 const SettingsAnalyticsComponentAjs: ng.IComponentOptions = {
   bindings: {
@@ -37,6 +38,7 @@ const SettingsAnalyticsComponentAjs: ng.IComponentOptions = {
     'DashboardService',
     'UserService',
     'ngRouter',
+    'ngLanguageService',
     function (
       NotificationService: NotificationService,
       PortalSettingsService: PortalSettingsService,
@@ -45,10 +47,17 @@ const SettingsAnalyticsComponentAjs: ng.IComponentOptions = {
       DashboardService: DashboardService,
       UserService: UserService,
       router: Router,
+      ngLanguageService: LanguageService,
     ) {
       this.router = router;
       this.settings = cloneDeep(Constants.env.settings);
-      this.providedConfigurationMessage = 'Configuration provided by the system';
+      this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
+      this.displayType = (type: string) => {
+        if (type === 'Platform' || type === 'API' || type === 'Application') {
+          return this.translate('settings.analytics.types.' + type);
+        }
+        return type;
+      };
 
       this.$onInit = () => {
         Promise.all([DashboardService.list('PLATFORM'), DashboardService.list('API'), DashboardService.list('APPLICATION')]).then(
@@ -75,7 +84,7 @@ const SettingsAnalyticsComponentAjs: ng.IComponentOptions = {
       this.save = () => {
         PortalSettingsService.save(this.settings).then(response => {
           merge(Constants.env.settings, response.data);
-          NotificationService.show('Configuration saved');
+          NotificationService.show(this.translate('settings.analytics.saved'));
           this.formSettings.$setPristine();
         });
       };
@@ -93,15 +102,15 @@ const SettingsAnalyticsComponentAjs: ng.IComponentOptions = {
             template: require('html-loader!../../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
             clickOutsideToClose: true,
             locals: {
-              title: `Are you sure you want to delete the dashboard '${dashboard.name}'?`,
+              title: this.translate('settings.analytics.deleteTitle', { name: dashboard.name }),
               msg: '',
-              confirmButton: 'Delete',
+              confirmButton: this.translate('common.delete'),
             },
           })
           .then(response => {
             if (response) {
               DashboardService.delete(dashboard).then(() => {
-                NotificationService.show("Dashboard '" + dashboard.name + "' has been deleted");
+                NotificationService.show(this.translate('settings.analytics.deleted', { name: dashboard.name }));
                 this.$onInit();
               });
             }
@@ -111,7 +120,7 @@ const SettingsAnalyticsComponentAjs: ng.IComponentOptions = {
       this.update = (dashboard: Dashboard) => {
         DashboardService.update(dashboard)
           .then(() => {
-            NotificationService.show('Dashboard saved with success');
+            NotificationService.show(this.translate('settings.analytics.dashboardSaved'));
           })
           .finally(() => {
             this.$onInit();

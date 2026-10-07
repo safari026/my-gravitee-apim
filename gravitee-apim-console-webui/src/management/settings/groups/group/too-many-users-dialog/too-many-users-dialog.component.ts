@@ -20,10 +20,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { GioBannerModule } from '@gravitee/ui-particles-angular';
 
 import { TooManyUsersDialogData } from '../group.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'too-many-users-dialog',
-  imports: [MatCardModule, MatDialogModule, MatButtonModule, GioBannerModule],
+  imports: [MatCardModule, MatDialogModule, MatButtonModule, GioBannerModule, TranslatePipe],
   templateUrl: './too-many-users-dialog.component.html',
   styleUrl: './too-many-users-dialog.component.scss',
 })

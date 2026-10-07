@@ -42,6 +42,7 @@ import { CategoriesComponent } from './categories.component';
 import { GioGoBackButtonModule } from '../../../shared/components/gio-go-back-button/gio-go-back-button.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [CategoriesComponent, CategoryComponent],
@@ -70,6 +71,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     GioTableWrapperModule,
     MatRadioGroup,
     MatRadioButton,
+    TranslatePipe,
   ],
 })
 export class CategoriesModule {}

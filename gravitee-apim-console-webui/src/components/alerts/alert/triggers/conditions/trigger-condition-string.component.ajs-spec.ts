@@ -17,6 +17,7 @@ import { IComponentControllerService } from 'angular';
 
 import { setupAngularJsTesting } from '../../../../../../old-jest.setup';
 import { Metrics, Scope } from '../../../../../entities/alert';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 setupAngularJsTesting();
 
@@ -26,7 +27,8 @@ describe('AlertTriggerConditionStringComponent', () => {
 
   beforeEach(inject(_$componentController_ => {
     $componentController = _$componentController_;
-    alertTriggerConditionStringComponent = $componentController('gvAlertTriggerConditionString', null, {});
+    const ngLanguageService = new LanguageService();
+    alertTriggerConditionStringComponent = $componentController('gvAlertTriggerConditionString', { ngLanguageService }, {});
   }));
 
   describe('onInit', () => {

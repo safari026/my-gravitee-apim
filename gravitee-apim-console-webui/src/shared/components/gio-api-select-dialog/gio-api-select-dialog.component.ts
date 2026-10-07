@@ -29,6 +29,7 @@ import { CommonModule } from '@angular/common';
 
 import { ApiV2Service } from '../../../services-ngx/api-v2.service';
 import { Api } from '../../../entities/management-api-v2';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 export interface GioApiSelectDialogData {
   title: string;
@@ -50,6 +51,7 @@ export type GioApiSelectDialogResult = Api;
     MatButtonModule,
     GioIconsModule,
     GioAvatarModule,
+    TranslatePipe,
   ],
 })
 export class GioApiSelectDialogComponent implements OnInit {

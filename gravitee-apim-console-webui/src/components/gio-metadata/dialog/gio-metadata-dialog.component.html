@@ -17,13 +17,13 @@
 -->
 <div class="gio-metadata-dialog__title">
   <span mat-dialog-title>
-    <ng-container *ngIf="isApplication">{{ titleKey | translate }}</ng-container>
-    <ng-container *ngIf="!isApplication">{{
+    <ng-container *ngIf="isLocalized">{{ titleKey | translate }}</ng-container>
+    <ng-container *ngIf="!isLocalized">{{
       metadata.defaultValue ? 'Override global metadata' : metadata.action + ' ' + metadata.referenceType + ' metadata'
     }}</ng-container>
   </span>
   <mat-icon class="gio-metadata-dialog__title__cancel"></mat-icon>
-  <button mat-icon-button [attr.aria-label]="isApplication ? ('common.close' | translate) : 'Close'" (click)="onClose()">
+  <button mat-icon-button [attr.aria-label]="'common.close' | translate" (click)="onClose()">
     <mat-icon class="gio-metadata-dialog__title__cancel" svgIcon="gio:cancel"> </mat-icon>
   </button>
 </div>
@@ -33,29 +33,29 @@
     <div class="gio-metadata-dialog__form">
       <mat-form-field appearance="outline" *ngIf="metadata.action === 'Update'">
         <input id="key" type="text" matInput formControlName="key" data-testid="metadata_dialog_key" />
-        <mat-label>{{ isApplication ? ('applications.metadata.dialog.key' | translate) : 'Key' }}</mat-label>
+        <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.key' | translate) : 'Key' }}</mat-label>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
         <input id="name" type="text" matInput formControlName="name" required="true" data-testid="metadata_dialog_name" />
-        <mat-label>{{ isApplication ? ('applications.metadata.dialog.name' | translate) : 'Name' }}</mat-label>
+        <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.name' | translate) : 'Name' }}</mat-label>
       </mat-form-field>
 
       <mat-form-field appearance="outline">
-        <mat-label>{{ isApplication ? ('applications.metadata.dialog.format' | translate) : 'Format' }}</mat-label>
+        <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.format' | translate) : 'Format' }}</mat-label>
         <mat-select formControlName="format" data-testid="metadata_dialog_format">
           <mat-option *ngFor="let format of formats" [value]="format">{{ format.toLowerCase() }}</mat-option>
         </mat-select>
       </mat-form-field>
       <mat-form-field appearance="outline" *ngIf="metadata.action === 'Update' && metadata.defaultValue">
         <input id="defaultValue" type="text" matInput formControlName="defaultValue" />
-        <mat-label>{{ isApplication ? ('applications.metadata.dialog.globalValue' | translate) : 'Global value' }}</mat-label>
+        <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.globalValue' | translate) : 'Global value' }}</mat-label>
       </mat-form-field>
 
       <ng-container [ngSwitch]="form.getRawValue()?.format">
         <ng-container *ngSwitchCase="'BOOLEAN'">
           <mat-form-field appearance="outline">
-            <mat-label>{{ isApplication ? ('applications.metadata.dialog.value' | translate) : 'Value' }}</mat-label>
+            <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.value' | translate) : 'Value' }}</mat-label>
             <mat-select id="value-boolean" formControlName="value" data-testid="metadata_dialog_boolean">
               <mat-option [value]="true">true</mat-option>
               <mat-option [value]="false">false</mat-option>
@@ -65,7 +65,7 @@
 
         <ng-container *ngSwitchCase="'DATE'">
           <mat-form-field appearance="outline" class="datepicker">
-            <mat-label>{{ isApplication ? ('applications.metadata.dialog.chooseDate' | translate) : 'Choose a date' }}</mat-label>
+            <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.chooseDate' | translate) : 'Choose a date' }}</mat-label>
             <div class="gio-metadata-dialog__datepicker">
               <input id="value-date" matInput [matDatepicker]="picker" formControlName="value" data-testid="metadata_dialog_date_value" />
               <mat-datepicker-toggle matIconSuffix [for]="picker">
@@ -73,14 +73,14 @@
               </mat-datepicker-toggle>
               <mat-datepicker #picker></mat-datepicker>
             </div>
-            <mat-hint>{{ isApplication ? ('applications.metadata.dialog.dateHint' | translate) : 'MM/DD/YYYY' }}</mat-hint>
-            <mat-error>{{ isApplication ? ('applications.metadata.dialog.dateError' | translate) : 'Please enter a valid date' }}</mat-error>
+            <mat-hint>{{ isLocalized ? (i18nPrefix + '.dialog.dateHint' | translate) : 'MM/DD/YYYY' }}</mat-hint>
+            <mat-error>{{ isLocalized ? (i18nPrefix + '.dialog.dateError' | translate) : 'Please enter a valid date' }}</mat-error>
           </mat-form-field>
         </ng-container>
 
         <ng-container *ngSwitchCase="'NUMERIC'">
           <mat-form-field appearance="outline">
-            <mat-label>{{ isApplication ? ('applications.metadata.dialog.value' | translate) : 'Value' }}</mat-label>
+            <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.value' | translate) : 'Value' }}</mat-label>
             <input
               id="value-numeric"
               type="number"
@@ -89,14 +89,14 @@
               required="true"
               data-testid="metadata_dialog_numeric_value"
             />
-            <mat-hint>{{ isApplication ? ('applications.metadata.dialog.numberHint' | translate) : 'Ex: 123000.92' }}</mat-hint>
-            <mat-error>{{ isApplication ? ('applications.metadata.dialog.numberError' | translate) : 'Invalid number' }}</mat-error>
+            <mat-hint>{{ isLocalized ? (i18nPrefix + '.dialog.numberHint' | translate) : 'Ex: 123000.92' }}</mat-hint>
+            <mat-error>{{ isLocalized ? (i18nPrefix + '.dialog.numberError' | translate) : 'Invalid number' }}</mat-error>
           </mat-form-field>
         </ng-container>
 
         <ng-container *ngSwitchCase="'MAIL'">
           <mat-form-field appearance="outline">
-            <mat-label>{{ isApplication ? ('applications.metadata.dialog.value' | translate) : 'Value' }}</mat-label>
+            <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.value' | translate) : 'Value' }}</mat-label>
             <input
               [pattern]="mailPattern"
               id="value-mail"
@@ -106,14 +106,14 @@
               required="true"
               data-testid="metadata_dialog_mail_value"
             />
-            <mat-hint>{{ isApplication ? ('applications.metadata.dialog.mailHint' | translate) : 'Ex: john@doe.com' }}</mat-hint>
-            <mat-error>{{ isApplication ? ('applications.metadata.dialog.mailError' | translate) : 'Invalid email' }}</mat-error>
+            <mat-hint>{{ isLocalized ? (i18nPrefix + '.dialog.mailHint' | translate) : 'Ex: john@doe.com' }}</mat-hint>
+            <mat-error>{{ isLocalized ? (i18nPrefix + '.dialog.mailError' | translate) : 'Invalid email' }}</mat-error>
           </mat-form-field>
         </ng-container>
 
         <ng-container *ngSwitchCase="'URL'">
           <mat-form-field appearance="outline">
-            <mat-label>{{ isApplication ? ('applications.metadata.dialog.value' | translate) : 'Value' }}</mat-label>
+            <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.value' | translate) : 'Value' }}</mat-label>
             <input
               [pattern]="urlPattern"
               id="value-url"
@@ -123,14 +123,14 @@
               required="true"
               data-testid="metadata_dialog_url_value"
             />
-            <mat-hint>{{ isApplication ? ('applications.metadata.dialog.urlHint' | translate) : 'Ex: https://gravitee.io' }}</mat-hint>
-            <mat-error>{{ isApplication ? ('applications.metadata.dialog.urlError' | translate) : 'Invalid URL' }}</mat-error>
+            <mat-hint>{{ isLocalized ? (i18nPrefix + '.dialog.urlHint' | translate) : 'Ex: https://gravitee.io' }}</mat-hint>
+            <mat-error>{{ isLocalized ? (i18nPrefix + '.dialog.urlError' | translate) : 'Invalid URL' }}</mat-error>
           </mat-form-field>
         </ng-container>
 
         <ng-container *ngSwitchDefault>
           <mat-form-field appearance="outline">
-            <mat-label>{{ isApplication ? ('applications.metadata.dialog.value' | translate) : 'Value' }}</mat-label>
+            <mat-label>{{ isLocalized ? (i18nPrefix + '.dialog.value' | translate) : 'Value' }}</mat-label>
             <input
               id="value-string"
               type="text"
@@ -148,11 +148,11 @@
     <button
       mat-stroked-button
       type="button"
-      [attr.aria-label]="isApplication ? ('common.cancel' | translate) : 'Cancel'"
+      [attr.aria-label]="'common.cancel' | translate"
       (click)="onClose()"
       data-testid="metadata_dialog_cancel"
     >
-      {{ isApplication ? ('common.cancel' | translate) : 'Cancel' }}
+      {{ 'common.cancel' | translate }}
     </button>
     <button
       [disabled]="form.invalid || form.pristine || !hasChange"
@@ -161,7 +161,7 @@
       color="primary"
       data-testid="metadata_dialog_save"
     >
-      {{ isApplication ? ('common.save' | translate) : 'Save' }}
+      {{ 'common.save' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

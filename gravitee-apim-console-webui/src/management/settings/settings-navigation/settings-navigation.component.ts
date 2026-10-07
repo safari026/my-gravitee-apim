@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnInit } from '@angular/core';
-import { takeUntil } from 'rxjs/operators';
+import { ChangeDetectorRef, Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { skip, takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { GioMenuService } from '@gravitee/ui-particles-angular';
+import { GioMenuService, GioMenuSearchService } from '@gravitee/ui-particles-angular';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { GroupItem, MenuItem, SettingsNavigationService } from './settings-navigation.service';
+
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'settings-navigation',
@@ -27,16 +30,20 @@ import { GroupItem, MenuItem, SettingsNavigationService } from './settings-navig
   styleUrls: ['./settings-navigation.component.scss'],
   standalone: false,
 })
-export class SettingsNavigationComponent implements OnInit {
+export class SettingsNavigationComponent implements OnInit, OnDestroy {
   public groupItems: GroupItem[] = [];
   public hasBreadcrumb = false;
-  private unsubscribe$ = new Subject();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
     private readonly gioMenuService: GioMenuService,
     private readonly settingsNavigationService: SettingsNavigationService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly gioMenuSearchService: GioMenuSearchService,
   ) {}
 
   ngOnInit() {
@@ -45,6 +52,28 @@ export class SettingsNavigationComponent implements OnInit {
     });
 
     this.groupItems = this.settingsNavigationService.getSettingsNavigationRoutes();
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.groupItems = this.settingsNavigationService.getSettingsNavigationRoutes();
+        this.refreshSearchItems();
+        this.changeDetectorRef.markForCheck();
+      });
+  }
+
+  private refreshSearchItems(): void {
+    const envHrid = this.activatedRoute.pathFromRoot.map(route => route.snapshot.params.envHrid).find(Boolean);
+    if (!envHrid) {
+      return;
+    }
+    this.gioMenuSearchService.removeMenuSearchItems([envHrid]);
+    this.gioMenuSearchService.addMenuSearchItems(this.settingsNavigationService.getSettingsNavigationSearchItems(envHrid));
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   isActive(item: MenuItem): boolean {

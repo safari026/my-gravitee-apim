@@ -27,6 +27,7 @@ import { MatInput } from '@angular/material/input';
 import { IconService } from '../../../../../../services-ngx/icon.service';
 import { PolicyV2Service } from '../../../../../../services-ngx/policy-v2.service';
 import { SharedPolicyGroup } from '../../../../../../entities/management-api-v2';
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 
 export interface HistoryStudioDialogData {
   sharedPolicyGroup: SharedPolicyGroup;
@@ -52,6 +53,7 @@ export type HistoryStudioDialogResult = false | 'RESTORE_VERSION';
     MatLabel,
     ReactiveFormsModule,
     GioBannerModule,
+    TranslatePipe,
   ],
 })
 export class HistoryStudioDialogComponent {

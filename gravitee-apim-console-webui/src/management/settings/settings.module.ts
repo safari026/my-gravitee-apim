@@ -39,6 +39,7 @@ import { CategoriesModule } from './categories/categories.module';
 import { CustomUserFieldsModule } from './custom-user-fields/custom-user-fields.module';
 
 import { DocumentationModule } from '../../components/documentation/documentation.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -61,6 +62,7 @@ import { DocumentationModule } from '../../components/documentation/documentatio
     ApiPortalHeaderModule,
     CustomUserFieldsModule,
     CategoriesModule,
+    TranslatePipe,
   ],
   declarations: [
     SettingsNavigationComponent,

@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>{{ customUserFieldsDialogData.action }} user field</span>
+<span mat-dialog-title>{{ isUpdate ? ('settings.userFields.updateTitle' | translate) : ('settings.userFields.createTitle' | translate) }}</span>
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content class="form-fields">
@@ -30,7 +30,7 @@
         data-testid="key-input"
         (click)="initOptions()"
       />
-      <mat-label>Key</mat-label>
+      <mat-label>{{ 'settings.userFields.key' | translate }}</mat-label>
       <mat-autocomplete #auto="matAutocomplete">
         @for (option of filteredOptions | async; track option) {
           <mat-option [value]="option">
@@ -38,35 +38,35 @@
           </mat-option>
         }
       </mat-autocomplete>
-      <mat-error *ngIf="form.get('key').hasError('pattern')">Only a-zA-Z0-9_- characters allowed</mat-error>
-      <mat-error *ngIf="form.get('key').hasError('required')">Key is required.</mat-error>
-      <mat-error *ngIf="form.get('key').hasError('maxlength')">Key can not exceed 50 characters.</mat-error>
-      <mat-error *ngIf="form.get('key').hasError('minlength')">Key has to be at least 1 characters long. </mat-error>
+      <mat-error *ngIf="form.get('key').hasError('pattern')">{{ 'settings.userFields.keyPattern' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('key').hasError('required')">{{ 'settings.userFields.keyRequired' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('key').hasError('maxlength')">{{ 'settings.userFields.keyMax' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('key').hasError('minlength')">{{ 'settings.userFields.keyMin' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field">
       <input id="label" type="text" matInput formControlName="label" required="true" data-testid="label-input" />
-      <mat-label>Label</mat-label>
-      <mat-error *ngIf="form.get('label').hasError('required')">Label is required.</mat-error>
-      <mat-error *ngIf="form.get('label').hasError('maxlength')">Label length can not exceed 50 characters.</mat-error>
-      <mat-error *ngIf="form.get('label').hasError('minlength')">Label has to be at least 1 characters long. </mat-error>
+      <mat-label>{{ 'settings.userFields.label' | translate }}</mat-label>
+      <mat-error *ngIf="form.get('label').hasError('required')">{{ 'settings.userFields.labelRequired' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('label').hasError('maxlength')">{{ 'settings.userFields.labelMax' | translate }}</mat-error>
+      <mat-error *ngIf="form.get('label').hasError('minlength')">{{ 'settings.userFields.labelMin' | translate }}</mat-error>
     </mat-form-field>
 
     <gio-form-slide-toggle>
-      <gio-form-label>Required</gio-form-label>
-      <mat-slide-toggle gioFormSlideToggle formControlName="required" aria-label="Required" name="required"></mat-slide-toggle>
+      <gio-form-label>{{ 'settings.userFields.required' | translate }}</gio-form-label>
+      <mat-slide-toggle gioFormSlideToggle formControlName="required" [attr.aria-label]="'settings.userFields.required' | translate" name="required"></mat-slide-toggle>
     </gio-form-slide-toggle>
 
     <mat-form-field appearance="outline">
-      <mat-label>Values</mat-label>
-      <gio-form-tags-input placeholder="Type value and confirm with enter." formControlName="values"></gio-form-tags-input>
+      <mat-label>{{ 'settings.userFields.values' | translate }}</mat-label>
+      <gio-form-tags-input [placeholder]="'settings.userFields.valuesPlaceholder' | translate" formControlName="values"></gio-form-tags-input>
     </mat-form-field>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-stroked-button type="button" [attr.aria-label]="'Cancel'" (click)="onClose()" data-testid="dialog-cancel">Cancel</button>
+    <button mat-stroked-button type="button" [attr.aria-label]="'common.cancel' | translate" (click)="onClose()" data-testid="dialog-cancel">{{ 'common.cancel' | translate }}</button>
     <button [disabled]="form.invalid || form.pristine" mat-raised-button type="submit" color="primary" data-testid="dialog-save">
-      Save
+      {{ 'common.save' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

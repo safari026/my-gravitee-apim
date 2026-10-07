@@ -515,6 +515,7 @@ export const enApplications = {
   metadata: {
     title: 'Notification Template metadata',
     add: 'Add Notification Template Metadata',
+    addAria: 'Add notification template metadata',
     description: 'Create notification template of application metadata to retrieve custom information about your API',
     tableCaption: 'Application metadata table',
     filterSource: 'Filter by source',

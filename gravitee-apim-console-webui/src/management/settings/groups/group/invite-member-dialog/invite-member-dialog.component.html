@@ -15,11 +15,11 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>Invite Member</h2>
+<h2 mat-dialog-title>{{ 'settings.groups.inviteMemberTitle' | translate }}</h2>
 <mat-dialog-content>
   <form [formGroup]="invitationForm" class="invite-member__form">
-    <mat-form-field aria-hidden="false" aria-label="Select default API role">
-      <mat-label>Default API role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApiRole' | translate }}</mat-label>
       <mat-select formControlName="defaultAPIRole">
         @for (role of defaultAPIRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="disabledAPIRoles().has(role.id)">{{ role.name }} </mat-option>
@@ -27,8 +27,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default API role">
-      <mat-label>Default application role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApplicationRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApplicationRole' | translate }}</mat-label>
       <mat-select formControlName="defaultApplicationRole">
         @for (role of defaultApplicationRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }} </mat-option>
@@ -37,13 +37,15 @@
     </mat-form-field>
 
     <mat-form-field>
-      <mat-label>Email</mat-label>
+      <mat-label>{{ 'settings.groups.email' | translate }}</mat-label>
       <input matInput formControlName="email" type="email" required />
     </mat-form-field>
   </form>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" type="submit" (click)="submit()" [disabled]="!invitationForm.valid">Send Invitation</button>
-  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" type="submit" (click)="submit()" [disabled]="!invitationForm.valid">
+    {{ 'settings.groups.sendInvitation' | translate }}
+  </button>
+  <button mat-raised-button mat-dialog-close>{{ 'common.cancel' | translate }}</button>
 </mat-dialog-actions>

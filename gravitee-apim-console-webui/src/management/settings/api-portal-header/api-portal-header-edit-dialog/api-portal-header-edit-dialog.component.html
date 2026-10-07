@@ -16,20 +16,22 @@
 
 -->
 
-<h4 mat-dialog-title>{{ isUpdate ? 'Update' : 'New' }} API Information</h4>
+<h4 mat-dialog-title>
+  {{ isUpdate ? ('settings.apiPortalHeader.dialogUpdate' | translate) : ('settings.apiPortalHeader.dialogCreate' | translate) }}
+</h4>
 <div mat-dialog-content class="controls">
   <mat-form-field class="control">
-    <mat-label>Name</mat-label>
+    <mat-label>{{ 'settings.apiPortalHeader.name' | translate }}</mat-label>
     <input required matInput [(ngModel)]="data.name" data-testid="name-input" />
   </mat-form-field>
   <mat-form-field class="control">
-    <mat-label>Value</mat-label>
+    <mat-label>{{ 'settings.apiPortalHeader.value' | translate }}</mat-label>
     <input required matInput [(ngModel)]="data.value" data-testid="value-input" />
   </mat-form-field>
 </div>
 <div mat-dialog-actions class="action-buttons">
-  <button mat-flat-button (click)="onCancelClick()" data-testid="cancel-button">Cancel</button>
+  <button mat-flat-button (click)="onCancelClick()" data-testid="cancel-button">{{ 'common.cancel' | translate }}</button>
   <button mat-raised-button [mat-dialog-close]="data" [disabled]="isDisabled()" color="primary" data-testid="submit-button">
-    {{ isUpdate ? 'Update' : 'Create' }}
+    {{ isUpdate ? ('common.save' | translate) : ('common.create' | translate) }}
   </button>
 </div>

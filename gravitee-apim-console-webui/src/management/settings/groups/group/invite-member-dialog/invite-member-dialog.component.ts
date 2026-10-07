@@ -33,6 +33,7 @@ import { EnvironmentSettingsService } from '../../../../../services-ngx/environm
 import { RoleName, Member } from '../membershipState';
 import { AddOrInviteMembersDialogData } from '../group.component';
 import { Group } from '../../../../../entities/group/group';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'invite-member-dialog',
@@ -47,6 +48,7 @@ import { Group } from '../../../../../entities/group/group';
     ReactiveFormsModule,
     MatCardModule,
     MatIconModule,
+    TranslatePipe,
   ],
   templateUrl: './invite-member-dialog.component.html',
   styleUrl: './invite-member-dialog.component.scss',

@@ -24,7 +24,9 @@ const WidgetDataTableConfigurationComponent: ng.IComponentOptions = {
   },
   controller: [
     'DashboardService',
-    function (DashboardService: DashboardService) {
+    'ngLanguageService',
+    function (DashboardService: DashboardService, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.fields = DashboardService.getIndexedFields();
       this.projections = concat(
         {

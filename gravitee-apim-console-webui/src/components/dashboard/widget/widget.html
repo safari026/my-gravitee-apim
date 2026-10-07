@@ -23,17 +23,17 @@
     </md-card-title-text>
     <md-card-title-text ng-if="$ctrl.isModificationMode && $ctrl.updateMode">
       <md-input-container>
-        <label>Title</label>
+        <label>{{ $ctrl.translate('settings.analytics.editor.title') }}</label>
         <input type="text" ng-model="$ctrl.widget.title" required />
       </md-input-container>
       <md-input-container>
-        <label>Subtitle</label>
+        <label>{{ $ctrl.translate('settings.analytics.editor.subtitle') }}</label>
         <input type="text" ng-model="$ctrl.widget.subhead" />
       </md-input-container>
     </md-card-title-text>
     <md-card-title-media>
       <a
-        aria-label="Modify widget"
+        aria-label="{{ $ctrl.translate('settings.analytics.editor.modify') }}"
         ng-if="$ctrl.updateMode"
         ng-click="$ctrl.isModificationMode=!$ctrl.isModificationMode"
         ng-switch="$ctrl.isModificationMode"
@@ -41,15 +41,24 @@
         <ng-md-icon ng-switch-when="true" icon="border_color"></ng-md-icon>
         <ng-md-icon ng-switch-default icon="edit"></ng-md-icon>
       </a>
-      <a title="{{ $ctrl.translate('applications.analytics.removeWidget') }}" ng-click="$ctrl.delete()"><ng-md-icon icon="close"></ng-md-icon></a>
+      <a
+        title="{{ $ctrl.updateMode ? $ctrl.translate('settings.analytics.editor.remove') : $ctrl.translate('applications.analytics.removeWidget') }}"
+        ng-click="$ctrl.delete()"
+        ><ng-md-icon icon="close"></ng-md-icon
+      ></a>
     </md-card-title-media>
   </md-card-title>
 
   <md-card-content ng-if="$ctrl.updateMode">
-    <gravitee-empty-state ng-if="!$ctrl.isModificationMode" icon="{{$ctrl.getIconFromType()}}" model="Dashboard"></gravitee-empty-state>
+    <gravitee-empty-state
+      ng-if="!$ctrl.isModificationMode"
+      icon="{{$ctrl.getIconFromType()}}"
+      model="Dashboard"
+      message="{{$ctrl.translate('settings.analytics.editor.startAdding')}}"
+    ></gravitee-empty-state>
     <div class="gv-widget-content" ng-if="!$ctrl.widget.chart.type" layout="column">
       <md-input-container>
-        <label>Widget type</label>
+        <label>{{ $ctrl.translate('settings.analytics.editor.widgetType') }}</label>
         <md-select ng-model="$ctrl.widget.chart.type" ng-change="$ctrl.isModificationMode = true" required>
           <md-option ng-repeat="widgetType in ['table', 'line', 'pie', 'map', 'stats']" ng-value="widgetType">{{widgetType}}</md-option>
         </md-select>

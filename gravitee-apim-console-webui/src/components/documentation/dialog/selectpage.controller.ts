@@ -15,14 +15,23 @@
  */
 import { IScope } from 'angular';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 interface ISelectPageToLinkScope extends IScope {
   pages: any[];
   title: string;
   selectedPage: any;
 }
-function SelectPageDialogController($scope: ISelectPageToLinkScope, $mdDialog: angular.material.IDialogService, locals: any) {
+function SelectPageDialogController(
+  $scope: ISelectPageToLinkScope,
+  $mdDialog: angular.material.IDialogService,
+  locals: any,
+  ngLanguageService: LanguageService,
+) {
   $scope.pages = locals.pages;
   $scope.title = locals.title;
+
+  this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
 
   this.cancel = () => {
     $mdDialog.hide();
@@ -32,6 +41,6 @@ function SelectPageDialogController($scope: ISelectPageToLinkScope, $mdDialog: a
     $mdDialog.hide($scope.selectedPage);
   };
 }
-SelectPageDialogController.$inject = ['$scope', '$mdDialog', 'locals'];
+SelectPageDialogController.$inject = ['$scope', '$mdDialog', 'locals', 'ngLanguageService'];
 
 export default SelectPageDialogController;

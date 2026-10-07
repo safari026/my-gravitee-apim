@@ -18,14 +18,14 @@
 
 <div layout="row">
   <md-input-container>
-    <label>Low threshold</label>
+    <label>{{$ctrl.translate('alerts.condition.lowThreshold')}}</label>
     <input
       ng-model="$ctrl.condition.thresholdLow"
       required
       type="number"
       min="1"
       name="thresholdLow"
-      aria-label="trigger threshold low"
+      aria-label="{{$ctrl.translate('alerts.condition.lowAria')}}"
       ng-disabled="$ctrl.isReadonly"
     />
     <!--
@@ -34,22 +34,22 @@
     </div>
     -->
     <div ng-messages="$ctrl.formAlert.thresholdLow.$error">
-      <div ng-message="required">Threshold is required.</div>
-      <div ng-message="min">Threshold must be higher than 0.</div>
+    <div ng-message="required">{{$ctrl.translate('alerts.condition.thresholdRequired')}}</div>
+    <div ng-message="min">{{$ctrl.translate('alerts.condition.thresholdMin')}}</div>
     </div>
   </md-input-container>
 
-  <span flex="10" style="display: grid; align-items: center" align="center"> and </span>
+  <span flex="10" style="display: grid; align-items: center" align="center"> {{$ctrl.translate('alerts.condition.and')}} </span>
 
   <md-input-container>
-    <label>High threshold</label>
+    <label>{{$ctrl.translate('alerts.condition.highThreshold')}}</label>
     <input
       ng-model="$ctrl.condition.thresholdHigh"
       required
       type="number"
       min="{{$ctrl.condition.thresholdLow}}"
       name="thresholdHigh"
-      aria-label="trigger threshold high"
+      aria-label="{{$ctrl.translate('alerts.condition.highAria')}}"
       ng-disabled="$ctrl.isReadonly"
     />
     <!--
@@ -58,8 +58,8 @@
     </div>
     -->
     <div ng-messages="$ctrl.formAlert.thresholdHigh.$error">
-      <div ng-message="required">Threshold is required.</div>
-      <div ng-message="min">Threshold must be higher than 0.</div>
+    <div ng-message="required">{{$ctrl.translate('alerts.condition.thresholdRequired')}}</div>
+    <div ng-message="min">{{$ctrl.translate('alerts.condition.thresholdMin')}}</div>
     </div>
   </md-input-container>
 </div>

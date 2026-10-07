@@ -19,6 +19,7 @@ import { Alert, Scope } from '../../entities/alert';
 import AlertService from '../../services/alert.service';
 import NotificationService from '../../services/notification.service';
 import UserService from '../../services/user.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 const AlertsComponentAjs: ng.IComponentOptions = {
   bindings: {
@@ -33,7 +34,16 @@ const AlertsComponentAjs: ng.IComponentOptions = {
     'NotificationService',
     'UserService',
     '$mdDialog',
-    function (ngRouter: Router, AlertService: AlertService, NotificationService: NotificationService, UserService: UserService, $mdDialog) {
+    'ngLanguageService',
+    function (
+      ngRouter: Router,
+      AlertService: AlertService,
+      NotificationService: NotificationService,
+      UserService: UserService,
+      $mdDialog,
+      ngLanguageService: LanguageService,
+    ) {
+      this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
       this.alerts = this.alerts ?? [];
       this.goTo = (urlSegment: string) => {
         ngRouter.navigate(['./', urlSegment], { relativeTo: this.activatedRoute });
@@ -48,15 +58,15 @@ const AlertsComponentAjs: ng.IComponentOptions = {
             template: require('html-loader!../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
             clickOutsideToClose: true,
             locals: {
-              title: `Are you sure you want to delete the alert '${alert.name}'?`,
+              title: this.translate('alerts.list.deleteConfirm', { name: alert.name }),
               msg: '',
-              confirmButton: 'Delete',
+              confirmButton: this.translate('common.delete'),
             },
           })
           .then(response => {
             if (response) {
               AlertService.delete(alert).then(() => {
-                NotificationService.show("Alert '" + alert.name + "' has been deleted");
+                NotificationService.show(this.translate('alerts.list.deleted', { name: alert.name }));
                 this.reload();
               });
             }
@@ -67,7 +77,7 @@ const AlertsComponentAjs: ng.IComponentOptions = {
         this.enhanceAlert(alert);
         AlertService.update(alert)
           .then(() => {
-            NotificationService.show('Alert saved with success');
+            NotificationService.show(this.translate('alerts.list.saved'));
           })
           .finally(() => {
             this.reload();

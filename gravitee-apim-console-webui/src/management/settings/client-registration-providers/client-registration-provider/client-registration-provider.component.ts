@@ -15,17 +15,19 @@
  */
 import { JKSTrustStore, PKCS12TrustStore } from 'src/entities/management-api-v2';
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject } from 'rxjs';
 import { FormControl, UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { Header } from '@gravitee/ui-particles-angular';
-import { catchError, takeUntil, tap } from 'rxjs/operators';
+import { catchError, skip, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ClientRegistrationProvidersService } from '../../../../services-ngx/client-registration-providers.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ClientRegistrationProvider } from '../../../../entities/client-registration-provider/clientRegistrationProvider';
 import { nonBlankEntriesValidator, toDictionary, toGioFormHeader, uniqueKeysValidator } from '../../../../util/gio-form-header.util';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'client-registration-provider',
@@ -37,42 +39,32 @@ export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   public updateMode: boolean;
   public providerForm: UntypedFormGroup;
-  public initialAccessTokenTypes: { name: string; value: ClientRegistrationProvider['initial_access_token_type'] }[] = [
-    {
-      name: 'Client Credentials',
-      value: 'CLIENT_CREDENTIALS',
-    },
-    {
-      name: 'Initial Access Token',
-      value: 'INITIAL_ACCESS_TOKEN',
-    },
-  ];
+  public initialAccessTokenTypes: { name: string; value: ClientRegistrationProvider['initial_access_token_type'] }[] = [];
   public renewClientSecretMethods = ['POST', 'PATCH', 'PUT'];
   public renewClientSecretClientIdElToken = '{#client_id}';
   public renewClientSecretEndpointUrlExample: string = 'https://[am_gateway]/[domain]/oidc/register/{#client_id}/renew_secret';
 
   public formInitialValues: unknown;
 
-  public trustStoreTypes = [
-    { label: 'None', value: 'NONE' },
-    { label: 'Java Trust Store (.jks)', value: 'JKS' },
-    { label: 'PKCS#12 (.p12) / PFX (.pfx)', value: 'PKCS12' },
-  ];
+  public trustStoreTypes: { label: string; value: string }[] = [];
 
-  public keyStoreTypes = [
-    { label: 'None', value: 'NONE' },
-    { label: 'Java Key Store (.jks)', value: 'JKS' },
-    { label: 'PKCS#12 (.p12) / PFX (.pfx)', value: 'PKCS12' },
-  ];
+  public keyStoreTypes: { label: string; value: string }[] = [];
 
   constructor(
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
     private readonly clientRegistrationProvidersService: ClientRegistrationProvidersService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit(): void {
+    this.buildSelectOptions();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.buildSelectOptions());
+
     if (this.activatedRoute?.snapshot?.params?.providerId) {
       this.clientRegistrationProvidersService
         .get(this.activatedRoute.snapshot.params.providerId)
@@ -111,13 +103,17 @@ export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
           .update({ ...providerFormValueToSave, id: this.activatedRoute.snapshot.params.providerId })
           .pipe(
             tap(clientRegistrationProvider => {
-              this.snackBarService.success(`Client registration provider  ${clientRegistrationProvider.name} has been updated.`);
+              this.snackBarService.success(
+                this.languageService.translate('settings.clientRegistration.providerUpdated', { name: clientRegistrationProvider.name }),
+              );
               this.providerForm.markAsPristine();
             }),
           )
       : this.clientRegistrationProvidersService.create(providerFormValueToSave).pipe(
           tap(clientRegistrationProvider => {
-            this.snackBarService.success(`Client registration provider  ${clientRegistrationProvider.name} has been created.`);
+            this.snackBarService.success(
+              this.languageService.translate('settings.clientRegistration.providerCreated', { name: clientRegistrationProvider.name }),
+            );
             this.providerForm.markAsPristine();
           }),
         );
@@ -173,6 +169,29 @@ export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
         this.providerForm.updateValueAndValidity();
       });
     this.formInitialValues = this.providerForm.value;
+  }
+
+  private buildSelectOptions(): void {
+    this.initialAccessTokenTypes = [
+      {
+        name: this.languageService.translate('settings.clientRegistration.tokenClientCredentials'),
+        value: 'CLIENT_CREDENTIALS',
+      },
+      {
+        name: this.languageService.translate('settings.clientRegistration.tokenInitialAccessToken'),
+        value: 'INITIAL_ACCESS_TOKEN',
+      },
+    ];
+    this.trustStoreTypes = [
+      { label: this.languageService.translate('settings.clientRegistration.storeNone'), value: 'NONE' },
+      { label: this.languageService.translate('settings.clientRegistration.storeJksTrust'), value: 'JKS' },
+      { label: this.languageService.translate('settings.clientRegistration.storePkcs12'), value: 'PKCS12' },
+    ];
+    this.keyStoreTypes = [
+      { label: this.languageService.translate('settings.clientRegistration.storeNone'), value: 'NONE' },
+      { label: this.languageService.translate('settings.clientRegistration.storeJksKey'), value: 'JKS' },
+      { label: this.languageService.translate('settings.clientRegistration.storePkcs12'), value: 'PKCS12' },
+    ];
   }
 
   isClientCredentials(): boolean {

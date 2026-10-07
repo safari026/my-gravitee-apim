@@ -31,6 +31,7 @@ import {
   GioApiSelectDialogData,
   GioApiSelectDialogResult,
 } from '../../../shared/components/gio-api-select-dialog/gio-api-select-dialog.component';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'app-top-apis',
@@ -48,6 +49,7 @@ export class TopApisComponent implements OnInit {
     public topApiService: TopApiService,
     private snackBarService: SnackBarService,
     private matDialog: MatDialog,
+    private languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -95,7 +97,7 @@ export class TopApisComponent implements OnInit {
       .pipe(
         tap((): void => {
           this.isLoading = false;
-          this.snackBarService.success('List updated successfully');
+          this.snackBarService.success(this.languageService.translate('settings.topApis.listUpdated'));
         }),
         catchError(({ error }) => {
           tap(() => (this.isLoading = false));
@@ -113,9 +115,9 @@ export class TopApisComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Remove from Top APIs',
-          content: 'Are you sure you want to remove this API?',
-          confirmButton: 'Remove',
+          title: this.languageService.translate('settings.topApis.removeTitle'),
+          content: this.languageService.translate('settings.topApis.removeContent'),
+          confirmButton: this.languageService.translate('common.remove'),
         },
         role: 'alertdialog',
         id: 'removeTopApiDialog',
@@ -128,7 +130,7 @@ export class TopApisComponent implements OnInit {
         switchMap(() => this.topApiService.getList()),
         tap((): void => {
           this.isLoading = false;
-          this.snackBarService.success(`${topApi.name} removed successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.topApis.removed', { name: topApi.name }));
         }),
         catchError(({ error }) => {
           this.isLoading = false;
@@ -146,7 +148,7 @@ export class TopApisComponent implements OnInit {
     this.matDialog
       .open<GioApiSelectDialogComponent, GioApiSelectDialogData, GioApiSelectDialogResult>(GioApiSelectDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
-        data: { title: 'Add API' },
+        data: { title: this.languageService.translate('settings.topApis.addDialogTitle') },
         role: 'alertdialog',
         id: 'addTopApiDialog',
         autoFocus: false,
@@ -158,7 +160,7 @@ export class TopApisComponent implements OnInit {
         switchMap(api => this.topApiService.create(api.id)),
         tap(() => {
           this.isLoading = false;
-          this.snackBarService.success(`API added successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.topApis.added'));
         }),
         catchError(({ error }) => {
           this.isLoading = false;

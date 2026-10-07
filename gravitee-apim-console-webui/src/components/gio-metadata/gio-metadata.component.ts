@@ -111,11 +111,25 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   @Input()
   readOnly: boolean;
 
+  get metadataI18nPrefix(): string | null {
+    if (this.referenceType === 'Application') {
+      return 'applications.metadata';
+    }
+    if (this.referenceType === 'Global') {
+      return 'settings.metadata';
+    }
+    return null;
+  }
+
   constructor(
     private matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
     private readonly languageService: LanguageService,
   ) {}
+
+  metadataLabel(key: string, fallback: string, params?: Record<string, string | number>): string {
+    return this.metadataI18nPrefix ? this.languageService.translate(`${this.metadataI18nPrefix}.${key}`, params) : fallback;
+  }
 
   ngOnInit(): void {
     this.referenceType = this.metadataSaveServices.type;
@@ -189,19 +203,10 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(_ =>
-          this.snackBarService.success(
-            this.referenceType === 'Application'
-              ? this.languageService.translate('applications.metadata.updated', { name: element.name })
-              : `'${element.name}' updated successfully`,
-          ),
+          this.snackBarService.success(this.metadataLabel('updated', `'${element.name}' updated successfully`, { name: element.name })),
         ),
         catchError(({ error }) => {
-          this.snackBarService.error(
-            error?.message ??
-              (this.referenceType === 'Application'
-                ? this.languageService.translate('applications.metadata.updateError')
-                : 'Error during update'),
-          );
+          this.snackBarService.error(error?.message ?? this.metadataLabel('updateError', 'Error during update'));
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),
@@ -211,33 +216,20 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   }
 
   deleteMetadata(element: MetadataVM): void {
-    const title =
-      this.referenceType === 'Application'
-        ? element.defaultValue
-          ? this.languageService.translate('applications.metadata.resetTitle')
-          : this.languageService.translate('applications.metadata.deleteTitle', { type: this.referenceType })
-        : element.defaultValue
-          ? 'Reset global metadata'
-          : `Delete ${this.referenceType} metadata`;
-    const content =
-      this.referenceType === 'Application'
-        ? element.defaultValue
-          ? this.languageService.translate('applications.metadata.resetContent', {
-              name: element.name,
-              defaultValue: element.defaultValue,
-            })
-          : this.languageService.translate('applications.metadata.deleteContent', { type: this.referenceType, name: element.name })
-        : element.defaultValue
-          ? `Are you sure you want to reset '${element.name}' to its original value '${element.defaultValue}'?`
-          : `Are you sure you want to delete ${this.referenceType} metadata '${element.name}'?`;
-    const confirmButton =
-      this.referenceType === 'Application'
-        ? element.defaultValue
-          ? this.languageService.translate('common.reset')
-          : this.languageService.translate('common.delete')
-        : element.defaultValue
-          ? 'Reset'
-          : 'Delete';
+    const title = element.defaultValue
+      ? this.metadataLabel('resetTitle', 'Reset global metadata')
+      : this.metadataLabel('deleteTitle', `Delete ${this.referenceType} metadata`, { type: this.referenceType });
+    const content = element.defaultValue
+      ? this.metadataLabel(
+          'resetContent',
+          `Are you sure you want to reset '${element.name}' to its original value '${element.defaultValue}'?`,
+          { name: element.name, defaultValue: element.defaultValue },
+        )
+      : this.metadataLabel('deleteContent', `Are you sure you want to delete ${this.referenceType} metadata '${element.name}'?`, {
+          type: this.referenceType,
+          name: element.name,
+        });
+    const confirmButton = this.languageService.translate(element.defaultValue ? 'common.reset' : 'common.delete');
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
@@ -253,19 +245,10 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
         filter(confirmed => confirmed),
         switchMap(_ => this.metadataSaveServices.delete(element.key)),
         tap(_ =>
-          this.snackBarService.success(
-            this.referenceType === 'Application'
-              ? this.languageService.translate('applications.metadata.deleted', { name: element.name })
-              : `'${element.name}' deleted successfully`,
-          ),
+          this.snackBarService.success(this.metadataLabel('deleted', `'${element.name}' deleted successfully`, { name: element.name })),
         ),
         catchError(({ error }) => {
-          this.snackBarService.error(
-            error?.message ??
-              (this.referenceType === 'Application'
-                ? this.languageService.translate('applications.metadata.deleteError')
-                : 'Error during deletion'),
-          );
+          this.snackBarService.error(error?.message ?? this.metadataLabel('deleteError', 'Error during deletion'));
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),
@@ -293,20 +276,10 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(metadata => {
-          this.snackBarService.success(
-            this.referenceType === 'Application'
-              ? this.languageService.translate('applications.metadata.created', { name: metadata.name })
-              : `'${metadata.name}' created successfully`,
-          );
+          this.snackBarService.success(this.metadataLabel('created', `'${metadata.name}' created successfully`, { name: metadata.name }));
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(
-            error?.message
-              ? error.message
-              : this.referenceType === 'Application'
-                ? this.languageService.translate('applications.metadata.createError')
-                : 'Error during creation',
-          );
+          this.snackBarService.error(error?.message ?? this.metadataLabel('createError', 'Error during creation'));
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),

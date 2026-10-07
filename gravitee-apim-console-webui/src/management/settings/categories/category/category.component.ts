@@ -40,6 +40,7 @@ import {
   GioApiSelectDialogResult,
 } from '../../../../shared/components/gio-api-select-dialog/gio-api-select-dialog.component';
 import { EnvironmentSettingsService } from '../../../../services-ngx/environment-settings.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 interface ApiVM {
   id: string;
@@ -95,6 +96,7 @@ export class CategoryComponent implements OnInit {
     private readonly permissionService: GioPermissionService,
     private matDialog: MatDialog,
     private environmentSettingsService: EnvironmentSettingsService,
+    private languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -154,7 +156,11 @@ export class CategoryComponent implements OnInit {
       )
       .subscribe({
         next: category => {
-          this.snackBarService.success(`Category [${category.name}] successfully ${this.mode === 'new' ? 'created' : 'updated'}.`);
+          this.snackBarService.success(
+            this.languageService.translate(this.mode === 'new' ? 'settings.categories.savedCreated' : 'settings.categories.savedUpdated', {
+              name: category.name,
+            }),
+          );
           if (this.mode === 'new') {
             this.router.navigate(['..', category.id], { relativeTo: this.activatedRoute });
           } else {
@@ -220,7 +226,7 @@ export class CategoryComponent implements OnInit {
     this.matDialog
       .open<GioApiSelectDialogComponent, GioApiSelectDialogData, GioApiSelectDialogResult>(GioApiSelectDialogComponent, {
         data: {
-          title: 'Add API',
+          title: this.languageService.translate('settings.categories.addApi'),
         },
         width: GIO_DIALOG_WIDTH.SMALL,
       })
@@ -230,7 +236,7 @@ export class CategoryComponent implements OnInit {
         switchMap(({ id }) => this.apiV2Service.get(id)),
         switchMap(api => {
           if (api.categories?.includes(category.key)) {
-            this.snackBarService.error(`API "${api.name}" is already defined in the category.`);
+            this.snackBarService.error(this.languageService.translate('settings.categories.apiAlreadyIn', { name: api.name }));
             return EMPTY;
           }
           const updatedCategories = api.categories ? [...api.categories, category.key] : [category.key];
@@ -240,7 +246,7 @@ export class CategoryComponent implements OnInit {
       )
       .subscribe({
         next: api => {
-          this.snackBarService.success(`API [${api.name}] has been added to the category.`);
+          this.snackBarService.success(this.languageService.translate('settings.categories.apiAdded', { name: api.name }));
           this.category.next(category);
         },
         error: ({ error }) => this.snackBarService.error(error.message),
@@ -251,9 +257,9 @@ export class CategoryComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Remove API',
-          content: `Are you sure you want to remove API '${api.name}' from the category '${category.name}'?`,
-          confirmButton: 'Remove',
+          title: this.languageService.translate('settings.categories.removeApi'),
+          content: this.languageService.translate('settings.categories.removeApiContent', { api: api.name, category: category.name }),
+          confirmButton: this.languageService.translate('common.remove'),
         },
         role: 'alertdialog',
         id: 'confirmDialog',
@@ -270,10 +276,10 @@ export class CategoryComponent implements OnInit {
       )
       .subscribe({
         next: _ => {
-          this.snackBarService.success(`'${api.name}' removed successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.categories.apiRemoved', { name: api.name }));
           this.refreshData.next(1);
         },
-        error: ({ error }) => this.snackBarService.error(error?.message ?? 'Error during API removal'),
+        error: ({ error }) => this.snackBarService.error(error?.message ?? this.languageService.translate('settings.categories.apiRemoveError')),
       });
   }
 
@@ -305,10 +311,10 @@ export class CategoryComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.snackBarService.success('API order updated successfully.');
+          this.snackBarService.success(this.languageService.translate('settings.categories.orderUpdated'));
           this.category.next(category);
         },
-        error: ({ error }) => this.snackBarService.error(error?.message ? error.message : 'Error during API order update!'),
+        error: ({ error }) => this.snackBarService.error(error?.message ? error.message : this.languageService.translate('settings.categories.orderUpdateError')),
       });
   }
 }

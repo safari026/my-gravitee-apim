@@ -16,38 +16,42 @@
 
 -->
 <div class="title">
-  <h1>Authentication</h1>
+  <h1>{{ 'settings.authentication.title' | translate }}</h1>
 </div>
 
 <mat-card class="identity-providers__form__card">
   <div class="title">
-    <h3>Configuration</h3>
+    <h3>{{ 'settings.authentication.configuration' | translate }}</h3>
   </div>
   <form *ngIf="identityProvidersForm" [formGroup]="identityProvidersForm" autocomplete="off">
     <mat-card-content>
       <gio-form-slide-toggle
-        [matTooltip]="'Configuration provided by the system'"
+        [matTooltip]="'settings.systemConfig' | translate"
         [matTooltipDisabled]="!isReadonly('portal.authentication.forceLogin.enabled')"
         formGroupName="forceLogin"
         class="identity-providers__form__card__form-field"
       >
         <mat-icon *ngIf="isReadonly('portal.authentication.forceLogin.enabled')" gioFormPrefix>lock</mat-icon>
-        <gio-form-label>Force authentication to access portal</gio-form-label>
+        <gio-form-label>{{ 'settings.authentication.forceLogin' | translate }}</gio-form-label>
         <mat-slide-toggle
           formControlName="enabled"
           gioFormSlideToggle
-          aria-label="Force authentication to access portal"
+          [attr.aria-label]="'settings.authentication.forceLogin' | translate"
         ></mat-slide-toggle>
       </gio-form-slide-toggle>
       <gio-form-slide-toggle
-        [matTooltip]="'Configuration provided by the system'"
+        [matTooltip]="'settings.systemConfig' | translate"
         [matTooltipDisabled]="!isReadonly('portal.authentication.localLogin.enabled')"
         formGroupName="localLogin"
         class="identity-providers__form__card__form-field"
       >
         <mat-icon *ngIf="isReadonly('portal.authentication.localLogin.enabled')" gioFormPrefix>lock</mat-icon>
-        <gio-form-label>Show login form on portal</gio-form-label>
-        <mat-slide-toggle formControlName="enabled" gioFormSlideToggle aria-label="Show login form on portal"></mat-slide-toggle>
+        <gio-form-label>{{ 'settings.authentication.localLogin' | translate }}</gio-form-label>
+        <mat-slide-toggle
+          formControlName="enabled"
+          gioFormSlideToggle
+          [attr.aria-label]="'settings.authentication.localLogin' | translate"
+        ></mat-slide-toggle>
       </gio-form-slide-toggle>
     </mat-card-content>
   </form>
@@ -61,44 +65,50 @@
       [dataSource]="filteredIdentityProviderSettingsTable"
       class="identity-providers__table"
       id="identityProviderTable"
-      aria-label="Identity Provider table"
+      [attr.aria-label]="'settings.authentication.tableAria' | translate"
     >
       <ng-container matColumnDef="logo">
         <th mat-header-cell *matHeaderCellDef id="logo"></th>
         <td mat-cell *matCellDef="let element">
-          <img class="identity-providers__table__logo" [src]="element.logo" alt="Logo of {{ element.name }}" />
+          <img
+            class="identity-providers__table__logo"
+            [src]="element.logo"
+            [alt]="'settings.authentication.logoAlt' | translate: { name: element.name }"
+          />
         </td>
       </ng-container>
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef id="id">Id</th>
+        <th mat-header-cell *matHeaderCellDef id="id">{{ 'settings.authentication.id' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.id }}
         </td>
       </ng-container>
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+        <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.authentication.name' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.name }}
         </td>
       </ng-container>
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef id="description">Description</th>
+        <th mat-header-cell *matHeaderCellDef id="description">{{ 'settings.authentication.description' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.description }}
         </td>
       </ng-container>
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef id="actions">Actions</th>
+        <th mat-header-cell *matHeaderCellDef id="actions">{{ 'common.actions' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <div class="identity-providers__table__centered-cell">
             <button
               *gioPermission="{ anyOf: ['environment-identity_provider_activation-u'] }"
               (click)="onActivationToggleActionClicked(element)"
               mat-icon-button
-              aria-label="Identity provider activation"
-              matTooltip="
-            {{ element.isActivated ? 'Deactivate identity provider' : 'Activate identity provider' }}
-            "
+              [attr.aria-label]="'settings.authentication.activationAria' | translate"
+              [matTooltip]="
+                element.isActivated
+                  ? ('settings.authentication.deactivate' | translate)
+                  : ('settings.authentication.activate' | translate)
+              "
             >
               <mat-icon>{{ element.isActivated ? 'toggle_on' : 'toggle_off' }}</mat-icon>
             </button>
@@ -112,10 +122,10 @@
       <!-- Row shown when there is no data -->
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
         <td *ngIf="!isLoadingData" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-          {{ 'No notifications to display.' }}
+          {{ 'settings.authentication.empty' | translate }}
         </td>
         <td *ngIf="isLoadingData" class="mat-cell" [attr.colspan]="displayedColumns.length">
-          {{ 'Loading...' }}
+          {{ 'common.loading' | translate }}
         </td>
       </tr>
     </table>

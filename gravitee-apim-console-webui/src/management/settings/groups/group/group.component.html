@@ -18,21 +18,21 @@
 @if (group$ | async; as group) {
   <mat-card class="group__card">
     <mat-card-header>
-      <gio-go-back-button routerLink=".." aria-hidden="false" aria-label="Click to go back to groups"></gio-go-back-button>
-      <h2>{{ mode === 'new' ? 'Create group' : group.name }}</h2>
+      <gio-go-back-button routerLink=".." aria-hidden="false" [attr.aria-label]="'settings.groups.backAria' | translate"></gio-go-back-button>
+      <h2>{{ mode === 'new' ? ('settings.groups.createTitle' | translate) : group.name }}</h2>
     </mat-card-header>
     <mat-card-content>
       <form [formGroup]="groupForm">
         <mat-form-field class="group__form__field">
-          <mat-label>Name</mat-label>
+          <mat-label>{{ 'settings.groups.name' | translate }}</mat-label>
           <input matInput formControlName="name" />
         </mat-form-field>
 
-        <h3 class="group__card__subtitle">Roles & Permissions</h3>
+        <h3 class="group__card__subtitle">{{ 'settings.groups.rolesTitle' | translate }}</h3>
 
         @if (mode === 'edit') {
-          <mat-form-field aria-hidden="false" aria-label="Select default API role" class="group__form__field">
-            <mat-label>Default API Role</mat-label>
+          <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiRole' | translate" class="group__form__field">
+            <mat-label>{{ 'settings.groups.defaultApiRole' | translate }}</mat-label>
             <mat-select formControlName="defaultAPIRole">
               <mat-option></mat-option>
               @for (role of defaultAPIRoles; track role.id) {
@@ -41,8 +41,8 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field aria-hidden="false" aria-label="Select default api product role" class="group__form__field">
-            <mat-label>Default API Product Role</mat-label>
+          <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiProductRole' | translate" class="group__form__field">
+            <mat-label>{{ 'settings.groups.defaultApiProductRole' | translate }}</mat-label>
             <mat-select formControlName="defaultAPIProductRole">
               <mat-option></mat-option>
               @for (role of defaultAPIProductRoles; track role.id) {
@@ -51,8 +51,8 @@
             </mat-select>
           </mat-form-field>
 
-          <mat-form-field aria-hidden="false" aria-label="Select default application role" class="group__form__field">
-            <mat-label>Default Application Role</mat-label>
+          <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApplicationRole' | translate" class="group__form__field">
+            <mat-label>{{ 'settings.groups.defaultApplicationRole' | translate }}</mat-label>
             <mat-select formControlName="defaultApplicationRole">
               <mat-option></mat-option>
               @for (role of defaultApplicationRoles; track role.id) {
@@ -63,43 +63,43 @@
         }
 
         <gio-form-slide-toggle class="group__form__actions">
-          <gio-form-label>Allow Group Admin to change default API role</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.allowChangeApiRole' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="canAdminChangeAPIRole"
             gioFormSlideToggle
             aria-hidden="false"
-            aria-label="Enable group admin to change default API role"
+            [attr.aria-label]="'settings.groups.allowChangeApiRoleAria' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <gio-form-slide-toggle class="group__form__actions">
-          <gio-form-label>Allow Group Admin to change default API Products role</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.allowChangeApiProductRole' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="canAdminChangeAPIProductRole"
             gioFormSlideToggle
             aria-hidden="false"
-            aria-label="Enable group admin to change default API Products role"
+            [attr.aria-label]="'settings.groups.allowChangeApiProductRoleAria' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <gio-form-slide-toggle class="group__form__actions">
-          <gio-form-label>Allow Group Admin to change default application role</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.allowChangeApplicationRole' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="canAdminChangeApplicationRole"
             gioFormSlideToggle
             aria-hidden="false"
-            aria-label="Enable group admin to change default application role"
+            [attr.aria-label]="'settings.groups.allowChangeApplicationRoleAria' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <div class="group__form__actions">
           <gio-form-slide-toggle>
-            <gio-form-label>Automatically add group to new APIs</gio-form-label>
+            <gio-form-label>{{ 'settings.groups.autoAddToNewApis' | translate }}</gio-form-label>
             <mat-slide-toggle
               formControlName="shouldAddToNewAPIs"
               gioFormSlideToggle
               aria-hidden="false"
-              aria-label="Enable to add group to the new APIs automatically"
+              [attr.aria-label]="'settings.groups.autoAddToNewApisAria' | translate"
             ></mat-slide-toggle>
           </gio-form-slide-toggle>
 
@@ -111,19 +111,19 @@
               [disabled]="disableAddGroupToExistingAPIs"
               (click)="addToExistingAPIs(group)"
             >
-              Add Group To Existing APIs
+              {{ 'settings.groups.addToExistingApisBtn' | translate }}
             </button>
           }
         </div>
 
         <div class="group__form__actions">
           <gio-form-slide-toggle>
-            <gio-form-label>Automatically add group to new API Products</gio-form-label>
+            <gio-form-label>{{ 'settings.groups.autoAddToNewApiProducts' | translate }}</gio-form-label>
             <mat-slide-toggle
               formControlName="shouldAddToNewAPIProducts"
               gioFormSlideToggle
               aria-hidden="false"
-              aria-label="Enable to add group to new API Products automatically"
+              [attr.aria-label]="'settings.groups.autoAddToNewApiProductsAria' | translate"
             ></mat-slide-toggle>
           </gio-form-slide-toggle>
 
@@ -134,19 +134,19 @@
               [disabled]="disableAddGroupToExistingAPIProducts"
               (click)="addToExistingAPIProducts(group)"
             >
-              Add Group To Existing API Products
+              {{ 'settings.groups.addToExistingApiProductsBtn' | translate }}
             </button>
           }
         </div>
 
         <div class="group__form__actions">
           <gio-form-slide-toggle>
-            <gio-form-label>Automatically add group to new applications</gio-form-label>
+            <gio-form-label>{{ 'settings.groups.autoAddToNewApps' | translate }}</gio-form-label>
             <mat-slide-toggle
               formControlName="shouldAddToNewApplications"
               gioFormSlideToggle
               aria-hidden="false"
-              aria-label="Enable to add group to the new applications automatically"
+              [attr.aria-label]="'settings.groups.autoAddToNewAppsAria' | translate"
             ></mat-slide-toggle>
           </gio-form-slide-toggle>
 
@@ -157,45 +157,45 @@
               (click)="addToExistingApplications(group)"
               [disabled]="disableAddGroupToExistingApplications"
             >
-              Add Group To Existing Applications
+              {{ 'settings.groups.addToExistingAppsBtn' | translate }}
             </button>
           }
         </div>
 
-        <h3 class="group__card__subtitle">Members Management</h3>
+        <h3 class="group__card__subtitle">{{ 'settings.groups.membersManagement' | translate }}</h3>
 
         <mat-form-field class="group__form__field">
-          <mat-label>Max Number Of Members</mat-label>
+          <mat-label>{{ 'settings.groups.maxMembers' | translate }}</mat-label>
           <input matInput type="number" formControlName="maxNumberOfMembers" />
         </mat-form-field>
 
         <gio-form-slide-toggle class="group__form__actions">
-          <gio-form-label>Allow adding members via user search</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.allowInviteSearch' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="shouldAllowInvitationViaSearch"
             gioFormSlideToggle
             aria-hidden="false"
-            aria-label="Enable invitations via user search"
+            [attr.aria-label]="'settings.groups.allowInviteSearchAria' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <gio-form-slide-toggle class="group__form__actions">
-          <gio-form-label>Allow sending invitations to users via email</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.allowInviteEmail' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="shouldAllowInvitationViaEmail"
             gioFormSlideToggle
             aria-hidden="false"
-            aria-label="Enable invitations via email"
+            [attr.aria-label]="'settings.groups.allowInviteEmailAria' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <gio-form-slide-toggle class="group__form__actions">
-          <gio-form-label>Notify when new members are added to the group</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.notifyNewMembers' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="shouldNotifyWhenMemberAdded"
             gioFormSlideToggle
             aria-hidden="false"
-            aria-label="Enable to notify when new members added to the group"
+            [attr.aria-label]="'settings.groups.notifyNewMembersAria' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
       </form>
@@ -205,17 +205,18 @@
   @if (mode === 'edit') {
     <mat-card class="group__card">
       <mat-card-header>
-        <mat-card-title>Members</mat-card-title>
+        <mat-card-title>{{ 'settings.groups.members' | translate }}</mat-card-title>
         <button
           class="group__form__actions"
           mat-raised-button
           color="primary"
           [disabled]="!canAddMembers"
           [matMenuTriggerFor]="addMembersMenu"
-          matTooltip="Search and invite users to the group"
+          [matTooltip]="'settings.groups.addMembersTooltip' | translate"
+          [attr.aria-label]="'settings.groups.addMembersTooltip' | translate"
         >
           <mat-icon svgIcon="gio:plus"></mat-icon>
-          Add Members
+          {{ 'settings.groups.addMembers' | translate }}
         </button>
         <mat-menu #addMembersMenu="matMenu" xPosition="before" yPosition="below">
           <button
@@ -223,86 +224,86 @@
             (click)="openAddMembersDialog()"
             [disabled]="!group.system_invitation"
             aria-hidden="false"
-            aria-label="Click to invite user via search"
+            [attr.aria-label]="'settings.groups.userSearchAria' | translate"
           >
             <mat-icon svgIcon="gio:search"></mat-icon>
-            User Search
+            {{ 'settings.groups.userSearch' | translate }}
           </button>
           <button
             mat-menu-item
             (click)="openInviteMemberDialog()"
             [disabled]="!group.email_invitation"
             aria-hidden="false"
-            aria-label="Click to invite user via email"
+            [attr.aria-label]="'settings.groups.emailInvitationAria' | translate"
           >
             <mat-icon svgIcon="gio:mail"></mat-icon>
-            Email Invitation
+            {{ 'settings.groups.emailInvitation' | translate }}
           </button>
         </mat-menu>
       </mat-card-header>
       @if (maxInvitationsLimitReached) {
         <gio-banner-info
-          >The number of members in this group has reached maximum allowed. Adding users via search and email invitation have been disabled.
+          >{{ 'settings.groups.maxMembersBanner' | translate }}
         </gio-banner-info>
       }
       <mat-tab-group (selectedIndexChange)="onTabChange($event)">
-        <mat-tab label="Members">
+        <mat-tab [label]="'settings.groups.members' | translate">
           @if (groupMembers$ | async; as members) {
             <gio-table-wrapper
               [length]="noOfFilteredMembers"
               [filters]="membersDefaultFilters"
               (filtersChange)="filterGroupMembers($event)"
             >
-              <table mat-table [dataSource]="filteredMembers" id="membersDataTable" aria-hidden="false" aria-label="Members Data Table">
+              <table mat-table [dataSource]="filteredMembers" id="membersDataTable" aria-hidden="false" [attr.aria-label]="'settings.groups.membersTableAria' | translate">
                 <ng-container matColumnDef="name">
-                  <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+                  <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.groups.name' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>
                       {{ row.displayName }}
                       @if (row.roles['GROUP'] === 'ADMIN') {
-                        <span class="gio-badge-primary">Group Admin</span>
+                        <span class="gio-badge-primary">{{ 'settings.groups.groupAdmin' | translate }}</span>
                       }
                     </div>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="defaultApiRole">
-                  <th mat-header-cell *matHeaderCellDef id="defaultApiRole">API Role</th>
+                  <th mat-header-cell *matHeaderCellDef id="defaultApiRole">{{ 'settings.groups.apiRole' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>{{ row.roles['API'] }}</div>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="defaultApiProductRole">
-                  <th mat-header-cell *matHeaderCellDef id="defaultApiProductRole">API Product Role</th>
+                  <th mat-header-cell *matHeaderCellDef id="defaultApiProductRole">{{ 'settings.groups.apiProductRole' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>{{ row.roles['API_PRODUCT'] }}</div>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="defaultApplicationRole">
-                  <th mat-header-cell *matHeaderCellDef id="defaultApplicationRole">Application Role</th>
+                  <th mat-header-cell *matHeaderCellDef id="defaultApplicationRole">{{ 'settings.groups.applicationRole' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>{{ row.roles['APPLICATION'] }}</div>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="defaultIntegrationRole">
-                  <th mat-header-cell *matHeaderCellDef id="defaultIntegrationRole">Integration Role</th>
+                  <th mat-header-cell *matHeaderCellDef id="defaultIntegrationRole">{{ 'settings.groups.integrationRole' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>{{ row.roles['INTEGRATION'] }}</div>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="defaultClusterRole">
-                  <th mat-header-cell *matHeaderCellDef id="defaultClusterRole">Cluster Role</th>
+                  <th mat-header-cell *matHeaderCellDef id="defaultClusterRole">{{ 'settings.groups.clusterRole' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>{{ row.roles['CLUSTER'] }}</div>
                   </td>
                 </ng-container>
 
                 <ng-container matColumnDef="defaultExplorerRole">
-                  <th mat-header-cell *matHeaderCellDef id="defaultExplorerRole">Explorer Role</th>
+                  <th mat-header-cell *matHeaderCellDef id="defaultExplorerRole">{{ 'settings.groups.explorerRole' | translate }}</th>
                   <td mat-cell *matCellDef="let row">
                     <div>{{ row.roles['EXPLORER'] }}</div>
                   </td>
@@ -314,9 +315,9 @@
                     <button
                       mat-button
                       (click)="openEditMemberDialog(row)"
-                      matTooltip="Modify member settings"
+                      [matTooltip]="'settings.groups.modifyMember' | translate"
                       aria-hidden="false"
-                      aria-label="Click to edit group"
+                      [attr.aria-label]="'settings.groups.modifyMember' | translate"
                     >
                       <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
                     </button>
@@ -324,9 +325,9 @@
                       mat-button
                       [disabled]="deleteDisabled"
                       (click)="openDeleteMemberDialog(row)"
-                      matTooltip="Remove member from group"
+                      [matTooltip]="'settings.groups.removeMember' | translate"
                       aria-hidden="false"
-                      aria-label="Click to delete group member"
+                      [attr.aria-label]="'settings.groups.removeMember' | translate"
                     >
                       <mat-icon svgIcon="gio:trash"></mat-icon>
                     </button>
@@ -336,14 +337,14 @@
                 <tr mat-row *matRowDef="let row; columns: memberColumnDefs"></tr>
                 <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
                   <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="memberColumnDefs.length">
-                    No members available to display
+                    {{ 'settings.groups.noMembers' | translate }}
                   </td>
                 </tr>
               </table>
             </gio-table-wrapper>
           }
         </mat-tab>
-        <mat-tab label="Invitations" lazy>
+        <mat-tab [label]="'settings.groups.invitations' | translate" lazy>
           <ng-template matTabContent>
             @if (invitations$ | async; as data) {
               <gio-table-wrapper
@@ -356,31 +357,31 @@
                   [dataSource]="filteredInvitations"
                   id="invitationsDataTable"
                   aria-hidden="false"
-                  aria-label="Invitations Data Table"
+                  [attr.aria-label]="'settings.groups.invitationsTableAria' | translate"
                 >
                   <ng-container matColumnDef="guestEmail">
-                    <th mat-header-cell *matHeaderCellDef id="guestEmail">Email</th>
+                    <th mat-header-cell *matHeaderCellDef id="guestEmail">{{ 'settings.groups.email' | translate }}</th>
                     <td mat-cell *matCellDef="let row">
                       <div>{{ row.email }}</div>
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="guestApiRole">
-                    <th mat-header-cell *matHeaderCellDef id="guestApiRole">API Role</th>
+                    <th mat-header-cell *matHeaderCellDef id="guestApiRole">{{ 'settings.groups.apiRole' | translate }}</th>
                     <td mat-cell *matCellDef="let row">
                       <div>{{ row.api_role }}</div>
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="guestApplicationRole">
-                    <th mat-header-cell *matHeaderCellDef id="guestApplicationRole">Application Role</th>
+                    <th mat-header-cell *matHeaderCellDef id="guestApplicationRole">{{ 'settings.groups.applicationRole' | translate }}</th>
                     <td mat-cell *matCellDef="let row">
                       <div>{{ row.application_role }}</div>
                     </td>
                   </ng-container>
 
                   <ng-container matColumnDef="guestInvitedOn">
-                    <th mat-header-cell *matHeaderCellDef id="guestInvitedOn">Invitation Date</th>
+                    <th mat-header-cell *matHeaderCellDef id="guestInvitedOn">{{ 'settings.groups.invitationDate' | translate }}</th>
                     <td mat-cell *matCellDef="let row">
                       <div>{{ row.created_at | date: 'MMM dd, yyyy' }}</div>
                     </td>
@@ -392,9 +393,9 @@
                       <button
                         mat-button
                         (click)="deleteInvitation(row.id, row.email)"
-                        matTooltip="Delete invitation"
+                        [matTooltip]="'settings.groups.deleteInvitationTooltip' | translate"
                         aria-hidden="false"
-                        aria-label="Click to delete invitation"
+                        [attr.aria-label]="'settings.groups.deleteInvitationTooltip' | translate"
                       >
                         <mat-icon svgIcon="gio:trash"></mat-icon>
                       </button>
@@ -404,7 +405,7 @@
                   <tr mat-row *matRowDef="let row; columns: invitationColumnDefs"></tr>
                   <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
                     <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="invitationColumnDefs.length">
-                      No invitations sent to display
+                      {{ 'settings.groups.noInvitations' | translate }}
                     </td>
                   </tr>
                 </table>
@@ -417,29 +418,29 @@
 
     <mat-card class="group__card">
       <mat-card-header>
-        <mat-card-title>APIs</mat-card-title>
+        <mat-card-title>{{ 'settings.groups.apis' | translate }}</mat-card-title>
       </mat-card-header>
       @if (groupAPIs$ | async; as data) {
         <gio-table-wrapper [length]="noOfAPIs" [filters]="apisDefaultFilters" (filtersChange)="filterGroupAPIs($event)">
-          <table mat-table [dataSource]="filteredAPIs" id="groupApisDataTable" aria-hidden="false" aria-label="Group APIs Data Table">
+          <table mat-table [dataSource]="filteredAPIs" id="groupApisDataTable" aria-hidden="false" [attr.aria-label]="'settings.groups.apisTableAria' | translate">
             <ng-container matColumnDef="apiName">
-              <th mat-header-cell *matHeaderCellDef id="apiName">Name</th>
+              <th mat-header-cell *matHeaderCellDef id="apiName">{{ 'settings.groups.name' | translate }}</th>
               <td mat-cell *matCellDef="let row">
                 <div>
                   {{ row.name }}
                   @if (row.visibility === 'PUBLIC') {
-                    <span class="gio-badge-warning">Public</span>
+                    <span class="gio-badge-warning">{{ 'settings.groups.public' | translate }}</span>
                   }
 
                   @if (row.visibility === 'PRIVATE') {
-                    <span class="gio-badge-primary">Private</span>
+                    <span class="gio-badge-primary">{{ 'settings.groups.private' | translate }}</span>
                   }
                 </div>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="apiVersion">
-              <th mat-header-cell *matHeaderCellDef id="apiVersion">Version</th>
+              <th mat-header-cell *matHeaderCellDef id="apiVersion">{{ 'settings.groups.version' | translate }}</th>
               <td mat-cell *matCellDef="let row">
                 <div>{{ row.version }}</div>
               </td>
@@ -448,7 +449,7 @@
             <tr mat-header-row *matHeaderRowDef="groupAPIColumnDefs"></tr>
             <tr mat-row *matRowDef="let row; columns: groupAPIColumnDefs"></tr>
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-              <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="groupAPIColumnDefs.length">No dependent APIs to display</td>
+              <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="groupAPIColumnDefs.length">{{ 'settings.groups.noDependentApis' | translate }}</td>
             </tr>
           </table>
         </gio-table-wrapper>
@@ -457,7 +458,7 @@
 
     <mat-card class="group__card">
       <mat-card-header>
-        <mat-card-title>API Products</mat-card-title>
+        <mat-card-title>{{ 'settings.groups.apiProducts' | translate }}</mat-card-title>
       </mat-card-header>
       @if (groupAPIProducts$ | async; as data) {
         <gio-table-wrapper
@@ -470,17 +471,17 @@
             [dataSource]="filteredAPIProducts"
             id="groupApiProductsDataTable"
             aria-hidden="false"
-            aria-label="Group API Products Data Table"
+            [attr.aria-label]="'settings.groups.apiProductsTableAria' | translate"
           >
             <ng-container matColumnDef="apiProductName">
-              <th mat-header-cell *matHeaderCellDef id="apiProductName">Name</th>
+              <th mat-header-cell *matHeaderCellDef id="apiProductName">{{ 'settings.groups.name' | translate }}</th>
               <td mat-cell *matCellDef="let row">
                 <div>{{ row.name }}</div>
               </td>
             </ng-container>
 
             <ng-container matColumnDef="apiProductVersion">
-              <th mat-header-cell *matHeaderCellDef id="apiProductVersion">Version</th>
+              <th mat-header-cell *matHeaderCellDef id="apiProductVersion">{{ 'settings.groups.version' | translate }}</th>
               <td mat-cell *matCellDef="let row">
                 <div>{{ row.version }}</div>
               </td>
@@ -490,7 +491,7 @@
             <tr mat-row *matRowDef="let row; columns: groupAPIProductColumnDefs"></tr>
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
               <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="groupAPIProductColumnDefs.length">
-                No dependent API Products to display
+                {{ 'settings.groups.noDependentApiProducts' | translate }}
               </td>
             </tr>
           </table>
@@ -500,7 +501,7 @@
 
     <mat-card class="group__card">
       <mat-card-header>
-        <mat-card-title>Applications</mat-card-title>
+        <mat-card-title>{{ 'settings.groups.applications' | translate }}</mat-card-title>
       </mat-card-header>
       @if (groupApplications$ | async; as data) {
         <gio-table-wrapper
@@ -513,16 +514,16 @@
             [dataSource]="filteredApplications"
             id="groupApplicationsDataTable"
             aria-hidden="false"
-            aria-label="Group Applications Data Table"
+            [attr.aria-label]="'settings.groups.applicationsTableAria' | translate"
           >
             <ng-container matColumnDef="applicationName">
-              <th mat-header-cell *matHeaderCellDef id="applicationName">Name</th>
+              <th mat-header-cell *matHeaderCellDef id="applicationName">{{ 'settings.groups.name' | translate }}</th>
               <td mat-cell *matCellDef="let row">
                 <div>
                   {{ row.name }}
 
                   @if (row.disable_membership_notifications) {
-                    <span class="gio-badge-warning">Membership Notifications Disabled</span>
+                    <span class="gio-badge-warning">{{ 'settings.groups.membershipNotificationsDisabled' | translate }}</span>
                   }
                 </div>
               </td>
@@ -531,7 +532,7 @@
             <tr mat-row *matRowDef="let row; columns: groupApplicationsColumnDefs"></tr>
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
               <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="groupApplicationsColumnDefs.length">
-                No dependent applications to display
+                {{ 'settings.groups.noDependentApps' | translate }}
               </td>
             </tr>
           </table>

@@ -27,6 +27,7 @@ import { Environment } from '../../entities/environment/environment';
 import { cleanRouterLink } from '../../util/router-link.util';
 import { EnvironmentSettingsService } from '../../services-ngx/environment-settings.service';
 import { LanguageService } from '../../shared/i18n/language.service';
+import { SettingsNavigationService } from '../../management/settings/settings-navigation/settings-navigation.service';
 
 interface MenuItem {
   icon?: string;
@@ -91,6 +92,7 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     private readonly languageService: LanguageService,
     private readonly injector: Injector,
     private readonly changeDetectorRef: ChangeDetectorRef,
+    private readonly settingsNavigationService: SettingsNavigationService,
   ) {}
 
   ngOnInit(): void {
@@ -128,6 +130,10 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
         this.footerMenuItems = this.buildFooterMenuItems();
         this.gioMenuSearchService.removeMenuSearchItems([SIDE_NAV_GROUP_ID]);
         this.gioMenuSearchService.addMenuSearchItems(this.getSideNaveMenuSearchItems());
+        if (this.envHrid) {
+          this.gioMenuSearchService.removeMenuSearchItems([this.envHrid]);
+          this.gioMenuSearchService.addMenuSearchItems(this.settingsNavigationService.getSettingsNavigationSearchItems(this.envHrid));
+        }
         this.changeDetectorRef.markForCheck();
       });
 

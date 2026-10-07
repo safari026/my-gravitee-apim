@@ -39,6 +39,7 @@ import { Member, RoleName } from '../membershipState';
 import { UsersService } from '../../../../../services-ngx/users.service';
 import { AddOrInviteMembersDialogData } from '../group.component';
 import { Group } from '../../../../../entities/group/group';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'add-member-dialog',
@@ -54,6 +55,7 @@ import { Group } from '../../../../../entities/group/group';
     MatAutocompleteModule,
     MatListModule,
     MatChipsModule,
+    TranslatePipe,
   ],
   templateUrl: './add-members-dialog.component.html',
   styleUrl: './add-members-dialog.component.scss',

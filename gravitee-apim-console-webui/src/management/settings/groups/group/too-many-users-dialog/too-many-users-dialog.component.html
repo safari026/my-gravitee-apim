@@ -15,15 +15,12 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>Many Users Found</h2>
+<h2 mat-dialog-title>{{ 'settings.groups.manyUsersTitle' | translate }}</h2>
 <mat-dialog-content>
-  <gio-banner-info>
-    More than one user already exist with the email id {{ email }} in the organization. You can select and add a specific user using add
-    member function.
-  </gio-banner-info>
-  <span> Do you want to continue? </span>
+  <gio-banner-info>{{ 'settings.groups.manyUsersContent' | translate: { email } }}</gio-banner-info>
+  <span>{{ 'settings.groups.manyUsersContinue' | translate }}</span>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" (click)="submit()">Continue</button>
-  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" (click)="submit()">{{ 'settings.groups.continue' | translate }}</button>
+  <button mat-raised-button mat-dialog-close>{{ 'common.cancel' | translate }}</button>
 </mat-dialog-actions>

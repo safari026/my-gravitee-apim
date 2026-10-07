@@ -18,51 +18,51 @@
 @if (category$ | async; as category) {
   <div class="title">
     <gio-go-back-button routerLink=".."></gio-go-back-button>
-    <h1>{{ mode === 'new' ? 'Create category' : 'Category details' }}</h1>
+    <h1>{{ mode === 'new' ? ('settings.categories.createTitle' | translate) : ('settings.categories.detailsTitle' | translate) }}</h1>
   </div>
   <form [formGroup]="categoryDetails" class="content">
     <mat-card>
       <mat-card-content>
         <div class="title-information">
-          <h2>General</h2>
+          <h2>{{ 'settings.categories.general' | translate }}</h2>
           @if (hasPortalNextEnabled) {
-            <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;Applies to both portals </span>
+            <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;{{ 'settings.portal.appliesToBoth' | translate }} </span>
           }
         </div>
         <div class="general">
           <div class="general__left">
             <mat-form-field>
-              <mat-label>Name</mat-label>
+              <mat-label>{{ 'settings.categories.name' | translate }}</mat-label>
               <input matInput formControlName="name" />
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Description</mat-label>
+              <mat-label>{{ 'settings.categories.description' | translate }}</mat-label>
               <input matInput formControlName="description" />
             </mat-form-field>
             <mat-form-field>
-              <mat-label>Documentation page</mat-label>
+              <mat-label>{{ 'settings.categories.documentationPage' | translate }}</mat-label>
               <mat-select formControlName="page">
-                <mat-option [value]="undefined">-- Select documentation page --</mat-option>
+                <mat-option [value]="undefined">{{ 'settings.categories.selectDocumentationPage' | translate }}</mat-option>
                 @if (pages$ | async; as pageList) {
                   @for (page of pageList; track page) {
                     <mat-option [value]="page.id">{{ page.name }}</mat-option>
                   }
                 }
               </mat-select>
-              <mat-hint>Choose a Markdown page for your category</mat-hint>
+              <mat-hint>{{ 'settings.categories.pageHint' | translate }}</mat-hint>
             </mat-form-field>
             <gio-form-slide-toggle>
-              Hide Category
-              <mat-slide-toggle gioFormSlideToggle formControlName="hidden" aria-label="Hide category"></mat-slide-toggle>
+              {{ 'settings.categories.hide' | translate }}
+              <mat-slide-toggle gioFormSlideToggle formControlName="hidden" [attr.aria-label]="'settings.categories.hideCategory' | translate"></mat-slide-toggle>
             </gio-form-slide-toggle>
           </div>
           <div class="general__right">
             <div class="general__right__image-upload">
               <gio-form-file-picker formControlName="picture" accept="image/*">
-                <gio-form-file-picker-label>Picture</gio-form-file-picker-label>
+                <gio-form-file-picker-label>{{ 'settings.categories.picture' | translate }}</gio-form-file-picker-label>
                 <gio-form-file-picker-add-button class="general__right__image-upload__picture__btn">
                   <div class="general__right__image-upload__picture">
-                    <span class="general__right__image-upload__picture__text"> Click here or drag an image <br />Max 500KB</span>
+                    <span class="general__right__image-upload__picture__text"> {{ 'settings.categories.uploadHint' | translate }} <br />{{ 'settings.categories.uploadMax' | translate }}</span>
                     <gio-avatar
                       class="general__right__image-upload__picture__default-avatar"
                       [size]="108"
@@ -83,11 +83,11 @@
                 formControlName="background"
                 accept="image/*"
               >
-                <gio-form-file-picker-label>Background</gio-form-file-picker-label>
+                <gio-form-file-picker-label>{{ 'settings.categories.background' | translate }}</gio-form-file-picker-label>
                 <gio-form-file-picker-add-button>
-                  <span class="general__right__image-upload__background__text"> Click here or drag an image <br />Max 500KB</span>
+                  <span class="general__right__image-upload__background__text"> {{ 'settings.categories.uploadHint' | translate }} <br />{{ 'settings.categories.uploadMax' | translate }}</span>
                 </gio-form-file-picker-add-button>
-                <gio-form-file-picker-empty><span>No background defined</span></gio-form-file-picker-empty>
+                <gio-form-file-picker-empty><span>{{ 'settings.categories.noBackground' | translate }}</span></gio-form-file-picker-empty>
               </gio-form-file-picker>
             </div>
           </div>
@@ -99,9 +99,9 @@
         <mat-card-content>
           <div class="apis__title">
             <div class="title-information">
-              <h2>APIs</h2>
+              <h2>{{ 'settings.categories.apis' | translate }}</h2>
               @if (hasPortalNextEnabled) {
-                <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;Applies to both portals </span>
+                <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;{{ 'settings.portal.appliesToBoth' | translate }} </span>
               }
             </div>
             <button
@@ -111,26 +111,26 @@
               color="primary"
               *gioPermission="{ anyOf: ['environment-api-u'] }"
             >
-              <mat-icon>add</mat-icon> Add API to Category
+              <mat-icon>add</mat-icon> {{ 'settings.categories.addApiToCategory' | translate }}
             </button>
           </div>
           @if (apis$ | async; as apis) {
-            <table mat-table [dataSource]="apis" id="categoriesTable" aria-label="Categories table">
+            <table mat-table [dataSource]="apis" id="categoriesTable" [attr.aria-label]="'settings.categories.apisTableAria' | translate">
               <!-- Display Name Column -->
               <ng-container matColumnDef="name">
-                <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+                <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.categories.name' | translate }}</th>
                 <td mat-cell *matCellDef="let element">
                   <div class="apis__table__name">
                     {{ element.name }}
                     @if (element.id === highlightApiControl.value) {
-                      <span class="gio-badge-accent" matTooltip="Highlighted Api"><mat-icon svgIcon="gio:star-outline"></mat-icon></span>
+                      <span class="gio-badge-accent" [matTooltip]="'settings.categories.highlightedApi' | translate"><mat-icon svgIcon="gio:star-outline"></mat-icon></span>
                     }
                   </div>
                 </td>
               </ng-container>
               <!-- Display Version Column -->
               <ng-container matColumnDef="version">
-                <th mat-header-cell *matHeaderCellDef id="version">Version</th>
+                <th mat-header-cell *matHeaderCellDef id="version">{{ 'settings.categories.version' | translate }}</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.version }}
                 </td>
@@ -138,7 +138,7 @@
 
               <!-- Display Context Path Column -->
               <ng-container matColumnDef="contextPath">
-                <th mat-header-cell *matHeaderCellDef id="context-path">Context path</th>
+                <th mat-header-cell *matHeaderCellDef id="context-path">{{ 'settings.categories.contextPath' | translate }}</th>
                 <td mat-cell *matCellDef="let element">
                   {{ element.contextPath }}
                 </td>
@@ -153,7 +153,7 @@
                       <button
                         mat-button
                         (click)="removeHighlightedApi()"
-                        matTooltip="Remove Highlighted API"
+                        [matTooltip]="'settings.categories.removeHighlighted' | translate"
                         *gioPermission="{ anyOf: ['environment-category-u'] }"
                       >
                         <mat-icon svgIcon="gio:cancel"></mat-icon>
@@ -162,7 +162,7 @@
                       <button
                         mat-button
                         (click)="addHighlightedApi(element.id)"
-                        matTooltip="Highlight API"
+                        [matTooltip]="'settings.categories.highlightApiAction' | translate"
                         *gioPermission="{ anyOf: ['environment-category-u'] }"
                       >
                         <mat-icon svgIcon="gio:star-outline"></mat-icon>
@@ -173,7 +173,7 @@
                       mat-button
                       [disabled]="element.disableMoveUp"
                       (click)="moveCategoryApi(element, element.order - 1)"
-                      matTooltip="Move Up"
+                      [matTooltip]="'settings.categories.moveUp' | translate"
                       *gioPermission="{ anyOf: ['environment-category-u'] }"
                     >
                       <mat-icon svgIcon="gio:arrow-up"></mat-icon>
@@ -182,7 +182,7 @@
                       mat-button
                       [disabled]="element.disableMoveDown"
                       (click)="moveCategoryApi(element, element.order + 1)"
-                      matTooltip="Move Down"
+                      [matTooltip]="'settings.categories.moveDown' | translate"
                       *gioPermission="{ anyOf: ['environment-category-u'] }"
                     >
                       <mat-icon svgIcon="gio:arrow-down"></mat-icon>
@@ -191,7 +191,7 @@
                     <button
                       mat-button
                       (click)="removeApiFromCategory(element, category)"
-                      matTooltip="Remove API"
+                      [matTooltip]="'settings.categories.removeApi' | translate"
                       *gioPermission="{ anyOf: ['environment-api-u'] }"
                     >
                       <mat-icon svgIcon="gio:trash"></mat-icon>
@@ -206,7 +206,7 @@
               <!-- Row shown when there is no data -->
               <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
                 <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-                  {{ 'There are no APIs for this category.' }}
+                  {{ 'settings.categories.emptyApis' | translate }}
                 </td>
               </tr>
             </table>

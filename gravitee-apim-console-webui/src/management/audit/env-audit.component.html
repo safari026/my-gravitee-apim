@@ -16,13 +16,13 @@
 
 -->
 <div class="org-settings-audit__title">
-  <h1>Audit</h1>
+  <h1>{{ 'audit.title' | translate }}</h1>
 </div>
 
 <mat-card class="org-settings-audit__filters">
   <mat-card-content [formGroup]="filtersForm">
     <mat-form-field class="org-settings-audit__filters__field">
-      <mat-label>Event</mat-label>
+      <mat-label>{{ 'audit.filters.event' | translate }}</mat-label>
       <mat-select formControlName="event">
         <mat-option></mat-option>
         <mat-option *ngFor="let name of eventsName$ | async" [value]="name">{{ name }}</mat-option>
@@ -30,16 +30,16 @@
     </mat-form-field>
 
     <mat-form-field class="org-settings-audit__filters__field">
-      <mat-label>Type</mat-label>
+      <mat-label>{{ 'audit.filters.type' | translate }}</mat-label>
       <mat-select formControlName="referenceType">
         <mat-option></mat-option>
-        <mat-option value="APPLICATION">APPLICATION</mat-option>
-        <mat-option value="API">API</mat-option>
+        <mat-option value="APPLICATION">{{ 'audit.filters.typeApplication' | translate }}</mat-option>
+        <mat-option value="API">{{ 'audit.filters.typeApi' | translate }}</mat-option>
       </mat-select>
     </mat-form-field>
     <ng-container [ngSwitch]="filtersForm.get('referenceType').value">
       <mat-form-field *ngSwitchCase="'APPLICATION'" class="org-settings-audit__filters__field">
-        <mat-label>Applications</mat-label>
+        <mat-label>{{ 'audit.filters.applications' | translate }}</mat-label>
         <mat-select formControlName="applicationId">
           <mat-option></mat-option>
           <mat-option *ngFor="let application of applications$ | async" [value]="application.id">
@@ -49,7 +49,7 @@
       </mat-form-field>
 
       <mat-form-field *ngSwitchCase="'API'" class="org-settings-audit__filters__field">
-        <mat-label>APIs</mat-label>
+        <mat-label>{{ 'audit.filters.apis' | translate }}</mat-label>
         <mat-select formControlName="apiId">
           <mat-option></mat-option>
           <mat-option *ngFor="let api of apis$ | async" [value]="api.id">
@@ -60,17 +60,17 @@
     </ng-container>
 
     <mat-form-field class="org-settings-audit__filters__field right">
-      <mat-label>Enter a date range</mat-label>
+      <mat-label>{{ 'audit.filters.dateRange' | translate }}</mat-label>
       <mat-date-range-input formGroupName="range" [rangePicker]="picker">
-        <input matStartDate formControlName="start" placeholder="Start date" />
-        <input matEndDate formControlName="end" placeholder="End date" />
+        <input matStartDate formControlName="start" [placeholder]="'audit.filters.startDate' | translate" />
+        <input matEndDate formControlName="end" [placeholder]="'audit.filters.endDate' | translate" />
       </mat-date-range-input>
-      <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+      <mat-hint>{{ 'audit.filters.dateHint' | translate }}</mat-hint>
       <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
       <mat-date-range-picker #picker></mat-date-range-picker>
 
-      <mat-error *ngIf="filtersForm.controls.range.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-      <mat-error *ngIf="filtersForm.controls.range.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+      <mat-error *ngIf="filtersForm.controls.range.hasError('matStartDateInvalid')">{{ 'audit.filters.invalidStart' | translate }}</mat-error>
+      <mat-error *ngIf="filtersForm.controls.range.hasError('matEndDateInvalid')">{{ 'audit.filters.invalidEnd' | translate }}</mat-error>
     </mat-form-field>
   </mat-card-content>
 </mat-card>
@@ -81,42 +81,42 @@
   [filters]="filtersStream.value.tableWrapper"
   (filtersChange)="onFiltersChanged($event)"
 >
-  <table mat-table [dataSource]="filteredTableData" class="org-settings-audit__table" id="auditTable" aria-label="Audit table">
-    <!-- Date Column -->
+  <table
+    mat-table
+    [dataSource]="filteredTableData"
+    class="org-settings-audit__table"
+    id="auditTable"
+    [attr.aria-label]="'audit.tableAria' | translate"
+  >
     <ng-container matColumnDef="date">
-      <th mat-header-cell *matHeaderCellDef id="date" width="1%">Date</th>
+      <th mat-header-cell *matHeaderCellDef id="date" width="1%">{{ 'audit.columns.date' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.date | date: 'medium' }}</td>
     </ng-container>
 
-    <!-- User Column -->
     <ng-container matColumnDef="user">
-      <th mat-header-cell *matHeaderCellDef id="user" width="15%">User</th>
+      <th mat-header-cell *matHeaderCellDef id="user" width="15%">{{ 'audit.columns.user' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         {{ element.user }}
       </td>
     </ng-container>
 
-    <!-- Type Column -->
     <ng-container matColumnDef="referenceType">
-      <th mat-header-cell *matHeaderCellDef id="referenceType" width="15%">Type</th>
+      <th mat-header-cell *matHeaderCellDef id="referenceType" width="15%">{{ 'audit.columns.type' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.referenceType }}</td>
     </ng-container>
 
-    <!-- Reference Column -->
     <ng-container matColumnDef="reference">
-      <th mat-header-cell *matHeaderCellDef id="reference" width="15%">Reference</th>
+      <th mat-header-cell *matHeaderCellDef id="reference" width="15%">{{ 'audit.columns.reference' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.reference }}</td>
     </ng-container>
 
-    <!-- Event Column -->
     <ng-container matColumnDef="event">
-      <th mat-header-cell *matHeaderCellDef id="event" width="15%">Event</th>
+      <th mat-header-cell *matHeaderCellDef id="event" width="15%">{{ 'audit.columns.event' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.event }}</td>
     </ng-container>
 
-    <!-- Targets Column -->
     <ng-container matColumnDef="targets">
-      <th mat-header-cell *matHeaderCellDef id="targets" width="15%">Target</th>
+      <th mat-header-cell *matHeaderCellDef id="targets" width="15%">{{ 'audit.columns.target' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <div class="targets" *ngFor="let target of element.targets | keyvalue">
           <div class="targets__target">{{ target.key }}:</div>
@@ -125,9 +125,8 @@
       </td>
     </ng-container>
 
-    <!-- Patch Column -->
     <ng-container matColumnDef="patch">
-      <th mat-header-cell *matHeaderCellDef id="patch" width="1%">Patch</th>
+      <th mat-header-cell *matHeaderCellDef id="patch" width="1%">{{ 'audit.columns.patch' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <div class="pre-wrapper">
           <div>
@@ -135,8 +134,8 @@
               *ngIf="!element.displayPatch"
               (click)="element.displayPatch = true"
               mat-icon-button
-              aria-label="Button to show patch"
-              matTooltip="Show patch"
+              [attr.aria-label]="'audit.patch.showAria' | translate"
+              [matTooltip]="'audit.patch.show' | translate"
             >
               <mat-icon svgIcon="gio:eye-empty"></mat-icon>
             </button>
@@ -145,8 +144,8 @@
               *ngIf="element.displayPatch"
               (click)="element.displayPatch = false"
               mat-icon-button
-              aria-label="Button to hide patch"
-              matTooltip="Hide patch"
+              [attr.aria-label]="'audit.patch.hideAria' | translate"
+              [matTooltip]="'audit.patch.hide' | translate"
             >
               <mat-icon svgIcon="gio:cancel"></mat-icon>
             </button>
@@ -161,10 +160,13 @@
     <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
-    <!-- Row shown when there is no data -->
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-      <td *ngIf="tableIsLoading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">Loading...</td>
-      <td *ngIf="!tableIsLoading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No audit</td>
+      <td *ngIf="tableIsLoading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+        {{ 'common.loading' | translate }}
+      </td>
+      <td *ngIf="!tableIsLoading" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+        {{ 'audit.empty' | translate }}
+      </td>
     </tr>
   </table>
 </gio-table-wrapper>

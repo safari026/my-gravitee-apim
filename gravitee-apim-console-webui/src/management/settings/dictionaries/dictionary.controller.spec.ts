@@ -17,14 +17,19 @@ import type {} from 'angular-material';
 
 import DictionaryController from './dictionary.controller';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 describe('DictionaryController', () => {
   let controller: DictionaryController;
   let $mdDialog: any;
   let NotificationService: any;
   let DictionaryService: any;
   let ngRouter: any;
+  let languageService: LanguageService;
+  let $scope: { $applyAsync: jest.Mock };
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     $mdDialog = { show: jest.fn() };
     NotificationService = { show: jest.fn() };
     DictionaryService = {
@@ -37,8 +42,10 @@ describe('DictionaryController', () => {
       stop: jest.fn(),
     };
     ngRouter = { navigate: jest.fn() };
+    languageService = new LanguageService();
+    $scope = { $applyAsync: jest.fn() };
 
-    controller = new DictionaryController($mdDialog, NotificationService, DictionaryService, ngRouter);
+    controller = new DictionaryController($mdDialog, NotificationService, DictionaryService, ngRouter, languageService, $scope as any);
     controller['dictionary'] = {
       properties: {
         large_value: 'short',
@@ -46,6 +53,10 @@ describe('DictionaryController', () => {
     };
     controller['dictProperties'] = controller.computeProperties();
     controller['query'] = { total: 1 };
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('editProperty', () => {
@@ -100,7 +111,7 @@ describe('DictionaryController', () => {
       await controller.saveProperties();
 
       expect(DictionaryService.update).toHaveBeenCalled();
-      expect(NotificationService.show).toHaveBeenCalledWith('Properties has been updated');
+      expect(NotificationService.show).toHaveBeenCalledWith(languageService.translate('settings.dictionaries.propertiesUpdated'));
       expect(controller['propertiesDirty']).toBe(false);
       expect(controller['dictProperties']).toEqual([{ key: 'large_value', value: 'saved' }]);
     });
@@ -210,6 +221,55 @@ describe('DictionaryController', () => {
       expect(controller['query'].total).toBe(1);
       expect(controller['propertiesDirty']).toBe(true);
       expect(controller['dictProperties']).toEqual([{ key: 'keep', value: '1' }]);
+    });
+  });
+
+  describe('i18n', () => {
+    it('overlays MANUAL/DYNAMIC, HTTP, and time units EN → RU → EN without changing values', () => {
+      expect(controller.types.map(type => type.id)).toEqual(['MANUAL', 'DYNAMIC']);
+      expect(controller.providers.map(provider => provider.id)).toEqual(['HTTP']);
+      expect(controller.timeUnits.map(unit => unit.id)).toEqual(['SECONDS', 'MINUTES', 'HOURS']);
+      expect(controller.displayType('MANUAL')).toEqual('Manual');
+      expect(controller.displayType('DYNAMIC')).toEqual('Dynamic');
+      expect(controller.displayProvider('HTTP')).toEqual('Custom (HTTP)');
+      expect(controller.displayTimeUnit('SECONDS')).toEqual('Seconds');
+      expect(controller.getHttpMethods()).toEqual(['GET', 'DELETE', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'TRACE', 'HEAD']);
+
+      languageService.setLanguage('ru');
+      controller.$onChanges();
+      expect(controller['types'].map(type => type.id)).toEqual(['MANUAL', 'DYNAMIC']);
+      expect(controller.displayType('MANUAL')).toEqual('Ручной');
+      expect(controller.displayType('DYNAMIC')).toEqual('Динамический');
+      expect(controller.displayProvider('HTTP')).toEqual('Пользовательский (HTTP)');
+      expect(controller.displayTimeUnit('MINUTES')).toEqual('Минуты');
+      expect(controller.getHttpMethods()).toEqual(['GET', 'DELETE', 'PATCH', 'POST', 'PUT', 'OPTIONS', 'TRACE', 'HEAD']);
+
+      languageService.setLanguage('en');
+      controller.$onChanges();
+      expect(controller.displayType('MANUAL')).toEqual('Manual');
+      expect(controller.displayTimeUnit('HOURS')).toEqual('Hours');
+    });
+
+    it('shows translated snackbars and delete confirm at call time', async () => {
+      controller['dictionary'] = { name: 'Cities', properties: {} };
+      controller['updateMode'] = false;
+      DictionaryService.create.mockResolvedValue({ data: { id: 'dict-1' } });
+      $mdDialog.show.mockResolvedValue(true);
+      DictionaryService.delete.mockResolvedValue({});
+
+      languageService.setLanguage('ru');
+      await controller.update();
+      expect(NotificationService.show).toHaveBeenCalledWith('Словарь Cities создан');
+
+      controller.delete();
+      expect($mdDialog.show).toHaveBeenCalledWith(
+        expect.objectContaining({
+          locals: expect.objectContaining({
+            title: 'Вы уверены, что хотите удалить этот словарь?',
+            confirmButton: 'Да, удалить',
+          }),
+        }),
+      );
     });
   });
 });

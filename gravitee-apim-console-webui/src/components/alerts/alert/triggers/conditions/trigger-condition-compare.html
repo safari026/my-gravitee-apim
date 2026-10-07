@@ -17,35 +17,35 @@
 -->
 <div layout="row">
   <md-input-container class="md-block" flex-gt-sm flex="30">
-    <label>Multiplier</label>
+    <label>{{$ctrl.translate('alerts.condition.multiplier')}}</label>
     <input
       ng-model="$ctrl.condition.multiplier"
       required
       type="number"
       min="1"
       name="condition-compare-multiplier"
-      aria-label="compare multiplier"
+      aria-label="{{$ctrl.translate('alerts.condition.multiplierAria')}}"
       ng-disabled="$ctrl.isReadonly"
     />
     <div ng-messages="$ctrl.formAlert['condition-compare-multiplier'].$error">
-      <div ng-message="required">Multiplier is required.</div>
-      <div ng-message="min">Multiplier must be higher than 0.</div>
+      <div ng-message="required">{{$ctrl.translate('alerts.condition.multiplierRequired')}}</div>
+      <div ng-message="min">{{$ctrl.translate('alerts.condition.multiplierMin')}}</div>
     </div>
   </md-input-container>
 
   <md-input-container class="md-block" flex-gt-sm flex="30">
-    <label>Property</label>
+    <label>{{$ctrl.translate('alerts.condition.property')}}</label>
     <md-select
       ng-model="$ctrl.condition.property2"
       required
       name="condition-compare-property"
-      aria-label="compare property"
+      aria-label="{{$ctrl.translate('alerts.condition.propertyAria')}}"
       ng-disabled="$ctrl.isReadonly"
     >
-      <md-option ng-value="type.key" ng-repeat="type in $ctrl.metrics"> {{::type.name}} </md-option>
+      <md-option ng-value="type.key" ng-repeat="type in $ctrl.metrics"> {{$ctrl.translate('alerts.metrics.' + type.key)}} </md-option>
     </md-select>
     <div ng-messages="$ctrl.formAlert['condition-compare-property'].$error">
-      <div ng-message="required">Property is required.</div>
+      <div ng-message="required">{{$ctrl.translate('alerts.condition.propertyRequired')}}</div>
     </div>
   </md-input-container>
 </div>

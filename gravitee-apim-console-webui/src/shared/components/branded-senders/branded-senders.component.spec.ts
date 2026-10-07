@@ -29,6 +29,7 @@ import { BrandedSendersComponent } from './branded-senders.component';
 
 import { BrandedSender } from '../../../entities/brandedSender';
 import { GioTestingModule } from '../../testing';
+import { LanguageService } from '../../i18n/language.service';
 
 @Component({
   standalone: true,
@@ -80,6 +81,7 @@ describe('BrandedSendersComponent', () => {
 
   afterEach(() => {
     fixture.destroy();
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('default section', () => {
@@ -520,6 +522,21 @@ describe('BrandedSendersComponent', () => {
       fixture.detectChanges();
 
       expect((await badges()).length).toBe(1);
+    });
+  });
+
+  describe('i18n', () => {
+    it('should switch Add configuration to Russian and back without recreating the component', async () => {
+      const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '.branded-senders__add' }));
+      expect(await addButton.getText()).toContain('Add configuration');
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+      expect(await addButton.getText()).toContain('Добавить конфигурацию');
+
+      TestBed.inject(LanguageService).setLanguage('en');
+      fixture.detectChanges();
+      expect(await addButton.getText()).toContain('Add configuration');
     });
   });
 

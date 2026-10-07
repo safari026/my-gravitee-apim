@@ -19,12 +19,18 @@ import { SettingsNavigationService } from './settings-navigation.service';
 
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { GioTestingModule } from '../../../shared/testing';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('SettingsNavigationService', () => {
   let service: SettingsNavigationService;
   const envId = 'envId';
 
+  afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
+  });
+
   const init = (hasAnyMatching = true) => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [GioTestingModule],
       providers: [
@@ -72,6 +78,26 @@ describe('SettingsNavigationService', () => {
           }),
         ),
       ),
+    );
+  });
+
+  it('switches search item names EN \u2192 RU \u2192 EN without reload', () => {
+    init();
+    const languageService = TestBed.inject(LanguageService);
+
+    expect(service.getSettingsNavigationSearchItems(envId).map(item => item.name)).toEqual(
+      expect.arrayContaining(['Analytics', 'Groups', 'Notification settings']),
+    );
+
+    languageService.setLanguage('ru');
+    expect(service.getSettingsNavigationSearchItems(envId).map(item => item.name)).toEqual(
+      expect.arrayContaining(['Аналитика', 'Группы', 'Настройки уведомлений']),
+    );
+    expect(service.getSettingsNavigationSearchItems(envId).every(item => item.routerLink.includes(`${envId}/settings`))).toBe(true);
+
+    languageService.setLanguage('en');
+    expect(service.getSettingsNavigationSearchItems(envId).map(item => item.name)).toEqual(
+      expect.arrayContaining(['Analytics', 'Groups', 'Notification settings']),
     );
   });
 

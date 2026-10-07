@@ -20,6 +20,7 @@ import { GioMonacoEditorModule, MonacoEditorLanguageConfig } from '@gravitee/ui-
 import { FormsModule } from '@angular/forms';
 
 import { SharedPolicyGroup } from '../../../../../../entities/management-api-v2';
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 
 export interface HistoryJsonDialogData {
   sharedPolicyGroup: SharedPolicyGroup;
@@ -32,7 +33,7 @@ export type HistoryJsonDialogResult = boolean;
   templateUrl: './history-json-dialog.component.html',
   styleUrls: ['./history-json-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogModule, MatButtonModule, GioMonacoEditorModule, FormsModule],
+  imports: [MatDialogModule, MatButtonModule, GioMonacoEditorModule, FormsModule, TranslatePipe],
 })
 export class HistoryJsonDialogComponent {
   protected languageConfig: MonacoEditorLanguageConfig = {

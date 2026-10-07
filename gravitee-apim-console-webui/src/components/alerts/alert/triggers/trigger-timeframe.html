@@ -16,42 +16,43 @@
 
 -->
 <div class="gv-forms-header">
-  <h3>Timeframe</h3>
-  <div class="ipsum">Timeframe when notifications should be sent</div>
+  <h3>{{$ctrl.translate('alerts.timeframe.title')}}</h3>
+  <div class="ipsum">{{$ctrl.translate('alerts.timeframe.hint')}}</div>
 </div>
 
 <div class="gv-form-content scrollable" layout="column">
   <div ng-repeat="period in $ctrl.alert.notificationPeriods" layout-gt-sm="row">
     <div flex="90">
-      Every <code>{{$ctrl.getDayNames(period)}}</code>
+      {{$ctrl.translate('alerts.timeframe.every')}} <code>{{$ctrl.getDayNames(period)}}</code>
       <span ng-if="$ctrl.isRange(period)"
-        >from <code>{{$ctrl.formatPeriod(period.beginHour)}}</code> to <code>{{$ctrl.formatPeriod(period.endHour)}}</code>
+        >{{$ctrl.translate('alerts.timeframe.from')}} <code>{{$ctrl.formatPeriod(period.beginHour)}}</code>
+        {{$ctrl.translate('alerts.timeframe.to')}} <code>{{$ctrl.formatPeriod(period.endHour)}}</code>
         [<code>{{period.zoneId}}</code>]
       </span>
       <span ng-if="$ctrl.isTime(period)">
-        at <code>{{$ctrl.formatPeriod(period.beginHour)}}</code>
+        {{$ctrl.translate('alerts.timeframe.at')}} <code>{{$ctrl.formatPeriod(period.beginHour)}}</code>
         [<code>{{period.zoneId}}</code>]
       </span>
     </div>
-    <gv-button icon="general:rename" ng-click="$ctrl.edit($index)" small outlined primary>Edit</gv-button>
-    <gv-button icon="general:trash" ng-click="$ctrl.remove($index)" small outlined danger>Remove</gv-button>
+    <gv-button icon="general:rename" ng-click="$ctrl.edit($index)" small outlined primary>{{$ctrl.translate('common.edit')}}</gv-button>
+    <gv-button icon="general:trash" ng-click="$ctrl.remove($index)" small outlined danger>{{$ctrl.translate('common.remove')}}</gv-button>
   </div>
 
-  <div ng-if="$ctrl.alert.notificationPeriods.length === 0">No timeframe defined, it will send all the time.</div>
+  <div ng-if="$ctrl.alert.notificationPeriods.length === 0">{{$ctrl.translate('alerts.timeframe.empty')}}</div>
 
   <gv-expandable
     ng-open="open"
     ng-on-gv-row-expandable:toggle="$ctrl.onToggleForm($event)"
     class="gv-trigger-timeframe_form"
-    title="Add a timeframe"
+    title="{{$ctrl.translate('alerts.timeframe.add')}}"
   >
-    <div slot="summary">Add a timeframe</div>
+    <div slot="summary">{{$ctrl.translate('alerts.timeframe.add')}}</div>
     <div slot="details" ng-form name="timeframe" class="gv-trigger-timeframe_form-details">
       <div layout-gt-sm="row" layout-align="space-between center">
         <md-input-container flex="65">
-          <label>Days</label>
+          <label>{{$ctrl.translate('alerts.timeframe.days')}}</label>
           <md-select ng-required="open" ng-model="timeframe.days" multiple>
-            <md-option ng-repeat="day in $ctrl.days" ng-value="day"> {{day}} </md-option>
+            <md-option ng-repeat="day in $ctrl.days" ng-value="day"> {{$ctrl.translate('alerts.days.' + day)}} </md-option>
           </md-select>
         </md-input-container>
 
@@ -59,28 +60,30 @@
           ng-model="timeframe.businessDays"
           gv-model
           flex="30"
-          aria-label="Business day"
-          label="Business day"
-          description="Set any day except weekend"
+          aria-label="{{$ctrl.translate('alerts.timeframe.businessDayAria')}}"
+          label="{{$ctrl.translate('alerts.timeframe.businessDay')}}"
+          description="{{$ctrl.translate('alerts.timeframe.businessDayHint')}}"
         >
         </gv-switch>
       </div>
       <div layout-gt-sm="row" layout-align="space-between center">
         <div flex="65" class="prevent-overlap">
-          <gv-date-picker label="Time range" time strict range gv-model ng-model="timeframe.range"></gv-date-picker>
+          <gv-date-picker label="{{$ctrl.translate('alerts.timeframe.timeRange')}}" time strict range gv-model ng-model="timeframe.range"></gv-date-picker>
         </div>
         <gv-switch
           ng-model="timeframe.officeHours"
           gv-model
           flex="30"
-          aria-label="Office hours"
-          label="Office hours"
+          aria-label="{{$ctrl.translate('alerts.timeframe.officeHoursAria')}}"
+          label="{{$ctrl.translate('alerts.timeframe.officeHours')}}"
           ng-attr-description="{{$ctrl.getOfficeHoursDescription()}}"
         >
         </gv-switch>
       </div>
       <div layout-gt-sm="row" layout-align="end end">
-        <gv-button icon="code:plus" outlined ng-click="$ctrl.add(timeframe)" small ng-disabled="timeframe.$invalid">Add </gv-button>
+        <gv-button icon="code:plus" outlined ng-click="$ctrl.add(timeframe)" small ng-disabled="timeframe.$invalid"
+          >{{$ctrl.translate('common.add')}}
+        </gv-button>
       </div>
     </div>
   </gv-expandable>

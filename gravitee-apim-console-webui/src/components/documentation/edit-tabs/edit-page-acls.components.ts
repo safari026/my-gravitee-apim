@@ -16,6 +16,7 @@
 import { IController, IScope } from 'angular';
 
 import RoleService from '../../../services/role.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import '@gravitee/ui-components/wc/gv-switch';
 
 interface IPageScope extends IScope {
@@ -32,7 +33,10 @@ class EditPageAclsComponentController implements IController {
   constructor(
     private readonly RoleService: RoleService,
     private $scope: IPageScope,
+    private readonly ngLanguageService: LanguageService,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onChanges() {
     const scope = this.isApiPage ? 'API' : 'ENVIRONMENT';
@@ -64,7 +68,7 @@ class EditPageAclsComponentController implements IController {
     );
   }
 }
-EditPageAclsComponentController.$inject = ['RoleService', '$scope'];
+EditPageAclsComponentController.$inject = ['RoleService', '$scope', 'ngLanguageService'];
 
 export const EditPageAclsComponent: ng.IComponentOptions = {
   bindings: {

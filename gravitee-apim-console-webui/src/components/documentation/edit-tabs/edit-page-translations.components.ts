@@ -17,6 +17,7 @@ import { IController, IScope } from 'angular';
 
 import { DocumentationService, PageType } from '../../../services/documentation.service';
 import NotificationService from '../../../services/notification.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class EditPageTranslationsComponentController implements IController {
   apiId: string;
@@ -31,7 +32,10 @@ class EditPageTranslationsComponentController implements IController {
     private $scope: IScope,
     private readonly DocumentationService: DocumentationService,
     private readonly NotificationService: NotificationService,
+    private readonly ngLanguageService: LanguageService,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     this.$scope.$on('saveTranslation', () => {
@@ -80,14 +84,14 @@ class EditPageTranslationsComponentController implements IController {
         template: require('html-loader!../../dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Would you like to remove "' + page.name + '"?',
-          confirmButton: 'Remove',
+          title: this.translate('settings.documentation.removeTitle', { name: page.name }),
+          confirmButton: this.translate('common.remove'),
         },
       })
       .then((response: any) => {
         if (response) {
           this.DocumentationService.remove(page.id, this.apiId).then(() => {
-            this.NotificationService.show('Translation ' + page.name + ' has been removed');
+            this.NotificationService.show(this.translate('settings.documentation.translationRemoved', { name: page.name }));
             this.refreshTranslations();
           });
         }
@@ -105,12 +109,12 @@ class EditPageTranslationsComponentController implements IController {
     if (!this.currentTranslation.id) {
       this.DocumentationService.create(this.currentTranslation, this.apiId).then((response: any) => {
         const page = response.data;
-        this.NotificationService.show("'" + page.name + "' has been created");
+        this.NotificationService.show(this.translate('settings.documentation.created', { name: page.name }));
         this.refreshTranslations();
       });
     } else {
       this.DocumentationService.update(this.currentTranslation, this.apiId).then(() => {
-        this.NotificationService.show("'" + this.currentTranslation.name + "' has been updated");
+        this.NotificationService.show(this.translate('settings.documentation.updated', { name: this.currentTranslation.name }));
         this.refreshTranslations();
       });
     }
@@ -128,7 +132,7 @@ class EditPageTranslationsComponentController implements IController {
     }
   }
 }
-EditPageTranslationsComponentController.$inject = ['$mdDialog', '$scope', 'DocumentationService', 'NotificationService'];
+EditPageTranslationsComponentController.$inject = ['$mdDialog', '$scope', 'DocumentationService', 'NotificationService', 'ngLanguageService'];
 
 export const EditPageTranslationsComponent: ng.IComponentOptions = {
   bindings: {

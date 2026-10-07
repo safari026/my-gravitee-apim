@@ -24,6 +24,7 @@ import { emptyFetcher } from './edit-tabs/edit-page-fetchers.component';
 import { DocumentationService, PageType } from '../../services/documentation.service';
 import NotificationService from '../../services/notification.service';
 import UserService from '../../services/user.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 interface IPageScope extends IScope {
   fetcherJsonSchema: {
@@ -73,6 +74,7 @@ class EditPageComponentController implements IController {
     private readonly UserService: UserService,
     private $scope: IPageScope,
     private ngRouter: Router,
+    private readonly ngLanguageService: LanguageService,
   ) {
     this.tabs = [
       {
@@ -127,6 +129,8 @@ class EditPageComponentController implements IController {
     };
   }
 
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
+
   $onInit() {
     this.apiId = this.activatedRoute.snapshot.params.apiId;
     this.pageId = this.activatedRoute.snapshot.params.pageId;
@@ -139,7 +143,7 @@ class EditPageComponentController implements IController {
     this.currentTab = this.tabs[this.selectedTab].name;
     if (this.resolvedPage.messages && this.resolvedPage.messages.length > 0) {
       this.error = {
-        title: 'Validation messages',
+        title: this.translate('settings.documentation.validationMessages'),
         message: this.resolvedPage.messages,
       };
     }
@@ -213,14 +217,14 @@ class EditPageComponentController implements IController {
     this.DocumentationService.update(this.page, this.apiId)
       .then(response => {
         if (response.data.messages && response.data.messages.length > 0) {
-          this.NotificationService.showError("'" + this.page.name + "' has been updated (with validation errors)");
+          this.NotificationService.showError(this.translate('settings.documentation.updatedWithErrors', { name: this.page.name }));
         } else {
-          this.NotificationService.show("'" + this.page.name + "' has been updated");
+          this.NotificationService.show(this.translate('settings.documentation.updated', { name: this.page.name }));
         }
         this.ngRouter.navigate(['../'], { relativeTo: this.activatedRoute });
       })
       .catch(err => {
-        this.error = { ...err.data, title: 'Sorry, unable to update page' };
+        this.error = { ...err.data, title: this.translate('settings.documentation.unableToUpdate') };
       });
   }
 
@@ -260,7 +264,7 @@ class EditPageComponentController implements IController {
 
   rename() {
     this.DocumentationService.partialUpdate('name', this.newName, this.page.id, this.apiId).then(() => {
-      this.NotificationService.show("'" + this.page.name + "' has been renamed to '" + this.newName + "'");
+      this.NotificationService.show(this.translate('settings.documentation.renamed', { name: this.page.name, newName: this.newName }));
       this.page.name = this.newName;
       this.toggleRename();
     });
@@ -286,19 +290,19 @@ class EditPageComponentController implements IController {
 
   fetch() {
     this.DocumentationService.fetch(this.page.id, this.apiId).then(() => {
-      this.NotificationService.show("'" + this.page.name + "' has been successfully fetched");
+      this.NotificationService.show(this.translate('settings.documentation.fetched', { name: this.page.name }));
       this.reset();
     });
   }
 
   getBannerMessage(): string {
     return this.isMarkdownTemplate()
-      ? 'This page is not available for users yet'
-      : 'This page is not published yet and will not be visible to other users';
+      ? this.translate('settings.documentation.unavailableBanner')
+      : this.translate('settings.documentation.unpublishedBanner');
   }
 }
 
-EditPageComponentController.$inject = ['NotificationService', 'DocumentationService', 'UserService', '$scope', 'ngRouter'];
+EditPageComponentController.$inject = ['NotificationService', 'DocumentationService', 'UserService', '$scope', 'ngRouter', 'ngLanguageService'];
 
 export const DocumentationEditPageComponentAjs: ng.IComponentOptions = {
   bindings: {
@@ -312,6 +316,7 @@ export const DocumentationEditPageComponentAjs: ng.IComponentOptions = {
     pageResources: '<',
     categoryResources: '<',
     attachedResources: '<',
+    language: '<',
   },
   template: require('html-loader!./edit-page.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: EditPageComponentController,

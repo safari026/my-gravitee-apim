@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<md-dialog aria-label="confirm-dialog">
+<md-dialog aria-label="{{title}}">
   <md-dialog-content layout-padding>
     <h4>{{title}}</h4>
     <md-select ng-model="selectedPage" required>
@@ -26,7 +26,7 @@
     </md-select>
   </md-dialog-content>
   <md-dialog-actions layout="row">
-    <md-button ng-click="ctrl.cancel()">Cancel</md-button>
-    <md-button ng-click="ctrl.select()" ng-disabled="!selectedPage">Add</md-button>
+    <md-button ng-click="ctrl.cancel()">{{ctrl.translate('common.cancel')}}</md-button>
+    <md-button ng-click="ctrl.select()" ng-disabled="!selectedPage">{{ctrl.translate('common.add')}}</md-button>
   </md-dialog-actions>
 </md-dialog>

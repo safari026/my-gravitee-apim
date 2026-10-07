@@ -22,6 +22,7 @@ import type { ToolbarItemOptions } from '@toast-ui/editor/types/ui';
 import type { Editor, EditorOptions } from '@toast-ui/editor';
 
 import NotificationService from '../../../services/notification.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 // Step 2. Import language files of prismjs that you need
 import 'prismjs/components/prism-javascript';
 import 'prismjs/components/prism-typescript';
@@ -41,8 +42,11 @@ class ComponentCtrl implements ng.IComponentController {
     private readonly Constants,
     private readonly $mdDialog: angular.material.IDialogService,
     private readonly NotificationService: NotificationService,
-    private readonly activatedRoute: ActivatedRoute,
+    private readonly ngLanguageService: LanguageService,
+    private readonly activatedRoute?: ActivatedRoute,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     addAnchorLinks('.toastui-editor-contents');
@@ -66,7 +70,7 @@ class ComponentCtrl implements ng.IComponentController {
       [
         {
           name: '',
-          tooltip: 'Insert page link',
+          tooltip: this.translate('settings.documentation.insertPageLink'),
           command: 'addLinkToPage',
           style: { backgroundImage: "url('assets/logo_file.svg')", backgroundSize: '30px 30px' },
         },
@@ -103,7 +107,9 @@ class ComponentCtrl implements ng.IComponentController {
 
           if (blob.size > this.Constants.env.settings.portal.uploadMedia.maxSizeInOctet) {
             this.NotificationService.showError(
-              `The uploaded file is too big, you are limited to ${this.Constants.env.settings.portal.uploadMedia.maxSizeInOctet} bytes`,
+              this.translate('settings.documentation.fileTooBig', {
+                max: this.Constants.env.settings.portal.uploadMedia.maxSizeInOctet,
+              }),
             );
             return;
           }
@@ -127,7 +133,7 @@ class ComponentCtrl implements ng.IComponentController {
           clickOutsideToClose: true,
           locals: {
             pages: this.pagesToLink,
-            title: 'Create a link to a page',
+            title: this.translate('settings.documentation.createPageLink'),
           },
         })
         .then(page => {
@@ -145,7 +151,7 @@ class ComponentCtrl implements ng.IComponentController {
     });
   }
 }
-ComponentCtrl.$inject = ['$http', 'Constants', '$mdDialog', 'NotificationService'];
+ComponentCtrl.$inject = ['$http', 'Constants', '$mdDialog', 'NotificationService', 'ngLanguageService', 'activatedRoute'];
 
 export const PageEditorMarkdownComponent: ng.IComponentOptions = {
   template: require('html-loader!./page-editormarkdown.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

@@ -19,6 +19,7 @@ import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/materia
 
 import { GioDiffModule } from '../../../../../../shared/components/gio-diff/gio-diff.module';
 import { SharedPolicyGroup } from '../../../../../../entities/management-api-v2';
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 
 export interface HistoryCompareDialogData {
   left: SharedPolicyGroup;
@@ -33,7 +34,7 @@ export type HistoryCompareDialogResult = boolean;
   templateUrl: './history-compare-dialog.component.html',
   styleUrls: ['./history-compare-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogModule, MatButtonModule, GioDiffModule],
+  imports: [MatDialogModule, MatButtonModule, GioDiffModule, TranslatePipe],
 })
 export class HistoryCompareDialogComponent {
   protected readonly left = JSON.stringify(this.data.left, null, 2);

@@ -34,6 +34,7 @@ import { EnvSettings } from '../../../entities/Constants';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
 import { GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
 import { UpdateCategory } from '../../../entities/category/UpdateCategory';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('CategoriesComponent', () => {
   let fixture: ComponentFixture<CategoriesComponent>;
@@ -116,6 +117,8 @@ describe('CategoriesComponent', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    localStorage.removeItem('gio-console-lang');
+    TestBed.inject(LanguageService).setLanguage('en');
   });
 
   describe('No categories', () => {
@@ -127,6 +130,25 @@ describe('CategoriesComponent', () => {
       const table = await harnessLoader.getHarness(MatTableHarness);
       const tableHost = await table.host();
       expect(await tableHost.text()).toContain('There are no categories for this environment.');
+    });
+
+    it('switches empty state EN → RU → EN without reload', async () => {
+      const languageService = TestBed.inject(LanguageService);
+      const table = await harnessLoader.getHarness(MatTableHarness);
+      const tableHost = await table.host();
+
+      expect(await tableHost.text()).toContain('There are no categories for this environment.');
+      expect(fixture.nativeElement.textContent).toContain('Categories');
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(await tableHost.text()).toContain('Для этой среды нет категорий.');
+      expect(fixture.nativeElement.textContent).toContain('Категории');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(await tableHost.text()).toContain('There are no categories for this environment.');
+      expect(fixture.nativeElement.textContent).toContain('Categories');
     });
   });
 
@@ -313,6 +335,6 @@ describe('CategoriesComponent', () => {
     return await getTableRows()
       .then(rows => rows[rowIndex].getCells({ columnName: 'actions' }))
       .then(cells => cells[0])
-      .then(actionCell => actionCell.getHarnessOrNull(MatButtonHarness.with({ selector: `[mattooltip="${tooltipText}"]` })));
+      .then(actionCell => actionCell.getHarnessOrNull(MatButtonHarness.with({ selector: `[aria-label="${tooltipText}"]` })));
   }
 });

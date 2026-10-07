@@ -29,7 +29,9 @@ const AlertTriggerMetricsRateComponent: ng.IComponentOptions = {
   template: require('html-loader!./trigger-metrics-rate.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: [
     'Constants',
-    function (Constants: any) {
+    'ngLanguageService',
+    function (Constants: any, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.$onInit = () => {
         this.metrics = Metrics.filterByScope(
           Rule.findByScopeAndType(this.alert.reference_type, this.alert.type, Constants?.org?.settings?.cloudHosted?.enabled).metrics,

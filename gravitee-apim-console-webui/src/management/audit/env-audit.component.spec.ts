@@ -27,14 +27,16 @@ import { EnvAuditComponent } from './env-audit.component';
 import { EnvAuditModule } from './env-audit.module';
 
 import { fakeMetadataPageAudit } from '../../entities/audit/Audit.fixture';
-import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
 import { Api, fakeApiV4 } from '../../entities/management-api-v2';
 import { GioTableWrapperHarness } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.harness';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
 
 describe('EnvAuditComponent', () => {
   let fixture: ComponentFixture<EnvAuditComponent>;
   let loader: HarnessLoader;
   let httpTestingController: HttpTestingController;
+  let languageService: LanguageService;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
@@ -47,6 +49,8 @@ describe('EnvAuditComponent', () => {
     loader = TestbedHarnessEnvironment.loader(fixture);
 
     httpTestingController = TestBed.inject(HttpTestingController);
+    languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('en');
     fixture.detectChanges();
   });
 
@@ -150,7 +154,44 @@ describe('EnvAuditComponent', () => {
     expectAuditListRequest({ event: 'ROLE_UPDATED' }, { page: 1, size: 10 });
   });
 
+  it('localizes chrome and switches EN → RU → EN without changing query values', async () => {
+    expectAuditListRequest();
+    expectAuditEventsNameRequest();
+
+    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Audit');
+    const table = await loader.getHarness(MatTableHarness.with({ selector: '#auditTable' }));
+    expect(await table.getHeaderRows().then(rows => rows[0].getCellTextByColumnName())).toEqual(
+      expect.objectContaining({
+        date: 'Date',
+        user: 'User',
+        event: 'Event',
+        patch: 'Patch',
+      }),
+    );
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Аудит');
+    expect(await table.getHeaderRows().then(rows => rows[0].getCellTextByColumnName())).toEqual(
+      expect.objectContaining({
+        date: 'Дата',
+        user: 'Пользователь',
+        event: 'Событие',
+        patch: 'Изменения',
+      }),
+    );
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Audit');
+
+    const eventInput = await loader.getHarness(MatSelectHarness.with({ selector: '[formControlName=event]' }));
+    await eventInput.clickOptions({ text: 'ROLE_UPDATED' });
+    expectAuditListRequest({ event: 'ROLE_UPDATED' });
+  });
+
   afterEach(() => {
+    languageService.setLanguage('en');
     httpTestingController.verify();
   });
 

@@ -17,19 +17,19 @@
 -->
 <mat-card>
   <mat-card-header>
-    <mat-card-title>Shared Policy Group</mat-card-title>
-    <mat-card-subtitle>Shared Policy Group allow to apply different policies on your API event phases</mat-card-subtitle>
+    <mat-card-title>{{ 'settings.sharedPolicyGroups.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'settings.sharedPolicyGroups.subtitle' | translate }}</mat-card-subtitle>
     <div class="shared-policy-groups__headerRightBtn" *gioPermission="{ anyOf: ['environment-shared_policy_group-c'] }">
       <button mat-raised-button color="primary" [matMenuTriggerFor]="addEnvironmentFlowMenu">
-        <mat-icon svgIcon="gio:plus"></mat-icon>Add Shared Policy Group
+        <mat-icon svgIcon="gio:plus"></mat-icon>{{ 'settings.sharedPolicyGroups.add' | translate }}
       </button>
 
       <mat-menu #addEnvironmentFlowMenu="matMenu">
         <button mat-menu-item (click)="onAddEnvironmentFlow('PROXY')">
-          <span>Proxy API</span>
+          <span>{{ 'settings.sharedPolicyGroups.proxyApi' | translate }}</span>
         </button>
         <button mat-menu-item (click)="onAddEnvironmentFlow('MESSAGE')">
-          <span>Message API</span>
+          <span>{{ 'settings.sharedPolicyGroups.messageApi' | translate }}</span>
         </button>
       </mat-menu>
     </div>
@@ -43,9 +43,9 @@
       [paginationPageSizeOptions]="[25, 50, 100]"
       (filtersChange)="onFiltersChanged($event)"
     >
-      <table mat-table matSort [dataSource]="pageTableVM.items" aria-label="Shared Policy Group">
+      <table mat-table matSort [dataSource]="pageTableVM.items" [attr.aria-label]="'settings.sharedPolicyGroups.tableAria' | translate">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="name">Name</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="name">{{ 'settings.sharedPolicyGroups.name' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             <div class="cell">
               <div class="cell__nameDescription">
@@ -58,28 +58,35 @@
         </ng-container>
 
         <ng-container matColumnDef="apiType">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="apiType">API Type</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="apiType">{{ 'settings.sharedPolicyGroups.apiType' | translate }}</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.apiType | titlecase }}
+            {{
+              (element.apiType === 'MESSAGE'
+                ? 'settings.sharedPolicyGroups.messageApi'
+                : element.apiType === 'PROXY'
+                  ? 'settings.sharedPolicyGroups.proxyApi'
+                  : element.apiType
+              ) | translate
+            }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="phase">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="phase">Phase</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="phase">{{ 'settings.sharedPolicyGroups.phase' | translate }}</th>
           <td mat-cell *matCellDef="let element">
-            {{ element.phase }}
+            {{ ('settings.sharedPolicyGroups.phases.' + element.phase) | translate }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="lastUpdate">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="updatedAt">Last updated</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="updatedAt">{{ 'settings.sharedPolicyGroups.lastUpdated' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             {{ element.updatedAt | date: 'medium' }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="lastDeploy">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="deployedAt">Last deployed</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="deployedAt">{{ 'settings.sharedPolicyGroups.lastDeployed' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             {{ element.deployedAt | date: 'medium' }}
           </td>
@@ -95,11 +102,21 @@
                     <mat-icon svgIcon="gio:kubernetes"></mat-icon>
                   </div>
                 }
-                <button mat-button aria-label="Button to view" matTooltip="View" (click)="onEdit(element.id)">
+                <button
+                  mat-button
+                  [attr.aria-label]="'settings.sharedPolicyGroups.viewAria' | translate"
+                  [matTooltip]="'common.view' | translate"
+                  (click)="onEdit(element.id)"
+                >
                   <mat-icon svgIcon="gio:eye-empty"></mat-icon>
                 </button>
               } @else {
-                <button mat-button aria-label="Button to edit" matTooltip="Edit" (click)="onEdit(element.id)">
+                <button
+                  mat-button
+                  [attr.aria-label]="'settings.sharedPolicyGroups.editAria' | translate"
+                  [matTooltip]="'common.edit' | translate"
+                  (click)="onEdit(element.id)"
+                >
                   <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
                 </button>
 
@@ -107,8 +124,8 @@
                   *gioPermission="{ anyOf: ['environment-shared_policy_group-d'] }"
                   type="button"
                   mat-button
-                  aria-label="Button to remove Shared Policy Group"
-                  matTooltip="Remove"
+                  [attr.aria-label]="'settings.sharedPolicyGroups.removeAria' | translate"
+                  [matTooltip]="'common.remove' | translate"
                   (click)="onRemove(element.id)"
                 >
                   <mat-icon svgIcon="gio:trash"></mat-icon>
@@ -124,8 +141,8 @@
         <!-- Row shown when there is no data -->
         <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
           <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-            <div *ngIf="!pageTableVM.isLoading" class="mat-body">No Shared Policy Group</div>
-            <div *ngIf="pageTableVM.isLoading" class="mat-body">Loading...</div>
+            <div *ngIf="!pageTableVM.isLoading" class="mat-body">{{ 'settings.sharedPolicyGroups.empty' | translate }}</div>
+            <div *ngIf="pageTableVM.isLoading" class="mat-body">{{ 'common.loading' | translate }}</div>
           </td>
         </tr>
       </table>

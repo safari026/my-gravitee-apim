@@ -17,14 +17,14 @@
 -->
 
 <md-input-container class="md-block flex-gt-sm">
-  <label>Threshold</label>
+  <label>{{$ctrl.translate('alerts.condition.threshold')}}</label>
   <input
     ng-model="$ctrl.condition.threshold"
     required
     type="number"
     min="1"
     name="threshold"
-    aria-label="trigger threshold"
+    aria-label="{{$ctrl.translate('alerts.condition.thresholdAria')}}"
     ng-disabled="$ctrl.isReadonly"
   />
   <!--
@@ -33,7 +33,7 @@
   </div>
   -->
   <div ng-messages="$ctrl.formAlert.threshold.$error">
-    <div ng-message="required">Threshold is required.</div>
-    <div ng-message="min">Threshold must be higher than 0.</div>
+    <div ng-message="required">{{$ctrl.translate('alerts.condition.thresholdRequired')}}</div>
+    <div ng-message="min">{{$ctrl.translate('alerts.condition.thresholdMin')}}</div>
   </div>
 </md-input-container>

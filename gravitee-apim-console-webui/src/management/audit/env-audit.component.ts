@@ -25,6 +25,7 @@ import { ApplicationService } from '../../services-ngx/application.service';
 import { AuditService } from '../../services-ngx/audit.service';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { GioTableWrapperFilters } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
+import { LanguageService } from '../../shared/i18n/language.service';
 import { endOfDay } from '../../util/date.util';
 
 interface AuditDataTable {
@@ -101,6 +102,7 @@ export class EnvAuditComponent implements OnInit, OnDestroy {
     private readonly apiV2Service: ApiV2Service,
     private applicationService: ApplicationService,
     private snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -136,7 +138,7 @@ export class EnvAuditComponent implements OnInit, OnDestroy {
         switchMap(({ auditFilters, tableWrapper }) =>
           this.auditService.list(auditFilters, tableWrapper.pagination.index, tableWrapper.pagination.size).pipe(
             catchError(() => {
-              this.snackBarService.error('Unable to try the request, please try again');
+              this.snackBarService.error(this.languageService.translate('audit.loadError'));
               return EMPTY;
             }),
           ),

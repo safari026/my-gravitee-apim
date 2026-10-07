@@ -27,6 +27,7 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { Category } from '../../../entities/category/Category';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { PortalSettingsService } from '../../../services-ngx/portal-settings.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'app-categories',
@@ -50,6 +51,7 @@ export class CategoriesComponent implements OnInit {
     private matDialog: MatDialog,
     private readonly permissionService: GioPermissionService,
     private portalSettingsService: PortalSettingsService,
+    private languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -71,9 +73,9 @@ export class CategoriesComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete Category',
-          content: `Are you sure you want to delete the category '${category.name}'?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.categories.deleteTitle'),
+          content: this.languageService.translate('settings.categories.deleteContent', { name: category.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'confirmDialog',
@@ -86,10 +88,10 @@ export class CategoriesComponent implements OnInit {
       )
       .subscribe({
         next: _ => {
-          this.snackBarService.success(`'${category.name}' deleted successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.categories.deleted', { name: category.name }));
           this.categoryList.next(1);
         },
-        error: ({ error }) => this.snackBarService.error(error?.message ?? 'Error during deletion'),
+        error: ({ error }) => this.snackBarService.error(error?.message ?? this.languageService.translate('settings.categories.deleteError')),
       });
   }
 
@@ -141,7 +143,7 @@ export class CategoriesComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: _ => {
-          this.snackBarService.success(`Category order has been changed`);
+          this.snackBarService.success(this.languageService.translate('settings.categories.orderChanged'));
           this.categoryList.next(1);
         },
         error: ({ error }) => this.snackBarService.error(error.message),
@@ -155,7 +157,11 @@ export class CategoriesComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: _ => {
-          this.snackBarService.success(`Category [${category.name}] is now ${isHidden ? 'hidden' : 'shown'}`);
+          this.snackBarService.success(
+            this.languageService.translate(isHidden ? 'settings.categories.hiddenNow' : 'settings.categories.shown', {
+              name: category.name,
+            }),
+          );
           this.categoryList.next(1);
         },
         error: ({ error }) => this.snackBarService.error(error.message),

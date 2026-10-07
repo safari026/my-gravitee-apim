@@ -20,21 +20,21 @@
     <div class="notifications">
       <div class="notifications__header">
         <div class="notifications__title">
-          <h3 class="notifications__title__main">Notifications</h3>
+          <h3 class="notifications__title__main">{{ 'settings.notifications.title' | translate }}</h3>
           <div class="notifications__title__subtitle">
-            Configure your own Developer Portal notifications using Portal, Email or Webhook notifier
+            {{ 'settings.notifications.subtitle' | translate }}
           </div>
         </div>
 
         <button
           *ngIf="canAdd"
           mat-raised-button
-          [attr.aria-label]="'Add notification'"
+          [attr.aria-label]="'settings.notifications.addAria' | translate"
           (click)="addNotification()"
           data-testid="add-notification"
           color="primary"
         >
-          <mat-icon svgIcon="gio:plus"></mat-icon>Add notification
+          <mat-icon svgIcon="gio:plus"></mat-icon>{{ 'settings.notifications.add' | translate }}
         </button>
       </div>
 

@@ -17,45 +17,49 @@
 -->
 <div class="gv-forms gv-forms-fluid" layout="column">
   <div class="gv-forms-header">
-    <h1 ng-if="!$ctrl.editMode">New dashboard [{{$ctrl.dashboard.type}}]</h1>
-    <h1 ng-if="$ctrl.editMode">{{::$ctrl.dashboard.name}} [{{$ctrl.dashboard.type}}]</h1>
-    <a ng-click="$ctrl.backToDashboards()">Back to dashboards</a>
+    <h1 ng-if="!$ctrl.editMode">
+      {{$ctrl.translate('settings.analytics.dashboard.newTitle', { type: $ctrl.displayType($ctrl.dashboard.type) })}}
+    </h1>
+    <h1 ng-if="$ctrl.editMode">
+      {{$ctrl.translate('settings.analytics.dashboard.titleWithType', { name: $ctrl.dashboard.name, type: $ctrl.displayType($ctrl.dashboard.type) })}}
+    </h1>
+    <a ng-click="$ctrl.backToDashboards()">{{$ctrl.translate('settings.analytics.dashboard.back')}}</a>
   </div>
 
   <form name="$ctrl.formDashboard" ng-submit="$ctrl.save()" novalidate>
     <div class="gv-form">
-      <h2>Details</h2>
+      <h2>{{$ctrl.translate('settings.analytics.dashboard.details')}}</h2>
       <div class="gv-form-content" layout="column">
         <div layout="row" layout-align="end center">
           <md-input-container flex>
-            <label>Dashboard name</label>
+            <label>{{$ctrl.translate('settings.analytics.dashboard.name')}}</label>
             <input ng-model="$ctrl.dashboard.name" required />
           </md-input-container>
 
           <md-input-container>
-            <md-checkbox ng-model="$ctrl.dashboard.enabled">Enabled dashboard</md-checkbox>
+            <md-checkbox ng-model="$ctrl.dashboard.enabled">{{$ctrl.translate('settings.analytics.dashboard.enabled')}}</md-checkbox>
           </md-input-container>
         </div>
 
         <div layout="row" layout-align="end center">
           <md-input-container flex>
-            <label>Query filter</label>
+            <label>{{$ctrl.translate('settings.analytics.dashboard.queryFilter')}}</label>
             <input type="text" ng-model="$ctrl.dashboard.query_filter" />
           </md-input-container>
 
           <ng-md-icon
             icon="info"
             style="fill: #b1bdc5"
-            aria-label="Query filter info"
+            aria-label="{{$ctrl.translate('settings.analytics.dashboard.queryFilterAria')}}"
             ng-click="$ctrl.showQueryFilterInformation()"
           ></ng-md-icon>
 
           <md-input-container ng-if="$ctrl.displayPreview()">
             <md-button type="button" ng-if="$ctrl.updateMode" class="md-raised md-primary" ng-click="$ctrl.tooglePreview()">
-              <ng-md-icon icon="play_arrow" style="fill: white"></ng-md-icon>Enable preview
+              <ng-md-icon icon="play_arrow" style="fill: white"></ng-md-icon>{{$ctrl.translate('settings.analytics.dashboard.enablePreview')}}
             </md-button>
             <md-button type="button" ng-if="!$ctrl.updateMode" class="md-raised md-warn" ng-click="$ctrl.tooglePreview()">
-              <ng-md-icon icon="stop" style="fill: white"></ng-md-icon>Disable preview
+              <ng-md-icon icon="stop" style="fill: white"></ng-md-icon>{{$ctrl.translate('settings.analytics.dashboard.disablePreview')}}
             </md-button>
           </md-input-container>
         </div>
@@ -70,7 +74,7 @@
             permission-only="['environment-dashboard-c', 'environment-dashboard-u']"
             ng-disabled="$ctrl.formDashboard.$invalid || $ctrl.formDashboard.$pristine"
           >
-            Save
+            {{$ctrl.translate('common.save')}}
           </md-button>
           <md-button
             type="button"
@@ -80,7 +84,7 @@
             ng-click="$ctrl.reset()"
             ng-disabled="$ctrl.formDashboard.$pristine"
           >
-            Reset
+            {{$ctrl.translate('common.reset')}}
           </md-button>
         </md-card-actions>
       </div>
@@ -92,11 +96,11 @@
   permission
   permission-only="['environment-dashboard-c', 'environment-dashboard-u']"
   ng-if="$ctrl.updateMode"
-  aria-label="Add widget"
+  aria-label="{{$ctrl.translate('settings.analytics.dashboard.addWidgetAria')}}"
   class="md-fab md-fab-bottom-right md-fab-scrollable"
   ng-class="{'gv-help-displayed': $ctrl.$rootScope.helpDisplayed}"
   ng-click="$ctrl.addWidget()"
 >
-  <md-tooltip md-direction="top" md-visible="false">Add a new widget</md-tooltip>
+  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.analytics.dashboard.addWidget')}}</md-tooltip>
   <ng-md-icon icon="add"></ng-md-icon>
 </md-button>

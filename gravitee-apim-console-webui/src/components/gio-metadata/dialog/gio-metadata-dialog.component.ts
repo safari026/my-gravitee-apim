@@ -53,11 +53,28 @@ export class GioMetadataDialogComponent implements OnInit, AfterViewChecked {
     return this.metadata.referenceType === 'Application';
   }
 
-  get titleKey(): string {
-    if (this.metadata.defaultValue) {
-      return 'applications.metadata.dialog.overrideTitle';
+  get i18nPrefix(): string | null {
+    if (this.metadata.referenceType === 'Application') {
+      return 'applications.metadata';
     }
-    return this.metadata.action === 'Create' ? 'applications.metadata.dialog.createTitle' : 'applications.metadata.dialog.updateTitle';
+    if (this.metadata.referenceType === 'Global') {
+      return 'settings.metadata';
+    }
+    return null;
+  }
+
+  get isLocalized(): boolean {
+    return this.i18nPrefix !== null;
+  }
+
+  get titleKey(): string | null {
+    if (!this.i18nPrefix) {
+      return null;
+    }
+    if (this.metadata.defaultValue) {
+      return `${this.i18nPrefix}.dialog.overrideTitle`;
+    }
+    return this.metadata.action === 'Create' ? `${this.i18nPrefix}.dialog.createTitle` : `${this.i18nPrefix}.dialog.updateTitle`;
   }
 
   constructor(

@@ -18,6 +18,7 @@ import { IOnInit } from 'angular';
 import { merge } from 'lodash';
 
 import DashboardService, { AverageableField } from '../../../../services/dashboard.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 interface Stat {
   key: string;
@@ -44,7 +45,12 @@ class WidgetDataStatsConfigurationController implements IOnInit {
   selectedStatsKeys: string[] = [];
   availableStats: Stat[];
 
-  constructor(private readonly DashboardService: DashboardService) {}
+  constructor(
+    private readonly DashboardService: DashboardService,
+    private readonly ngLanguageService: LanguageService,
+  ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit(): void {
     if (!this.chart.data) {
@@ -148,7 +154,7 @@ class WidgetDataStatsConfigurationController implements IOnInit {
     }
   }
 }
-WidgetDataStatsConfigurationController.$inject = ['DashboardService'];
+WidgetDataStatsConfigurationController.$inject = ['DashboardService', 'ngLanguageService'];
 
 const WidgetDataStatsConfigurationComponent: ng.IComponentOptions = {
   template: require('html-loader!./widget-data-stats-configuration.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

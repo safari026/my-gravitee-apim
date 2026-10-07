@@ -23,8 +23,8 @@ import { GioTableWrapperHarness } from '../../../shared/components/gio-table-wra
 export class SharedPolicyGroupsHarness extends ComponentHarness {
   static readonly hostSelector = 'shared-policy-groups';
 
-  public getAddButton = this.locatorFor(MatButtonHarness.with({ text: /Add Shared Policy Group/ }));
-  public getTable = this.locatorFor(MatTableHarness.with({ selector: '[aria-label="Shared Policy Group"]' }));
+  public getAddButton = this.locatorFor(MatButtonHarness.with({ selector: '[matMenuTriggerFor]' }));
+  public getTable = this.locatorFor(MatTableHarness);
   public getTableWrapper = this.locatorFor(GioTableWrapperHarness);
 
   public async getDeleteButton(index: number) {

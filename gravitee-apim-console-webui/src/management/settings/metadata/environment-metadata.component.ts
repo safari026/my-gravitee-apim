@@ -28,7 +28,6 @@ import { EnvironmentMetadataService } from '../../../services-ngx/environment-me
 })
 export class EnvironmentMetadataComponent implements OnInit {
   metadataSaveServices: MetadataSaveServices;
-  description: string;
 
   constructor(
     private readonly environmentMetadataService: EnvironmentMetadataService,
@@ -44,6 +43,5 @@ export class EnvironmentMetadataComponent implements OnInit {
       update: updateMetadata => this.environmentMetadataService.updateMetadata(updateMetadata),
       delete: metadataKey => this.environmentMetadataService.deleteMetadata(metadataKey),
     };
-    this.description = `Create Global metadata to retrieve custom information about your API`;
   }
 }

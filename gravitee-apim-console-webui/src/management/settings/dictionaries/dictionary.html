@@ -18,50 +18,58 @@
 <div class="gv-forms" layout="column">
   <div class="gv-forms-header">
     <h1 ng-if="$ctrl.updateMode">{{$ctrl.dictionary.name}}</h1>
-    <h1 ng-if="!$ctrl.updateMode">Create a new dictionary</h1>
-    <a ng-click="$ctrl.backToList()">Back to dictionaries</a>
+    <h1 ng-if="!$ctrl.updateMode">{{$ctrl.translate('settings.dictionaries.createTitle')}}</h1>
+    <a ng-click="$ctrl.backToList()">{{$ctrl.translate('settings.dictionaries.backToList')}}</a>
   </div>
   <form name="$ctrl.formDictionary" ng-submit="$ctrl.update()" novalidate>
     <div class="gv-form">
-      <h2>General</h2>
+      <h2>{{$ctrl.translate('settings.dictionaries.general')}}</h2>
       <div class="gv-form-content" layout="column">
         <div layout-gt-sm="row">
           <md-input-container class="md-block" flex-gt-sm>
-            <label>Name</label>
+            <label>{{$ctrl.translate('settings.dictionaries.name')}}</label>
             <input ng-model="$ctrl.dictionary.name" type="text" required name="name" maxlength="50" />
-            <div class="hint" ng-if="$ctrl.formDictionary.name.$valid || $ctrl.formDictionary.name.$pristine">Dictionary Name</div>
+            <div class="hint" ng-if="$ctrl.formDictionary.name.$valid || $ctrl.formDictionary.name.$pristine">
+              {{$ctrl.translate('settings.dictionaries.nameHint')}}
+            </div>
             <div ng-messages="$ctrl.formDictionary.name.$error">
-              <div ng-message="required">dictionary name is required.</div>
-              <div ng-message="md-maxlength">The name has to be less than 50 characters long.</div>
+              <div ng-message="required">{{$ctrl.translate('settings.dictionaries.nameRequired')}}</div>
+              <div ng-message="md-maxlength">{{$ctrl.translate('settings.dictionaries.nameMaxLength')}}</div>
             </div>
           </md-input-container>
         </div>
 
         <div layout-gt-sm="row">
           <md-input-container class="md-block" flex-gt-sm>
-            <label>Description</label>
+            <label>{{$ctrl.translate('settings.dictionaries.description')}}</label>
             <input ng-model="$ctrl.dictionary.description" type="text" name="description" />
             <div class="hint" ng-if="$ctrl.formDictionary.description.$valid || $ctrl.formDictionary.description.$pristine">
-              Provide a description of the dictionary
+              {{$ctrl.translate('settings.dictionaries.descriptionHint')}}
             </div>
           </md-input-container>
         </div>
 
         <div layout-gt-sm="row">
           <md-input-container class="md-block" flex-gt-sm>
-            <label>Type</label>
-            <md-select ng-model="$ctrl.dictionary.type" placeholder="Type" required ng-required="true" ng-disabled="$ctrl.dictionary.id">
+            <label>{{$ctrl.translate('settings.dictionaries.type')}}</label>
+            <md-select
+              ng-model="$ctrl.dictionary.type"
+              placeholder="{{$ctrl.translate('settings.dictionaries.type')}}"
+              required
+              ng-required="true"
+              ng-disabled="$ctrl.dictionary.id"
+            >
               <md-option ng-repeat="type in $ctrl.types" ng-value="type.id">{{type.name}}</md-option>
             </md-select>
             <div class="hint" ng-if="$ctrl.formDictionary.type.$valid || $ctrl.formDictionary.type.$pristine">
-              Set the type of the dictionary
+              {{$ctrl.translate('settings.dictionaries.typeHint')}}
             </div>
           </md-input-container>
         </div>
 
         <div layout-gt-sm="row" ng-if="$ctrl.dictionary.deployed_at">
           <md-input-container class="md-block" flex-gt-sm>
-            <label>Last deployment at</label>
+            <label>{{$ctrl.translate('settings.dictionaries.lastDeployment')}}</label>
             <input
               value="{{$ctrl.dictionary.deployed_at | date:'yyyy-MM-dd hh:mm:ss.sss'}}"
               type="text"
@@ -77,14 +85,14 @@
           permission
           permission-only="['environment-dictionary-u']"
         >
-          <label>Lifecycle</label>
+          <label>{{$ctrl.translate('settings.dictionaries.lifecycle')}}</label>
           <md-input-container class="md-block" flex-gt-sm>
             <md-button class="md-raised" type="button" ng-click="$ctrl.start()" ng-disabled="$ctrl.dictionary.state === 'STARTED'">
-              Start
+              {{$ctrl.translate('settings.dictionaries.start')}}
             </md-button>
 
             <md-button class="md-raised md-warn" type="button" ng-click="$ctrl.stop()" ng-disabled="$ctrl.dictionary.state === 'STOPPED'">
-              Stop
+              {{$ctrl.translate('settings.dictionaries.stop')}}
             </md-button>
           </md-input-container>
         </div>
@@ -97,11 +105,11 @@
       permission
       permission-only="['environment-dictionary-c', 'environment-dictionary-u', 'environment-dictionary-d']"
     >
-      <h2>Trigger</h2>
+      <h2>{{$ctrl.translate('settings.dictionaries.trigger')}}</h2>
       <div class="gv-form-content" layout="column">
         <div layout="row" layout-sm="column">
           <md-input-container class="md-block" flex-gt-xs>
-            <label>Interval</label>
+            <label>{{$ctrl.translate('settings.dictionaries.interval')}}</label>
             <input required ng-model="$ctrl.dictionary.trigger.rate" md-autofocus type="number" min="1" ng-required="true" />
           </md-input-container>
 
@@ -110,8 +118,13 @@
           </div>
 
           <md-input-container class="md-block" flex-gt-xs>
-            <label>Time Unit</label>
-            <md-select ng-model="$ctrl.dictionary.trigger.unit" placeholder="Time unit" required ng-required="true">
+            <label>{{$ctrl.translate('settings.dictionaries.timeUnit')}}</label>
+            <md-select
+              ng-model="$ctrl.dictionary.trigger.unit"
+              placeholder="{{$ctrl.translate('settings.dictionaries.timeUnit')}}"
+              required
+              ng-required="true"
+            >
               <md-option ng-repeat="timeUnit in $ctrl.timeUnits" ng-value="timeUnit.id">{{timeUnit.name}}</md-option>
             </md-select>
           </md-input-container>
@@ -124,11 +137,16 @@
       permission
       permission-only="['environment-dictionary-c', 'environment-dictionary-u', 'environment-dictionary-d']"
     >
-      <h2>Provider</h2>
+      <h2>{{$ctrl.translate('settings.dictionaries.provider')}}</h2>
       <div class="gv-form-content" layout="column">
         <md-input-container class="md-block" flex-gt-xs>
-          <label>Type</label>
-          <md-select ng-model="$ctrl.dictionary.provider.type" placeholder="Type" required ng-required="true">
+          <label>{{$ctrl.translate('settings.dictionaries.type')}}</label>
+          <md-select
+            ng-model="$ctrl.dictionary.provider.type"
+            placeholder="{{$ctrl.translate('settings.dictionaries.type')}}"
+            required
+            ng-required="true"
+          >
             <md-option ng-repeat="provider in $ctrl.providers" ng-value="provider.id">{{provider.name}}</md-option>
           </md-select>
         </md-input-container>
@@ -136,27 +154,34 @@
         <br />
 
         <div ng-if="$ctrl.dictionary.provider">
-          <h6>Configuration</h6>
+          <h6>{{$ctrl.translate('settings.dictionaries.configuration')}}</h6>
 
           <div ng-if="$ctrl.dictionary.provider.type == 'HTTP'" layout="column" layout-sm="column">
             <md-input-container class="md-block" flex-gt-sm>
-              <label>HTTP Service URL</label>
+              <label>{{$ctrl.translate('settings.dictionaries.httpServiceUrl')}}</label>
               <input ng-model="$ctrl.dictionary.provider.configuration.url" type="url" ng-required="true" />
             </md-input-container>
 
-            <md-checkbox ng-model="$ctrl.dictionary.provider.configuration.useSystemProxy" aria-label="Use system proxy"
-              >Use system proxy</md-checkbox
+            <md-checkbox ng-model="$ctrl.dictionary.provider.configuration.useSystemProxy" aria-label="{{$ctrl.translate('settings.dictionaries.useSystemProxy')}}"
+              >{{$ctrl.translate('settings.dictionaries.useSystemProxy')}}</md-checkbox
             >
 
             <md-input-container class="md-block" flex-gt-sm>
-              <label>HTTP Method</label>
-              <md-select ng-model="$ctrl.dictionary.provider.configuration.method" placeholder="HTTP Methods" required ng-required="true">
+              <label>{{$ctrl.translate('settings.dictionaries.httpMethod')}}</label>
+              <md-select
+                ng-model="$ctrl.dictionary.provider.configuration.method"
+                placeholder="{{$ctrl.translate('settings.dictionaries.httpMethods')}}"
+                required
+                ng-required="true"
+              >
                 <md-option ng-value="method" ng-repeat="method in $ctrl.getHttpMethods()">{{method}}</md-option>
               </md-select>
             </md-input-container>
 
             <md-input-container class="md-block" flex-gt-sm>
-              <label style="transform: translate3d(0, 6px, 0) scale(0.75) !important"> Request body </label>
+              <label style="transform: translate3d(0, 6px, 0) scale(0.75) !important">
+                {{$ctrl.translate('settings.dictionaries.requestBody')}}
+              </label>
 
               <textarea
                 ui-codemirror="{ onLoad : $ctrl.codemirrorLoaded }"
@@ -168,9 +193,13 @@
 
             <div layout="column" layout-sm="column" style="margin-bottom: 15px">
               <h5 style="color: grey">
-                <span>Headers</span>
-                <ng-md-icon icon="add_circle_outline" style="fill: #b1bdc5" aria-label="Add HTTP header" ng-click="$ctrl.addHTTPHeader()"
-                  >Add headers</ng-md-icon
+                <span>{{$ctrl.translate('settings.dictionaries.headers')}}</span>
+                <ng-md-icon
+                  icon="add_circle_outline"
+                  style="fill: #b1bdc5"
+                  aria-label="{{$ctrl.translate('settings.dictionaries.addHeaderAria')}}"
+                  ng-click="$ctrl.addHTTPHeader()"
+                  >{{$ctrl.translate('settings.dictionaries.addHeaders')}}</ng-md-icon
                 >
               </h5>
               <div
@@ -182,7 +211,7 @@
                 <ng-md-icon
                   icon="remove_circle_outline"
                   style="fill: #b1bdc5"
-                  aria-label="Delete header"
+                  aria-label="{{$ctrl.translate('settings.dictionaries.deleteHeaderAria')}}"
                   ng-click="$ctrl.removeHTTPHeader($index)"
                 ></ng-md-icon>
 
@@ -191,7 +220,13 @@
                 </div>
 
                 <md-input-container flex-gt-sm>
-                  <input aria-label="Header name" ng-model="header.name" type="text" placeholder="Header name" ng-required="true" />
+                  <input
+                    aria-label="{{$ctrl.translate('settings.dictionaries.headerName')}}"
+                    ng-model="header.name"
+                    type="text"
+                    placeholder="{{$ctrl.translate('settings.dictionaries.headerName')}}"
+                    ng-required="true"
+                  />
                 </md-input-container>
 
                 <div flex="5" hide-xs hide-sm>
@@ -199,13 +234,21 @@
                 </div>
 
                 <md-input-container flex-gt-sm>
-                  <input aria-label="Header value" ng-model="header.value" type="text" placeholder="Header value" ng-required="true" />
+                  <input
+                    aria-label="{{$ctrl.translate('settings.dictionaries.headerValue')}}"
+                    ng-model="header.value"
+                    type="text"
+                    placeholder="{{$ctrl.translate('settings.dictionaries.headerValue')}}"
+                    ng-required="true"
+                  />
                 </md-input-container>
               </div>
             </div>
 
             <md-input-container class="md-block" flex-gt-sm>
-              <label style="transform: translate3d(0, 6px, 0) scale(0.75) !important"> Transformation (JOLT Specification) </label>
+              <label style="transform: translate3d(0, 6px, 0) scale(0.75) !important">
+                {{$ctrl.translate('settings.dictionaries.transformation')}}
+              </label>
 
               <textarea
                 ui-codemirror="{ onLoad : $ctrl.codemirrorLoaded }"
@@ -231,7 +274,7 @@
         permission
         permission-only="['environment-dictionary-u']"
       >
-        Update
+        {{$ctrl.translate('settings.dictionaries.update')}}
       </md-button>
       <md-button
         ng-if="!$ctrl.updateMode"
@@ -241,7 +284,7 @@
         permission
         permission-only="['environment-dictionary-c']"
       >
-        Create
+        {{$ctrl.translate('settings.dictionaries.create')}}
       </md-button>
 
       <md-button
@@ -252,7 +295,7 @@
         ng-click="$ctrl.deploy()"
       >
         <ng-md-icon icon="backup" style="fill: white"></ng-md-icon>
-        Deploy
+        {{$ctrl.translate('settings.dictionaries.deploy')}}
       </md-button>
 
       <md-button
@@ -263,7 +306,7 @@
         permission-only="['environment-dictionary-u']"
         ng-disabled="$ctrl.formDictionary.$invalid || $ctrl.formDictionary.$pristine"
       >
-        Reset
+        {{$ctrl.translate('common.reset')}}
       </md-button>
 
       <md-button
@@ -274,13 +317,13 @@
         permission
         permission-only="['environment-dictionary-d']"
       >
-        Delete
+        {{$ctrl.translate('common.delete')}}
       </md-button>
     </div>
   </form>
 
   <div class="gv-form" ng-if="$ctrl.updateMode">
-    <h2>Properties</h2>
+    <h2>{{$ctrl.translate('settings.dictionaries.propertiesTitle')}}</h2>
     <div class="gv-form-content" layout="column">
       <form name="formProperties" ng-submit="$ctrl.saveProperties()" novalidate>
         <md-table-container ng-if="$ctrl.hasProperties()">
@@ -289,13 +332,13 @@
               <tr md-row>
                 <th md-column ng-if="$ctrl.dictionary.type === 'MANUAL'">
                   <md-checkbox
-                    aria-label="Select all"
+                    aria-label="{{$ctrl.translate('settings.dictionaries.selectAll')}}"
                     ng-model="$ctrl.selectAll"
                     ng-change="$ctrl.toggleSelectAll($ctrl.selectAll)"
                   ></md-checkbox>
                 </th>
-                <th md-column md-order-by="name" ng-click="reverse = !reverse">Key</th>
-                <th md-column>Value</th>
+                <th md-column md-order-by="name" ng-click="reverse = !reverse">{{$ctrl.translate('settings.dictionaries.key')}}</th>
+                <th md-column>{{$ctrl.translate('settings.dictionaries.value')}}</th>
                 <th md-column md-column width="80px" nowrap ng-if="$ctrl.dictionary.type === 'MANUAL'"></th>
               </tr>
             </thead>
@@ -303,7 +346,7 @@
               <tr md-row ng-repeat="entry in $ctrl.getPropertiesPage(reverse)">
                 <td md-cell ng-if="$ctrl.dictionary.type === 'MANUAL'">
                   <md-checkbox
-                    aria-label="Select {{entry.key}}"
+                    aria-label="{{$ctrl.translate('settings.dictionaries.selectProperty', { key: entry.key })}}"
                     ng-model="$ctrl.selectedProperties[entry.key]"
                     ng-change="$ctrl.checkSelectAll()"
                   ></md-checkbox>
@@ -315,7 +358,7 @@
                   ng-click="$ctrl.editProperty($event, entry.key, entry.value)"
                   ng-class="{'gravitee-placeholder': entry.value}"
                 >
-                  {{entry.value || 'Set value'}}
+                  {{entry.value || $ctrl.translate('settings.dictionaries.setValue')}}
                 </td>
                 <td md-cell ng-if="$ctrl.dictionary.type === 'MANUAL'">
                   <ng-md-icon
@@ -344,19 +387,19 @@
           ng-if="!$ctrl.hasProperties()"
           icon="assignment"
           model="Property"
-          message="Properties will appear here"
-          sub-message="{{$ctrl.dictionary.type === 'DYNAMIC' ? 'Properties will be updated automatically' : 'Start creating property'}}"
+          message="{{$ctrl.translate('settings.dictionaries.propertiesEmpty')}}"
+          sub-message="{{$ctrl.dictionary.type === 'DYNAMIC' ? $ctrl.translate('settings.dictionaries.propertiesEmptyDynamic') : $ctrl.translate('settings.dictionaries.propertiesEmptyManual')}}"
           create-mode="!$ctrl.updateMode"
         ></gravitee-empty-state>
 
         <div layout="column" ng-if="$ctrl.dictionary.type === 'MANUAL'">
           <div class="hint" ng-if="$ctrl.propertiesDirty" style="position: static; margin: 0 8px 8px">
-            Edited properties are not saved until you click Save properties.
+            {{$ctrl.translate('settings.dictionaries.propertiesDirtyHint')}}
           </div>
 
           <div class="md-actions gravitee-api-save-button" layout="row">
             <md-button class="md-raised md-primary" type="submit" permission permission-only="['environment-dictionary-u']">
-              Save properties
+              {{$ctrl.translate('settings.dictionaries.saveProperties')}}
             </md-button>
             <md-button
               class="md-raised md-warn float-right"
@@ -366,7 +409,7 @@
               permission-only="['environment-dictionary-u']"
               ng-disabled="!$ctrl.hasSelectedProperties()"
             >
-              Delete
+              {{$ctrl.translate('common.delete')}}
             </md-button>
           </div>
         </div>
@@ -379,10 +422,10 @@
   ng-if="$ctrl.dictionary.type === 'MANUAL' && $ctrl.dictionary.id"
   permission
   permission-only="'environment-dictionary-u'"
-  aria-label="Create property"
+  aria-label="{{$ctrl.translate('settings.dictionaries.createProperty')}}"
   class="md-fab md-fab-bottom-right"
   ng-click="$ctrl.addProperty()"
 >
-  <md-tooltip md-direction="top" md-visible="false">Create property</md-tooltip>
+  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.dictionaries.createProperty')}}</md-tooltip>
   <ng-md-icon icon="add"></ng-md-icon>
 </md-button>

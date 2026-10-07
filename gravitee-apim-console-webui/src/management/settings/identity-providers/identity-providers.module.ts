@@ -32,6 +32,7 @@ import { IdentityProvidersComponent } from './identity-providers.component';
 
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [IdentityProvidersComponent],
@@ -53,6 +54,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     MatTooltipModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    TranslatePipe,
   ],
 })
 export class IdentityProvidersModule {}

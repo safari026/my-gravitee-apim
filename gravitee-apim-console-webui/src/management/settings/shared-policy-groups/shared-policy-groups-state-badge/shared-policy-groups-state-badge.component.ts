@@ -17,10 +17,11 @@ import { Component, Input } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { SharedPolicyGroup } from '../../../../entities/management-api-v2';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'shared-policy-groups-state-badge',
-  imports: [MatTooltipModule],
+  imports: [MatTooltipModule, TranslatePipe],
   templateUrl: './shared-policy-groups-state-badge.component.html',
   styleUrl: './shared-policy-groups-state-badge.component.scss',
 })

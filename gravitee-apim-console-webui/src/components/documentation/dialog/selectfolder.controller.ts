@@ -15,13 +15,22 @@
  */
 import { IScope } from 'angular';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 interface IMoveToFolderScope extends IScope {
   folders: any[];
   title: string;
 }
-function SelectFolderDialogController($scope: IMoveToFolderScope, $mdDialog: angular.material.IDialogService, locals: any) {
+function SelectFolderDialogController(
+  $scope: IMoveToFolderScope,
+  $mdDialog: angular.material.IDialogService,
+  locals: any,
+  ngLanguageService: LanguageService,
+) {
   $scope.folders = locals.folders;
   $scope.title = locals.title;
+
+  this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
 
   this.cancel = () => {
     $mdDialog.hide();
@@ -31,6 +40,6 @@ function SelectFolderDialogController($scope: IMoveToFolderScope, $mdDialog: ang
     $mdDialog.hide(folderId);
   };
 }
-SelectFolderDialogController.$inject = ['$scope', '$mdDialog', 'locals'];
+SelectFolderDialogController.$inject = ['$scope', '$mdDialog', 'locals', 'ngLanguageService'];
 
 export default SelectFolderDialogController;

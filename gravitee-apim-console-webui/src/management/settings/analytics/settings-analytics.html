@@ -16,16 +16,16 @@
 
 -->
 <div class="gv-forms" layout="column">
-  <h1>Analytics</h1>
-  <h2>Dashboards</h2>
+  <h1>{{$ctrl.translate('settings.analytics.title')}}</h1>
+  <h2>{{$ctrl.translate('settings.analytics.dashboards')}}</h2>
   <div class="gv-form" ng-repeat="(type, dashboards) in $ctrl.dashboardsByType">
-    <h3>{{type}}</h3>
+    <h3>{{$ctrl.displayType(type)}}</h3>
     <div class="gv-form-content" layout="column">
       <md-table-container ng-if="dashboards.length > 0">
         <table md-table class="gv-table-dense">
           <thead md-head>
             <tr md-row>
-              <th md-column class="column-with-logo">Name</th>
+              <th md-column class="column-with-logo">{{$ctrl.translate('settings.analytics.name')}}</th>
               <th permission permission-only="'environment-dashboard-u'" width="64px" nowrap></th>
               <th permission permission-only="'environment-dashboard-u'" width="48px" nowrap></th>
               <th permission permission-only="'environment-dashboard-u'" width="48px" nowrap></th>
@@ -53,7 +53,7 @@
                   permission
                   permission-only="'environment-dashboard-u'"
                 >
-                  <md-tooltip md-direction="top" md-visible="false">Enable this dashboard</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.analytics.enableDashboard')}}</md-tooltip>
                 </ng-md-icon>
                 <ng-md-icon
                   ng-if="dashboard.enabled"
@@ -63,16 +63,16 @@
                   permission
                   permission-only="'environment-dashboard-u'"
                 >
-                  <md-tooltip md-direction="top" md-visible="false">Disable this dashboard</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.analytics.disableDashboard')}}</md-tooltip>
                 </ng-md-icon>
               </td>
               <td md-cell permission permission-only="'environment-dashboard-u'" width="76px" nowrap>
                 <ng-md-icon ng-if="!$first" icon="arrow_upwards" ng-click="$ctrl.upward(dashboard)">
-                  <md-tooltip md-direction="top" md-visible="false">Move upward</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.analytics.moveUp')}}</md-tooltip>
                 </ng-md-icon>
                 <span ng-if="$first" style="padding-right: 28px"></span>
                 <ng-md-icon ng-if="!$last" icon="arrow_downward" ng-click="$ctrl.downward(dashboard)">
-                  <md-tooltip md-direction="top" md-visible="false">Move downward</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.analytics.moveDown')}}</md-tooltip>
                 </ng-md-icon>
               </td>
               <td md-cell permission permission-only="'environment-dashboard-d'">
@@ -86,35 +86,35 @@
         ng-if="dashboards.length === 0"
         icon="insert_chart"
         model="Dashboard"
-        message="Dashboards will appear here"
-        sub-message="Start creating a dashboard"
+        message="{{$ctrl.translate('settings.analytics.empty')}}"
+        sub-message="{{$ctrl.translate('settings.analytics.emptyHint')}}"
         create-mode="true"
       ></gravitee-empty-state>
       <div class="md-actions gravitee-api-save-button" layout="row">
         <md-button
           permission
           permission-only="'environment-dashboard-c'"
-          aria-label="Add {{type}} dashboard"
+          aria-label="{{$ctrl.translate('settings.analytics.addDashboardAria', { type: $ctrl.displayType(type) })}}"
           ng-click="$ctrl.newDashboard(type)"
           class="md-raised md-primary"
         >
-          Add a new {{type}} dashboard
+          {{$ctrl.translate('settings.analytics.addDashboard', { type: $ctrl.displayType(type) })}}
         </md-button>
       </div>
     </div>
   </div>
-  <h2>Settings</h2>
+  <h2>{{$ctrl.translate('settings.analytics.settings')}}</h2>
   <div class="gv-form">
     <form name="$ctrl.formSettings" class="gv-form-content" layout="column" ng-submit="$ctrl.save()">
       <md-input-container class="md-block" flex-gt-sm>
-        <label>HTTP Client Timeout</label>
+        <label>{{$ctrl.translate('settings.analytics.httpClientTimeout')}}</label>
         <input
           type="number"
           min="0"
           ng-model="$ctrl.settings.analytics.clientTimeout"
           ng-disabled="$ctrl.isReadonlySetting('analytics.client.timeout') || !$ctrl.canUpdateSettings"
         />
-        <md-tooltip ng-if="$ctrl.isReadonlySetting('analytics.client.timeout')">{{$ctrl.providedConfigurationMessage}}</md-tooltip>
+        <md-tooltip ng-if="$ctrl.isReadonlySetting('analytics.client.timeout')">{{$ctrl.translate('settings.systemConfig')}}</md-tooltip>
       </md-input-container>
 
       <md-card-actions>
@@ -124,7 +124,7 @@
           ng-disabled="$ctrl.formSettings.$invalid || $ctrl.formSettings.$pristine"
           permission
           permission-only="['environment-settings-c', 'environment-settings-u', 'environment-settings-d']"
-          >Save</md-button
+          >{{$ctrl.translate('common.save')}}</md-button
         >
         <md-button
           type="button"
@@ -133,7 +133,7 @@
           ng-disabled="$ctrl.formSettings.$invalid || $ctrl.formSettings.$pristine"
           permission
           permission-only="['environment-settings-c', 'environment-settings-u', 'environment-settings-d']"
-          >Reset</md-button
+          >{{$ctrl.translate('common.reset')}}</md-button
         >
       </md-card-actions>
     </form>

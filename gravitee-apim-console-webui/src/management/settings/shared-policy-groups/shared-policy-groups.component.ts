@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 import { CommonModule } from '@angular/common';
-import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, DestroyRef, inject, Injector, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { MatCardModule } from '@angular/material/card';
 import { MatButtonModule } from '@angular/material/button';
 import { GIO_DIALOG_WIDTH, GioConfirmDialogComponent, GioConfirmDialogData, GioIconsModule } from '@gravitee/ui-particles-angular';
@@ -23,8 +24,7 @@ import { MatTabsModule } from '@angular/material/tabs';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSortModule } from '@angular/material/sort';
 import { BehaviorSubject, switchMap } from 'rxjs';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
-import { debounceTime, filter, map, tap } from 'rxjs/operators';
+import { debounceTime, filter, map, skip, tap } from 'rxjs/operators';
 import { MatDialog } from '@angular/material/dialog';
 import { MatMenuModule } from '@angular/material/menu';
 import { MatSnackBarModule } from '@angular/material/snack-bar';
@@ -42,9 +42,11 @@ import { SharedPolicyGroupsService } from '../../../services-ngx/shared-policy-g
 import { GioTableWrapperFilters, Sort } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
-import { ApiV4, SharedPolicyGroup, SharedPolicyGroupsSortByParam, toReadableFlowPhase } from '../../../entities/management-api-v2';
+import { ApiV4, SharedPolicyGroup, SharedPolicyGroupsSortByParam } from '../../../entities/management-api-v2';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 type PageTableVM = {
   items: {
@@ -52,8 +54,8 @@ type PageTableVM = {
     name: string;
     description: string;
     lifecycleState: SharedPolicyGroup['lifecycleState'];
-    apiType: string;
-    phase: string;
+    apiType: SharedPolicyGroup['apiType'];
+    phase: SharedPolicyGroup['phase'];
     updatedAt: Date;
     deployedAt: Date;
   }[];
@@ -79,6 +81,7 @@ type PageTableVM = {
     GioPermissionModule,
     GioTableWrapperModule,
     SharedPolicyGroupsStateBadgeComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -90,6 +93,9 @@ export class SharedPolicyGroupsComponent implements OnInit {
   private readonly permissionService = inject(GioPermissionService);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
+  private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
   private refreshPageTableVM$ = new BehaviorSubject<void>(undefined);
 
   protected displayedColumns: string[] = ['name', 'apiType', 'phase', 'lastUpdate', 'lastDeploy', 'actions'];
@@ -107,6 +113,10 @@ export class SharedPolicyGroupsComponent implements OnInit {
   protected isReadOnly = !this.permissionService.hasAnyMatching(['environment-shared_policy_group-u']);
 
   ngOnInit(): void {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.changeDetectorRef.markForCheck());
+
     this.refreshPageTableVM$
       .pipe(
         debounceTime(200),
@@ -126,7 +136,7 @@ export class SharedPolicyGroupsComponent implements OnInit {
             description: sharedPolicyGroup.description,
             lifecycleState: sharedPolicyGroup.lifecycleState,
             apiType: sharedPolicyGroup.apiType,
-            phase: toReadableFlowPhase(sharedPolicyGroup.phase),
+            phase: sharedPolicyGroup.phase,
             updatedAt: sharedPolicyGroup.updatedAt,
             deployedAt: sharedPolicyGroup.deployedAt,
             isKubernetesOrigin: sharedPolicyGroup.originContext?.origin === 'KUBERNETES',
@@ -176,11 +186,11 @@ export class SharedPolicyGroupsComponent implements OnInit {
       )
       .subscribe({
         next: sharedPolicyGroup => {
-          this.snackBarService.success('Shared Policy Group created');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.created'));
           this.router.navigate([sharedPolicyGroup.id, 'studio'], { relativeTo: this.activatedRoute });
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group creation!');
+          this.snackBarService.error(error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.createError'));
         },
       });
   }
@@ -190,9 +200,16 @@ export class SharedPolicyGroupsComponent implements OnInit {
   }
 
   protected onRemove(sharedPolicyGroupId: string) {
-    removeSharedPolicyGroup(this.matDialog, this.snackBarService, this.sharedPolicyGroupsService, sharedPolicyGroupId, () => {
-      this.refreshPageTableVM$.next();
-    });
+    removeSharedPolicyGroup(
+      this.matDialog,
+      this.snackBarService,
+      this.sharedPolicyGroupsService,
+      this.languageService,
+      sharedPolicyGroupId,
+      () => {
+        this.refreshPageTableVM$.next();
+      },
+    );
   }
 }
 
@@ -207,18 +224,16 @@ export const removeSharedPolicyGroup = (
   matDialog: MatDialog,
   snackBarService: SnackBarService,
   sharedPolicyGroupsService: SharedPolicyGroupsService,
+  languageService: LanguageService,
   sharedPolicyGroupId: string,
   onSuccess: () => void = () => {},
 ) => {
   matDialog
     .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
       data: {
-        title: 'Remove Shared Policy Group',
-        content: `Are you sure you want to remove this Shared Policy Group?<br>
-If this Shared Policy Group is used in API flows, be sure to inform API publishers before making this change.<br>
-If an API flow still uses this Shared Policy Group, the API flow will ignore it and continue to run.`,
-
-        confirmButton: 'Remove',
+        title: languageService.translate('settings.sharedPolicyGroups.removeTitle'),
+        content: languageService.translate('settings.sharedPolicyGroups.removeContent'),
+        confirmButton: languageService.translate('common.remove'),
       },
       role: 'alertdialog',
       id: 'remove-spg-dialog',
@@ -231,11 +246,11 @@ If an API flow still uses this Shared Policy Group, the API flow will ignore it 
     )
     .subscribe({
       next: () => {
-        snackBarService.success('Shared Policy Group removed');
+        snackBarService.success(languageService.translate('settings.sharedPolicyGroups.removed'));
         onSuccess();
       },
       error: e => {
-        snackBarService.error(e.error?.message ?? 'An error occurred while removing the Shared Policy Group');
+        snackBarService.error(e.error?.message ?? languageService.translate('settings.sharedPolicyGroups.removeError'));
         throw e;
       },
     });

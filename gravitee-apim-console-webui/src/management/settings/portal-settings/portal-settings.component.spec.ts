@@ -33,6 +33,7 @@ import {
 } from '@gravitee/ui-particles-angular';
 import { MatInputHarness } from '@angular/material/input/testing';
 import { MatSlideToggleHarness } from '@angular/material/slide-toggle/testing';
+import { MatRadioButtonHarness } from '@angular/material/radio/testing';
 import { SpanHarness } from '@gravitee/ui-particles-angular/testing';
 import { of } from 'rxjs';
 
@@ -44,6 +45,7 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
 import { GioTestingPermission, GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
 import { fakePortalSettings } from '../../../entities/portal/portalSettings.fixture';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('PortalSettingsComponent', () => {
   let fixture: ComponentFixture<PortalSettingsComponent>;
@@ -89,6 +91,7 @@ describe('PortalSettingsComponent', () => {
         },
       })
       .compileComponents();
+    TestBed.inject(LanguageService).setLanguage('en');
     fixture = TestBed.createComponent(PortalSettingsComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
     httpTestingController = TestBed.inject(HttpTestingController);
@@ -100,6 +103,7 @@ describe('PortalSettingsComponent', () => {
   afterEach(() => {
     jest.clearAllMocks();
     httpTestingController.verify();
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('Portal settings form', () => {
@@ -509,6 +513,70 @@ describe('PortalSettingsComponent', () => {
       });
     });
 
+    it('translates the page title EN → RU → EN without reload', async () => {
+      portalSettingsMock = fakePortalSettings();
+      expectPortalSettingsGetRequest(portalSettingsMock);
+      fixture.detectChanges();
+
+      const languageService = TestBed.inject(LanguageService);
+      const title = () => fixture.nativeElement.querySelector('h1')?.textContent?.trim();
+
+      expect(title()).toEqual('Settings');
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(title()).toEqual('Настройки');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(title()).toEqual('Settings');
+    });
+
+    it('keeps primary owner mode radio values HYBRID/USER/GROUP after RU language change', async () => {
+      portalSettingsMock = fakePortalSettings();
+      expectPortalSettingsGetRequest(portalSettingsMock);
+      fixture.detectChanges();
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.componentInstance.primaryOwnerModeList.map(mode => mode.id)).toEqual(['HYBRID', 'USER', 'GROUP']);
+      expect(fixture.componentInstance.apiProductPrimaryOwnerModeList.map(mode => mode.id)).toEqual(['HYBRID', 'USER', 'GROUP']);
+
+      const radioValues = await Promise.all((await loader.getAllHarnesses(MatRadioButtonHarness)).map(radio => radio.getValue()));
+      expect(radioValues.filter(value => value === 'HYBRID' || value === 'USER' || value === 'GROUP')).toEqual([
+        'HYBRID',
+        'USER',
+        'GROUP',
+        'HYBRID',
+        'USER',
+        'GROUP',
+      ]);
+      expect(radioValues).toContain('Swagger');
+      expect(radioValues).toContain('Redoc');
+    });
+
+    it('rebuilds primary owner mode labels EN → RU → EN without changing ids', async () => {
+      portalSettingsMock = fakePortalSettings();
+      expectPortalSettingsGetRequest(portalSettingsMock);
+      fixture.detectChanges();
+
+      const languageService = TestBed.inject(LanguageService);
+      const hybridLabel = () => fixture.componentInstance.primaryOwnerModeList.find(mode => mode.id === 'HYBRID')?.label;
+
+      expect(hybridLabel()).toEqual('HYBRID: an API primary owner can be either a user or a group (Default)');
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(fixture.componentInstance.primaryOwnerModeList.map(mode => mode.id)).toEqual(['HYBRID', 'USER', 'GROUP']);
+      expect(hybridLabel()).toEqual('HYBRID: основным владельцем API может быть пользователь или группа (по умолчанию)');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(hybridLabel()).toEqual('HYBRID: an API primary owner can be either a user or a group (Default)');
+    });
+
     it('display settings form and edit Documentation field', async () => {
       const message = 'Page not found';
 
@@ -862,6 +930,42 @@ describe('PortalSettingsComponent', () => {
       const req = httpTestingController.expectOne(`${CONSTANTS_TESTING.env.baseURL}/settings`);
       expect(req.request.method).toEqual('POST');
       expect(req.request.body.email.brandedSenders).toEqual([]);
+    });
+  });
+
+  describe('i18n', () => {
+    const hybridEn = 'HYBRID: an API primary owner can be either a user or a group (Default)';
+    const hybridRu = 'HYBRID: основным владельцем API может быть пользователь или группа (по умолчанию)';
+
+    beforeEach(async () => {
+      localStorage.removeItem('gio-console-lang');
+      await init();
+      expectPortalSettingsGetRequest(fakePortalSettings());
+    });
+
+    it('should show English chrome by default, switch to Russian, and back without recreating the component', async () => {
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('Settings');
+      const hybridRadio = await loader.getHarness(MatRadioButtonHarness.with({ label: hybridEn }));
+      expect(await hybridRadio.getValue()).toBe('HYBRID');
+      const addButton = await loader.getHarness(MatButtonHarness.with({ selector: '.branded-senders__add' }));
+      expect(await addButton.getText()).toContain('Add configuration');
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('Настройки');
+      const hybridRadioRu = await loader.getHarness(MatRadioButtonHarness.with({ label: hybridRu }));
+      expect(await hybridRadioRu.getValue()).toBe('HYBRID');
+      expect(await addButton.getText()).toContain('Добавить конфигурацию');
+
+      TestBed.inject(LanguageService).setLanguage('en');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('h1').textContent.trim()).toBe('Settings');
+      const hybridRadioEn = await loader.getHarness(MatRadioButtonHarness.with({ label: hybridEn }));
+      expect(await hybridRadioEn.getValue()).toBe('HYBRID');
+      expect(await addButton.getText()).toContain('Add configuration');
     });
   });
 

@@ -17,12 +17,14 @@
 -->
 @switch (lifecycleState) {
   @case ('DEPLOYED') {
-    <span class="gio-badge-success lifecycleStateBadge">Deployed</span>
+    <span class="gio-badge-success lifecycleStateBadge">{{ 'settings.sharedPolicyGroups.lifecycle.DEPLOYED' | translate }}</span>
   }
   @case ('UNDEPLOYED') {
-    <span class="gio-badge-warning lifecycleStateBadge">Undeployed</span>
+    <span class="gio-badge-warning lifecycleStateBadge">{{ 'settings.sharedPolicyGroups.lifecycle.UNDEPLOYED' | translate }}</span>
   }
   @case ('PENDING') {
-    <span class="gio-badge-neutral lifecycleStateBadge" matTooltip="Last change are not deployed">Pending</span>
+    <span class="gio-badge-neutral lifecycleStateBadge" [matTooltip]="'settings.sharedPolicyGroups.pendingTooltip' | translate">{{
+      'settings.sharedPolicyGroups.lifecycle.PENDING' | translate
+    }}</span>
   }
 }

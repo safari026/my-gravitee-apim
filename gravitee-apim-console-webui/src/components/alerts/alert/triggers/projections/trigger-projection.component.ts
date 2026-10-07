@@ -28,8 +28,11 @@ const AlertTriggerProjectionComponent: ng.IComponentOptions = {
     isReadonly: '<',
   },
   template: require('html-loader!./trigger-projection.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
       // Metrics are depending on the source of the trigger
       if (this.alert.source === 'REQUEST') {
         this.metrics = Metrics.filterByScope(ApiMetrics.METRICS, this.alert.reference_type);
@@ -49,7 +52,8 @@ const AlertTriggerProjectionComponent: ng.IComponentOptions = {
     this.deleteProjection = () => {
       this.onProjectionRemove();
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerProjectionComponent;

@@ -18,8 +18,8 @@
 <h2 mat-dialog-title>{{ member.displayName }}</h2>
 <mat-dialog-content>
   <form [formGroup]="editMemberForm" class="edit-member__form">
-    <mat-form-field aria-hidden="false" aria-label="Select default API role">
-      <mat-label>Default API Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApiRole' | translate }}</mat-label>
       <mat-select formControlName="defaultAPIRole" (selectionChange)="onChange()">
         @for (role of defaultAPIRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="disabledAPIRoles.has(role.id)">{{ role.name }} </mat-option>
@@ -27,8 +27,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default API product role">
-      <mat-label>Default API Product Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiProductRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApiProductRole' | translate }}</mat-label>
       <mat-select formControlName="defaultAPIProductRole" (selectionChange)="onChange()">
         @for (role of defaultAPIProductRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="disabledAPIProductRoles.has(role.id)">{{ role.name }}</mat-option>
@@ -36,8 +36,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default application role">
-      <mat-label>Default Application Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApplicationRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApplicationRole' | translate }}</mat-label>
       <mat-select formControlName="defaultApplicationRole" (selectionChange)="onChange()">
         @for (role of defaultApplicationRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -45,8 +45,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default integration role">
-      <mat-label>Default Integration Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultIntegrationRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultIntegrationRole' | translate }}</mat-label>
       <mat-select formControlName="defaultIntegrationRole" (selectionChange)="onChange()">
         @for (role of defaultIntegrationRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -54,8 +54,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default cluster role">
-      <mat-label>Default Cluster Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultClusterRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultClusterRole' | translate }}</mat-label>
       <mat-select formControlName="defaultClusterRole" (selectionChange)="onChange()">
         @for (role of defaultClusterRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -63,8 +63,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default explorer role">
-      <mat-label>Default Explorer Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultExplorerRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultExplorerRole' | translate }}</mat-label>
       <mat-select formControlName="defaultExplorerRole" (selectionChange)="onChange()">
         @for (role of defaultExplorerRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -73,20 +73,20 @@
     </mat-form-field>
 
     <gio-form-slide-toggle class="edit-member__form__actions">
-      <gio-form-label>Group Admin</gio-form-label>
+      <gio-form-label>{{ 'settings.groups.groupAdmin' | translate }}</gio-form-label>
       <mat-slide-toggle
         formControlName="groupAdmin"
         gioFormSlideToggle
         aria-hidden="false"
-        aria-label="Enable to make user admin of the group"
+        [attr.aria-label]="'settings.groups.groupAdminAria' | translate"
         (toggleChange)="onChange()"
       ></mat-slide-toggle>
     </gio-form-slide-toggle>
 
     @if (downgradedMember?.id === member.id) {
       <mat-form-field appearance="outline">
-        <mat-label>Search Members</mat-label>
-        <input aria-label="Search members" matInput formControlName="searchTerm" [matAutocomplete]="auto" />
+        <mat-label>{{ 'settings.groups.searchMembers' | translate }}</mat-label>
+        <input [attr.aria-label]="'settings.groups.searchMembersAria' | translate" matInput formControlName="searchTerm" [matAutocomplete]="auto" />
         <mat-autocomplete #auto="matAutocomplete" [displayWith]="displayMember" (optionSelected)="selectPrimaryOwner($event)">
           @for (member of filteredMembers$ | async; track member.id) {
             <mat-option [value]="member">
@@ -94,7 +94,7 @@
             </mat-option>
           }
         </mat-autocomplete>
-        <mat-hint>Select a member to transfer primary ownership</mat-hint>
+        <mat-hint>{{ 'settings.groups.searchMembersHint' | translate }}</mat-hint>
       </mat-form-field>
 
       @if (selectedPrimaryOwner) {
@@ -114,6 +114,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" [disabled]="disableSubmit" (click)="submit()">Save</button>
-  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="disableSubmit" (click)="submit()">{{ 'common.save' | translate }}</button>
+  <button mat-raised-button mat-dialog-close>{{ 'common.cancel' | translate }}</button>
 </mat-dialog-actions>

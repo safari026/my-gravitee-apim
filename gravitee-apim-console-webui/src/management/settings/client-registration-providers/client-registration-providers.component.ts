@@ -13,10 +13,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
-import { catchError, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { GioConfirmDialogComponent, GioConfirmDialogData, GioLicenseService, LicenseOptions } from '@gravitee/ui-particles-angular';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -28,6 +29,7 @@ import { PortalSettings, PortalSettingsApplication } from '../../../entities/por
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { ApimFeature } from '../../../shared/components/gio-license/gio-license-data';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 export type ProvidersTableDS = {
   id: string;
@@ -47,7 +49,6 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
   providersTableDS: ProvidersTableDS[] = [];
   displayedColumns = ['name', 'description', 'updatedAt', 'actions'];
   isLoadingData = true;
-  disabledMessage = 'Configuration provided by the system';
   dcrRegistrationLicenseOptions: LicenseOptions = { feature: ApimFeature.APIM_DCR_REGISTRATION };
   hasDcrRegistrationLock$: Observable<boolean>;
   canUpdateSettings: boolean;
@@ -63,6 +64,8 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
     private readonly matDialog: MatDialog,
     private readonly licenseService: GioLicenseService,
     private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnDestroy(): void {
@@ -77,9 +80,9 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
       'environment-settings-u',
       'environment-settings-d',
     ]);
-    if (!this.canUpdateSettings) {
-      this.disabledMessage = undefined;
-    }
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe();
     combineLatest([this.portalSettingsService.get(), this.clientRegistrationProvidersService.list()])
       .pipe(
         tap(([settings, providers]) => {
@@ -108,9 +111,9 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete client registration provider',
-          content: `Are you sure you want to delete the client registration provider <strong>${provider.name}</strong> ?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.clientRegistration.deleteTitle'),
+          content: this.languageService.translate('settings.clientRegistration.deleteContent', { name: provider.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'removeClientRegistrationProviderConfirmDialog',
@@ -119,7 +122,7 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.clientRegistrationProvidersService.delete(provider.id)),
-        tap(() => this.snackBarService.success(`"${provider.name}" has been deleted.`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.clientRegistration.deleted', { name: provider.name }))),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -177,13 +180,17 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
           this.settings.application = portalSettingsApplication;
           return this.portalSettingsService.save(this.settings);
         }),
-        tap(() => this.snackBarService.success(`Configuration has been saved.`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.clientRegistration.saved'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
   }
   isReadonly(property: string): boolean {
     return PortalSettingsService.isReadonly(this.settings, property);
+  }
+
+  get disabledMessage(): string | undefined {
+    return this.canUpdateSettings ? this.languageService.translate('settings.systemConfig') : undefined;
   }
 }
 

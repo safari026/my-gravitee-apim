@@ -26,6 +26,7 @@ import { ConsoleSettingsService } from '../../../services-ngx/console-settings.s
 import { isIso8601DateValid } from '../../api/reporter-settings/reporter-settings-message/iso-8601-date.validator';
 import { isWindowedCountValidFormat } from '../../api/reporter-settings/reporter-settings-message/windowed-count-format.validator';
 import { WindowedCount, WindowedCountFormatError } from '../../api/reporter-settings/reporter-settings-message/windowed-count';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-logging',
@@ -35,7 +36,6 @@ import { WindowedCount, WindowedCountFormatError } from '../../api/reporter-sett
 })
 export class ApiLoggingComponent implements OnInit, OnDestroy {
   isLoading = true;
-  providedConfigurationMessage = 'Configuration provided by the system';
   apiLoggingForm: UntypedFormGroup;
   canUpdateSettings: boolean;
   settings: ConsoleSettings;
@@ -45,7 +45,12 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
     private readonly fb: UntypedFormBuilder,
     private readonly consoleSettingsService: ConsoleSettingsService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
+
+  get tocSectionNames(): Record<string, string> {
+    return { '': this.languageService.translate('settings.apiLogging.toc') };
+  }
 
   ngOnInit(): void {
     this.consoleSettingsService
@@ -136,7 +141,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
     this.consoleSettingsService
       .save(settingsToSave)
       .pipe(
-        tap(() => this.snackBarService.success('Configuration successfully saved!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.apiLogging.saved'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.ngOnInit());
@@ -160,7 +165,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultLowerThanLimit',
-        message: 'Default should be greater than Limit',
+        message: this.languageService.translate('settings.apiLogging.defaultLowerThanLimit'),
       };
 
       if (defaultControl.value < limitControl.value) {
@@ -183,7 +188,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultGreaterThanLimit',
-        message: 'Default should be lower than Limit',
+        message: this.languageService.translate('settings.apiLogging.defaultGreaterThanLimit'),
       };
 
       if (defaultControl.value > limitControl.value) {
@@ -206,7 +211,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultLowerThanLimit',
-        message: 'Default should be greater than Limit',
+        message: this.languageService.translate('settings.apiLogging.defaultLowerThanLimit'),
       };
 
       try {
@@ -237,7 +242,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultLowerThanLimit',
-        message: 'Default must be a lower rate than limit',
+        message: this.languageService.translate('settings.apiLogging.defaultLowerThanMaxRate'),
       };
 
       try {

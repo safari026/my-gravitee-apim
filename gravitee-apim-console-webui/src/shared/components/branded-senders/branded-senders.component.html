@@ -17,54 +17,55 @@
 -->
 <div class="branded-senders">
   <!-- Default notification email (read-only, for context) -->
-  <h3 class="branded-senders__title">Default notification email</h3>
-  <p class="branded-senders__subtitle">Used when no branded rule matches the recipient's email domain.</p>
+  <h3 class="branded-senders__title">{{ 'settings.portal.branded.defaultEmail' | translate }}</h3>
+  <p class="branded-senders__subtitle">{{ 'settings.portal.branded.defaultEmailHint' | translate }}</p>
 
   <mat-form-field class="branded-senders__field">
-    <mat-label>Default From</mat-label>
+    <mat-label>{{ 'settings.portal.branded.defaultFrom' | translate }}</mat-label>
     <mat-icon
       matPrefix
       class="branded-senders__lock"
-      matTooltip="Read-only preview of the Default From configured in the Email settings above"
+      [matTooltip]="'settings.portal.branded.defaultFromTooltip' | translate"
     >
       lock
     </mat-icon>
-    <input matInput [value]="defaultFrom()" disabled aria-label="Default From" />
+    <input matInput [value]="defaultFrom()" disabled [attr.aria-label]="'settings.portal.branded.defaultFrom' | translate" />
   </mat-form-field>
 
   <mat-form-field class="branded-senders__field">
-    <mat-label>Default subject prefix</mat-label>
+    <mat-label>{{ 'settings.portal.branded.defaultSubject' | translate }}</mat-label>
     <mat-icon
       matPrefix
       class="branded-senders__lock"
-      matTooltip="Read-only preview of the Default subject prefix configured in the Email settings above"
+      [matTooltip]="'settings.portal.branded.defaultSubjectTooltip' | translate"
     >
       lock
     </mat-icon>
-    <input matInput [value]="defaultSubject()" disabled aria-label="Default subject prefix" />
-    <mat-hint>%s is replaced with the email's subject.</mat-hint>
+    <input matInput [value]="defaultSubject()" disabled [attr.aria-label]="'settings.portal.branded.defaultSubject' | translate" />
+    <mat-hint>{{ 'settings.portal.branded.subjectHint' | translate }}</mat-hint>
   </mat-form-field>
 
   <!-- Branded notification email (editable rules) -->
-  <h3 class="branded-senders__title">Branded notification email</h3>
-  <p class="branded-senders__subtitle">
-    Add one or more rules. When a recipient's domain matches a rule, that rule's <strong>From</strong> and <strong>Subject</strong> prefix
-    are used instead of the defaults above.
-  </p>
+  <h3 class="branded-senders__title">{{ 'settings.portal.branded.brandedEmail' | translate }}</h3>
+  <p class="branded-senders__subtitle">{{ 'settings.portal.branded.brandedEmailHint' | translate }}</p>
 
   @for (group of configurations.controls; track $index) {
     <mat-card [formGroup]="group" class="branded-senders__card">
       <div class="branded-senders__card__header">
         <div class="branded-senders__card__header__label">
-          <span class="branded-senders__card__header__title">Configuration {{ $index + 1 }}</span>
+          <span class="branded-senders__card__header__title">{{
+            'settings.portal.branded.configuration' | translate: { index: $index + 1 }
+          }}</span>
           @if (inheritedFromOrg() && !hasUserEdited()) {
-            <span class="gio-badge" data-testid="branded-senders-inherited-badge">Inherited from Org</span>
+            <span class="gio-badge" data-testid="branded-senders-inherited-badge">{{
+              'settings.portal.branded.inheritedFromOrg' | translate
+            }}</span>
           }
         </div>
         <button
           mat-icon-button
           type="button"
-          aria-label="Delete configuration"
+          [attr.aria-label]="'settings.portal.branded.deleteConfiguration' | translate"
           [disabled]="isDisabled()"
           (click)="removeConfiguration($index)"
         >
@@ -73,38 +74,46 @@
       </div>
 
       <mat-form-field class="branded-senders__field">
-        <mat-label>Recipient domains</mat-label>
+        <mat-label>{{ 'settings.portal.branded.recipientDomains' | translate }}</mat-label>
         <gio-form-tags-input
           formControlName="domains"
           [required]="true"
           [addOnBlur]="true"
           [placeholder]="group.controls.domains.value.length === 0 ? 'example.com, eu.example.com' : ''"
         ></gio-form-tags-input>
-        <mat-hint>Match is case-insensitive on the part after &#64; in the recipient address.</mat-hint>
+        <mat-hint>{{ 'settings.portal.branded.domainsHint' | translate }}</mat-hint>
         @if (group.controls.domains.hasError('required')) {
-          <mat-error>At least one domain is required.</mat-error>
+          <mat-error>{{ 'settings.portal.branded.domainRequired' | translate }}</mat-error>
         }
         @if (group.controls.domains.hasError('invalidDomains')) {
-          <mat-error>Invalid domain(s): {{ group.controls.domains.getError('invalidDomains').join(', ') }}</mat-error>
+          <mat-error>{{
+            'settings.portal.branded.invalidDomains'
+              | translate: { domains: group.controls.domains.getError('invalidDomains').join(', ') }
+          }}</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field class="branded-senders__field">
-        <mat-label>From</mat-label>
-        <input matInput formControlName="from" placeholder="noreply@example.com" aria-label="From" />
+        <mat-label>{{ 'settings.portal.from' | translate }}</mat-label>
+        <input matInput formControlName="from" placeholder="noreply@example.com" [attr.aria-label]="'settings.portal.from' | translate" />
         @if (group.controls.from.hasError('required')) {
-          <mat-error>From is required.</mat-error>
+          <mat-error>{{ 'settings.portal.branded.fromRequired' | translate }}</mat-error>
         }
         @if (group.controls.from.hasError('invalidSenderAddress')) {
-          <mat-error>Enter a valid email address, optionally with a display name.</mat-error>
+          <mat-error>{{ 'settings.portal.branded.invalidFrom' | translate }}</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field class="branded-senders__field">
-        <mat-label>Subject prefix</mat-label>
-        <input matInput formControlName="subject" placeholder="[Example] %s" aria-label="Subject prefix" />
+        <mat-label>{{ 'settings.portal.branded.subjectPrefix' | translate }}</mat-label>
+        <input
+          matInput
+          formControlName="subject"
+          placeholder="[Example] %s"
+          [attr.aria-label]="'settings.portal.branded.subjectPrefix' | translate"
+        />
         @if (group.controls.subject.hasError('maxlength')) {
-          <mat-error>Must be at most {{ subjectMaxLength }} characters.</mat-error>
+          <mat-error>{{ 'settings.portal.branded.subjectMax' | translate: { max: subjectMaxLength } }}</mat-error>
         }
       </mat-form-field>
     </mat-card>
@@ -112,12 +121,12 @@
 
   @if (configurations.hasError('duplicateDomains')) {
     <p class="branded-senders__error">
-      Each domain may only be used in one configuration. Used more than once: {{ configurations.getError('duplicateDomains').join(', ') }}.
+      {{ 'settings.portal.branded.duplicateDomains' | translate: { domains: configurations.getError('duplicateDomains').join(', ') } }}
     </p>
   }
 
   @if (configurations.hasError('maxSerializedLength')) {
-    <p class="branded-senders__error">These configurations are too large to save. Remove some domains or configurations and try again.</p>
+    <p class="branded-senders__error">{{ 'settings.portal.branded.tooLarge' | translate }}</p>
   }
 
   <div class="branded-senders__actions">
@@ -130,11 +139,13 @@
       (click)="addConfiguration()"
     >
       <mat-icon>add</mat-icon>
-      Add configuration
+      {{ 'settings.portal.branded.addConfiguration' | translate }}
     </button>
 
     @if (canReset()) {
-      <button mat-stroked-button type="button" data-testid="reset-branded-senders" (click)="reset.emit()">Reset to Org settings</button>
+      <button mat-stroked-button type="button" data-testid="reset-branded-senders" (click)="reset.emit()">
+        {{ 'settings.portal.branded.resetToOrg' | translate }}
+      </button>
     }
   </div>
 </div>

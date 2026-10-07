@@ -27,7 +27,7 @@ import {
   Self,
   signal,
 } from '@angular/core';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import {
   AbstractControl,
   ControlValueAccessor,
@@ -42,7 +42,7 @@ import {
   ValidatorFn,
   Validators,
 } from '@angular/forms';
-import { filter } from 'rxjs/operators';
+import { filter, skip } from 'rxjs/operators';
 import { MatCardModule } from '@angular/material/card';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
@@ -52,6 +52,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { GioFormTagsInputModule } from '@gravitee/ui-particles-angular';
 
 import { BrandedSender } from '../../../entities/brandedSender';
+import { LanguageService } from '../../i18n/language.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
 
 type BrandedSenderForm = FormGroup<{
   domains: FormControl<string[]>;
@@ -142,6 +144,7 @@ const duplicateDomainsValidator: ValidatorFn = (control: AbstractControl): Valid
     MatTooltipModule,
     MatIconModule,
     GioFormTagsInputModule,
+    TranslatePipe,
   ],
   templateUrl: './branded-senders.component.html',
   styleUrl: './branded-senders.component.scss',
@@ -151,6 +154,7 @@ export class BrandedSendersComponent implements ControlValueAccessor, Validator,
   private readonly destroyRef = inject(DestroyRef);
   private readonly changeDetector = inject(ChangeDetectorRef);
   private readonly errorHandler = inject(ErrorHandler);
+  private readonly languageService = inject(LanguageService);
 
   // Injecting the host NgControl (instead of registering via NG_VALUE_ACCESSOR / NG_VALIDATORS) lets this nested
   // sub-form react to its parent control being touched — see ngOnInit. The value accessor is assigned in the
@@ -159,6 +163,9 @@ export class BrandedSendersComponent implements ControlValueAccessor, Validator,
     if (this.ngControl) {
       this.ngControl.valueAccessor = this;
     }
+    toObservable(this.languageService.currentLanguage)
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.changeDetector.markForCheck());
   }
 
   /** The default sender/subject shown read-only for context (the `EMAIL_FROM` / `EMAIL_SUBJECT` fallback). */

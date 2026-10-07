@@ -48,6 +48,7 @@ import { ClientRegistrationProviderComponent } from './client-registration-provi
 
 import { GioGoBackButtonModule } from '../../../shared/components/gio-go-back-button/gio-go-back-button.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -82,6 +83,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     GioFormTagsInputModule,
     GioPermissionModule,
     GioLicenseModule,
+    TranslatePipe,
   ],
   declarations: [ClientRegistrationProvidersComponent, ClientRegistrationProviderComponent],
   exports: [ClientRegistrationProvidersComponent, ClientRegistrationProviderComponent],

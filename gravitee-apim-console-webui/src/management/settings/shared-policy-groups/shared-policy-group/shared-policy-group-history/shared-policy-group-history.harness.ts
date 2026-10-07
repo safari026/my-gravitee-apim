@@ -21,7 +21,7 @@ import { GioTableWrapperHarness } from '../../../../../shared/components/gio-tab
 
 export class SharedPolicyGroupHistoryHarness extends ComponentHarness {
   static readonly hostSelector = 'shared-policy-group-history';
-  public getTable = this.locatorFor(MatTableHarness.with({ selector: '[aria-label="Shared Policy Group"]' }));
+  public getTable = this.locatorFor(MatTableHarness);
   public getTableWrapper = this.locatorFor(GioTableWrapperHarness);
   public compareTwoSPGButton = this.locatorForOptional(MatButtonHarness.with({ text: /compareTwoSPG/ }));
 }

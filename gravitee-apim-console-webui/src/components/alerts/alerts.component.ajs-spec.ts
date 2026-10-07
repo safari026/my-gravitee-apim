@@ -17,16 +17,21 @@ import { IComponentControllerService } from 'angular';
 
 import { setupAngularJsTesting } from '../../../old-jest.setup';
 import { Alert, Scope } from '../../../src/entities/alert';
+import { LanguageService } from '../../../src/shared/i18n/language.service';
 
 setupAngularJsTesting();
 
 describe('AlertsComponent', () => {
   let $componentController: IComponentControllerService;
   let alertsComponent: any;
+  let ngLanguageService: LanguageService;
 
   beforeEach(inject(_$componentController_ => {
     $componentController = _$componentController_;
-    alertsComponent = $componentController('alertsComponentAjs', null, {});
+    ngLanguageService = new LanguageService();
+    localStorage.removeItem('gio-console-lang');
+    ngLanguageService.setLanguage('en');
+    alertsComponent = $componentController('alertsComponentAjs', { ngLanguageService }, {});
   }));
 
   describe('enhanceAlert', () => {
@@ -75,6 +80,25 @@ describe('AlertsComponent', () => {
       alertsComponent.enhanceAlert(alert);
 
       expect(alert.reference_type).toEqual(Scope.APPLICATION);
+    });
+  });
+
+  describe('i18n', () => {
+    it('translates list chrome and keeps technical severity values', () => {
+      expect(alertsComponent.translate('alerts.list.title')).toBe('Alerts');
+      expect(alertsComponent.translate('alerts.operators.GT')).toBe('greater than');
+      expect(alertsComponent.getSeverityColor({ severity: 'INFO' })).toBe('#54a3ff');
+      expect(alertsComponent.getSeverityColor({ severity: 'WARNING' })).toBe('#FF950D');
+      expect(alertsComponent.getSeverityColor({ severity: 'CRITICAL' })).toBe('#d73a49');
+
+      ngLanguageService.setLanguage('ru');
+      expect(alertsComponent.translate('alerts.list.title')).toBe('Оповещения');
+      expect(alertsComponent.translate('alerts.operators.GT')).toBe('больше');
+      expect(alertsComponent.getSeverityColor({ severity: 'CRITICAL' })).toBe('#d73a49');
+
+      ngLanguageService.setLanguage('en');
+      expect(alertsComponent.translate('alerts.list.title')).toBe('Alerts');
+      expect(alertsComponent.translate('alerts.operators.GT')).toBe('greater than');
     });
   });
 });

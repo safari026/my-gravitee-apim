@@ -47,5 +47,5 @@
   ng-if="!$ctrl.model.definition || !$ctrl.model.definition.length"
   icon="insert_chart"
   model="Dashboard"
-  message="{{$ctrl.updateMode?'Start adding widgets': $ctrl.translate('applications.analytics.noWidget')}}"
+  message="{{$ctrl.updateMode ? $ctrl.translate('settings.analytics.editor.startAdding') : $ctrl.translate('applications.analytics.noWidget')}}"
 ></gravitee-empty-state>

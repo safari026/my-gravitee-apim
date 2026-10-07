@@ -16,12 +16,12 @@
 
 -->
 
-<h2>Featured APIs</h2>
+<h2>{{ 'settings.topApis.title' | translate }}</h2>
 <mat-card>
   <mat-card-content>
     <div class="header">
       <div class="header__title">
-        <p>Showcase your APIs on the Developer Portal homepage</p>
+        <p>{{ 'settings.topApis.subtitle' | translate }}</p>
       </div>
 
       <div class="header__actions">
@@ -35,7 +35,7 @@
           data-testid="add-top-api-button"
         >
           <mat-icon>add</mat-icon>
-          Add API
+          {{ 'settings.topApis.add' | translate }}
         </button>
       </div>
     </div>
@@ -43,7 +43,7 @@
 
   <table mat-table [dataSource]="topApisList">
     <caption style="display: none">
-      Table with Top Apis list.
+      {{ 'settings.topApis.tableCaption' | translate }}
     </caption>
     <!-- Picture Column     -->
     <ng-container matColumnDef="picture">
@@ -62,19 +62,19 @@
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'settings.topApis.name' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
 
     <!-- Version Column -->
     <ng-container matColumnDef="version">
-      <th mat-header-cell *matHeaderCellDef>Version</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'settings.topApis.version' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.version }}</td>
     </ng-container>
 
     <!-- Description Column -->
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef>Description</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'settings.topApis.description' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.description }}</td>
     </ng-container>
 
@@ -88,7 +88,7 @@
                 [disabled]="isLoading || isFirst(element.order)"
                 (click)="moveUp(element)"
                 mat-icon-button
-                aria-label="Move Top API up"
+                [attr.aria-label]="'settings.topApis.moveUpAria' | translate"
                 data-testid="move-up-top-api-button"
               >
                 <mat-icon>arrow_upward</mat-icon>
@@ -97,7 +97,7 @@
                 [disabled]="isLoading || isLast(element.order)"
                 (click)="moveDown(element)"
                 mat-icon-button
-                aria-label="Move Top API down"
+                [attr.aria-label]="'settings.topApis.moveDownAria' | translate"
                 data-testid="move-down-top-api-button"
               >
                 <mat-icon>arrow_downward</mat-icon>
@@ -108,7 +108,7 @@
           <button
             (click)="deleteTopApi(element)"
             mat-icon-button
-            aria-label="Delete this Top API"
+            [attr.aria-label]="'settings.topApis.deleteAria' | translate"
             *gioPermission="{ anyOf: ['environment-top_apis-d'] }"
             data-testid="delete-top-api-button"
             [disabled]="isLoading"
@@ -124,7 +124,7 @@
 
     <!-- Row shown when there is no data -->
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No Top APIs to display.</td>
+      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">{{ 'settings.topApis.empty' | translate }}</td>
     </tr>
   </table>
 </mat-card>

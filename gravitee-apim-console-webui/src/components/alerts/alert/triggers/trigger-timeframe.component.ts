@@ -29,7 +29,9 @@ const AlertTriggerTimeframeComponent: ng.IComponentOptions = {
   template: require('html-loader!./trigger-timeframe.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: [
     '$scope',
-    function ($scope) {
+    'ngLanguageService',
+    function ($scope, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.officeStartTime = moment();
       this.officeStartTime.set({ hour: 9, minute: 0, second: 0, millisecond: 0 });
       this.officeEndTime = moment();
@@ -122,7 +124,10 @@ const AlertTriggerTimeframeComponent: ng.IComponentOptions = {
       };
 
       this.getOfficeHoursDescription = () => {
-        return `Set time range from ${this.formatTime(this.officeStartTime, 'LT')} to ${this.formatTime(this.officeEndTime, 'LT')}`;
+        return this.translate('alerts.timeframe.officeHoursHint', {
+          from: this.formatTime(this.officeStartTime, 'LT'),
+          to: this.formatTime(this.officeEndTime, 'LT'),
+        });
       };
 
       this.remove = (idx: number) => {
@@ -156,13 +161,13 @@ const AlertTriggerTimeframeComponent: ng.IComponentOptions = {
       this.getDayNames = (period: Period) => {
         if (period.days) {
           if (period.days.length === this.days.length) {
-            return 'day';
+            return this.translate('alerts.timeframe.allDays');
           } else if (period.days.length === 1) {
-            return this.days[period.days[0] - 1];
+            return this.translate('alerts.days.' + this.days[period.days[0] - 1]);
           }
-          const days = this.getDays(period.days);
+          const days = this.getDays(period.days).map(day => this.translate('alerts.days.' + day));
           const lastDay = days.pop();
-          return `${days.join(', ')} and ${lastDay}`;
+          return `${days.join(', ')} ${this.translate('alerts.timeframe.and')} ${lastDay}`;
         }
         return '';
       };

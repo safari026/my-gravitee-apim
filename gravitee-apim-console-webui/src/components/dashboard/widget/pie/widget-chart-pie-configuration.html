@@ -16,38 +16,44 @@
 
 -->
 <div layout="column">
-  <md-switch ng-model="$ctrl.isCustomField" aria-label="Use custom field?">Use custom field?</md-switch>
+  <md-switch ng-model="$ctrl.isCustomField" aria-label="{{$ctrl.translate('settings.analytics.editor.customField')}}"
+    >{{$ctrl.translate('settings.analytics.editor.customField')}}</md-switch
+  >
 
   <div layout="row">
     <md-input-container ng-show="!$ctrl.isCustomField">
-      <label>Field</label>
+      <label>{{$ctrl.translate('settings.analytics.editor.field')}}</label>
       <md-select ng-model="$ctrl.chart.request.field">
         <md-option ng-repeat="field in $ctrl.fields" ng-value="field.value">{{field.label}}</md-option>
       </md-select>
     </md-input-container>
 
     <md-input-container ng-show="$ctrl.isCustomField">
-      <label>Field</label>
+      <label>{{$ctrl.translate('settings.analytics.editor.field')}}</label>
       <input name="Field" ng-model="$ctrl.field" ng-change="$ctrl.onFieldChanged()" />
     </md-input-container>
   </div>
 </div>
 
 <div layout="row" ng-repeat="data in $ctrl.data" ng-show="!$ctrl.isCustomField">
-  <ng-md-icon icon="clear" aria-label="Remove data" ng-click="$ctrl.removeData(data)"></ng-md-icon>
+  <ng-md-icon
+    icon="clear"
+    aria-label="{{$ctrl.translate('settings.analytics.editor.removeData')}}"
+    ng-click="$ctrl.removeData(data)"
+  ></ng-md-icon>
 
   <md-input-container>
-    <label>Min</label>
+    <label>{{$ctrl.translate('settings.analytics.editor.min')}}</label>
     <input type="number" ng-model="data.min" min="0" required ng-change="$ctrl.onDataChanged()" />
   </md-input-container>
 
   <md-input-container>
-    <label>Max</label>
+    <label>{{$ctrl.translate('settings.analytics.editor.max')}}</label>
     <input type="number" ng-model="data.max" min="0" required ng-change="$ctrl.onDataChanged()" />
   </md-input-container>
 
   <md-input-container>
-    <label>Label</label>
+    <label>{{$ctrl.translate('settings.analytics.editor.label')}}</label>
     <input type="text" ng-model="data.label" required ng-change="$ctrl.onDataChanged()" />
   </md-input-container>
 
@@ -61,4 +67,9 @@
   ></div>
 </div>
 
-<ng-md-icon ng-show="!$ctrl.isCustomField" icon="add" aria-label="Add data" ng-click="$ctrl.addData()"></ng-md-icon>
+<ng-md-icon
+  ng-show="!$ctrl.isCustomField"
+  icon="add"
+  aria-label="{{$ctrl.translate('settings.analytics.editor.addData')}}"
+  ng-click="$ctrl.addData()"
+></ng-md-icon>

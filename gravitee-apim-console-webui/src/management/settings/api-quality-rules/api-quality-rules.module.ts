@@ -34,6 +34,7 @@ import { ApiQualityRulesAddDialogComponent } from './api-quality-rules-add-dialo
 
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -57,6 +58,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     MatTooltipModule,
     MatSnackBarModule,
     GioBannerModule,
+    TranslatePipe,
   ],
   declarations: [ApiQualityRulesComponent, ApiQualityRulesAddDialogComponent],
   exports: [ApiQualityRulesComponent, ApiQualityRulesAddDialogComponent],

@@ -19,8 +19,8 @@
   <div class="gv-sub-content" ng-if="!$ctrl.hasAlertingPlugin">
     <gravitee-empty-state
       icon="alarm_off"
-      message="No alert plugin is installed."
-      sub-message="Please install a plugin before being able to define alert rules."
+      message="{{$ctrl.translate('alerts.activity.noPlugin')}}"
+      sub-message="{{$ctrl.translate('alerts.activity.noPluginSub')}}"
     ></gravitee-empty-state>
   </div>
 
@@ -28,15 +28,15 @@
     <gravitee-empty-state
       icon="add_alarm"
       model="Alert"
-      message="No alert configured"
-      sub-message="Start creating an alert"
+      message="{{$ctrl.translate('alerts.activity.noConfigured')}}"
+      sub-message="{{$ctrl.translate('alerts.activity.startCreating')}}"
       create-mode="true"
     >
       <md-button
         permission
         permission-only="['api-alert-c', 'application-alert-c', 'environment-alert-c']"
         class="md-fab"
-        aria-label="create-alert"
+        aria-label="{{$ctrl.translate('alerts.list.createAria')}}"
         ng-click="$ctrl.goToAlertCreation()"
       >
         <ng-md-icon icon="add" style="fill: #fff"></ng-md-icon>
@@ -47,23 +47,23 @@
   <div class="gv-sub-content" ng-if="$ctrl.hasAlertingPlugin">
     <div class="gv-forms gv-forms-fluid" layout="column">
       <div layout="row">
-        <h2 flex>Alerts board</h2>
+        <h2 flex>{{$ctrl.translate('alerts.activity.board')}}</h2>
         <md-input-container class="md-block">
           <gv-quick-time-range on-timeframe-change="$ctrl.refresh(timeframe)"></gv-quick-time-range>
         </md-input-container>
         <md-button class="md-primary" ng-click="$ctrl.refresh()">
           <ng-md-icon icon="refresh" size="20"></ng-md-icon>
-          Refresh
+          {{$ctrl.translate('common.refresh')}}
         </md-button>
       </div>
 
       <div ng-if="$ctrl.hasConfiguredAlerts && $ctrl.alerts.length === 0">
-        <gravitee-empty-state icon="alarm_on" message="No alert event"></gravitee-empty-state>
+        <gravitee-empty-state icon="alarm_on" message="{{$ctrl.translate('alerts.activity.noEvent')}}"></gravitee-empty-state>
       </div>
 
       <div layout="column" ng-show="$ctrl.alerts.length > 0">
         <div>
-          <h2>All alert events in {{$ctrl.timeframe.title | lowercase}}</h2>
+          <h2>{{$ctrl.translate('alerts.activity.allEvents', { timeframe: $ctrl.timeframeTitle() })}}</h2>
           <div style="height: 250px">
             <gv-chart-bar ng-prop-series="$ctrl.series" ng-attr-options="{{$ctrl.options}}"></gv-chart-bar>
           </div>
@@ -83,7 +83,7 @@
                   <md-card-header-text>
                     <span class="md-title" title="{{alert.name}}">{{alert.name}}</span>
                     <md-tooltip md-direction="top">{{alert.name}}</md-tooltip>
-                    <a ng-click="$ctrl.goToHistory(alert)">View history</a>
+                    <a ng-click="$ctrl.goToHistory(alert)">{{$ctrl.translate('alerts.activity.viewHistory')}}</a>
                   </md-card-header-text>
                 </md-card-header>
 

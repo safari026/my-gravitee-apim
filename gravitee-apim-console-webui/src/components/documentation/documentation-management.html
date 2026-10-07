@@ -32,34 +32,34 @@
           ng-disabled="$ctrl.readOnly"
           class="md-raised md-primary"
           ng-click="$ctrl.changeFolderVisibility()"
-          aria-label="visibility"
+          aria-label="{{ $ctrl.currentFolder.visibility === 'PRIVATE' ? $ctrl.translate('settings.documentation.makePublic') : $ctrl.translate('settings.documentation.makePrivate')}}"
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
         >
-          {{ $ctrl.currentFolder.visibility === 'PRIVATE' ? 'Make PUBLIC' : 'Make PRIVATE'}}</md-button
+          {{ $ctrl.currentFolder.visibility === 'PRIVATE' ? $ctrl.translate('settings.documentation.makePublic') : $ctrl.translate('settings.documentation.makePrivate')}}</md-button
         >
         <md-button
           type="button"
           ng-disabled="$ctrl.readOnly"
           class="md-raised md-primary"
           ng-click="$ctrl.toggleRenameFolder()"
-          aria-label="Edit"
+          aria-label="{{$ctrl.translate('settings.documentation.renameFolder')}}"
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
           ng-if="!translateFolder"
         >
-          Rename Folder</md-button
+          {{$ctrl.translate('settings.documentation.renameFolder')}}</md-button
         >
         <md-button
           type="button"
           ng-disabled="$ctrl.readOnly"
           class="md-raised md-primary"
           ng-click="$ctrl.toggleTranslateFolder()"
-          aria-label="Translations"
+          aria-label="{{ translateFolder? $ctrl.translate('settings.documentation.browseFolder') : $ctrl.translate('settings.documentation.translateFolder') }}"
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
         >
-          {{ translateFolder? 'Browse Folder' : 'Translate Folder' }}</md-button
+          {{ translateFolder? $ctrl.translate('settings.documentation.browseFolder') : $ctrl.translate('settings.documentation.translateFolder') }}</md-button
         >
       </div>
 
@@ -70,7 +70,7 @@
           permission-only="['environment-documentation-c', 'api-documentation-c']"
           ng-click="$ctrl.importPages()"
         >
-          Import multiple files
+          {{$ctrl.translate('settings.documentation.importMultiple')}}
         </a>
         <md-button
           class="md-raised md-primary"
@@ -81,7 +81,7 @@
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
         >
-          Fetch all
+          {{$ctrl.translate('settings.documentation.fetchAll')}}
         </md-button>
       </div>
     </div>
@@ -99,11 +99,11 @@
           type="button"
           class="md-raised md-primary"
           ng-click="$ctrl.renameFolder()"
-          aria-label="Edit"
+          aria-label="{{$ctrl.translate('common.save')}}"
         >
-          Save</md-button
+          {{$ctrl.translate('common.save')}}</md-button
         >
-        <md-button ng-disabled="$ctrl.readOnly" class="md-raised" type="button" ng-click="$ctrl.toggleRenameFolder()"> Cancel </md-button>
+        <md-button ng-disabled="$ctrl.readOnly" class="md-raised" type="button" ng-click="$ctrl.toggleRenameFolder()"> {{$ctrl.translate('common.cancel')}} </md-button>
       </div>
     </div>
 
@@ -113,16 +113,16 @@
         <table md-table class="gv-table-dense">
           <thead md-head>
             <tr md-row>
-              <th md-column width="0%">Language</th>
-              <th md-column>Name</th>
-              <th md-column width="1%" nowrap>Last Update</th>
+              <th md-column width="0%">{{$ctrl.translate('settings.documentation.language')}}</th>
+              <th md-column>{{$ctrl.translate('settings.documentation.name')}}</th>
+              <th md-column width="1%" nowrap>{{$ctrl.translate('settings.documentation.lastUpdate')}}</th>
               <th md-column width="0%"></th>
               <th md-column width="0%"></th>
             </tr>
           </thead>
           <tbody md-body>
             <tr ng-if="!$ctrl.currentFolder.translations.length || $ctrl.currentFolder.translations.length <= 0">
-              <td md-cell colspan="5"><span>No translation available</span></td>
+              <td md-cell colspan="5"><span>{{$ctrl.translate('settings.documentation.noTranslation')}}</span></td>
             </tr>
             <tr md-row ng-repeat="translation in $ctrl.currentFolder.translations">
               <td md-cell width="48px">
@@ -143,7 +143,7 @@
                   permission-only="['environment-documentation-u', 'api-documentation-u']"
                 >
                   <ng-md-icon icon="delete"></ng-md-icon>
-                  <md-tooltip md-direction="top" md-visible="false">Remove</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('common.remove')}}</md-tooltip>
                 </md-button>
               </td>
             </tr>
@@ -157,21 +157,21 @@
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
           type="button"
-          aria-label="Add translation"
+          aria-label="{{$ctrl.translate('settings.documentation.addTranslation')}}"
           class="md-raised md-primary"
           ng-click="$ctrl.addTranslation()"
         >
-          Add a translation
+          {{$ctrl.translate('settings.documentation.addTranslation')}}
         </md-button>
       </div>
 
       <div class="gv-form-content" ng-if="$ctrl.currentTranslation">
         <md-input-container class="md-block">
-          <label>Language (max. 2 characters)</label>
+          <label>{{$ctrl.translate('settings.documentation.languageMax')}}</label>
           <input ng-disabled="$ctrl.readOnly" ng-model="$ctrl.currentTranslation.configuration.lang" maxlength="2" required />
         </md-input-container>
         <md-input-container class="md-block">
-          <label>Translated title</label>
+          <label>{{$ctrl.translate('settings.documentation.translatedTitle')}}</label>
           <input ng-disabled="$ctrl.readOnly" type="text" ng-model="$ctrl.currentTranslation.name" required />
         </md-input-container>
       </div>
@@ -181,14 +181,14 @@
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
           type="button"
-          aria-label="Save translation"
+          aria-label="{{$ctrl.translate('settings.documentation.saveTranslation')}}"
           class="md-raised md-primary"
           ng-click="$ctrl.saveFolderTranslation()"
           ng-disabled="$ctrl.readOnly || !$ctrl.currentTranslation.configuration.lang || !$ctrl.currentTranslation.name"
         >
-          Save translation
+          {{$ctrl.translate('settings.documentation.saveTranslation')}}
         </md-button>
-        <md-button class="md-raised" type="button" ng-click="$ctrl.refreshCurrentFolder()"> Reset </md-button>
+        <md-button class="md-raised" type="button" ng-click="$ctrl.refreshCurrentFolder()"> {{$ctrl.translate('common.reset')}} </md-button>
       </div>
     </div>
 
@@ -198,12 +198,12 @@
         <table md-table class="gv-table-dense">
           <thead md-head>
             <tr md-row>
-              <th md-column class="column-with-logo">Name</th>
+              <th md-column class="column-with-logo">{{$ctrl.translate('settings.documentation.name')}}</th>
               <th md-column width="0%"></th>
               <th md-column width="0%"></th>
               <th md-column width="0%"></th>
               <th md-column width="76px"></th>
-              <th md-column width="1%" nowrap>Last Update</th>
+              <th md-column width="1%" nowrap>{{$ctrl.translate('settings.documentation.lastUpdate')}}</th>
               <th md-column width="0%"></th>
               <th md-column width="24px"></th>
             </tr>
@@ -261,7 +261,7 @@
                     class="icon-button-homepage"
                   >
                     <ng-md-icon icon="language" size="12" style="fill: rgb(68, 138, 255)">
-                      <md-tooltip>Translated</md-tooltip>
+                      <md-tooltip>{{$ctrl.translate('settings.documentation.translated')}}</md-tooltip>
                     </ng-md-icon>
                   </sup>
                 </span>
@@ -277,7 +277,7 @@
                   permission-only="['environment-documentation-u', 'api-documentation-u']"
                 >
                   <ng-md-icon icon="link"></ng-md-icon>
-                  <md-tooltip md-direction="top" md-visible="false">Create a Link in ...</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.documentation.createLink')}}</md-tooltip>
                 </md-button>
               </td>
               <td md-cell width="48px">
@@ -292,7 +292,7 @@
                   permission-only="['environment-documentation-u', 'api-documentation-u']"
                 >
                   <ng-md-icon icon="archive"></ng-md-icon>
-                  <md-tooltip md-direction="top" md-visible="false">Move to ...</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.documentation.moveTo')}}</md-tooltip>
                 </md-button>
               </td>
               <td md-cell width="48px">
@@ -307,7 +307,7 @@
                 >
                   <ng-md-icon icon="{{$ctrl.isMarkdownTemplate(page.type) ? 'check_box_outline_blank' : 'cloud_queue'}}"></ng-md-icon>
                   <md-tooltip md-direction="top" md-visible="false">
-                    {{$ctrl.isMarkdownTemplate(page.type) ? 'Make template available' : 'Publish this page'}}
+                    {{$ctrl.isMarkdownTemplate(page.type) ? $ctrl.translate('settings.documentation.makeTemplateAvailable') : $ctrl.translate('settings.documentation.publishPage')}}
                   </md-tooltip>
                 </md-button>
                 <md-button
@@ -321,7 +321,7 @@
                 >
                   <ng-md-icon icon="{{$ctrl.isMarkdownTemplate(page.type) ? 'check_box' : 'cloud_done'}}"></ng-md-icon>
                   <md-tooltip md-direction="top" md-visible="false">
-                    {{$ctrl.isMarkdownTemplate(page.type) ? 'Make template unavailable' : 'Unpublish this page'}}
+                    {{$ctrl.isMarkdownTemplate(page.type) ? $ctrl.translate('settings.documentation.makeTemplateUnavailable') : $ctrl.translate('settings.documentation.unpublishPage')}}
                   </md-tooltip>
                 </md-button>
               </td>
@@ -333,7 +333,7 @@
                   permission
                   permission-only="['environment-documentation-u', 'api-documentation-u']"
                 >
-                  <md-tooltip md-direction="top" md-visible="false">Move upward</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.documentation.moveUp')}}</md-tooltip>
                 </ng-md-icon>
                 <span ng-if="$first" style="padding-right: 28px"></span>
                 <ng-md-icon
@@ -343,7 +343,7 @@
                   permission
                   permission-only="['environment-documentation-u', 'api-documentation-u']"
                 >
-                  <md-tooltip md-direction="top" md-visible="false">Move downward</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('settings.documentation.moveDown')}}</md-tooltip>
                 </ng-md-icon>
               </td>
               <td md-cell width="1%" nowrap>{{page.lastModificationDate | date:'medium'}}</td>
@@ -358,7 +358,7 @@
                   permission-only="['environment-documentation-u', 'api-documentation-u']"
                 >
                   <ng-md-icon icon="delete"></ng-md-icon>
-                  <md-tooltip md-direction="top" md-visible="false">Remove</md-tooltip>
+                  <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('common.remove')}}</md-tooltip>
                 </md-button>
               </td>
               <td md-cell width="24px">
@@ -380,8 +380,8 @@
         ng-if="$ctrl.rootDir != '' && $ctrl.pages.length == 0"
         icon="insert_drive_file"
         model="Page"
-        message="Documentation will appear here"
-        sub-message="Start creating a page"
+        message="{{$ctrl.translate('settings.documentation.empty')}}"
+        sub-message="{{$ctrl.translate('settings.documentation.emptyHint')}}"
         create-mode="true"
       ></gravitee-empty-state>
 
@@ -394,12 +394,12 @@
         <md-fab-trigger>
           <md-button
             ng-disabled="$ctrl.readOnly"
-            aria-label="menu"
+            aria-label="{{$ctrl.translate('settings.documentation.newPage')}}"
             class="md-fab md-success"
             permission
             permission-only="['environment-documentation-u', 'api-documentation-u']"
           >
-            <md-tooltip ng-if="$ctrl.pages.length > 0" md-direction="top" md-visible="false">New page</md-tooltip>
+            <md-tooltip ng-if="$ctrl.pages.length > 0" md-direction="top" md-visible="false">{{$ctrl.translate('settings.documentation.newPage')}}</md-tooltip>
             <ng-md-icon icon="add"></ng-md-icon>
           </md-button>
         </md-fab-trigger>

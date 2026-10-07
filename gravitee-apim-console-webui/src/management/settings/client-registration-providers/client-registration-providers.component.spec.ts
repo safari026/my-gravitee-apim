@@ -34,6 +34,7 @@ import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { PortalSettings } from '../../../entities/portal/portalSettings';
 import { Constants } from '../../../entities/Constants';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ClientRegistrationProviders', () => {
   const providers = [fakeClientRegistrationProvider(), fakeClientRegistrationProvider()];
@@ -72,6 +73,7 @@ describe('ClientRegistrationProviders', () => {
   let rootLoader: HarnessLoader;
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [
         NoopAnimationsModule,
@@ -126,7 +128,33 @@ describe('ClientRegistrationProviders', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
+  });
+
+  it('should show English chrome by default', () => {
+    expect(fixture.nativeElement.textContent).toContain('Client Registration');
+    expect(fixture.nativeElement.textContent).toContain('Default application type');
+    expect(fixture.nativeElement.textContent).toContain('Dynamic Client Registration (DCR) for applications');
+    expect(fixture.nativeElement.textContent).toContain('Add a provider');
+  });
+
+  it('should switch chrome to Russian and back without recreating the component', () => {
+    const languageService = TestBed.inject(LanguageService);
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Регистрация клиентов');
+    expect(fixture.nativeElement.textContent).toContain('Тип приложения по умолчанию');
+    expect(fixture.nativeElement.textContent).toContain('Добавить поставщика');
+    expect(fixture.nativeElement.textContent).not.toContain('Default application type');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Client Registration');
+    expect(fixture.nativeElement.textContent).toContain('Default application type');
   });
 
   it('should init with some readonly fields', async () => {

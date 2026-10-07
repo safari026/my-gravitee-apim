@@ -408,7 +408,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Remove member from group"]' }));
+      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Remove member from group"]' }));
       await deleteButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const confirmButtonHarness = await dialogHarness.getHarness(MatButtonHarness.with({ text: 'Delete' }));
@@ -442,7 +442,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Remove member from group"]' }));
+      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Remove member from group"]' }));
       expect(await deleteButton.isDisabled()).toEqual(true);
     });
 
@@ -472,7 +472,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Remove member from group"]' }));
+      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Remove member from group"]' }));
       expect(await deleteButton.isDisabled()).toEqual(true);
     });
 
@@ -515,7 +515,7 @@ describe('GroupComponent', () => {
       const rows = await tableHarness.getRows();
       const deleteButtonRow0 = await (
         await rows[0].getCells({ columnName: 'actions' }).then(c => c[0])
-      ).getHarness(MatButtonHarness.with({ selector: '[mattooltip="Remove member from group"]' }));
+      ).getHarness(MatButtonHarness.with({ selector: '[aria-label="Remove member from group"]' }));
       expect(await deleteButtonRow0.isDisabled()).toEqual(false);
     });
 
@@ -529,7 +529,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const matSelectHarnesses = await dialogHarness.getAllHarnesses(MatSelectHarness);
@@ -596,7 +596,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -669,7 +669,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiProductRoleSelect = await dialogHarness.getHarness(
@@ -743,7 +743,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -821,7 +821,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -896,7 +896,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -971,7 +971,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -1046,7 +1046,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[2].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -1134,7 +1134,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -1209,7 +1209,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiProductRoleSelect = await dialogHarness.getHarness(
@@ -1286,7 +1286,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiRoleSelect = await dialogHarness.getHarness(MatSelectHarness.with({ selector: '[formControlName="defaultAPIRole"]' }));
@@ -1335,7 +1335,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Remove member from group"]' }));
+      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Remove member from group"]' }));
       await deleteButton.click();
       return rootLoader.getHarness(MatDialogHarness);
     };
@@ -1537,7 +1537,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#invitationsDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'guestActions' }).then(cells => cells[0]);
-      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Delete invitation"]' }));
+      const deleteButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Delete invitation"]' }));
       await deleteButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const confirmButtonHarness = await dialogHarness.getHarness(MatButtonHarness.with({ text: 'Continue' }));
@@ -1654,7 +1654,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       const apiProductRoleSelect = await dialogHarness.getHarness(
@@ -1676,7 +1676,7 @@ describe('GroupComponent', () => {
       const tableHarness = await harnessLoader.getHarness(MatTableHarness.with({ selector: '#membersDataTable' }));
       const rows = await tableHarness.getRows();
       const cell = await rows[0].getCells({ columnName: 'actions' }).then(cells => cells[0]);
-      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[mattooltip="Modify member settings"]' }));
+      const editButton = await cell.getHarness(MatButtonHarness.with({ selector: '[aria-label="Modify member settings"]' }));
       await editButton.click();
       const dialogHarness = await rootLoader.getHarness(MatDialogHarness);
       // Change API Product role to USER
@@ -2176,7 +2176,7 @@ describe('GroupComponent', () => {
   }
 
   async function getButtonByTooltipText(tooltipText: string): Promise<MatButtonHarness> {
-    return await harnessLoader.getHarness(MatButtonHarness.with({ selector: `[mattooltip="${tooltipText}"]` }));
+    return await harnessLoader.getHarness(MatButtonHarness.with({ selector: `[aria-label="${tooltipText}"]` }));
   }
 
   function expectGetDefaultRoles() {

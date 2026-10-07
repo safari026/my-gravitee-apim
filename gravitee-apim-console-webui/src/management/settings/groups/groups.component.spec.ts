@@ -167,7 +167,7 @@ describe('GroupsComponent', () => {
           total_pages: 1,
         }),
       );
-      const deleteButton = await getButtonByRowIndexAndTooltip(0, 'Delete group');
+      const deleteButton = await getButtonByRowIndexAndTooltip(0, 'Click to delete group');
 
       expect(await deleteButton.isDisabled()).toEqual(true);
     });
@@ -182,7 +182,7 @@ describe('GroupsComponent', () => {
           total_pages: 1,
         }),
       );
-      const deleteButton = await getButtonByRowIndexAndTooltip(0, 'Delete group');
+      const deleteButton = await getButtonByRowIndexAndTooltip(0, 'Click to delete group');
 
       expect(await deleteButton.isDisabled()).toEqual(true);
     });
@@ -197,7 +197,7 @@ describe('GroupsComponent', () => {
           total_pages: 1,
         }),
       );
-      const deleteButton = await getButtonByRowIndexAndTooltip(0, 'Delete group');
+      const deleteButton = await getButtonByRowIndexAndTooltip(0, 'Click to delete group');
       expect(await deleteButton.isDisabled()).toEqual(false);
 
       await deleteButton.click();
@@ -245,6 +245,6 @@ describe('GroupsComponent', () => {
     return await getTableRows()
       .then(rows => rows[rowIndex].getCells({ columnName: 'actions' }))
       .then(cells => cells[0])
-      .then(actionCell => actionCell.getHarnessOrNull(MatButtonHarness.with({ selector: `[mattooltip="${tooltipText}"]` })));
+      .then(actionCell => actionCell.getHarnessOrNull(MatButtonHarness.with({ selector: `[aria-label="${tooltipText}"]` })));
   }
 });

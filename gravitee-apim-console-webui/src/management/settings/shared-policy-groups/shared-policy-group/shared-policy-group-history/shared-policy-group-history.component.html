@@ -20,23 +20,38 @@
   @if (sharedPolicyGroup(); as sharedPolicyGroup) {
     <mat-card-header>
       <mat-card-title
-        >Versions of {{ sharedPolicyGroup.name }}
-        <span class="gio-badge-accent" matTooltip="API type">{{ sharedPolicyGroup.apiType | titlecase }}</span>
-        <span class="gio-badge-accent" matTooltip="Phase">{{ toReadableFlowPhase(sharedPolicyGroup.phase) }}</span>
+        >{{ 'settings.sharedPolicyGroups.versionsOf' | translate: { name: sharedPolicyGroup.name } }}
+        <span class="gio-badge-accent" [matTooltip]="'settings.sharedPolicyGroups.apiTypeTooltip' | translate">{{
+          (sharedPolicyGroup.apiType === 'MESSAGE'
+            ? 'settings.sharedPolicyGroups.messageApi'
+            : sharedPolicyGroup.apiType === 'PROXY'
+              ? 'settings.sharedPolicyGroups.proxyApi'
+              : sharedPolicyGroup.apiType
+          ) | translate
+        }}</span>
+        <span class="gio-badge-accent" [matTooltip]="'settings.sharedPolicyGroups.phase' | translate">{{
+          ('settings.sharedPolicyGroups.phases.' + sharedPolicyGroup.phase) | translate
+        }}</span>
         <shared-policy-groups-state-badge [lifecycleState]="sharedPolicyGroup.lifecycleState"></shared-policy-groups-state-badge>
       </mat-card-title>
       <mat-card-subtitle>{{ sharedPolicyGroup.description }}</mat-card-subtitle>
       <div class="shared-policy-group-history__headerRightBtn">
         <button
           mat-stroked-button
-          matTooltip="Compare last selected version with the current Pending one"
+          [matTooltip]="'settings.sharedPolicyGroups.comparePendingTooltip' | translate"
           [disabled]="sharedPolicyGroup.lifecycleState !== 'PENDING' || disableComparePendingSPG"
           (click)="openComparePendingSPGDialog()"
         >
           <mat-icon svgIcon="gio:git-pull-request">comparePendingSPG</mat-icon>
           {{ comparePendingSPGLabel }}
         </button>
-        <span [matTooltip]="compareSPG ? 'Compare selected versions' : 'Select two versions to compare'">
+        <span
+          [matTooltip]="
+            compareSPG
+              ? ('settings.sharedPolicyGroups.compareSelectedTooltip' | translate)
+              : ('settings.sharedPolicyGroups.compareSelectTwo' | translate)
+          "
+        >
           <button mat-stroked-button [disabled]="disableCompareTwoSPG" (click)="openCompareTwoSPGDialog()">
             <mat-icon svgIcon="gio:git-pull-request">compareTwoSPG</mat-icon> {{ compareTwoSPGLabel }}
           </button>
@@ -54,7 +69,7 @@
       [paginationPageSizeOptions]="[25, 50, 100]"
       (filtersChange)="onFiltersChanged($event)"
     >
-      <table mat-table matSort [dataSource]="pageTableVM.items" aria-label="Shared Policy Group">
+      <table mat-table matSort [dataSource]="pageTableVM.items" [attr.aria-label]="'settings.sharedPolicyGroups.tableAria' | translate">
         <ng-container matColumnDef="checkbox">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let element">
@@ -63,14 +78,14 @@
         </ng-container>
 
         <ng-container matColumnDef="version">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="version">Version</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="version">{{ 'settings.sharedPolicyGroups.version' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             {{ element.sharedPolicyGroup.version }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'settings.sharedPolicyGroups.name' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             <div class="cell">
               <div class="cell__nameDescription">
@@ -85,7 +100,7 @@
         </ng-container>
 
         <ng-container matColumnDef="lastDeploy">
-          <th mat-header-cell *matHeaderCellDef mat-sort-header="deployedAt">Deployed At</th>
+          <th mat-header-cell *matHeaderCellDef mat-sort-header="deployedAt">{{ 'settings.sharedPolicyGroups.deployedAt' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             {{ element.sharedPolicyGroup.deployedAt | date: 'medium' }}
           </td>
@@ -97,16 +112,16 @@
             <div class="actions-btn">
               <button
                 mat-button
-                aria-label="Button show source"
-                matTooltip="Show JSON source"
+                [attr.aria-label]="'settings.sharedPolicyGroups.showJsonSourceAria' | translate"
+                [matTooltip]="'settings.sharedPolicyGroups.showJsonSource' | translate"
                 (click)="onShowJsonSource(element.sharedPolicyGroup)"
               >
                 <mat-icon svgIcon="gio:code">code</mat-icon>
               </button>
               <button
                 mat-button
-                aria-label="Button show details or restore version"
-                matTooltip="Show details or restore version"
+                [attr.aria-label]="'settings.sharedPolicyGroups.showDetailsOrRestoreAria' | translate"
+                [matTooltip]="'settings.sharedPolicyGroups.showDetailsOrRestore' | translate"
                 (click)="onShowDetailsOrRestore(element.sharedPolicyGroup)"
               >
                 <div class="actions-btn__show-or-restore">
@@ -124,8 +139,8 @@
         <!-- Row shown when there is no data -->
         <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
           <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-            <div *ngIf="!pageTableVM.isLoading" class="mat-body">No Shared Policy Group</div>
-            <div *ngIf="pageTableVM.isLoading" class="mat-body">Loading...</div>
+            <div *ngIf="!pageTableVM.isLoading" class="mat-body">{{ 'settings.sharedPolicyGroups.empty' | translate }}</div>
+            <div *ngIf="pageTableVM.isLoading" class="mat-body">{{ 'common.loading' | translate }}</div>
           </td>
         </tr>
       </table>

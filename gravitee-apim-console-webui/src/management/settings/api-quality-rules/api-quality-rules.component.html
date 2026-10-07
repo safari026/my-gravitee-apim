@@ -15,23 +15,27 @@
     limitations under the License.
 
 -->
-<h2 class="title">API Quality</h2>
+<h2 class="title">{{ 'settings.apiQuality.title' | translate }}</h2>
 
 <form *ngIf="apiQualityRulesForm" [formGroup]="apiQualityRulesForm" autocomplete="off">
   <mat-card class="api-quality-rules__form__card">
     <mat-card-header>
-      <mat-card-title class="mat-h5">API Score</mat-card-title>
-      <mat-card-subtitle>Ensure that your APIs match your organization's security, documentation, and design standards.</mat-card-subtitle>
+      <mat-card-title class="mat-h5">{{ 'settings.apiQuality.scoreTitle' | translate }}</mat-card-title>
+      <mat-card-subtitle>{{ 'settings.apiQuality.scoreSubtitle' | translate }}</mat-card-subtitle>
     </mat-card-header>
     <div class="separator-hr"></div>
     <mat-card-content>
       <gio-banner-info>
-        This tech preview feature is new! We're gathering feedback on it to make it even better, so it may change as we make improvements.
+        {{ 'settings.apiQuality.previewBanner' | translate }}
       </gio-banner-info>
       <gio-form-slide-toggle formGroupName="apiScore">
         <mat-icon *ngIf="isReadonly('api.score.enabled')" gioFormPrefix>lock</mat-icon>
-        <gio-form-label>Enable API Score</gio-form-label>
-        <mat-slide-toggle formControlName="enabled" gioFormSlideToggle aria-label="Enable API Score"></mat-slide-toggle>
+        <gio-form-label>{{ 'settings.apiQuality.enableScore' | translate }}</gio-form-label>
+        <mat-slide-toggle
+          formControlName="enabled"
+          gioFormSlideToggle
+          [attr.aria-label]="'settings.apiQuality.enableScore' | translate"
+        ></mat-slide-toggle>
       </gio-form-slide-toggle>
     </mat-card-content>
   </mat-card>
@@ -39,105 +43,109 @@
   <mat-card class="api-quality-rules__form__card">
     <mat-card-content>
       <gio-form-slide-toggle
-        [matTooltip]="'Configuration provided by the system'"
+        [matTooltip]="'settings.systemConfig' | translate"
         [matTooltipDisabled]="!isReadonly('api.review.enabled')"
         formGroupName="apiReview"
         class="api-quality-rules__form__card__form-field"
       >
         <mat-icon *ngIf="isReadonly('api.review.enabled')" gioFormPrefix>lock</mat-icon>
-        <gio-form-label>Enable API review</gio-form-label>
+        <gio-form-label>{{ 'settings.apiQuality.enableReview' | translate }}</gio-form-label>
         <mat-slide-toggle
           formControlName="enabled"
           gioFormSlideToggle
-          aria-label="Enable API review"
+          [attr.aria-label]="'settings.apiQuality.enableReview' | translate"
           data-testid="api-review-enabled-toggle"
         ></mat-slide-toggle>
       </gio-form-slide-toggle>
       <gio-form-slide-toggle
-        [matTooltip]="'Configuration provided by the system'"
+        [matTooltip]="'settings.systemConfig' | translate"
         [matTooltipDisabled]="!isReadonly('api.quality.metrics.enabled')"
         formGroupName="apiQualityMetrics"
         class="api-quality-rules__form__card__form-field"
       >
         <mat-icon *ngIf="isReadonly('api.quality.metrics.enabled')" gioFormPrefix>lock</mat-icon>
-        <gio-form-label>Enable API Quality Metrics</gio-form-label>
-        <mat-slide-toggle formControlName="enabled" gioFormSlideToggle aria-label="Enable API Quality Metrics"></mat-slide-toggle>
+        <gio-form-label>{{ 'settings.apiQuality.enableMetrics' | translate }}</gio-form-label>
+        <mat-slide-toggle
+          formControlName="enabled"
+          gioFormSlideToggle
+          [attr.aria-label]="'settings.apiQuality.enableMetrics' | translate"
+        ></mat-slide-toggle>
       </gio-form-slide-toggle>
 
       <div formGroupName="apiQualityMetrics">
-        <h3>General</h3>
+        <h3>{{ 'settings.apiQuality.general' | translate }}</h3>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.description.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.description.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Description weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.descriptionWeight' | translate }}</mat-label>
           <input formControlName="descriptionWeight" matInput type="number" min="0" max="9999" />
         </mat-form-field>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.description.min.length')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.description.min.length')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Description minimum length</mat-label>
+          <mat-label>{{ 'settings.apiQuality.descriptionMinLength' | translate }}</mat-label>
           <input formControlName="descriptionMinLength" matInput type="number" min="0" max="99999" />
         </mat-form-field>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.logo.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.logo.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Logo weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.logoWeight' | translate }}</mat-label>
           <input formControlName="logoWeight" matInput type="number" min="0" max="99999" />
         </mat-form-field>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.categories.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.categories.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Categories weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.categoriesWeight' | translate }}</mat-label>
           <input formControlName="categoriesWeight" matInput type="number" min="0" max="99999" />
         </mat-form-field>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.labels.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.labels.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Labels weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.labelsWeight' | translate }}</mat-label>
           <input formControlName="labelsWeight" matInput type="number" min="0" max="99999" />
         </mat-form-field>
-        <h3>Documentation</h3>
+        <h3>{{ 'settings.apiQuality.documentation' | translate }}</h3>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.functional.documentation.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.functional.documentation.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Functional documentation weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.functionalDocWeight' | translate }}</mat-label>
           <input formControlName="functionalDocumentationWeight" matInput type="number" min="0" max="99999" />
         </mat-form-field>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.technical.documentation.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.technical.documentation.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Technical documentation weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.technicalDocWeight' | translate }}</mat-label>
           <input formControlName="technicalDocumentationWeight" matInput type="number" min="0" max="99999" />
         </mat-form-field>
-        <h3>Endpoint</h3>
+        <h3>{{ 'settings.apiQuality.endpoint' | translate }}</h3>
         <mat-form-field
           class="api-quality-rules__form__card__form-field"
-          [matTooltip]="'Configuration provided by the system'"
+          [matTooltip]="'settings.systemConfig' | translate"
           [matTooltipDisabled]="!isReadonly('api.quality.metrics.healthcheck.weight')"
         >
           <mat-icon *ngIf="isReadonly('api.quality.metrics.healthcheck.weight')" gioFormPrefix>lock</mat-icon>
-          <mat-label>Healthcheck weight</mat-label>
+          <mat-label>{{ 'settings.apiQuality.healthcheckWeight' | translate }}</mat-label>
           <input formControlName="healthcheckWeight" matInput type="number" min="0" max="99999" />
         </mat-form-field>
       </div>
@@ -147,17 +155,17 @@
 
 <mat-card>
   <mat-card-header class="mat-card-header">
-    <mat-card-title>Manual rules</mat-card-title>
+    <mat-card-title>{{ 'settings.apiQuality.manualRules' | translate }}</mat-card-title>
 
     <button
       *gioPermission="{ anyOf: ['environment-quality_rule-c'] }"
       mat-raised-button
       color="primary"
-      aria-label="Add new quality rule"
+      [attr.aria-label]="'settings.apiQuality.addRuleAria' | translate"
       (click)="addQualityRule()"
     >
       <mat-icon>add</mat-icon>
-      Add new quality rule
+      {{ 'settings.apiQuality.addRule' | translate }}
     </button>
   </mat-card-header>
 
@@ -172,26 +180,26 @@
       [dataSource]="filteredQualityRulesSettingsTable"
       class="api-quality-rules__table"
       id="apiQualityRulesTable"
-      aria-label="Api Quality rules table"
+      [attr.aria-label]="'settings.apiQuality.tableAria' | translate"
     >
       <ng-container matColumnDef="quality">
-        <th mat-header-cell *matHeaderCellDef id="date">Quality rule</th>
+        <th mat-header-cell *matHeaderCellDef id="date">{{ 'settings.apiQuality.qualityRule' | translate }}</th>
         <td mat-cell *matCellDef="let element">{{ element.name }}</td>
       </ng-container>
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef id="description">Description</th>
+        <th mat-header-cell *matHeaderCellDef id="description">{{ 'settings.apiQuality.description' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.description }}
         </td>
       </ng-container>
       <ng-container matColumnDef="weight">
-        <th mat-header-cell *matHeaderCellDef id="user">Weight</th>
+        <th mat-header-cell *matHeaderCellDef id="user">{{ 'settings.apiQuality.weight' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.weight }}
         </td>
       </ng-container>
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef id="actions" width="1%">Actions</th>
+        <th mat-header-cell *matHeaderCellDef id="actions" width="1%">{{ 'common.actions' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <div class="api-quality-rules__actions">
             <div>
@@ -200,9 +208,9 @@
                   *gioPermission="{ anyOf: ['environment-quality_rule-u'] }"
                   mat-icon-button
                   (click)="updateRule(element)"
-                  aria-label="Edit manual rule"
+                  [attr.aria-label]="'settings.apiQuality.editRule' | translate"
                   id="editRule"
-                  matTooltip="Edit manual rule"
+                  [matTooltip]="'settings.apiQuality.editRule' | translate"
                 >
                   <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
                 </button>
@@ -214,9 +222,9 @@
                   *gioPermission="{ anyOf: ['environment-quality_rule-d'] }"
                   mat-icon-button
                   (click)="deleteRule(element.name, element.id)"
-                  aria-label="Delete manual rule"
+                  [attr.aria-label]="'settings.apiQuality.deleteRule' | translate"
                   id="deleteRule"
-                  matTooltip="Delete manual rule"
+                  [matTooltip]="'settings.apiQuality.deleteRule' | translate"
                 >
                   <mat-icon svgIcon="gio:trash"></mat-icon>
                 </button>
@@ -232,10 +240,10 @@
       <!-- Row shown when there is no data -->
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
         <td *ngIf="!isLoadingData" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-          {{ 'No manual rules to display.' }}
+          {{ 'settings.apiQuality.empty' | translate }}
         </td>
         <td *ngIf="isLoadingData" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-          {{ 'Loading...' }}
+          {{ 'common.loading' | translate }}
         </td>
       </tr>
     </table>

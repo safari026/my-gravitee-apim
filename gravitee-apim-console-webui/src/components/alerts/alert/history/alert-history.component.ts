@@ -26,7 +26,9 @@ const AlertHistoryComponent: ng.IComponentOptions = {
   template: require('html-loader!./alert-history.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: [
     'AlertService',
-    function (AlertService: AlertService) {
+    'ngLanguageService',
+    function (AlertService: AlertService, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.query = {
         limit: 10,
         page: 1,

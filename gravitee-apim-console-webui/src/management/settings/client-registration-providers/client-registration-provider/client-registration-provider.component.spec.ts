@@ -32,6 +32,7 @@ import {
   fakeNewClientRegistrationProvider,
 } from '../../../../entities/client-registration-provider/clientRegistrationProvider.fixture';
 import { GioPermissionService } from '../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('ClientRegistrationProvider', () => {
   let httpTestingController: HttpTestingController;
@@ -41,6 +42,7 @@ describe('ClientRegistrationProvider', () => {
   let loader: HarnessLoader;
 
   function initComponent(clientProviderId?: string) {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, ClientRegistrationProvidersModule, RouterTestingModule],
       providers: [
@@ -61,6 +63,7 @@ describe('ClientRegistrationProvider', () => {
   }
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 
@@ -72,6 +75,58 @@ describe('ClientRegistrationProvider', () => {
     it('should init', async () => {
       expect(loader).toBeTruthy();
       expect(fixture.componentInstance.updateMode).toBeFalsy();
+    });
+
+    it('should show English chrome by default', () => {
+      expect(fixture.nativeElement.textContent).toContain('New client registration provider');
+      expect(fixture.nativeElement.textContent).toContain('General');
+      expect(fixture.nativeElement.textContent).toContain('Configuration');
+      expect(fixture.nativeElement.textContent).toContain('Claim Mappings');
+    });
+
+    it('should switch chrome to Russian and back without recreating the component', async () => {
+      const languageService = TestBed.inject(LanguageService);
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.textContent).toContain('Новый поставщик регистрации клиентов');
+      expect(fixture.nativeElement.textContent).toContain('Общее');
+      expect(fixture.nativeElement.textContent).toContain('Конфигурация');
+      expect(fixture.nativeElement.textContent).toContain('Сопоставления утверждений');
+      expect(fixture.nativeElement.textContent).not.toContain('New client registration provider');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(fixture.nativeElement.textContent).toContain('New client registration provider');
+      expect(fixture.nativeElement.textContent).toContain('Claim Mappings');
+    });
+
+    it('should keep DCR token provider and store type values unchanged', async () => {
+      expect(fixture.componentInstance.initialAccessTokenTypes.map(option => option.value)).toEqual([
+        'CLIENT_CREDENTIALS',
+        'INITIAL_ACCESS_TOKEN',
+      ]);
+      expect(fixture.componentInstance.trustStoreTypes.map(option => option.value)).toEqual(['NONE', 'JKS', 'PKCS12']);
+      expect(fixture.componentInstance.keyStoreTypes.map(option => option.value)).toEqual(['NONE', 'JKS', 'PKCS12']);
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      await fixture.whenStable();
+
+      expect(fixture.componentInstance.initialAccessTokenTypes.map(option => option.value)).toEqual([
+        'CLIENT_CREDENTIALS',
+        'INITIAL_ACCESS_TOKEN',
+      ]);
+      expect(fixture.componentInstance.trustStoreTypes.map(option => option.value)).toEqual(['NONE', 'JKS', 'PKCS12']);
+      expect(fixture.componentInstance.keyStoreTypes.map(option => option.value)).toEqual(['NONE', 'JKS', 'PKCS12']);
+      expect(fixture.componentInstance.renewClientSecretMethods).toEqual(['POST', 'PATCH', 'PUT']);
+      expect(fixture.componentInstance.trustStoreTypes[0].label).toBe('Нет');
+      expect(fixture.componentInstance.initialAccessTokenTypes[1].name).toBe('Начальный токен доступа');
     });
 
     it('should document the AM renew secret endpoint with an EL client_id token', () => {

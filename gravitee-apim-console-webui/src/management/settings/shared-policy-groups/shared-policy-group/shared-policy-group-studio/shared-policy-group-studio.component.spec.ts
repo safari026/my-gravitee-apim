@@ -26,6 +26,7 @@ import { SharedPolicyGroupStudioComponent } from './shared-policy-group-studio.c
 import { SharedPolicyGroupStudioHarness } from './shared-policy-group-studio.harness';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../../shared/testing';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import { GioTestingPermissionProvider } from '../../../../../shared/components/gio-permission/gio-permission.service';
 import {
   fakeSharedPolicyGroup,
@@ -35,6 +36,7 @@ import {
   SharedPolicyGroup,
 } from '../../../../../entities/management-api-v2';
 import { SharedPolicyGroupsAddEditDialogHarness } from '../../shared-policy-groups-add-edit-dialog/shared-policy-groups-add-edit-dialog.harness';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import {
   expectDeploySharedPolicyGroupRequest,
   expectGetSharedPolicyGroupRequest,
@@ -51,6 +53,7 @@ describe('SharedPolicyGroupStudioComponent', () => {
   let rootLoader: HarnessLoader;
 
   beforeEach(async () => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       imports: [SharedPolicyGroupStudioComponent, GioTestingModule, NoopAnimationsModule],
       providers: [
@@ -80,7 +83,37 @@ describe('SharedPolicyGroupStudioComponent', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
+  });
+
+  it('should show English chrome by default', async () => {
+    expectSharedPolicyGroup();
+    expectGetPolicies();
+    expect(fixture.nativeElement.textContent).toContain('Proxy API');
+    expect(fixture.nativeElement.textContent).toContain('Request');
+    expect(fixture.nativeElement.textContent).toContain('Save');
+    expect(fixture.nativeElement.textContent).toContain('Deploy');
+  });
+
+  it('should switch chrome to Russian and back without recreating the component', async () => {
+    expectSharedPolicyGroup();
+    expectGetPolicies();
+    const languageService = TestBed.inject(LanguageService);
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Запрос');
+    expect(fixture.nativeElement.textContent).toContain('Сохранить');
+    expect(fixture.nativeElement.textContent).toContain('Развернуть');
+    expect(fixture.nativeElement.textContent).not.toContain('Deploy');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Request');
+    expect(fixture.nativeElement.textContent).toContain('Deploy');
   });
 
   it('should display empty request phase', async () => {

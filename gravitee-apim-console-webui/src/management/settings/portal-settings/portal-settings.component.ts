@@ -17,8 +17,8 @@ import { Component, DestroyRef, OnInit, inject, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { combineLatest, EMPTY, Observable, of, Subject } from 'rxjs';
-import { catchError, filter, map, tap } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { catchError, filter, map, skip, tap } from 'rxjs/operators';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { GioConfirmDialogComponent, GioConfirmDialogData, GioLicenseService } from '@gravitee/ui-particles-angular';
 import { isEmpty } from 'lodash';
 
@@ -29,6 +29,7 @@ import { BrandedSender } from '../../../entities/brandedSender';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { CorsUtil } from '../../../shared/utils';
 import { Constants } from '../../../entities/Constants';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 interface PortalForm {
   company: FormGroup<{
@@ -188,34 +189,9 @@ export class PortalSettingsComponent implements OnInit {
   public httpMethods = CorsUtil.httpMethods;
   public isLoadingData = true;
   private destroyRef = inject(DestroyRef);
-  primaryOwnerModeList = [
-    {
-      id: 'HYBRID',
-      label: 'HYBRID: an API primary owner can be either a user or a group (Default)',
-    },
-    {
-      id: 'USER',
-      label: 'USER: an API primary owner can only be a user',
-    },
-    {
-      id: `GROUP`,
-      label: 'GROUP: an API primary owner can only be a group',
-    },
-  ];
-  apiProductPrimaryOwnerModeList = [
-    {
-      id: 'HYBRID',
-      label: 'HYBRID: an API Product primary owner can be either a user or a group (Default)',
-    },
-    {
-      id: 'USER',
-      label: 'USER: an API Product primary owner can only be a user',
-    },
-    {
-      id: 'GROUP',
-      label: 'GROUP: an API Product primary owner can only be a group',
-    },
-  ];
+  private readonly languageService = inject(LanguageService);
+  primaryOwnerModeList: { id: 'HYBRID' | 'USER' | 'GROUP'; label: string }[] = [];
+  apiProductPrimaryOwnerModeList: { id: 'HYBRID' | 'USER' | 'GROUP'; label: string }[] = [];
   hasEnterpriseLicense$: Observable<boolean> = of(false);
   portalUrl: string = undefined;
   environmentRootRouterLink: string;
@@ -228,7 +204,43 @@ export class PortalSettingsComponent implements OnInit {
     private readonly licenseService: GioLicenseService,
     private readonly matDialog: MatDialog,
     @Inject(Constants) public readonly constants: Constants,
-  ) {}
+  ) {
+    this.rebuildOwnerModes();
+    toObservable(this.languageService.currentLanguage)
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.rebuildOwnerModes());
+  }
+
+  private rebuildOwnerModes(): void {
+    this.primaryOwnerModeList = [
+      {
+        id: 'HYBRID',
+        label: this.languageService.translate('settings.portal.ownerHybrid'),
+      },
+      {
+        id: 'USER',
+        label: this.languageService.translate('settings.portal.ownerUser'),
+      },
+      {
+        id: 'GROUP',
+        label: this.languageService.translate('settings.portal.ownerGroup'),
+      },
+    ];
+    this.apiProductPrimaryOwnerModeList = [
+      {
+        id: 'HYBRID',
+        label: this.languageService.translate('settings.portal.productOwnerHybrid'),
+      },
+      {
+        id: 'USER',
+        label: this.languageService.translate('settings.portal.productOwnerUser'),
+      },
+      {
+        id: 'GROUP',
+        label: this.languageService.translate('settings.portal.productOwnerGroup'),
+      },
+    ];
+  }
 
   public ngOnInit() {
     this.isLoadingData = true;
@@ -807,9 +819,9 @@ export class PortalSettingsComponent implements OnInit {
     this.portalSettingsService
       .save(updatedSettingsPayload)
       .pipe(
-        tap(() => this.snackBarService.success('Settings successfully updated!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.portal.updated'))),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'An error occurred while saving the settings.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('settings.portal.saveError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -854,10 +866,10 @@ export class PortalSettingsComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Reset branded senders',
-          content:
-            'You have unsaved changes on this page that will be discarded. Do you want to reset the branded senders to the organization configuration?',
-          confirmButton: 'Reset',
+          title: this.languageService.translate('settings.portal.resetBrandedTitle'),
+          content: this.languageService.translate('settings.portal.resetBrandedContent'),
+          confirmButton: this.languageService.translate('common.reset'),
+          cancelButton: this.languageService.translate('common.cancel'),
         },
         role: 'alertdialog',
         id: 'resetBrandedSendersConfirmDialog',
@@ -870,9 +882,9 @@ export class PortalSettingsComponent implements OnInit {
     this.portalSettingsService
       .resetBrandedSenders()
       .pipe(
-        tap(() => this.snackBarService.success('Branded senders reset to the organization configuration.')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.portal.brandedReset'))),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'An error occurred while resetting the branded senders.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('settings.portal.brandedResetError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

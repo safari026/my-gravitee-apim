@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, effect, Inject, inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -39,6 +39,8 @@ import { Role } from '../../../../../entities/role/role';
 import { GroupMembership, GroupMembershipMemberRoleEntity } from '../../../../../entities/group/groupMember';
 import { EditMemberDialogData } from '../group.component';
 import { Group } from '../../../../../entities/group/group';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'edit-member-dialog',
@@ -62,6 +64,7 @@ import { Group } from '../../../../../entities/group/group';
     GioFormSlideToggleModule,
     MatSlideToggle,
     GioBannerModule,
+    TranslatePipe,
   ],
   templateUrl: './edit-member-dialog.component.html',
   styleUrl: './edit-member-dialog.component.scss',
@@ -97,13 +100,21 @@ export class EditMemberDialogComponent implements OnInit {
   disabledAPIProductRoles = new Set<string>();
 
   private initialValues: any = null;
+  private readonly languageService = inject(LanguageService);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: EditMemberDialogData,
     private matDialogRef: MatDialogRef<EditMemberDialogComponent>,
     private permissionService: GioPermissionService,
     private settingsService: EnvironmentSettingsService,
-  ) {}
+  ) {
+    effect(() => {
+      this.languageService.currentLanguage();
+      if (this.editMemberForm && this.ownershipTransferMessage) {
+        this.ownershipTransferMessage = this.buildOwnershipTransferMessage(this.selectedPrimaryOwner);
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initializeDataFromInput();
@@ -413,15 +424,24 @@ export class EditMemberDialogComponent implements OnInit {
     if (successor) {
       if (apiDowngrade && apiProductDowngrade) {
         parts.push(
-          `${this.member.displayName} is the API and API Product primary owner. Primary ownership will be transferred to ${successor.displayName} and ${this.member.displayName} will be updated as owner.`,
+          this.languageService.translate('settings.groups.ownershipTransferBoth', {
+            owner: this.member.displayName,
+            successor: successor.displayName,
+          }),
         );
       } else if (apiDowngrade) {
         parts.push(
-          `${this.member.displayName} is the API primary owner. The API primary ownership will be transferred to ${successor.displayName} and ${this.member.displayName} will be updated as owner.`,
+          this.languageService.translate('settings.groups.ownershipTransferApi', {
+            owner: this.member.displayName,
+            successor: successor.displayName,
+          }),
         );
       } else if (apiProductDowngrade) {
         parts.push(
-          `${this.member.displayName} is the API Product primary owner. The API Product primary ownership will be transferred to ${successor.displayName} and ${this.member.displayName} will be updated as owner.`,
+          this.languageService.translate('settings.groups.ownershipTransferApiProduct', {
+            owner: this.member.displayName,
+            successor: successor.displayName,
+          }),
         );
       }
     }
@@ -435,26 +455,35 @@ export class EditMemberDialogComponent implements OnInit {
 
   private buildUpgradeMessage(apiUpgrade: boolean, apiProductUpgrade: boolean, apiPo: Member | null, apiProductPo: Member | null): string {
     if (apiUpgrade && apiProductUpgrade && apiPo && apiProductPo && apiPo.id === apiProductPo.id) {
-      return `${apiPo.displayName} is the API and API Product primary owner. Primary ownership will be transferred to ${this.member.displayName} and ${apiPo.displayName} will be updated as owner.`;
+      return this.languageService.translate('settings.groups.ownershipTransferBoth', {
+        owner: apiPo.displayName,
+        successor: this.member.displayName,
+      });
     }
 
     const parts: string[] = [];
     if (apiUpgrade) {
       if (apiPo) {
         parts.push(
-          `${apiPo.displayName} is the API primary owner. The API primary ownership will be transferred to ${this.member.displayName} and ${apiPo.displayName} will be updated as owner.`,
+          this.languageService.translate('settings.groups.ownershipTransferApi', {
+            owner: apiPo.displayName,
+            successor: this.member.displayName,
+          }),
         );
       } else {
-        parts.push(`${this.member.displayName} will become the API primary owner of this group.`);
+        parts.push(this.languageService.translate('settings.groups.ownershipBecomeApi', { name: this.member.displayName }));
       }
     }
     if (apiProductUpgrade) {
       if (apiProductPo) {
         parts.push(
-          `${apiProductPo.displayName} is the API Product primary owner. The API Product primary ownership will be transferred to ${this.member.displayName} and ${apiProductPo.displayName} will be updated as owner.`,
+          this.languageService.translate('settings.groups.ownershipTransferApiProduct', {
+            owner: apiProductPo.displayName,
+            successor: this.member.displayName,
+          }),
         );
       } else {
-        parts.push(`${this.member.displayName} will become the API Product primary owner of this group.`);
+        parts.push(this.languageService.translate('settings.groups.ownershipBecomeApiProduct', { name: this.member.displayName }));
       }
     }
     return parts.join(' ');

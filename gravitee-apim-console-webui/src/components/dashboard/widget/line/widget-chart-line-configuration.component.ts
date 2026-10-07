@@ -25,7 +25,9 @@ const WidgetChartLineConfigurationComponent: ng.IComponentOptions = {
   },
   controller: [
     'DashboardService',
-    function (DashboardService: DashboardService) {
+    'ngLanguageService',
+    function (DashboardService: DashboardService, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.fields = DashboardService.getAggregateFields();
 
       this.$onInit = () => {

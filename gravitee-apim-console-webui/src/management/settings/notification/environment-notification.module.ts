@@ -24,10 +24,11 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { EnvironmentNotificationComponent } from './environment-notification.component';
 
 import { NotificationModule } from '../../../components/notification';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [EnvironmentNotificationComponent],
   exports: [],
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule, NotificationModule, MatSnackBarModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule, NotificationModule, MatSnackBarModule, TranslatePipe],
 })
 export class EnvironmentNotificationModule {}

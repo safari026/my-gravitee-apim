@@ -17,12 +17,14 @@
 import WidgetComponent from './widget.component';
 
 import AnalyticsService from '../../../services/analytics.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('WidgetComponent', () => {
   let controller: any;
   let eventServiceMock: { search: jest.Mock };
   let ApiServiceMock: { searchApiEvents: jest.Mock };
   let analyticsServiceMock: { getQueryFilters: jest.Mock; buildQueryParam: jest.Mock };
+  let languageService: LanguageService;
 
   const createController = () => {
     const instance: any = {};
@@ -53,7 +55,14 @@ describe('WidgetComponent', () => {
     const controllerFn = (WidgetComponent.controller as (string | WidgetControllerFn)[])[
       WidgetComponent.controller.length - 1
     ] as WidgetControllerFn;
-    controllerFn.call(instance, $scope, analyticsServiceMock, eventServiceMock, ApiServiceMock, { translate: (key: string) => key });
+    controllerFn.call(
+      instance,
+      $scope,
+      analyticsServiceMock,
+      eventServiceMock,
+      ApiServiceMock,
+      languageService,
+    );
 
     return instance;
   };
@@ -85,6 +94,8 @@ describe('WidgetComponent', () => {
   });
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
+    languageService = new LanguageService();
     controller = createController();
     controller.widget = createLineWidget();
     controller.activatedRoute = {
@@ -93,6 +104,10 @@ describe('WidgetComponent', () => {
         queryParams: {},
       },
     };
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('reload line chart events', () => {
@@ -146,6 +161,26 @@ describe('WidgetComponent', () => {
 
       expect(eventServiceMock.search).toHaveBeenCalledWith(['PUBLISH_API'], 'api-1', 1_000, 2_000, 0, 10);
       expect(ApiServiceMock.searchApiEvents).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('i18n', () => {
+    it('translates editor chrome EN → RU → EN without reload', () => {
+      expect(controller.translate('settings.analytics.editor.title')).toEqual('Title');
+      expect(controller.translate('settings.analytics.editor.subtitle')).toEqual('Subtitle');
+      expect(controller.translate('settings.analytics.editor.widgetType')).toEqual('Widget type');
+      expect(controller.translate('settings.analytics.editor.modify')).toEqual('Modify widget');
+      expect(controller.translate('settings.analytics.editor.remove')).toEqual('Remove widget');
+
+      languageService.setLanguage('ru');
+      expect(controller.translate('settings.analytics.editor.title')).toEqual('Заголовок');
+      expect(controller.translate('settings.analytics.editor.subtitle')).toEqual('Подзаголовок');
+      expect(controller.translate('settings.analytics.editor.widgetType')).toEqual('Тип виджета');
+      expect(controller.translate('settings.analytics.editor.modify')).toEqual('Изменить виджет');
+
+      languageService.setLanguage('en');
+      expect(controller.translate('settings.analytics.editor.title')).toEqual('Title');
+      expect(controller.translate('settings.analytics.editor.modify')).toEqual('Modify widget');
     });
   });
 });

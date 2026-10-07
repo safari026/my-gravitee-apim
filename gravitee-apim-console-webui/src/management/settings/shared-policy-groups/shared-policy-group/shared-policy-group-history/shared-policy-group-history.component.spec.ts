@@ -36,6 +36,7 @@ import {
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../../shared/testing';
 import { fakePagedResult, fakePoliciesPlugin, fakePolicyPlugin, fakeSharedPolicyGroup } from '../../../../../entities/management-api-v2';
 import { GioTestingPermissionProvider } from '../../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 describe('SharedPolicyGroupHistoryComponent', () => {
   const SHARED_POLICY_GROUP_ID = 'sharedPolicyGroupId';
@@ -45,6 +46,7 @@ describe('SharedPolicyGroupHistoryComponent', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(async () => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, SharedPolicyGroupHistoryComponent, GioTestingModule],
       providers: [
@@ -81,10 +83,41 @@ describe('SharedPolicyGroupHistoryComponent', () => {
         id: SHARED_POLICY_GROUP_ID,
       }),
     );
+    fixture.detectChanges();
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
+  });
+
+  it('should show English chrome by default', async () => {
+    expectListSharedPolicyGroupHistoriesRequest(httpTestingController, undefined, SHARED_POLICY_GROUP_ID);
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Versions of');
+    expect(fixture.nativeElement.textContent).toContain('Select two versions to compare');
+    expect(fixture.nativeElement.textContent).toContain('Version');
+    expect(fixture.nativeElement.textContent).toContain('Deployed At');
+  });
+
+  it('should switch chrome to Russian and back without recreating the component', async () => {
+    expectListSharedPolicyGroupHistoriesRequest(httpTestingController, undefined, SHARED_POLICY_GROUP_ID);
+    const languageService = TestBed.inject(LanguageService);
+    fixture.detectChanges();
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Версии');
+    expect(fixture.nativeElement.textContent).toContain('Выберите две версии для сравнения');
+    expect(fixture.nativeElement.textContent).toContain('Развернуто');
+    expect(fixture.nativeElement.textContent).not.toContain('Select two versions to compare');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Select two versions to compare');
+    expect(fixture.nativeElement.textContent).toContain('Deployed At');
   });
 
   it('should display resources table', async () => {

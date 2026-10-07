@@ -25,14 +25,18 @@ const AlertTriggerConditionCompareComponent: ng.IComponentOptions = {
     isReadonly: '<',
   },
   template: require('html-loader!./trigger-condition-compare.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
       this.metrics = filter(
         this.metrics as Metrics[],
         metric => metric.conditions.indexOf('COMPARE') !== -1 && metric.key !== this.condition.property,
       );
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerConditionCompareComponent;

@@ -15,23 +15,30 @@
     limitations under the License.
 
 -->
-<md-dialog aria-label="Edit property" class="dictionary-edit-property-dialog">
+<md-dialog
+  aria-label="{{dialogDictionaryEditPropertyCtrl.translate('settings.dictionaries.editPropertyTitle')}}"
+  class="dictionary-edit-property-dialog"
+>
   <form name="formDictionaryEditProperty" ng-submit="dialogDictionaryEditPropertyCtrl.save()" novalidate>
     <md-dialog-content layout-padding>
-      <h4>Edit property</h4>
+      <h4>{{dialogDictionaryEditPropertyCtrl.translate('settings.dictionaries.editPropertyTitle')}}</h4>
       <md-input-container class="md-block">
-        <label>Name</label>
+        <label>{{dialogDictionaryEditPropertyCtrl.translate('settings.dictionaries.name')}}</label>
         <input ng-model="property.name" id="edit-key" readonly />
       </md-input-container>
       <md-input-container class="md-block">
-        <label>Value</label>
+        <label>{{dialogDictionaryEditPropertyCtrl.translate('settings.dictionaries.value')}}</label>
         <textarea ng-model="property.value" id="edit-value" rows="8" required></textarea>
       </md-input-container>
     </md-dialog-content>
 
     <md-dialog-actions layout="row">
-      <md-button ng-click="dialogDictionaryEditPropertyCtrl.hide()" type="button"> Cancel </md-button>
-      <md-button type="submit" class="md-raised md-primary" ng-disabled="formDictionaryEditProperty.$invalid"> Save </md-button>
+      <md-button ng-click="dialogDictionaryEditPropertyCtrl.hide()" type="button">
+        {{dialogDictionaryEditPropertyCtrl.translate('common.cancel')}}
+      </md-button>
+      <md-button type="submit" class="md-raised md-primary" ng-disabled="formDictionaryEditProperty.$invalid">
+        {{dialogDictionaryEditPropertyCtrl.translate('common.save')}}
+      </md-button>
     </md-dialog-actions>
   </form>
 </md-dialog>

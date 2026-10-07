@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, computed, Inject, OnInit, signal } from '@angular/core';
+import { Component, computed, effect, Inject, inject, OnInit, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { CommonModule } from '@angular/common';
@@ -33,11 +33,8 @@ import { GroupMembership, GroupMembershipMemberRoleEntity } from '../../../../..
 import { Member, RoleName } from '../membershipState';
 import { UsersService } from '../../../../../services-ngx/users.service';
 import { DeleteMemberDialogData } from '../group.component';
-
-const SCOPE_LABELS: Readonly<Record<'API' | 'API_PRODUCT', string>> = {
-  API: 'API',
-  API_PRODUCT: 'API Product',
-};
+import { LanguageService } from '../../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'delete-member-dialog',
@@ -56,6 +53,7 @@ const SCOPE_LABELS: Readonly<Record<'API' | 'API_PRODUCT', string>> = {
     MatChipRemove,
     MatChipSet,
     GioBannerModule,
+    TranslatePipe,
   ],
   templateUrl: './delete-member-dialog.component.html',
   styleUrl: './delete-member-dialog.component.scss',
@@ -74,12 +72,20 @@ export class DeleteMemberDialogComponent implements OnInit {
 
   private members: Member[] = [];
   private primaryOwnerMembership: GroupMembership = null;
+  private readonly languageService = inject(LanguageService);
 
   constructor(
     @Inject(MAT_DIALOG_DATA) public data: DeleteMemberDialogData,
     private usersService: UsersService,
     private matDialogRef: MatDialogRef<DeleteMemberDialogComponent>,
-  ) {}
+  ) {
+    effect(() => {
+      this.languageService.currentLanguage();
+      if (this.newPrimaryOwner) {
+        this.ownershipTransferMessage = this.buildOwnershipTransferMessage();
+      }
+    });
+  }
 
   ngOnInit(): void {
     this.initializeDataFromInput();
@@ -134,10 +140,7 @@ export class DeleteMemberDialogComponent implements OnInit {
     this.deleteMemberForm.controls.searchTerm.setValue('');
     this.deleteMemberForm.controls.searchTerm.disable();
     this.deleteMemberForm.controls.searchTerm.removeValidators(Validators.required);
-    const scopesLabel = this.primaryOwnerScopes()
-      .map(scope => SCOPE_LABELS[scope])
-      .join(' and ');
-    this.ownershipTransferMessage = `${this.member.displayName} is the ${scopesLabel} primary owner. Primary ownership of the group will be transferred from ${this.member.displayName} to ${this.newPrimaryOwner.displayName}.`;
+    this.ownershipTransferMessage = this.buildOwnershipTransferMessage();
     this.mapGroupMembership();
     this.disableSubmit = false;
   }
@@ -150,6 +153,19 @@ export class DeleteMemberDialogComponent implements OnInit {
     this.deleteMemberForm.controls.searchTerm.enable();
     this.deleteMemberForm.controls.searchTerm.addValidators(Validators.required);
     this.disableSubmit = true;
+  }
+
+  private buildOwnershipTransferMessage(): string {
+    const scopes = this.primaryOwnerScopes();
+    const scopesLabel =
+      scopes.length === 2
+        ? this.languageService.translate('settings.groups.scopeBoth')
+        : this.languageService.translate(scopes[0] === 'API' ? 'settings.groups.scopeApi' : 'settings.groups.scopeApiProduct');
+    return this.languageService.translate('settings.groups.ownershipDeleteTransfer', {
+      owner: this.member.displayName,
+      scopes: scopesLabel,
+      successor: this.newPrimaryOwner.displayName,
+    });
   }
 
   private mapGroupMembership() {

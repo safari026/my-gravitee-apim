@@ -36,6 +36,7 @@ import { TopApisComponent } from './top-apis.component';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioApiSelectDialogComponent } from '../../../shared/components/gio-api-select-dialog/gio-api-select-dialog.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [TopApisComponent],
@@ -61,6 +62,7 @@ import { GioApiSelectDialogComponent } from '../../../shared/components/gio-api-
     MatInputModule,
     GioAvatarModule,
     GioApiSelectDialogComponent,
+    TranslatePipe,
   ],
   exports: [TopApisComponent],
 })

@@ -17,30 +17,30 @@
 -->
 <mat-card>
   <mat-card-header class="groups__card-header-with-btn">
-    <mat-card-title><h2>Groups</h2></mat-card-title>
+    <mat-card-title><h2>{{ 'settings.groups.title' | translate }}</h2></mat-card-title>
     <button
       mat-raised-button
       [routerLink]="['.', 'new']"
       [disabled]="addGroupDisabled"
       color="primary"
       aria-hidden="false"
-      aria-label="Click to create group"
+      [attr.aria-label]="'settings.groups.addAria' | translate"
     >
       <mat-icon svgIcon="gio:plus"></mat-icon>
-      Add Group
+      {{ 'settings.groups.add' | translate }}
     </button>
   </mat-card-header>
   <mat-card-content>
     @if (settingsForm) {
       <form [formGroup]="settingsForm">
         <gio-form-slide-toggle>
-          <gio-form-label>Requires an application to have at least one group added in order to create or update it.</gio-form-label>
+          <gio-form-label>{{ 'settings.groups.userGroupRequired' | translate }}</gio-form-label>
           <mat-slide-toggle
             formControlName="userGroupRequired"
             gioFormSlideToggle
-            aria-label="Enable to enforce adding at least one group when creating new applications"
+            [attr.aria-label]="'settings.groups.userGroupRequiredAria' | translate"
           ></mat-slide-toggle>
-          <mat-hint>Use this setting if you want to enforce group ownership of applications.</mat-hint>
+          <mat-hint>{{ 'settings.groups.userGroupRequiredHint' | translate }}</mat-hint>
         </gio-form-slide-toggle>
       </form>
     }
@@ -48,25 +48,27 @@
 
   @if (groups$ | async; as data) {
     <gio-table-wrapper [length]="noOfRecords" [filters]="defaultFilters" (filtersChange)="filterData($event)">
-      <table mat-table [dataSource]="filteredData" id="groupsDataTable" aria-label="Groups Data Table">
+      <table mat-table [dataSource]="filteredData" id="groupsDataTable" [attr.aria-label]="'settings.groups.tableAria' | translate">
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+          <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.groups.name' | translate }}</th>
           <td mat-cell *matCellDef="let row">
             <div>
               {{ row.name }}
               @if (row.apiPrimaryOwner || row.apiProductPrimaryOwner) {
-                <span class="gio-badge-primary" tooltip="Group has a member with API or API Product role primary owner">Primary Owner</span>
+                <span class="gio-badge-primary" [attr.tooltip]="'settings.groups.primaryOwnerTooltip' | translate">{{
+                  'settings.groups.primaryOwner' | translate
+                }}</span>
               }
               @if (row.shouldAddToNewAPIs) {
-                <span class="gio-badge-warning" tooltip="Group will be automatically added to new applications"
-                  >Automatically associated to APIs</span
-                >
+                <span class="gio-badge-warning" [attr.tooltip]="'settings.groups.autoApisTooltip' | translate">{{
+                  'settings.groups.autoApis' | translate
+                }}</span>
               }
 
               @if (row.shouldAddToNewApplications) {
-                <span tooltip="Group will be automatically added to new APIs" class="gio-badge-warning"
-                  >Automatically associated to Applications</span
-                >
+                <span [attr.tooltip]="'settings.groups.autoAppsTooltip' | translate" class="gio-badge-warning">{{
+                  'settings.groups.autoApps' | translate
+                }}</span>
               }
             </div>
           </td>
@@ -75,16 +77,22 @@
         <ng-container matColumnDef="actions">
           <th mat-header-cell *matHeaderCellDef id="actions"></th>
           <td mat-cell *matCellDef="let row">
-            <button mat-button [routerLink]="['.', row.id]" matTooltip="Edit group" aria-hidden="false" aria-label="Click to edit group">
+            <button
+              mat-button
+              [routerLink]="['.', row.id]"
+              [matTooltip]="'settings.groups.editTooltip' | translate"
+              aria-hidden="false"
+              [attr.aria-label]="'settings.groups.editAria' | translate"
+            >
               <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
             </button>
             <button
               mat-button
               (click)="deleteGroup(row)"
               [disabled]="protectedGroups.has(row.id)"
-              matTooltip="Delete group"
+              [matTooltip]="'settings.groups.deleteTooltip' | translate"
               aria-hidden="false"
-              aria-label="Click to delete group"
+              [attr.aria-label]="'settings.groups.deleteAria' | translate"
             >
               <mat-icon svgIcon="gio:trash"></mat-icon>
             </button>
@@ -96,9 +104,9 @@
         <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
           <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="columnDefs.length">
             @if (isLoading) {
-              <div class="mat-body">Loading...</div>
+              <div class="mat-body">{{ 'common.loading' | translate }}</div>
             } @else {
-              <div class="mat-body">No groups available to display.</div>
+              <div class="mat-body">{{ 'settings.groups.empty' | translate }}</div>
             }
           </td>
         </tr>

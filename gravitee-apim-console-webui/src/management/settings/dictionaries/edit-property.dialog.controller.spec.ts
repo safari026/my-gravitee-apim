@@ -15,18 +15,23 @@
  */
 import DialogDictionaryEditPropertyController from './edit-property.dialog.controller';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 describe('DialogDictionaryEditPropertyController', () => {
   let $scope: any;
   let $mdDialog: { hide: jest.Mock };
   let controller: any;
+  let languageService: LanguageService;
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     $scope = {};
     $mdDialog = { hide: jest.fn() };
+    languageService = new LanguageService();
     controller = new (DialogDictionaryEditPropertyController as any)($scope, $mdDialog, {
       key: 'large_value',
       value: 'initial',
-    });
+    }, languageService);
   });
 
   it('should seed the scope from dialog locals using add-dialog naming (name/value)', () => {
@@ -48,5 +53,18 @@ describe('DialogDictionaryEditPropertyController', () => {
     controller.hide();
 
     expect($mdDialog.hide).toHaveBeenCalledWith();
+  });
+
+  it('translates dialog chrome EN → RU → EN', () => {
+    expect(controller.translate('settings.dictionaries.editPropertyTitle')).toEqual('Edit property');
+    expect(controller.translate('common.cancel')).toEqual('Cancel');
+    expect(controller.translate('common.save')).toEqual('Save');
+
+    languageService.setLanguage('ru');
+    expect(controller.translate('settings.dictionaries.editPropertyTitle')).toEqual('Изменить свойство');
+    expect(controller.translate('common.cancel')).toEqual('Отмена');
+
+    languageService.setLanguage('en');
+    expect(controller.translate('settings.dictionaries.editPropertyTitle')).toEqual('Edit property');
   });
 });

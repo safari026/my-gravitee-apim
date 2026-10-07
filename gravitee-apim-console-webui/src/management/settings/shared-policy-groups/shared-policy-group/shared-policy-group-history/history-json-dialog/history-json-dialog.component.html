@@ -15,7 +15,9 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>Version {{ data.sharedPolicyGroup.version }} JSON Source</span>
+<span mat-dialog-title>{{
+  'settings.sharedPolicyGroups.jsonSourceTitle' | translate: { version: data.sharedPolicyGroup.version }
+}}</span>
 
 <mat-dialog-content>
   <div class="mat-h4">JSON</div>
@@ -23,5 +25,5 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-flat-button [mat-dialog-close]="false">Close</button>
+  <button mat-flat-button [mat-dialog-close]="false">{{ 'common.close' | translate }}</button>
 </mat-dialog-actions>

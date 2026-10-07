@@ -16,6 +16,7 @@
 const PortalThemeComponentAjs: ng.IComponentOptions = {
   bindings: {
     views: '<',
+    language: '<',
   },
   controller: 'PortalThemeController',
   template: require('html-loader!./portalTheme.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

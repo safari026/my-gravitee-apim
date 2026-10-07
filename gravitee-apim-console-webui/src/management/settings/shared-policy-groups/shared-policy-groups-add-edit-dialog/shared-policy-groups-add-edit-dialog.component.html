@@ -15,34 +15,41 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>{{ isEdit ? 'Edit' : 'Add' }} Shared Policy Group for {{ apiTypeLabel }} API</span>
+<span mat-dialog-title>{{
+  (isEdit ? 'settings.sharedPolicyGroups.editTitle' : 'settings.sharedPolicyGroups.addTitle') | translate: { apiType: apiTypeLabel }
+}}</span>
 
 <form [formGroup]="formGroup">
   <mat-dialog-content class="mat-typography content">
-    <p>Shared Policy Group allow you to create policy collections that can be reused and executed within API flows.</p>
+    <p>{{ 'settings.sharedPolicyGroups.addEditDescription' | translate }}</p>
 
     <mat-form-field class="form-field">
-      <mat-label>Name</mat-label>
-      <input #nameInput type="text" aria-label="Name" matInput formControlName="name" [maxLength]="512" />
+      <mat-label>{{ 'settings.sharedPolicyGroups.name' | translate }}</mat-label>
+      <input
+        #nameInput
+        type="text"
+        [attr.aria-label]="'settings.sharedPolicyGroups.name' | translate"
+        matInput
+        formControlName="name"
+        [maxLength]="512"
+      />
       <mat-hint align="end">{{ nameInput.value.length }}/512</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="form-field">
-      <mat-label>Description</mat-label>
+      <mat-label>{{ 'settings.sharedPolicyGroups.description' | translate }}</mat-label>
       <textarea #descriptionInput matInput formControlName="description" [maxLength]="1024"></textarea>
       <mat-hint align="end">{{ descriptionInput.value.length }}/1024</mat-hint>
     </mat-form-field>
 
     <mat-form-field class="form-field">
-      <mat-label>Prerequisite message</mat-label>
+      <mat-label>{{ 'settings.sharedPolicyGroups.prerequisiteMessage' | translate }}</mat-label>
       <textarea #prerequisiteMessage matInput formControlName="prerequisiteMessage" [maxLength]="1024"></textarea>
-      <mat-hint
-        >Prerequisite message to be displayed when using SPG in Policy Studio. e.g.: "The resource cache "my-cache" is required".</mat-hint
-      >
+      <mat-hint>{{ 'settings.sharedPolicyGroups.prerequisiteHint' | translate }}</mat-hint>
       <mat-hint align="end">{{ prerequisiteMessage.value.length }}/1024</mat-hint>
     </mat-form-field>
 
-    <label>Phase</label>
+    <label>{{ 'settings.sharedPolicyGroups.phase' | translate }}</label>
     <mat-button-toggle-group formControlName="phase" class="gio-button-toggle-group">
       @for (phase of phases; track phase) {
         <mat-button-toggle [value]="phase.value">
@@ -53,9 +60,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-flat-button [mat-dialog-close]="undefined">Close</button>
+    <button mat-flat-button [mat-dialog-close]="undefined">{{ 'common.close' | translate }}</button>
     <button mat-raised-button color="primary" gioFormFocusInvalid [color]="(isValid$ | async) ? 'primary' : 'warn'" (click)="onSave()">
-      Save
+      {{ 'common.save' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

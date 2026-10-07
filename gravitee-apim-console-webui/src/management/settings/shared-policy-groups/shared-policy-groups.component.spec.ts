@@ -18,6 +18,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { HarnessLoader } from '@angular/cdk/testing';
 import { HttpTestingController } from '@angular/common/http/testing';
+import { MatMenuItemHarness } from '@angular/material/menu/testing';
 
 import { SharedPolicyGroupsComponent } from './shared-policy-groups.component';
 import { SharedPolicyGroupsHarness } from './shared-policy-groups.harness';
@@ -30,6 +31,7 @@ import {
   expectListSharedPolicyGroupsRequest,
 } from '../../../services-ngx/shared-policy-groups.service.spec';
 import { fakeCreateSharedPolicyGroup } from '../../../entities/management-api-v2';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('SharedPolicyGroupsComponent', () => {
   let fixture: ComponentFixture<SharedPolicyGroupsComponent>;
@@ -38,6 +40,7 @@ describe('SharedPolicyGroupsComponent', () => {
   let httpTestingController: HttpTestingController;
 
   beforeEach(async () => {
+    localStorage.removeItem('gio-console-lang');
     await TestBed.configureTestingModule({
       imports: [SharedPolicyGroupsComponent, NoopAnimationsModule, GioTestingModule],
       providers: [
@@ -61,6 +64,7 @@ describe('SharedPolicyGroupsComponent', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 
@@ -72,8 +76,16 @@ describe('SharedPolicyGroupsComponent', () => {
     expectListSharedPolicyGroupsRequest(httpTestingController);
 
     expect(await table.getCellTextByIndex()).toStrictEqual([
-      ['Shared policy group', 'Proxy', 'Request', expect.any(String), expect.any(String), ''],
+      ['Shared policy group', 'Proxy API', 'Request', expect.any(String), expect.any(String), ''],
     ]);
+  });
+
+  it('should show English chrome by default', async () => {
+    expectListSharedPolicyGroupsRequest(httpTestingController);
+    expect(fixture.nativeElement.textContent).toContain('Shared Policy Group');
+    expect(fixture.nativeElement.textContent).toContain('Add Shared Policy Group');
+    expect(fixture.nativeElement.textContent).toContain('Last updated');
+    expect(fixture.nativeElement.textContent).toContain('Request');
   });
 
   it('should refresh the table when filters change', async () => {
@@ -91,7 +103,7 @@ describe('SharedPolicyGroupsComponent', () => {
     expectListSharedPolicyGroupsRequest(httpTestingController, undefined, '?page=1&perPage=25&q=test');
 
     expect(await table.getCellTextByIndex()).toStrictEqual([
-      ['Shared policy group', 'Proxy', 'Request', expect.any(String), expect.any(String), ''],
+      ['Shared policy group', 'Proxy API', 'Request', expect.any(String), expect.any(String), ''],
     ]);
   });
 
@@ -110,6 +122,80 @@ describe('SharedPolicyGroupsComponent', () => {
     expectCreateSharedPolicyGroupRequest(
       httpTestingController,
       fakeCreateSharedPolicyGroup({ name: 'test', description: 'test', prerequisiteMessage: 'test', phase: 'RESPONSE' }),
+    );
+    expectListSharedPolicyGroupsRequest(httpTestingController);
+  });
+
+  it('should switch chrome to Russian and back without recreating the component', async () => {
+    expectListSharedPolicyGroupsRequest(httpTestingController);
+    const languageService = TestBed.inject(LanguageService);
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Общая группа политик');
+    expect(fixture.nativeElement.textContent).toContain('Добавить общую группу политик');
+    expect(fixture.nativeElement.textContent).toContain('Запрос');
+    expect(fixture.nativeElement.textContent).not.toContain('Last updated');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Shared Policy Group');
+    expect(fixture.nativeElement.textContent).toContain('Last updated');
+    expect(fixture.nativeElement.textContent).toContain('Request');
+  });
+
+  it('should keep PROXY and MESSAGE values when creating a Shared Policy Group', async () => {
+    const addButton = await componentHarness.getAddButton();
+    await addButton.click();
+    await rootLoader.getHarness(MatMenuItemHarness.with({ text: 'Message API' })).then(item => item.click());
+
+    fixture.detectChanges();
+    const addDialog = await rootLoader.getHarness(SharedPolicyGroupsAddEditDialogHarness);
+
+    await addDialog.setName('message-spg');
+    await addDialog.setPhase('Publish');
+    await addDialog.save();
+
+    expectCreateSharedPolicyGroupRequest(
+      httpTestingController,
+      fakeCreateSharedPolicyGroup({
+        name: 'message-spg',
+        description: '',
+        prerequisiteMessage: '',
+        apiType: 'MESSAGE',
+        phase: 'PUBLISH',
+      }),
+    );
+    expectListSharedPolicyGroupsRequest(httpTestingController);
+  });
+
+  it('should keep phase REQUEST/RESPONSE values after switching language', async () => {
+    expectListSharedPolicyGroupsRequest(httpTestingController);
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    const addButton = await componentHarness.getAddButton();
+    await addButton.click();
+    await rootLoader.getHarness(MatMenuItemHarness.with({ text: 'Message API' })).then(item => item.click());
+
+    fixture.detectChanges();
+    const addDialog = await rootLoader.getHarness(SharedPolicyGroupsAddEditDialogHarness);
+    await addDialog.setName('ru-spg');
+    await addDialog.setPhase('Ответ');
+    await addDialog.save();
+
+    expectCreateSharedPolicyGroupRequest(
+      httpTestingController,
+      fakeCreateSharedPolicyGroup({
+        name: 'ru-spg',
+        description: '',
+        prerequisiteMessage: '',
+        apiType: 'MESSAGE',
+        phase: 'RESPONSE',
+      }),
     );
     expectListSharedPolicyGroupsRequest(httpTestingController);
   });

@@ -15,11 +15,11 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>Add Members</h2>
+<h2 mat-dialog-title>{{ 'settings.groups.addMembersTitle' | translate }}</h2>
 <mat-dialog-content>
   <form [formGroup]="addMemberForm" class="add-member__form">
-    <mat-form-field aria-hidden="false" aria-label="Select default API role">
-      <mat-label>Default API Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApiRole' | translate }}</mat-label>
       <mat-select formControlName="defaultAPIRole" (selectionChange)="onDefaultRoleChange()">
         @for (role of defaultAPIRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="disabledAPIRoles.has(role.id)">{{ role.name }}</mat-option>
@@ -27,8 +27,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default API product role">
-      <mat-label>Default API Product Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApiProductRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApiProductRole' | translate }}</mat-label>
       <mat-select formControlName="defaultAPIProductRole" (selectionChange)="onDefaultRoleChange()">
         @for (role of defaultAPIProductRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="disabledAPIProductRoles.has(role.id)">{{ role.name }}</mat-option>
@@ -36,8 +36,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default application role">
-      <mat-label>Default Application Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultApplicationRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultApplicationRole' | translate }}</mat-label>
       <mat-select formControlName="defaultApplicationRole">
         @for (role of defaultApplicationRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -45,8 +45,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default integration role">
-      <mat-label>Default Integration Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultIntegrationRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultIntegrationRole' | translate }}</mat-label>
       <mat-select formControlName="defaultIntegrationRole">
         @for (role of defaultIntegrationRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -54,8 +54,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default cluster role">
-      <mat-label>Default Cluster Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultClusterRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultClusterRole' | translate }}</mat-label>
       <mat-select formControlName="defaultClusterRole">
         @for (role of defaultClusterRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -63,8 +63,8 @@
       </mat-select>
     </mat-form-field>
 
-    <mat-form-field aria-hidden="false" aria-label="Select default explorer role">
-      <mat-label>Default Explorer Role</mat-label>
+    <mat-form-field aria-hidden="false" [attr.aria-label]="'settings.groups.selectDefaultExplorerRole' | translate">
+      <mat-label>{{ 'settings.groups.defaultExplorerRole' | translate }}</mat-label>
       <mat-select formControlName="defaultExplorerRole">
         @for (role of defaultExplorerRoles; track role.id) {
           <mat-option [value]="role.name" [disabled]="role.system">{{ role.name }}</mat-option>
@@ -73,8 +73,8 @@
     </mat-form-field>
 
     <mat-form-field appearance="outline">
-      <mat-label>Search Users</mat-label>
-      <input aria-hidden="false" aria-label="Search users" matInput formControlName="searchTerm" [matAutocomplete]="auto" />
+      <mat-label>{{ 'settings.groups.searchUsers' | translate }}</mat-label>
+      <input aria-hidden="false" [attr.aria-label]="'settings.groups.searchUsersAria' | translate" matInput formControlName="searchTerm" [matAutocomplete]="auto" />
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectUser($event)">
         @for (user of filteredUsers$ | async; track user.id) {
           <mat-option [value]="user">
@@ -82,7 +82,7 @@
           </mat-option>
         }
       </mat-autocomplete>
-      <mat-hint>Search users to add to the group</mat-hint>
+      <mat-hint>{{ 'settings.groups.searchUsersHint' | translate }}</mat-hint>
     </mat-form-field>
 
     <mat-chip-set>
@@ -97,6 +97,6 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-raised-button color="primary" [disabled]="disableSubmit" (click)="submit()">Add Users</button>
-  <button mat-raised-button mat-dialog-close>Cancel</button>
+  <button mat-raised-button color="primary" [disabled]="disableSubmit" (click)="submit()">{{ 'settings.groups.addUsers' | translate }}</button>
+  <button mat-raised-button mat-dialog-close>{{ 'common.cancel' | translate }}</button>
 </mat-dialog-actions>

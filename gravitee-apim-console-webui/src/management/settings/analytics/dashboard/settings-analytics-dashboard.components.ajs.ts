@@ -20,6 +20,7 @@ import { cloneDeep, every, forEach, isEqual, merge } from 'lodash';
 import DashboardService from '../../../../services/dashboard.service';
 import NotificationService from '../../../../services/notification.service';
 import { Constants } from '../../../../entities/Constants';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 const SettingsAnalyticsDashboardComponentAjs: ng.IComponentOptions = {
   template: require('html-loader!./settings-analytics-dashboard.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: [
@@ -31,6 +32,7 @@ const SettingsAnalyticsDashboardComponentAjs: ng.IComponentOptions = {
     '$timeout',
     'ngRouter',
     'Constants',
+    'ngLanguageService',
     function (
       DashboardService: DashboardService,
       NotificationService: NotificationService,
@@ -40,12 +42,20 @@ const SettingsAnalyticsDashboardComponentAjs: ng.IComponentOptions = {
       $timeout,
       ngRouter: Router,
       constants: Constants,
+      ngLanguageService: LanguageService,
     ) {
       let previousPristine = true;
       this.fields = DashboardService.getIndexedFields();
       this.$rootScope = $rootScope;
       this.ngRouter = ngRouter;
       this.updateMode = true;
+      this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
+      this.displayType = (type: string) => {
+        if (type === 'Platform' || type === 'API' || type === 'Application') {
+          return this.translate('settings.analytics.types.' + type);
+        }
+        return type;
+      };
       this.$onInit = () => {
         this.editMode = !!this.activatedRoute.snapshot.params.dashboardId;
         if (this.activatedRoute.snapshot.params.dashboardId) {
@@ -103,7 +113,9 @@ const SettingsAnalyticsDashboardComponentAjs: ng.IComponentOptions = {
         }
         savePromise.then(response => {
           this.formDashboard.$setPristine();
-          NotificationService.show(`Dashboard ${this.editMode ? 'updated' : 'created'} with success`);
+          NotificationService.show(
+            this.translate(this.editMode ? 'settings.analytics.dashboardUpdated' : 'settings.analytics.dashboardCreated'),
+          );
           return this.ngRouter.navigate(['..', response.data.id], { relativeTo: this.activatedRoute });
         });
       };

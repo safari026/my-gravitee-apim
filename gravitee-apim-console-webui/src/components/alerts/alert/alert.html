@@ -19,17 +19,17 @@
   <div class="gv-alerts-alert gv-forms gv-forms-fluid" layout="column">
     <div class="gv-forms" layout="column">
       <div class="gv-forms-header">
-        <h1 ng-if="$ctrl.updateMode">[{{ $ctrl.titlePrefix }}] {{$ctrl.alert.name}}</h1>
-        <h1 ng-if="!$ctrl.updateMode">[{{ $ctrl.titlePrefix }}] Create a new alert</h1>
-        <a ng-click="$ctrl.backToAlerts()">Back to alerts</a>
+        <h1 ng-if="$ctrl.updateMode">[{{ $ctrl.displayTitlePrefix() }}] {{$ctrl.alert.name}}</h1>
+        <h1 ng-if="!$ctrl.updateMode">[{{ $ctrl.displayTitlePrefix() }}] {{$ctrl.translate('alerts.form.createTitle')}}</h1>
+        <a ng-click="$ctrl.backToAlerts()">{{$ctrl.translate('alerts.form.backToAlerts')}}</a>
       </div>
       <div class="gv-forms-header" ng-if="$ctrl.updateMode && $ctrl.alert.updated_at">
-        <span class="gv-subtitle"> Last updated at {{ $ctrl.alert.updated_at | date:'medium' }} </span>
+        <span class="gv-subtitle"> {{ $ctrl.translate('alerts.form.lastUpdated') }} {{ $ctrl.alert.updated_at | date:'medium' }} </span>
       </div>
 
       <div class="gv-page-draft-banner" ng-if="$ctrl.status.available_plugins === 0">
         <ng-md-icon icon="warning" class="gv-warning"></ng-md-icon>
-        No alert plugin is installed. Please install a plugin before being able to define alert rules.
+        {{$ctrl.translate('alerts.form.noPlugin')}}
         <br />
       </div>
 
@@ -40,14 +40,14 @@
             <md-tab-body></md-tab-body>
           </md-tab>
           <md-tab md-on-select="$ctrl.currentTab=$ctrl.selectTab(1)">
-            <md-tab-label>Alert</md-tab-label>
+            <md-tab-label>{{$ctrl.translate('alerts.form.tabAlert')}}</md-tab-label>
             <md-tab-body>
               <div class="gv-form">
-                <h3>General</h3>
+                <h3>{{$ctrl.translate('alerts.form.general')}}</h3>
                 <div class="gv-form-content" layout="column">
                   <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex="70">
-                      <label>Name</label>
+                      <label>{{$ctrl.translate('alerts.form.name')}}</label>
                       <input
                         ng-model="$ctrl.alert.name"
                         name="name"
@@ -56,13 +56,13 @@
                         required
                         autofocus
                         ng-disabled="$ctrl.isReadonly()"
-                        aria-label="Alert name"
+                        aria-label="{{$ctrl.translate('alerts.form.nameAria')}}"
                       />
-                      <div class="hint" ng-if="$ctrl.formAlert.name.$valid || $ctrl.formAlert.name.$pristine">Alert name.</div>
+                      <div class="hint" ng-if="$ctrl.formAlert.name.$valid || $ctrl.formAlert.name.$pristine">{{$ctrl.translate('alerts.form.nameHint')}}</div>
                       <div ng-messages="$ctrl.formAlert.name.$error">
-                        <div ng-message="required">Name is required.</div>
-                        <div ng-message="minlength">Name has to be more than 3 characters long.</div>
-                        <div ng-message="md-maxlength">Name has to be less than 50 characters long.</div>
+                        <div ng-message="required">{{$ctrl.translate('alerts.form.nameRequired')}}</div>
+                        <div ng-message="minlength">{{$ctrl.translate('alerts.form.nameMin')}}</div>
+                        <div ng-message="md-maxlength">{{$ctrl.translate('alerts.form.nameMax')}}</div>
                       </div>
                     </md-input-container>
 
@@ -73,48 +73,48 @@
                     >
                       <md-checkbox
                         ng-model="$ctrl.alert.enabled"
-                        aria-label="Enable this alert trigger"
+                        aria-label="{{$ctrl.translate('alerts.form.enableAria')}}"
                         class="md-primary md-align-top-left"
                         flex
                         ng-disabled="$ctrl.isReadonly()"
                       >
-                        Enable this alert
+                        {{$ctrl.translate('alerts.form.enable')}}
                       </md-checkbox>
                     </md-input-container>
                   </div>
 
                   <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex="70">
-                      <label>Rule</label>
+                      <label>{{$ctrl.translate('alerts.form.rule')}}</label>
                       <md-select ng-model="$ctrl.alert.type" required ng-disabled="$ctrl.updateMode" ng-change="$ctrl.onRuleChange()">
-                        <md-optgroup label="{{group}}" ng-repeat="group in $ctrl.groups">
+                        <md-optgroup label="{{$ctrl.translate('alerts.categories.' + group)}}" ng-repeat="group in $ctrl.groups">
                           <md-option ng-value="rule.source + '@' + rule.type" ng-repeat="rule in $ctrl.rules | filter: {category: group}"
-                            >{{rule.description}}
+                            >{{$ctrl.translate('alerts.rules.' + rule.source + '_' + rule.type)}}
                           </md-option>
                         </md-optgroup>
                       </md-select>
                     </md-input-container>
 
                     <md-input-container class="md-block" flex="30">
-                      <label>Severity</label>
+                      <label>{{$ctrl.translate('alerts.form.severity')}}</label>
                       <md-select ng-model="$ctrl.alert.severity" required ng-disabled="$ctrl.isReadonly()">
-                        <md-option ng-value="severity" ng-repeat="severity in $ctrl.severities"> {{severity | lowercase}} </md-option>
+                        <md-option ng-value="severity" ng-repeat="severity in $ctrl.severities"> {{$ctrl.translate('alerts.severity.' + severity)}} </md-option>
                       </md-select>
                     </md-input-container>
                   </div>
 
                   <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex-gt-sm>
-                      <label>Description</label>
+                      <label>{{$ctrl.translate('alerts.form.description')}}</label>
                       <input
                         ng-model="$ctrl.alert.description"
                         name="name"
                         md-maxlength="256"
-                        aria-label="Alert description"
+                        aria-label="{{$ctrl.translate('alerts.form.descriptionAria')}}"
                         ng-disabled="$ctrl.isReadonly()"
                       />
                       <div ng-messages="$ctrl.formAlert.name.$error">
-                        <div ng-message="md-maxlength">Description has to be less than 256 characters long.</div>
+                        <div ng-message="md-maxlength">{{$ctrl.translate('alerts.form.descriptionMax')}}</div>
                       </div>
                     </md-input-container>
                   </div>
@@ -122,18 +122,18 @@
               </div>
 
               <div ng-if="($ctrl.template && !$ctrl.updateMode) || $ctrl.alert.template">
-                <h2>Template</h2>
+                <h2>{{$ctrl.translate('alerts.form.template')}}</h2>
                 <div class="gv-form-content" layout="column">
                   <div layout-gt-sm="row">
                     <md-input-container class="md-block" flex="50" ng-if="$ctrl.alert.reference_type === 2 && !$ctrl.updateMode">
                       <md-checkbox
                         ng-model="$ctrl.alert.template"
                         ng-disabled="$ctrl.updateMode"
-                        aria-label="Define as template"
+                        aria-label="{{$ctrl.translate('alerts.form.defineAsTemplateAria')}}"
                         class="md-primary md-align-top-left"
                         flex
                       >
-                        Define as template
+                        {{$ctrl.translate('alerts.form.defineAsTemplate')}}
                       </md-checkbox>
                     </md-input-container>
 
@@ -141,22 +141,22 @@
                       <md-checkbox
                         ng-model="$ctrl.apiByDefault"
                         ng-click="$event.stopPropagation()"
-                        aria-label="Associate to every new API"
+                        aria-label="{{$ctrl.translate('alerts.form.associateNewApisAria')}}"
                         class="md-primary md-align-top-left"
                         flex
                       >
-                        Automatically create this alert for every new API
+                        {{$ctrl.translate('alerts.form.associateNewApis')}}
                       </md-checkbox>
                     </md-input-container>
                   </div>
 
                   <div class="md-actions gravitee-api-save-button" layout="row" ng-if="$ctrl.updateMode">
                     <md-button
-                      aria-label="Associate to existing APIs"
+                      aria-label="{{$ctrl.translate('alerts.form.associateExistingAria')}}"
                       ng-click="$ctrl.associateToApis()"
                       class="md-actions md-raised md-primary"
                     >
-                      Associate the alert to existing APIs
+                      {{$ctrl.translate('alerts.form.associateExisting')}}
                     </md-button>
                   </div>
                 </div>
@@ -166,13 +166,13 @@
 
               <div>
                 <div class="gv-forms-header">
-                  <h3>Condition</h3>
-                  <div class="ipsum">Field metrics and condition for the rule</div>
+                  <h3>{{$ctrl.translate('alerts.form.condition')}}</h3>
+                  <div class="ipsum">{{$ctrl.translate('alerts.form.conditionHint')}}</div>
                 </div>
 
                 <div class="gv-form-content scrollable" layout="column">
                   <div class="gv-alerts-alert_trigger-msg" ng-if="$ctrl.alert.type == null">
-                    Select a rule before setting the condition.
+                    {{$ctrl.translate('alerts.form.selectRule')}}
                   </div>
 
                   <gv-alert-trigger-missing-data
@@ -252,7 +252,7 @@
           </md-tab>
 
           <md-tab md-on-select="$ctrl.currentTab=$ctrl.selectTab(2)">
-            <md-tab-label>Notifications</md-tab-label>
+            <md-tab-label>{{$ctrl.translate('alerts.form.tabNotifications')}}</md-tab-label>
             <md-tab-body>
               <!-- Dampening -->
               <gv-alert-trigger-dampening dampening="$ctrl.alert.dampening" is-readonly="$ctrl.isReadonly()"></gv-alert-trigger-dampening>
@@ -262,7 +262,7 @@
           </md-tab>
 
           <md-tab md-on-select="$ctrl.currentTab=$ctrl.selectTab(3)" ng-disabled="!$ctrl.updateMode || $ctrl.alert.template">
-            <md-tab-label>History</md-tab-label>
+            <md-tab-label>{{$ctrl.translate('alerts.form.tabHistory')}}</md-tab-label>
             <md-tab-body>
               <gv-alert-history alert="$ctrl.alert"></gv-alert-history>
             </md-tab-body>
@@ -278,7 +278,7 @@
             ng-click="$ctrl.onUpdate($ctrl.alert)"
             ng-disabled="$ctrl.status.available_plugins === 0 || $ctrl.formAlert.$invalid || $ctrl.formAlert.$pristine"
           >
-            Update
+            {{$ctrl.translate('alerts.form.update')}}
           </md-button>
           <md-button
             ng-if="$ctrl.hasPermissionForCurrentScope('alert-c') && !$ctrl.updateMode"
@@ -286,7 +286,7 @@
             type="submit"
             ng-disabled="$ctrl.status.available_plugins === 0 || $ctrl.formAlert.$invalid || $ctrl.formAlert.$pristine"
           >
-            Create
+            {{$ctrl.translate('common.create')}}
           </md-button>
 
           <md-button
@@ -296,7 +296,7 @@
             ng-click="$ctrl.reset()"
             ng-disabled="$ctrl.status.available_plugins === 0 || $ctrl.formAlert.$invalid || $ctrl.formAlert.$pristine"
           >
-            Reset
+            {{$ctrl.translate('common.reset')}}
           </md-button>
           <md-button
             class="md-raised md-warn float-right"
@@ -305,7 +305,7 @@
             type="button"
             ng-click="$ctrl.delete()"
           >
-            Delete
+            {{$ctrl.translate('common.delete')}}
           </md-button>
         </div>
       </form>

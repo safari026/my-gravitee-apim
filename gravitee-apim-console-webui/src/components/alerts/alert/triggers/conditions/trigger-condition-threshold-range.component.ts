@@ -19,8 +19,11 @@ const AlertTriggerConditionThresholdRangeComponent: ng.IComponentOptions = {
     isReadonly: '<',
   },
   template: require('html-loader!./trigger-condition-threshold-range.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
       /*
       // Delete properties which have nothing to do with threshold range condition
       delete this.condition.pattern;
@@ -30,7 +33,8 @@ const AlertTriggerConditionThresholdRangeComponent: ng.IComponentOptions = {
       this.condition.operatorLow = 'INCLUSIVE';
       this.condition.operatorHigh = 'INCLUSIVE';
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerConditionThresholdRangeComponent;

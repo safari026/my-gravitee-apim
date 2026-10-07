@@ -15,14 +15,21 @@
  */
 import { IController } from 'angular';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 class DocumentationNewFolderComponentController implements IController {
   page: unknown;
   onSave: () => void;
+
+  constructor(private readonly ngLanguageService: LanguageService) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   save(): void {
     this.onSave();
   }
 }
+DocumentationNewFolderComponentController.$inject = ['ngLanguageService'];
 
 export const DocumentationNewFolderComponent: ng.IComponentOptions = {
   bindings: {

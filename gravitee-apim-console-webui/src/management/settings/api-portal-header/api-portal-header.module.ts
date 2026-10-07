@@ -36,6 +36,7 @@ import { ApiPortalHeaderEditDialogComponent } from './api-portal-header-edit-dia
 
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiPortalHeaderComponent, ApiPortalHeaderEditDialogComponent],
@@ -58,6 +59,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     GioFormSlideToggleModule,
     GioTableWrapperModule,
     GioPermissionModule,
+    TranslatePipe,
   ],
   exports: [ApiPortalHeaderComponent],
 })

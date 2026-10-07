@@ -21,9 +21,9 @@
   <mat-dialog-content>
     <mat-form-field appearance="outline" class="form-field">
       <mat-icon matPrefix>search</mat-icon>
-      <mat-label>Search APIs...</mat-label>
+      <mat-label>{{ 'common.searchApis' | translate }}</mat-label>
       <input matInput type="search" [matAutocomplete]="auto" [formControl]="searchApiControl" data-testid="api-select-input" />
-      <button *ngIf="searchApiControl.value" matSuffix mat-icon-button aria-label="Clear input" (click)="resetSearchTerm()">
+      <button *ngIf="searchApiControl.value" matSuffix mat-icon-button [attr.aria-label]="'common.clearInput' | translate" (click)="resetSearchTerm()">
         <mat-icon>close</mat-icon>
       </button>
       <mat-autocomplete #auto="matAutocomplete" (optionSelected)="selectAPI()" [displayWith]="displayFn">
@@ -41,7 +41,7 @@
             </span>
           </mat-option>
           <mat-option *ngIf="filteredOptions.length === 0 && searchApiControl.getRawValue()" disabled>
-            No APIs matching search criteria
+            {{ 'common.noMatchingApis' | translate }}
           </mat-option>
         }
       </mat-autocomplete>
@@ -49,7 +49,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions [align]="'end'" class="form-actions">
-    <button type="button" mat-flat-button (click)="onCancelClick()" data-testid="cancel-button">Cancel</button>
-    <button type="submit" [disabled]="!isApiSelected" mat-raised-button color="primary" data-testid="submit-button">Add</button>
+    <button type="button" mat-flat-button (click)="onCancelClick()" data-testid="cancel-button">{{ 'common.cancel' | translate }}</button>
+    <button type="submit" [disabled]="!isApiSelected" mat-raised-button color="primary" data-testid="submit-button">{{ 'common.add' | translate }}</button>
   </mat-dialog-actions>
 </form>

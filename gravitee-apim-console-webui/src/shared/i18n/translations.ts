@@ -10,6 +10,9 @@ import { enApplications } from './translations/en/applications';
 import { enGateways } from './translations/en/gateways';
 import { enObservability } from './translations/en/observability';
 import { enAnalytics } from './translations/en/analytics';
+import { enSettings } from './translations/en/settings';
+import { enAlerts } from './translations/en/alerts';
+import { enAudit } from './translations/en/audit';
 import { ruAuth } from './translations/ru/auth';
 import { ruCommon } from './translations/ru/common';
 import { ruNavigation } from './translations/ru/navigation';
@@ -22,6 +25,9 @@ import { ruApplications } from './translations/ru/applications';
 import { ruGateways } from './translations/ru/gateways';
 import { ruObservability } from './translations/ru/observability';
 import { ruAnalytics } from './translations/ru/analytics';
+import { ruSettings } from './translations/ru/settings';
+import { ruAlerts } from './translations/ru/alerts';
+import { ruAudit } from './translations/ru/audit';
 
 export type Language = 'en' | 'ru';
 
@@ -39,6 +45,9 @@ export const translations = {
     gateways: enGateways,
     observability: enObservability,
     analytics: enAnalytics,
+    settings: enSettings,
+    alerts: enAlerts,
+    audit: enAudit,
   },
   ru: {
     auth: ruAuth,
@@ -53,5 +62,8 @@ export const translations = {
     gateways: ruGateways,
     observability: ruObservability,
     analytics: ruAnalytics,
+    settings: ruSettings,
+    alerts: ruAlerts,
+    audit: ruAudit,
   },
 } as const;

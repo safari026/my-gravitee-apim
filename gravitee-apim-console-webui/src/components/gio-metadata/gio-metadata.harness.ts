@@ -29,7 +29,7 @@ export class GioMetadataHarness extends ComponentHarness {
   public static hostSelector = '.gio-metadata';
 
   protected getTable = this.locatorFor(MatTableHarness);
-  protected getAddMetadataButtonHarness = this.locatorFor(MatButtonHarness.with({ selector: '[aria-label="add-metadata"]' }));
+  protected getAddMetadataButtonHarness = this.locatorFor(MatButtonHarness.with({ selector: '[data-testid="add_metadata_button"]' }));
   protected getTableHeader = (dataTestId: string) =>
     this.locatorFor(MatSortHeaderHarness.with({ selector: `[data-testid=${dataTestId}]` }))();
   protected getSourceFilter = this.locatorFor(MatSelectHarness);

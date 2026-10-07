@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function DialogQueryFilterInformationController($mdDialog) {
+function DialogQueryFilterInformationController($mdDialog, ngLanguageService) {
   this.cancel = $mdDialog.cancel;
+  this.translate = (key, params) => ngLanguageService.translate(key, params);
 }
-DialogQueryFilterInformationController.$inject = ['$mdDialog'];
+DialogQueryFilterInformationController.$inject = ['$mdDialog', 'ngLanguageService'];
 
 export default DialogQueryFilterInformationController;
