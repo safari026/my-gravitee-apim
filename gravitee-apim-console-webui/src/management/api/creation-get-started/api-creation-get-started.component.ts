@@ -14,24 +14,15 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, OnDestroy } from '@angular/core';
 import { catchError, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
-import { EMPTY, of, Subject } from 'rxjs';
+import { EMPTY, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { ActivatedRoute, Router } from '@angular/router';
 
-import { CockpitService, UtmCampaign } from '../../../services-ngx/cockpit.service';
-import { Constants } from '../../../entities/Constants';
-import { InstallationService } from '../../../services-ngx/installation.service';
-import { Installation } from '../../../entities/installation/installation';
-import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { PolicyService } from '../../../services-ngx/policy.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioApiImportDialogComponent, GioApiImportDialogData } from '../component/gio-api-import-dialog/gio-api-import-dialog.component';
-import {
-  GioInformationDialogComponent,
-  GioConnectorDialogData,
-} from '../component/gio-information-dialog/gio-information-dialog.component';
 import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
@@ -40,43 +31,17 @@ import { LanguageService } from '../../../shared/i18n/language.service';
   styleUrls: ['./api-creation-get-started.component.scss'],
   standalone: false,
 })
-export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
-  cockpitLink: string;
-
-  isLoading = true;
-  isOEM = false;
-
-  policies = [];
-
+export class ApiCreationGetStartedComponent implements OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
-    @Inject(Constants) private readonly constants: Constants,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
-    private readonly cockpitService: CockpitService,
-    private readonly installationService: InstallationService,
-    private readonly permissionService: GioPermissionService,
     private readonly policyService: PolicyService,
     private readonly snackBarService: SnackBarService,
     private readonly matDialog: MatDialog,
     private readonly languageService: LanguageService,
   ) {}
-
-  ngOnInit(): void {
-    const hasInstallationPermission = this.permissionService.hasAnyMatching(['organization-installation-r']);
-    this.isOEM = this.constants.isOEM;
-
-    (hasInstallationPermission ? this.installationService.get() : of(undefined))
-      .pipe(
-        tap(installation => {
-          this.cockpitLink = this.getCockpitLink(installation);
-          this.isLoading = false;
-        }),
-        takeUntil(this.unsubscribe$),
-      )
-      .subscribe();
-  }
 
   ngOnDestroy() {
     this.unsubscribe$.next();
@@ -106,35 +71,6 @@ export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
         }),
         takeUntil(this.unsubscribe$),
       )
-      .subscribe();
-  }
-
-  private getCockpitLink(installation?: Installation): string {
-    const cockpitURL = installation?.cockpitURL ?? 'https://cockpit.gravitee.io';
-
-    return this.cockpitService.addQueryParamsForAnalytics(
-      cockpitURL,
-      UtmCampaign.API_DESIGNER,
-      installation?.additionalInformation.COCKPIT_INSTALLATION_STATUS === 'ACCEPTED' ? 'ACCEPTED' : undefined,
-    );
-  }
-
-  onMoreInfoClick(event: MouseEvent) {
-    event.stopPropagation();
-    this.matDialog
-      .open<GioInformationDialogComponent, GioConnectorDialogData, boolean>(GioInformationDialogComponent, {
-        data: {
-          name: 'Classic (V2) and New (V4) APIs compared',
-          information: {
-            description:
-              'Gravitee V4 APIs contain most of the same capabilities as V2 APIs, including analytics, logs, failover, and health check. They also support some features not available in V2 APIs, such as protocol mediation, shared policy groups, and native Kafka support. Some functionalities are not yet included, however, including alerts, tenants, and some analytics capabilities.',
-          },
-        },
-        role: 'alertdialog',
-        id: 'moreInfoDialog',
-      })
-      .afterClosed()
-      .pipe(takeUntil(this.unsubscribe$))
       .subscribe();
   }
 }

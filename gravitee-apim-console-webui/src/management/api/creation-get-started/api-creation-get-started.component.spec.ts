@@ -26,9 +26,6 @@ import { ApiCreationGetStartedComponent } from './api-creation-get-started.compo
 import { ApiCreationGetStartedModule } from './api-creation-get-started.module';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
-import { fakeInstallation } from '../../../entities/installation/installation.fixture';
-import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
-import { GioTestingPermission, GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
 import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApiCreationGetStartedComponent', () => {
@@ -38,17 +35,11 @@ describe('ApiCreationGetStartedComponent', () => {
   let component: ApiCreationGetStartedComponent;
   let httpTestingController: HttpTestingController;
 
-  const initConfigureTestingModule = (permissions: GioTestingPermission) => {
+  const initConfigureTestingModule = () => {
     localStorage.removeItem('gio-console-lang');
 
     TestBed.configureTestingModule({
-      imports: [GioPermissionModule, GioTestingModule, ApiCreationGetStartedModule, MatIconTestingModule, NoopAnimationsModule],
-      providers: [
-        {
-          provide: GioTestingPermissionProvider,
-          useValue: permissions,
-        },
-      ],
+      imports: [GioTestingModule, ApiCreationGetStartedModule, MatIconTestingModule, NoopAnimationsModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(ApiCreationGetStartedComponent);
@@ -66,109 +57,66 @@ describe('ApiCreationGetStartedComponent', () => {
     httpTestingController.verify();
   });
 
-  describe('as Admin', () => {
-    beforeEach(() => {
-      initConfigureTestingModule(['organization-installation-r']);
-    });
-
-    it('should use the cockpit link if installation registered', async () => {
-      httpTestingController.expectOne(`${CONSTANTS_TESTING.org.baseURL}/installation`).flush(
-        fakeInstallation({
-          cockpitURL: 'https://cockpit.gravitee.io',
-          additionalInformation: {
-            COCKPIT_INSTALLATION_STATUS: 'ACCEPTED',
-          },
-        }),
-      );
-      expect(component.cockpitLink).toEqual(
-        'https://cockpit.gravitee.io?utm_source=apim&utm_medium=InApp&utm_campaign=api_designer&utm_term=registered',
-      );
-    });
-
-    it('should always use the cockpit.gravitee.io link even if installation not registered', async () => {
-      httpTestingController.expectOne(`${CONSTANTS_TESTING.org.baseURL}/installation`).flush(
-        fakeInstallation({
-          cockpitURL: 'https://cockpit.gravitee.io',
-          additionalInformation: {},
-        }),
-      );
-      expect(component.cockpitLink).toEqual(
-        'https://cockpit.gravitee.io?utm_source=apim&utm_medium=InApp&utm_campaign=api_designer&utm_term=not_registered',
-      );
-    });
-
-    it('should open api import dialog', async () => {
-      httpTestingController.expectOne(`${CONSTANTS_TESTING.org.baseURL}/installation`);
-      component.goToApiImport();
-
-      expectPoliciesSwaggerGetRequest();
-
-      const confirmDialog = await rootLoader.getHarness(MatDialogHarness.with({ selector: '#importApiDialog' }));
-      await confirmDialog.close();
-    });
-
-    it('should open learn more dialog', async () => {
-      httpTestingController.expectOne(`${CONSTANTS_TESTING.org.baseURL}/installation`).flush(fakeInstallation());
-      fixture.detectChanges();
-
-      const learnMoreButton = await loader.getHarness(MatButtonHarness.with({ text: 'Learn More' }));
-      await learnMoreButton.click();
-
-      const confirmDialog = await rootLoader.getHarness(MatDialogHarness.with({ selector: '#moreInfoDialog' }));
-      await confirmDialog.close();
-    });
-
-    it('should switch chrome to Russian and back without recreating the component', async () => {
-      httpTestingController.expectOne(`${CONSTANTS_TESTING.org.baseURL}/installation`).flush(fakeInstallation());
-      fixture.detectChanges();
-
-      expect(fixture.nativeElement.textContent).toContain('Choose API creation method');
-      expect(fixture.nativeElement.textContent).toContain('Create Classic API');
-      expect(fixture.nativeElement.textContent).toContain('Create New API');
-      expect(fixture.nativeElement.textContent).toContain('Learn More');
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V4 API' }))).toBeTruthy();
-
-      const languageService = TestBed.inject(LanguageService);
-      languageService.setLanguage('ru');
-      fixture.detectChanges();
-
-      expect(fixture.nativeElement.textContent).toContain('Выберите способ создания API');
-      expect(fixture.nativeElement.textContent).toContain('Создать классический API');
-      expect(fixture.nativeElement.textContent).not.toContain('Choose API creation method');
-      expect(fixture.nativeElement.textContent).not.toContain('Create Classic API');
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Создать API V2' }))).toBeTruthy();
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать API V2' }))).toBeTruthy();
-      expect(fixture.nativeElement.textContent).toContain('Создать новый API');
-      expect(fixture.nativeElement.textContent).not.toContain('Create New API');
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Создать API V4' }))).toBeTruthy();
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать API V4' }))).toBeTruthy();
-      expect(fixture.nativeElement.textContent).toContain('Learn More');
-
-      languageService.setLanguage('en');
-      fixture.detectChanges();
-
-      expect(fixture.nativeElement.textContent).toContain('Choose API creation method');
-      expect(fixture.nativeElement.textContent).toContain('Create Classic API');
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
-      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Learn More' }))).toBeTruthy();
-    });
+  beforeEach(() => {
+    initConfigureTestingModule();
   });
 
-  describe('as ApiUser', () => {
-    beforeEach(() => {
-      initConfigureTestingModule([]);
-    });
+  it('should open api import dialog', async () => {
+    component.goToApiImport();
 
-    it('should always use the cockpit.gravitee.io link even if no right to access the installation', async () => {
-      httpTestingController.expectNone(`${CONSTANTS_TESTING.org.baseURL}/installation`);
+    expectPoliciesSwaggerGetRequest();
 
-      expect(component.cockpitLink).toEqual(
-        'https://cockpit.gravitee.io?utm_source=apim&utm_medium=InApp&utm_campaign=api_designer&utm_term=not_registered',
-      );
-    });
+    const confirmDialog = await rootLoader.getHarness(MatDialogHarness.with({ selector: '#importApiDialog' }));
+    await confirmDialog.close();
+  });
+
+  it('should keep create and import actions and hide removed get-started extras', async () => {
+    const text = fixture.nativeElement.textContent as string;
+
+    expect(text).toContain('Choose API creation method');
+    expect(text).toContain('Create Classic API');
+    expect(text).toContain('Create New API');
+    expect(text).not.toContain('Not sure which version to pick?');
+    expect(text).not.toContain('Learn More');
+    expect(text).not.toContain('Design API');
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V2 API' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V4 API' }))).toBeTruthy();
+  });
+
+  it('should switch chrome to Russian and back without recreating the component', async () => {
+    expect(fixture.nativeElement.textContent).toContain('Choose API creation method');
+    expect(fixture.nativeElement.textContent).toContain('Create Classic API');
+    expect(fixture.nativeElement.textContent).toContain('Create New API');
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V4 API' }))).toBeTruthy();
+
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Выберите способ создания API');
+    expect(fixture.nativeElement.textContent).toContain('Создать классический API');
+    expect(fixture.nativeElement.textContent).not.toContain('Choose API creation method');
+    expect(fixture.nativeElement.textContent).not.toContain('Create Classic API');
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Создать API V2' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать API V2' }))).toBeTruthy();
+    expect(fixture.nativeElement.textContent).toContain('Создать новый API');
+    expect(fixture.nativeElement.textContent).not.toContain('Create New API');
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Создать API V4' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать API V4' }))).toBeTruthy();
+    expect(fixture.nativeElement.textContent).not.toContain('Learn More');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Choose API creation method');
+    expect(fixture.nativeElement.textContent).toContain('Create Classic API');
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
+    expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
+    expect(fixture.nativeElement.textContent).not.toContain('Learn More');
   });
 
   function expectPoliciesSwaggerGetRequest() {
