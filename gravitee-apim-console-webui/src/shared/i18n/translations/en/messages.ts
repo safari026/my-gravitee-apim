@@ -1,0 +1,33 @@
+export const enMessages = {
+  title: 'Send a Broadcast Message',
+  banner: 'Send a one-way message to specified recipients to inform them of any changes or updates.',
+  channel: 'Channel',
+  channelRequired: 'Channel is required',
+  recipients: 'Recipients',
+  recipientsRequired: 'Recipients is required',
+  titleLabel: 'Title',
+  titleRequired: 'Title is required',
+  httpHeaders: 'HTTP headers',
+  url: 'URL',
+  urlRequired: 'URL is required',
+  useSystemProxy: 'Use system proxy',
+  text: 'Text',
+  textRequired: 'Text is required',
+  send: 'Send',
+  channels: {
+    portal: 'Portal Notifications',
+    email: 'Email',
+    http: 'POST HTTP Message',
+  },
+  recipient: {
+    apiSubscribers: 'API subscribers',
+    applicationRole: 'Members with the {role} role on applications subscribed to this API',
+    environmentRole: 'Members with the {role} role on this environment',
+  },
+  success: {
+    one: 'Message sent to {count} recipient',
+    many: 'Message sent to {count} recipients',
+  },
+  error: 'Message could not be sent',
+  errorBecause: 'Message could not be sent because of {reason}',
+} as const;

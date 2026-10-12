@@ -1,0 +1,33 @@
+export const ruMessages = {
+  title: 'Отправить рассылку',
+  banner: 'Отправьте одностороннее сообщение выбранным получателям, чтобы сообщить об изменениях или обновлениях.',
+  channel: 'Канал',
+  channelRequired: 'Укажите канал',
+  recipients: 'Получатели',
+  recipientsRequired: 'Укажите получателей',
+  titleLabel: 'Заголовок',
+  titleRequired: 'Укажите заголовок',
+  httpHeaders: 'HTTP-заголовки',
+  url: 'URL',
+  urlRequired: 'Укажите URL',
+  useSystemProxy: 'Использовать системный прокси',
+  text: 'Текст',
+  textRequired: 'Укажите текст',
+  send: 'Отправить',
+  channels: {
+    portal: 'Уведомления портала',
+    email: 'Email',
+    http: 'HTTP POST-сообщение',
+  },
+  recipient: {
+    apiSubscribers: 'Подписчики API',
+    applicationRole: 'Участники с ролью {role} в приложениях, подписанных на этот API',
+    environmentRole: 'Участники с ролью {role} в этом окружении',
+  },
+  success: {
+    one: 'Сообщение отправлено {count} получателю',
+    many: 'Сообщение отправлено {count} получателям',
+  },
+  error: 'Не удалось отправить сообщение',
+  errorBecause: 'Не удалось отправить сообщение: {reason}',
+} as const;
