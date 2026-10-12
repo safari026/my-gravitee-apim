@@ -30,4 +30,6 @@ export const enNavigation = {
   organization: 'Organization',
   developerPortal: 'Developer Portal',
   apiManagement: 'API Management',
+  collapseMenu: 'Collapse menu',
+  expandMenu: 'Expand menu',
 } as const;

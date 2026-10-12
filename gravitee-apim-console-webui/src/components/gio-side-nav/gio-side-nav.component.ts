@@ -13,9 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewChecked, AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
-import { GioLicenseService, GioMenuSearchService, LicenseOptions, MenuSearchItem, SelectorItem } from '@gravitee/ui-particles-angular';
+import {
+  GioLicenseService,
+  GioMenuSearchService,
+  GioMenuService,
+  LicenseOptions,
+  MenuSearchItem,
+  SelectorItem,
+} from '@gravitee/ui-particles-angular';
 import { catchError, distinctUntilChanged, map, skip, switchMap, takeUntil } from 'rxjs/operators';
 import { EMPTY, Observable, of, Subject } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -67,7 +74,7 @@ export const PORTAL_SETTINGS_PERMISSIONS = [
   styleUrls: ['./gio-side-nav.component.scss'],
   standalone: false,
 })
-export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
+export class GioSideNavComponent implements OnInit, AfterViewInit, AfterViewChecked, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   public mainMenuItems: MenuItem[] = [];
@@ -78,6 +85,8 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   public currentEnv: Environment;
   private envHrid: string;
   private envSettings?: EnvSettings;
+  private menuReduced = false;
+  private collapseLabelNeedsSync = false;
   public licenseExpirationDate$: Observable<Date>;
   public licenseExpirationNotificationEnabled = true;
 
@@ -88,6 +97,7 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
     private readonly gioMenuSearchService: GioMenuSearchService,
+    private readonly gioMenuService: GioMenuService,
     private readonly environmentSettingsService: EnvironmentSettingsService,
     private readonly languageService: LanguageService,
     private readonly injector: Injector,
@@ -136,8 +146,14 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
           this.gioMenuSearchService.addMenuSearchItems(this.settingsNavigationService.getSettingsNavigationSearchItems(this.envHrid));
         }
         this.syncMenuSearchPlaceholder();
+        this.syncCollapseMenuLabel();
         this.changeDetectorRef.markForCheck();
       });
+
+    this.gioMenuService.reduced$.pipe(takeUntil(this.unsubscribe$)).subscribe(reduced => {
+      this.menuReduced = reduced;
+      this.collapseLabelNeedsSync = true;
+    });
 
     if (this.constants.org.settings?.licenseExpirationNotification?.enabled !== undefined) {
       this.licenseExpirationNotificationEnabled = this.constants.org.settings.licenseExpirationNotification.enabled;
@@ -148,6 +164,15 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
 
   ngAfterViewInit(): void {
     this.syncMenuSearchPlaceholder();
+    this.syncCollapseMenuLabel();
+  }
+
+  ngAfterViewChecked(): void {
+    if (!this.collapseLabelNeedsSync) {
+      return;
+    }
+    this.collapseLabelNeedsSync = false;
+    this.syncCollapseMenuLabel();
   }
 
   ngOnDestroy(): void {
@@ -210,13 +235,6 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
         permissions: ['environment-api_product-r'],
         licenseOptions: apiProductsLicenseOptions,
         iconRight$: apiProductsIconRight$,
-      },
-      {
-        icon: 'gio:box',
-        routerLink: './integrations',
-        displayName: this.languageService.translate('navigation.integrations'),
-        permissions: ['environment-integration-r'],
-        category: this.languageService.translate('navigation.integrations'),
       },
       {
         icon: 'gio:multi-window',
@@ -420,6 +438,25 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
     const searchInput = this.elementRef.nativeElement.querySelector<HTMLInputElement>('.gio-menu-search__input');
     if (searchInput) {
       searchInput.placeholder = this.languageService.translate('common.search');
+    }
+  }
+
+  private syncCollapseMenuLabel(): void {
+    const collapseItem = this.elementRef.nativeElement.querySelector<HTMLElement>('.gio-menu-footer__collapse');
+    if (!collapseItem) {
+      return;
+    }
+
+    const label = this.languageService.translate(this.menuReduced ? 'navigation.expandMenu' : 'navigation.collapseMenu');
+    const title = collapseItem.querySelector<HTMLElement>('.gio-menu-item__title');
+    if (title && title.textContent !== label) {
+      title.textContent = label;
+    }
+    if (collapseItem.getAttribute('aria-label') !== label) {
+      collapseItem.setAttribute('aria-label', label);
+    }
+    if (collapseItem.getAttribute('title') !== label) {
+      collapseItem.setAttribute('title', label);
     }
   }
 

@@ -30,4 +30,6 @@ export const ruNavigation = {
   organization: 'Организация',
   developerPortal: 'Портал разработчика',
   apiManagement: 'Управление API',
+  collapseMenu: 'Свернуть меню',
+  expandMenu: 'Развернуть меню',
 } as const;

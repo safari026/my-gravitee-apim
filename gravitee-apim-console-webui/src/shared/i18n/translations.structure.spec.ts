@@ -165,6 +165,8 @@ describe('i18n translations', () => {
     expect(languageService.translate('common.cancel')).toBe('Cancel');
     expect(languageService.translate('auth.login.submit')).toBe('Sign in');
     expect(languageService.translate('navigation.apis')).toBe('APIs');
+    expect(languageService.translate('navigation.collapseMenu')).toBe('Collapse menu');
+    expect(languageService.translate('navigation.expandMenu')).toBe('Expand menu');
     expect(languageService.translate('userMenu.signOut')).toBe('Sign Out');
     expect(languageService.translate('dashboard.tabs.overview')).toBe('Overview');
     expect(languageService.translate('tasks.details')).toBe('Details');
@@ -206,6 +208,8 @@ describe('i18n translations', () => {
     expect(languageService.translate('common.cancel')).toBe('Отмена');
     expect(languageService.translate('auth.login.submit')).toBe('Войти');
     expect(languageService.translate('navigation.apis')).toBe('API');
+    expect(languageService.translate('navigation.collapseMenu')).toBe('Свернуть меню');
+    expect(languageService.translate('navigation.expandMenu')).toBe('Развернуть меню');
     expect(languageService.translate('userMenu.signOut')).toBe('Выйти');
     expect(languageService.translate('dashboard.tabs.overview')).toBe('Обзор');
     expect(languageService.translate('tasks.details')).toBe('Подробнее');
@@ -243,6 +247,8 @@ describe('i18n translations', () => {
 
     languageService.setLanguage('en');
     expect(languageService.translate('common.cancel')).toBe('Cancel');
+    expect(languageService.translate('navigation.collapseMenu')).toBe('Collapse menu');
+    expect(languageService.translate('navigation.expandMenu')).toBe('Expand menu');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('NEXT');
     expect(languageService.translate('applications.creation.title')).toBe('Application creation');
     expect(languageService.translate('applications.navigation.globalSettings')).toBe('Global settings');
