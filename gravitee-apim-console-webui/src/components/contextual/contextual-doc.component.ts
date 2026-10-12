@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-import { Component, ElementRef, EventEmitter, Injector, Input, Output } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Injector, Input, OnDestroy, Output } from '@angular/core';
 import { UpgradeComponent } from '@angular/upgrade/static';
 
 @Component({
@@ -25,7 +25,7 @@ import { UpgradeComponent } from '@angular/upgrade/static';
     class: 'bootstrap',
   },
 })
-export class ContextualDocComponentComponent extends UpgradeComponent {
+export class ContextualDocComponentComponent extends UpgradeComponent implements OnDestroy {
   @Input()
   public contextualDocumentationPage: string;
 
@@ -33,5 +33,9 @@ export class ContextualDocComponentComponent extends UpgradeComponent {
   onClose!: EventEmitter<void>;
   constructor(elementRef: ElementRef, injector: Injector) {
     super('gvContextualDoc', elementRef, injector);
+  }
+
+  override ngOnDestroy(): void {
+    super.ngOnDestroy();
   }
 }

@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
 import { Subject } from 'rxjs';
 import { distinctUntilChanged, filter, map, startWith, takeUntil } from 'rxjs/operators';
@@ -83,7 +83,7 @@ import { distinctUntilChanged, filter, map, startWith, takeUntil } from 'rxjs/op
   ],
   standalone: false,
 })
-export class ManagementComponent {
+export class ManagementComponent implements OnInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
   private contextualDocVisibilityKey = 'gv-contextual-doc-visibility';
 
@@ -125,10 +125,12 @@ export class ManagementComponent {
 
           return route;
         }),
+        map(route => route.data?.docs?.page ?? undefined),
+        distinctUntilChanged(),
         takeUntil(this.unsubscribe$),
       )
-      .subscribe(route => {
-        this.contextualDocumentationPage = route.data.docs?.page ?? undefined;
+      .subscribe(page => {
+        this.contextualDocumentationPage = page;
       });
   }
 
