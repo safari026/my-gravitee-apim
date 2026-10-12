@@ -25,6 +25,7 @@ import { GioTopNavComponent } from './gio-top-nav.component';
 
 import { GioUserMenuModule } from '../gio-user-menu/gio-user-menu.module';
 import { GioNotificationMenuModule } from '../gio-notification-menu/gio-notification-menu.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -40,6 +41,7 @@ import { GioNotificationMenuModule } from '../gio-notification-menu/gio-notifica
     GioUserMenuModule,
     GioNotificationMenuModule,
     RouterModule,
+    TranslatePipe,
     NgOptimizedImage,
   ],
   declarations: [GioTopNavComponent],

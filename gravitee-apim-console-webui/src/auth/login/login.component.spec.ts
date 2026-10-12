@@ -25,6 +25,7 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { LoginModule } from './login.module';
 import { LoginComponent } from './login.component';
 
+import { LanguageService } from '../../shared/i18n/language.service';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
 
 describe('LoginComponent', () => {
@@ -48,6 +49,7 @@ describe('LoginComponent', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    localStorage.removeItem('gio-console-lang');
   });
 
   it('should login with username & password', async () => {
@@ -65,5 +67,48 @@ describe('LoginComponent', () => {
       url: `${CONSTANTS_TESTING.org.baseURL}/user/login`,
     });
     expect(req.request.headers.get('Authorization').startsWith('Basic')).toBeTruthy();
+  });
+
+  it('should show English login chrome by default', () => {
+    const text = fixture.nativeElement.textContent;
+
+    expect(text).toContain('Sign In');
+    expect(text).toContain('to continue to the APIM Console');
+    expect(text).toContain('Username');
+    expect(text).toContain('Password');
+    expect(text).toContain('Sign in');
+  });
+
+  it('should switch login chrome EN → RU → EN without recreating the component', () => {
+    const languageService = TestBed.inject(LanguageService);
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(localStorage.getItem('gio-console-lang')).toBe('ru');
+    expect(fixture.nativeElement.textContent).toContain('Вход');
+    expect(fixture.nativeElement.textContent).toContain('для продолжения работы с APIM Console');
+    expect(fixture.nativeElement.textContent).toContain('Имя пользователя');
+    expect(fixture.nativeElement.textContent).toContain('Пароль');
+    expect(fixture.nativeElement.textContent).toContain('Войти');
+    expect(fixture.nativeElement.textContent).not.toContain('Sign In');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(localStorage.getItem('gio-console-lang')).toBe('en');
+    expect(fixture.nativeElement.textContent).toContain('Sign In');
+    expect(fixture.nativeElement.textContent).toContain('Sign in');
+    expect(fixture.nativeElement.textContent).not.toContain('Вход');
+  });
+
+  it('should translate validation errors without reload', () => {
+    fixture.componentInstance.loginForm.markAllAsTouched();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Username is required.');
+    expect(fixture.nativeElement.textContent).toContain('Password is required.');
+
+    TestBed.inject(LanguageService).setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Введите имя пользователя.');
+    expect(fixture.nativeElement.textContent).toContain('Введите пароль.');
   });
 });

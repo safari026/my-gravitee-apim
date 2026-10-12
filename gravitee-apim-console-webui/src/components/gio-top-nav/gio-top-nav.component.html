@@ -26,17 +26,28 @@
         <img class="gravitee-logo" ngSrc="assets/gravitee_logo_solaris.png" alt="Gravitee" height="62" width="64" />
       </ng-template>
     </button>
-    <gio-top-bar-content type="apim" productName="API Management"></gio-top-bar-content>
-    <gio-top-bar-link *ngIf="portalUrl" [url]="portalUrl" name="Developer Portal"></gio-top-bar-link>
+    <gio-top-bar-content type="apim" [productName]="'navigation.apiManagement' | translate"></gio-top-bar-content>
+    <gio-top-bar-link *ngIf="portalUrl" [url]="portalUrl" [name]="'navigation.developerPortal' | translate"></gio-top-bar-link>
     <gio-top-bar-menu>
       <button
         mat-icon-button
+        type="button"
         (click)="openContextualDocumentationClick()"
         aria-label="Display contextual documentation"
         *ngIf="!isOEM && displayContextualDocumentationButton"
         data-pendoId="sidenav-resource-center"
+        data-testid="top-nav-contextual-documentation-button"
       >
         <mat-icon svgIcon="gio:question-mark-circle"></mat-icon>
+      </button>
+      <button
+        mat-icon-button
+        type="button"
+        (click)="toggleLanguage()"
+        [attr.aria-label]="'common.language.switch' | translate"
+        data-testid="top-nav-language-button"
+      >
+        <mat-icon>language</mat-icon>
       </button>
       <gio-notification-menu></gio-notification-menu>
       <gio-user-menu [hasAlert]="hasAlert" [userTaskCount]="userTaskCount"></gio-user-menu>

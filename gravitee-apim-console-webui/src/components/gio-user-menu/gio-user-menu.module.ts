@@ -24,6 +24,7 @@ import { MatDividerModule } from '@angular/material/divider';
 import { GioUserMenuComponent } from './gio-user-menu.component';
 
 import { MiddleEllipsisPipe } from '../../shared/pipes/middle-ellipsis.pipe';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -38,6 +39,7 @@ import { MiddleEllipsisPipe } from '../../shared/pipes/middle-ellipsis.pipe';
     MatMenuModule,
     MatDividerModule,
     MiddleEllipsisPipe,
+    TranslatePipe,
   ],
   declarations: [GioUserMenuComponent],
   exports: [GioUserMenuComponent],

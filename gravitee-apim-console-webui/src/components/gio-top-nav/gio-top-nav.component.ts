@@ -24,6 +24,7 @@ import { User } from '../../entities/user/user';
 import { TaskService } from '../../services-ngx/task.service';
 import { UiCustomizationService } from '../../services-ngx/ui-customization.service';
 import { EnvironmentSettingsService } from '../../services-ngx/environment-settings.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'gio-top-nav',
@@ -54,6 +55,7 @@ export class GioTopNavComponent implements OnInit, OnDestroy {
     public readonly taskService: TaskService,
     private readonly uiCustomizationService: UiCustomizationService,
     private readonly licenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
     private readonly environmentSettingsService: EnvironmentSettingsService,
   ) {}
 
@@ -97,8 +99,13 @@ export class GioTopNavComponent implements OnInit, OnDestroy {
       });
   }
 
+  toggleLanguage(): void {
+    const currentLanguage = this.languageService.currentLanguage();
+    this.languageService.setLanguage(currentLanguage === 'en' ? 'ru' : 'en');
+  }
+
   openContextualDocumentationClick = () => {
-    if (window.pendo && window.pendo.isReady()) {
+    if ((window as any).pendo && (window as any).pendo.isReady()) {
       // Do nothing Pendo use this button to trigger the "Resource Center"
       return;
     }

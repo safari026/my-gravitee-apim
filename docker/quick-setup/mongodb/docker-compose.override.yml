@@ -1,0 +1,47 @@
+services:
+  mongodb:
+    container_name: gravitee_41220_mongodb
+
+  elasticsearch:
+    container_name: gravitee_41220_elasticsearch
+
+  gateway:
+    image: graviteeio/apim-gateway:4.12.20
+    container_name: gravitee_41220_gateway
+
+  management_api:
+    image: graviteeio/apim-management-api:4.12.20
+    container_name: gravitee_41220_management_api
+
+  management_ui:
+    container_name: gravitee_41220_management_ui
+
+  portal_ui:
+    container_name: gravitee_41220_portal_ui
+
+  mailhog:
+    container_name: gravitee_41220_mailhog
+
+networks:
+  frontend:
+    name: gravitee_41220_frontend
+  storage:
+    name: gravitee_41220_storage
+  email:
+    name: gravitee_41220_email
+
+volumes:
+  data-elasticsearch:
+    name: gravitee_41220_data-elasticsearch
+  data-mongo:
+    name: gravitee_41220_data-mongo
+  apim-mongodb-logs:
+    name: gravitee_41220_apim-mongodb-logs
+  apim-gateway-logs:
+    name: gravitee_41220_apim-gateway-logs
+  apim-management-api-logs:
+    name: gravitee_41220_apim-management-api-logs
+  apim-management-ui-logs:
+    name: gravitee_41220_apim-management-ui-logs
+  apim-portal-ui-logs:
+    name: gravitee_41220_apim-portal-ui-logs
