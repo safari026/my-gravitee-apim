@@ -13,14 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { map, takeUntil, tap } from 'rxjs/operators';
 import { Subject } from 'rxjs';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 import { ApplicationMetadataService } from '../../../../services-ngx/application-metadata.service';
 import { MetadataSaveServices } from '../../../../components/gio-metadata/gio-metadata.component';
 import { ApplicationService } from '../../../../services-ngx/application.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'application-metadata',
@@ -40,6 +42,8 @@ export class ApplicationMetadataComponent implements OnInit, OnDestroy {
     private readonly activatedRoute: ActivatedRoute,
     private readonly applicationService: ApplicationService,
     private readonly applicationMetadataService: ApplicationMetadataService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit() {
@@ -54,7 +58,11 @@ export class ApplicationMetadataComponent implements OnInit, OnDestroy {
       update: updateMetadata => this.applicationMetadataService.updateMetadata(applicationId, updateMetadata),
       delete: metadataKey => this.applicationMetadataService.deleteMetadata(applicationId, metadataKey),
     };
-    this.description = `Create notification template of application metadata to retrieve custom information about your API`;
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.description = this.languageService.translate('applications.metadata.description');
+      });
 
     this.applicationService
       .getById(applicationId)
@@ -66,6 +74,7 @@ export class ApplicationMetadataComponent implements OnInit, OnDestroy {
   }
 
   ngOnDestroy() {
+    this.unsubscribe$.next();
     this.unsubscribe$.unsubscribe();
   }
 }

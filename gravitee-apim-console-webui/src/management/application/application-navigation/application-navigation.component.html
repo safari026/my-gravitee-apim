@@ -37,7 +37,9 @@
     <div class="application-navigation__content">
       <div class="application-navigation__content__view">
         <gio-breadcrumb *ngIf="hasBreadcrumb" class="application-navigation__breadcrumb">
-          <span *gioBreadcrumbItem class="application-navigation__breadcrumb__item">Applications</span>
+          <span *gioBreadcrumbItem class="application-navigation__breadcrumb__item">{{
+            'applications.navigation.applications' | translate
+          }}</span>
           <div *gioBreadcrumbItem gioSubmenuTitle class="application-navigation__menu__title">{{ application.name }}</div>
           <ng-template ngFor let-item [ngForOf]="computeBreadcrumbItems()">
             <span *gioBreadcrumbItem class="application-navigation__breadcrumb__item">{{ item }}</span>

@@ -45,6 +45,7 @@ import { GioUsersSelectorModule } from '../../../../shared/components/gio-users-
 import { GioFormUserAutocompleteModule } from '../../../../shared/components/gio-user-autocomplete/gio-form-user-autocomplete.module';
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { ApiUserGroupModule } from '../../../api/user-group-access/api-user-group.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApplicationGeneralGroupsComponent, ApplicationGeneralMembersComponent, ApplicationGeneralTransferOwnershipComponent],
@@ -78,6 +79,7 @@ import { ApiUserGroupModule } from '../../../api/user-group-access/api-user-grou
     GioTableWrapperModule,
     ApiUserGroupModule,
     FormsModule,
+    TranslatePipe,
   ],
 })
 export class ApplicationGeneralUserGroupModule {}

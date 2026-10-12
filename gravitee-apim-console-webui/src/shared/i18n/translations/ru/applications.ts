@@ -376,7 +376,11 @@ export const ruApplications = {
     revoked: 'API-ключ отозван',
     renewTitle: 'Обновить API-ключ',
     renewContent: 'Обновить API-ключ?',
+    renewWarning: 'Предыдущий API-ключ станет недействителен через 2 часа.',
     renewed: 'API-ключ обновлен',
+    generated: 'Сгенерирован новый API-ключ',
+    copied: 'API-ключ скопирован в буфер обмена',
+    renewButton: 'Обновить API-ключ',
   },
   analytics: {
     overview: 'Обзор',

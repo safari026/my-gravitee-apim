@@ -14,9 +14,13 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { Component, Injector, Input, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { startWith, takeUntil } from 'rxjs/operators';
+import { Subject } from 'rxjs';
 
 import { Instance } from '../../../../entities/instance/instance';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 interface MenuItem {
   displayName: string;
@@ -30,21 +34,38 @@ interface MenuItem {
   styleUrls: ['./instance-details-header.component.scss'],
   standalone: false,
 })
-export class InstanceDetailsHeaderComponent implements OnInit {
+export class InstanceDetailsHeaderComponent implements OnInit, OnDestroy {
   @Input()
   public instance: Instance;
 
   public tabMenuItems: MenuItem[] = [];
+  private readonly unsubscribe$ = new Subject<void>();
+
+  constructor(
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+  ) {}
 
   ngOnInit(): void {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(startWith(this.languageService.currentLanguage()), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.buildTabs());
+  }
+
+  ngOnDestroy(): void {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
+
+  private buildTabs(): void {
     this.tabMenuItems = [
       {
-        displayName: 'Environment',
+        displayName: this.languageService.translate('gateways.details.tabs.environment'),
         routerLink: 'environment',
         testId: 'instances-detail-environment',
       },
       {
-        displayName: 'Monitoring',
+        displayName: this.languageService.translate('gateways.details.tabs.monitoring'),
         routerLink: 'monitoring',
         testId: 'instances-detail-monitoring',
       },

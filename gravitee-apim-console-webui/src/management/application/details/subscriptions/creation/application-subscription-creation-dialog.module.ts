@@ -29,6 +29,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { ApplicationSubscriptionCreationDialogComponent } from './application-subscription-creation-dialog.component';
 
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [ApplicationSubscriptionCreationDialogComponent],
   exports: [ApplicationSubscriptionCreationDialogComponent],
@@ -49,6 +51,7 @@ import { ApplicationSubscriptionCreationDialogComponent } from './application-su
     MatRadioGroup,
     GioFormJsonSchemaModule,
     MatSelect,
+    TranslatePipe,
   ],
 })
 export class ApplicationSubscriptionCreationDialogModule {}

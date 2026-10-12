@@ -376,7 +376,11 @@ export const enApplications = {
     revoked: 'API Key revoked',
     renewTitle: 'Renew API Key',
     renewContent: 'Are you sure you want to renew API Key ?',
+    renewWarning: 'Your previous API Key will be no longer valid in 2 hours!',
     renewed: 'API Key renewed',
+    generated: 'A new API Key has been generated',
+    copied: 'API Key has been copied to clipboard',
+    renewButton: 'Renew API Key',
   },
   analytics: {
     overview: 'Overview',

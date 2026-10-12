@@ -14,16 +14,18 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
 import { formatDate } from '@angular/common';
-import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { takeUntil, startWith } from 'rxjs/operators';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
 import { Instance } from '../../../../entities/instance/instance';
 import { InstanceService } from '../../../../services-ngx/instance.service';
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 type InformationItemDS = {
   icon: string;
@@ -53,6 +55,7 @@ type SystemPropertyItemDS = {
 export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
   public instance: Instance;
   public hasSystemProperties = false;
+  public environmentSectionName = '';
 
   public informationItemsDS: InformationItemDS;
   public filteredInformationItemsDS: InformationItemDS;
@@ -85,14 +88,21 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
   constructor(
     private readonly activatedRoute: ActivatedRoute,
     private readonly instanceService: InstanceService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit(): void {
-    this.instanceService
-      .get(this.activatedRoute.snapshot.params.instanceId)
+    combineLatest([
+      this.instanceService.get(this.activatedRoute.snapshot.params.instanceId),
+      toObservable(this.languageService.currentLanguage, { injector: this.injector }).pipe(
+        startWith(this.languageService.currentLanguage()),
+      ),
+    ])
       .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(instance => {
+      .subscribe(([instance]) => {
         this.instance = instance;
+        this.environmentSectionName = this.languageService.translate('gateways.details.tabs.environment');
 
         this.hasSystemProperties = this.instance.systemProperties ? Object.keys(this.instance.systemProperties).length > 0 : false;
 
@@ -111,42 +121,56 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     this.unsubscribe$.unsubscribe();
   }
 
+  private t(key: string): string {
+    return this.languageService.translate(key);
+  }
+
+  private stateLabel(state: string): string {
+    if (state === 'STARTED') {
+      return this.t('gateways.status.started');
+    }
+    if (state === 'STOPPED') {
+      return this.t('gateways.status.stopped');
+    }
+    return this.t('gateways.status.unknown');
+  }
+
   private initInformationTable() {
     this.informationItemsDS = [
       {
         icon: 'gio:building',
-        type: 'Hostname',
+        type: this.t('gateways.environment.info.hostname'),
         value: this.instance.hostname,
       },
       {
         icon: 'gio:wifi',
-        type: 'IP',
+        type: this.t('gateways.environment.info.ip'),
         value: this.instance.ip,
       },
       {
         icon: 'gio:wifi',
-        type: 'Port',
+        type: this.t('gateways.environment.info.port'),
         value: this.instance.port,
       },
       {
         icon: this.getIconFromState(this.instance.state),
-        type: 'State',
-        value: this.instance.state,
+        type: this.t('gateways.environment.info.state'),
+        value: this.stateLabel(this.instance.state),
         class: this.getClassFromState(this.instance.state),
       },
       {
         icon: 'gio:flag',
-        type: 'Version',
+        type: this.t('gateways.environment.info.version'),
         value: this.instance.version,
       },
       {
         icon: 'gio:clock-outline',
-        type: 'Started at',
+        type: this.t('gateways.environment.info.startedAt'),
         value: formatDate(this.instance.started_at, 'medium', 'en-US'),
       },
       {
         icon: 'gio:heart',
-        type: 'Last heartbeat at',
+        type: this.t('gateways.environment.info.lastHeartbeatAt'),
         value: formatDate(this.instance.last_heartbeat_at, 'medium', 'en-US'),
       },
     ];
@@ -154,7 +178,7 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.tags?.length > 0) {
       this.informationItemsDS.push({
         icon: 'gio:label-outline',
-        type: 'Sharding tags',
+        type: this.t('gateways.environment.info.shardingTags'),
         value: this.instance.tags.join(', '),
       });
     }
@@ -162,7 +186,7 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.tenant) {
       this.informationItemsDS.push({
         icon: 'gio:data-transfer-both',
-        type: 'Tenant',
+        type: this.t('gateways.environment.info.tenant'),
         value: this.instance.tenant,
       });
     }
@@ -170,7 +194,7 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.organizations_hrids?.length > 0) {
       this.informationItemsDS.push({
         icon: 'gio:product-apim',
-        type: 'Organizations',
+        type: this.t('gateways.environment.info.organizations'),
         value: this.instance.organizations_hrids.join(', '),
       });
     }
@@ -178,7 +202,7 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.environments_hrids?.length > 0) {
       this.informationItemsDS.push({
         icon: 'gio:server',
-        type: 'Environments',
+        type: this.t('gateways.environment.info.environments'),
         value: this.instance.environments_hrids.join(', '),
       });
     }
@@ -186,7 +210,7 @@ export class InstanceDetailsEnvironmentComponent implements OnInit, OnDestroy {
     if (this.instance.stopped_at) {
       this.informationItemsDS.push({
         icon: 'gio:power',
-        type: 'Stopped at',
+        type: this.t('gateways.environment.info.stoppedAt'),
         value: formatDate(this.instance.stopped_at, 'medium', 'en-US'),
       });
     }

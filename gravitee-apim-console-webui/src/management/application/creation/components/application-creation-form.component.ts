@@ -35,6 +35,7 @@ import { Observable } from 'rxjs';
 import { ApplicationType } from '../../../../entities/application-type/ApplicationType';
 import { Group } from '../../../../entities/group/group';
 import { GroupService } from '../../../../services-ngx/group.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type ApplicationForm = {
   name: FormControl<string>;
@@ -74,6 +75,7 @@ export type ApplicationCreationFormApplicationType = ApplicationType & {
     GioFormTagsInputModule,
     GioBannerModule,
     GioFormHeadersModule,
+    TranslatePipe,
   ],
   styleUrls: ['./application-creation-form.component.scss'],
   templateUrl: './application-creation-form.component.html',
@@ -104,6 +106,40 @@ export class ApplicationCreationFormComponent implements OnInit {
   );
 
   constructor(private groupService: GroupService) {}
+
+  typeTitleKey(id: string): string {
+    switch (id?.toUpperCase()) {
+      case 'SIMPLE':
+        return 'applications.types.simple';
+      case 'BROWSER':
+        return 'applications.types.spa';
+      case 'WEB':
+        return 'applications.types.web';
+      case 'NATIVE':
+        return 'applications.types.native';
+      case 'BACKEND_TO_BACKEND':
+        return 'applications.types.backendToBackend';
+      default:
+        return 'applications.types.simple';
+    }
+  }
+
+  typeSubtitleKey(id: string): string {
+    switch (id?.toUpperCase()) {
+      case 'SIMPLE':
+        return 'applications.typeDescriptions.simple';
+      case 'BROWSER':
+        return 'applications.typeDescriptions.spa';
+      case 'WEB':
+        return 'applications.typeDescriptions.web';
+      case 'NATIVE':
+        return 'applications.typeDescriptions.native';
+      case 'BACKEND_TO_BACKEND':
+        return 'applications.typeDescriptions.backendToBackend';
+      default:
+        return 'applications.typeDescriptions.simple';
+    }
+  }
 
   ngOnInit() {
     this.applicationType$ = this.applicationFormGroup.get('type').valueChanges.pipe(

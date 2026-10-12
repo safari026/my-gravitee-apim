@@ -13,10 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { LanguageService } from '../../../../shared/i18n/language.service';
+
 const ApplicationHeaderComponent: ng.IComponentOptions = {
   bindings: {
     application: '<',
   },
+  controller: [
+    'ngLanguageService',
+    class {
+      constructor(private readonly ngLanguageService: LanguageService) {}
+
+      translate(key: string, params?: Record<string, string | number>): string {
+        return this.ngLanguageService.translate(key, params);
+      }
+    },
+  ],
   template: require('html-loader!./application-header.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
 };
 

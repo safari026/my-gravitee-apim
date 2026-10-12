@@ -44,6 +44,7 @@ import { ApplicationSubscriptionListModule } from './details/subscriptions/list/
 import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioRoleModule } from '../../shared/components/gio-role/gio-role.module';
 import { GioPermissionModule } from '../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -74,6 +75,7 @@ import { GioPermissionModule } from '../../shared/components/gio-permission/gio-
     ApplicationGeneralUserGroupModule,
     ApplicationGeneralModule,
     ApplicationSubscriptionListModule,
+    TranslatePipe,
   ],
   declarations: [EnvApplicationListComponent, ApplicationAnalyticsComponent, ApplicationLogsComponent, ApplicationLogComponent],
 })

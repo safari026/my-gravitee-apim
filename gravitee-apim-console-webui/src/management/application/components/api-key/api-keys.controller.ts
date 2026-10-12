@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 import NotificationService from '../../../../services/notification.service';
 import ApplicationService from '../../../../services/application.service';
 import { ApiKeyMode } from '../../../../entities/application/Application';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 class ApiKeysController {
   private subscription: any;
@@ -30,7 +31,12 @@ class ApiKeysController {
     private $mdDialog: angular.material.IDialogService,
     private NotificationService: NotificationService,
     private ApplicationService: ApplicationService,
+    private ngLanguageService: LanguageService,
   ) {}
+
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
 
   $onInit() {
     this.listApiKeys();
@@ -53,15 +59,15 @@ class ApiKeysController {
         template: require('html-loader!../../../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Are you sure you want to renew your API Key?',
-          msg: 'Your previous API Key will be no longer valid in 2 hours!',
-          confirmButton: 'Renew',
+          title: this.translate('applications.apiKeys.renewTitle'),
+          msg: this.translate('applications.apiKeys.renewWarning'),
+          confirmButton: this.translate('common.renew'),
         },
       })
       .then(response => {
         if (response) {
           this.ApplicationService.renewApiKey(this.application, this.subscription).then(() => {
-            this.NotificationService.show('A new API Key has been generated');
+            this.NotificationService.show(this.translate('applications.apiKeys.generated'));
             this.listApiKeys();
           });
         }
@@ -93,14 +99,14 @@ class ApiKeysController {
         template: require('html-loader!../../../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: "Are you sure you want to revoke API Key '" + apiKey.key + "'?",
-          confirmButton: 'Revoke',
+          title: this.translate('applications.apiKeys.revokeContent', { key: apiKey.key }),
+          confirmButton: this.translate('common.revoke'),
         },
       })
       .then(response => {
         if (response) {
           this.ApplicationService.revokeApiKey(this.application, this.subscription, apiKey.id).then(() => {
-            this.NotificationService.show('API Key ' + apiKey.key + ' has been revoked!');
+            this.NotificationService.show(this.translate('applications.apiKeys.revoked'));
             this.listApiKeys();
           });
         }
@@ -108,14 +114,16 @@ class ApiKeysController {
   }
 
   onCopyApiKeySuccess(e): void {
-    this.NotificationService.show('API Key has been copied to clipboard');
+    this.NotificationService.show(this.translate('applications.apiKeys.copied'));
     e.clearSelection();
   }
 
   getTitle(): string {
-    return this.isSharedApiKey() ? 'Shared API Key' : 'API Keys';
+    return this.isSharedApiKey()
+      ? this.translate('applications.navigation.sharedApiKeys')
+      : this.translate('applications.apiKeys.title');
   }
 }
-ApiKeysController.$inject = ['$mdDialog', 'NotificationService', 'ApplicationService'];
+ApiKeysController.$inject = ['$mdDialog', 'NotificationService', 'ApplicationService', 'ngLanguageService'];
 
 export default ApiKeysController;
