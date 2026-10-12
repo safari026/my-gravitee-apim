@@ -12,6 +12,7 @@ export const ruCommon = {
   selectPage: 'Выбрать страницу',
   hits: 'Число запросов',
   hitsTotal: 'Всего запросов',
+  total: 'Всего',
   noStatus: 'Без статуса',
   add: 'Добавить',
   create: 'Создать',

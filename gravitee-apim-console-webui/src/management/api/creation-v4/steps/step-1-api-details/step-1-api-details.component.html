@@ -18,10 +18,10 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 1</div>
-      <div class="api-creation-v4__step__header__subtitle">Provide some details on your API</div>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 1 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.step1.subtitle' | translate }}</div>
     </div>
-    <div class="mat-h3">API details</div>
+    <div class="mat-h3">{{ 'apis.creation.v4.step1.title' | translate }}</div>
     <form [formGroup]="form" (ngSubmit)="save()">
       <div class="step-1-api-details__row">
         <mat-form-field appearance="outline">
@@ -34,30 +34,30 @@
             required="true"
             data-testid="api_creation_v4_name_input"
           />
-          <mat-label>API name</mat-label>
-          <mat-hint>This name will be public and will be used in the Gravitee Developer Portal</mat-hint>
-          <mat-error *ngIf="form.controls.name.errors?.required">API name is required</mat-error>
+          <mat-label>{{ 'apis.creation.v4.step1.name' | translate }}</mat-label>
+          <mat-hint>{{ 'apis.creation.v4.step1.nameHint' | translate }}</mat-hint>
+          <mat-error *ngIf="form.controls.name.errors?.required">{{ 'apis.creation.v4.step1.nameRequired' | translate }}</mat-error>
         </mat-form-field>
         <mat-form-field appearance="outline">
           <input id="version" type="text" matInput formControlName="version" maxlength="32" required="true" />
-          <mat-label data-testid="api_creation_v4_version_input">Version number</mat-label>
-          <mat-hint>For example 1.1, 1.1.1</mat-hint>
-          <mat-error *ngIf="form.controls.version.errors?.required">Version number is required</mat-error>
+          <mat-label data-testid="api_creation_v4_version_input">{{ 'apis.creation.v4.step1.version' | translate }}</mat-label>
+          <mat-hint>{{ 'apis.creation.v4.step1.versionHint' | translate }}</mat-hint>
+          <mat-error *ngIf="form.controls.version.errors?.required">{{ 'apis.creation.v4.step1.versionRequired' | translate }}</mat-error>
         </mat-form-field>
       </div>
       <div class="step-1-api-details__row">
         <mat-form-field appearance="outline">
           <textarea id="description" matInput #input maxlength="250" formControlName="description" rows="4"></textarea>
-          <mat-label>Description</mat-label>
-          <mat-hint align="start">Describe how your API works</mat-hint>
+          <mat-label>{{ 'apis.creation.v4.step1.description' | translate }}</mat-label>
+          <mat-hint align="start">{{ 'apis.creation.v4.step1.descriptionHint' | translate }}</mat-hint>
           <mat-hint align="end">{{ input.value.length }}/250</mat-hint>
-          <mat-error *ngIf="form.controls.description.errors?.required">Description is required</mat-error>
+          <mat-error *ngIf="form.controls.description.errors?.required">{{ 'apis.creation.v4.step1.descriptionRequired' | translate }}</mat-error>
         </mat-form-field>
       </div>
       <div class="api-creation-v4__step__footer">
-        <button mat-stroked-button type="button" (click)="onExit()">Exit</button>
+        <button mat-stroked-button type="button" (click)="onExit()">{{ 'apis.creation.v4.exit' | translate }}</button>
         <button mat-flat-button color="primary" type="submit" [disabled]="form.invalid" data-testid="api_creation_v4_validate_button">
-          Validate my API details
+          {{ 'apis.creation.v4.step1.validate' | translate }}
         </button>
       </div>
     </form>

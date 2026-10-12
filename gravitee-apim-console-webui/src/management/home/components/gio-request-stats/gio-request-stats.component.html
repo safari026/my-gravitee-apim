@@ -18,12 +18,12 @@
 <div *ngIf="data; else noContent" class="gio-request-stats">
   <div class="gio-request-stats__body">
     <div class="gio-request-stats__body__title">
-      <span>Requests</span>
+      <span>{{ 'dashboard.requestStats.requests' | translate }}</span>
     </div>
     <div class="gio-request-stats__body__rows">
       <div class="gio-request-stats__body__row">
         <span *ngIf="data.rps; else emptyNumber" class="gio-request-stats__body__row__value">{{ data.rps | number: '.1-1' }}</span>
-        <span class="gio-request-stats__body__row__label">Per second</span>
+        <span class="gio-request-stats__body__row__label">{{ 'dashboard.requestStats.perSecond' | translate }}</span>
       </div>
       <div class="gio-request-stats__body__row">
         <span
@@ -33,34 +33,34 @@
           [matTooltipDisabled]="data.count < 999"
           >{{ data.count | shortNumber: 2 }}</span
         >
-        <span class="gio-request-stats__body__row__label">Total</span>
+        <span class="gio-request-stats__body__row__label">{{ 'dashboard.requestStats.total' | translate }}</span>
       </div>
     </div>
   </div>
 
   <div class="gio-request-stats__body">
     <div class="gio-request-stats__body__title">
-      <span>Response Time</span>
+      <span>{{ 'dashboard.requestStats.responseTime' | translate }}</span>
     </div>
     <div class="gio-request-stats__body__rows">
       <div class="gio-request-stats__body__row">
         <span *ngIf="data.min; else emptyNumber" class="gio-request-stats__body__row__value">{{ data.min | number: '.1-2' }} ms</span>
-        <span class="gio-request-stats__body__row__label">Min</span>
+        <span class="gio-request-stats__body__row__label">{{ 'dashboard.requestStats.min' | translate }}</span>
       </div>
       <div class="gio-request-stats__body__row">
         <span *ngIf="data.max; else emptyNumber" class="gio-request-stats__body__row__value">{{ data.max | number: '.1-2' }} ms</span>
-        <span class="gio-request-stats__body__row__label">Max</span>
+        <span class="gio-request-stats__body__row__label">{{ 'dashboard.requestStats.max' | translate }}</span>
       </div>
       <div class="gio-request-stats__body__row">
         <span *ngIf="data.avg; else emptyNumber" class="gio-request-stats__body__row__value">{{ data.avg | number: '.1-2' }} ms</span>
-        <span class="gio-request-stats__body__row__label">Average</span>
+        <span class="gio-request-stats__body__row__label">{{ 'dashboard.requestStats.average' | translate }}</span>
       </div>
     </div>
   </div>
 </div>
 
 <ng-template #noContent>
-  <div class="mat-body">No content to display</div>
+  <div class="mat-body">{{ 'dashboard.empty' | translate }}</div>
 </ng-template>
 
 <ng-template #emptyNumber>

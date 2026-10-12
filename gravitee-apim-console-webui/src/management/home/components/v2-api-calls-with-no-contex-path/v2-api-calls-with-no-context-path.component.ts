@@ -27,10 +27,11 @@ import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { PlatformLog } from '../../../../entities/platform/platformLogs';
 import { PlatformService } from '../../../../services-ngx/platform.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'v2-api-calls-with-no-context-path',
-  imports: [GioTableWrapperModule, MatTableModule, GioLoaderModule, DatePipe],
+  imports: [GioTableWrapperModule, MatTableModule, GioLoaderModule, DatePipe, TranslatePipe],
   templateUrl: './v2-api-calls-with-no-context-path.component.html',
   styleUrl: './v2-api-calls-with-no-context-path.component.scss',
 })

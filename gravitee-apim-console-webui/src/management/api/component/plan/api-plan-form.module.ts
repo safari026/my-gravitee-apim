@@ -37,6 +37,7 @@ import { ApiPlanFormComponent } from './api-plan-form.component';
 
 import { GioSafePipeModule } from '../../../../shared/utils/safe.pipe.module';
 import { GioFormJsonSchemaExtendedModule } from '../../../../shared/components/form-json-schema-extended/form-json-schema-extended.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiPlanFormComponent, PlanEditGeneralStepComponent, PlanEditSecureStepComponent, PlanEditRestrictionStepComponent],
@@ -63,6 +64,7 @@ import { GioFormJsonSchemaExtendedModule } from '../../../../shared/components/f
     GioIconsModule,
     GioBannerModule,
     GioSafePipeModule,
+    TranslatePipe,
   ],
 })
 export class ApiPlanFormModule {}

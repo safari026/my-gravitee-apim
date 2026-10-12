@@ -25,6 +25,7 @@ import { PlanSecurityType } from '../../../../entities/plan';
 import { IfMatchEtagInterceptor } from '../../../../shared/interceptors/if-match-etag.interceptor';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import GroupService from '../../../../services/group.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 interface Page {
   fileName: string;
@@ -112,6 +113,7 @@ class ApiCreationV2ControllerAjs {
     private readonly ngIfMatchEtagInterceptor: IfMatchEtagInterceptor,
     private readonly ngRouter: Router,
     private readonly groupService: GroupService,
+    private readonly ngLanguageService: LanguageService,
   ) {
     this.api = {
       gravitee: '2.0.0',
@@ -136,19 +138,7 @@ class ApiCreationV2ControllerAjs {
     };
 
     this.pages = {};
-    this.securityTypes = [];
-    if (this.Constants.env.settings.plan.security.apikey.enabled) {
-      this.securityTypes.push({
-        id: PlanSecurityType.API_KEY,
-        name: 'API Key',
-      });
-    }
-    if (this.Constants.env.settings.plan.security.keyless.enabled) {
-      this.securityTypes.push({
-        id: PlanSecurityType.KEY_LESS,
-        name: 'Keyless (public)',
-      });
-    }
+    this.initSecurityTypes();
 
     this.rateLimitTimeUnits = ['SECONDS', 'MINUTES'];
     this.quotaTimeUnits = ['HOURS', 'DAYS', 'WEEKS', 'MONTHS'];
@@ -208,6 +198,30 @@ class ApiCreationV2ControllerAjs {
 
     if (changes.hasMoreGroups) {
       this.hasMoreGroups = changes.hasMoreGroups.currentValue;
+    }
+
+    if (changes.language) {
+      this.initSecurityTypes();
+    }
+  };
+
+  translate = (key: string, params?: Record<string, string | number>): string => {
+    return this.ngLanguageService.translate(key, params);
+  };
+
+  initSecurityTypes = () => {
+    this.securityTypes = [];
+    if (this.Constants.env.settings.plan.security.apikey.enabled) {
+      this.securityTypes.push({
+        id: PlanSecurityType.API_KEY,
+        name: this.translate('apis.creation.v2.plan.security.apiKey'),
+      });
+    }
+    if (this.Constants.env.settings.plan.security.keyless.enabled) {
+      this.securityTypes.push({
+        id: PlanSecurityType.KEY_LESS,
+        name: this.translate('apis.creation.v2.plan.security.keyless'),
+      });
     }
   };
 
@@ -325,12 +339,12 @@ class ApiCreationV2ControllerAjs {
           if (deployAndStart) {
             this.ApiService.deploy(api.data.id).then(() => {
               this.ApiService.start(api.data).then(() => {
-                this.NotificationService.show('API created, deployed and started');
+                this.NotificationService.show(this.translate('apis.creation.v2.confirmation.createdDeployedStarted'));
                 this.ngRouter.navigate(['../..', api.data.id], { relativeTo: this.activatedRoute });
               });
             });
           } else {
-            this.NotificationService.show('API created');
+            this.NotificationService.show(this.translate('apis.creation.v2.confirmation.created'));
             this.ngRouter.navigate(['../..', api.data.id], { relativeTo: this.activatedRoute });
           }
 
@@ -354,7 +368,9 @@ class ApiCreationV2ControllerAjs {
         res => {
           this.contextPathInvalid = !res.ok;
           if (this.contextPathInvalid) {
-            this.NotificationService.show(`Invalid context path ${res.reason}`);
+            this.NotificationService.show(
+              this.translate('apis.creation.v2.general.invalidContextPath', { reason: res.reason ?? '' }),
+            );
           } else {
             this.submitCurrentStep(stepData);
           }
@@ -527,7 +543,7 @@ class ApiCreationV2ControllerAjs {
         if (file.type) {
           this.selectFile(file);
         } else {
-          this.NotificationService.showError('Only Markdown, OpenAPI, AsyncAPI, and AsciiDoc files are supported');
+          this.NotificationService.showError(this.translate('apis.creation.v2.documentation.unsupportedFile'));
         }
       }
     });
@@ -565,8 +581,8 @@ class ApiCreationV2ControllerAjs {
         template: require('html-loader!../../../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Warning',
-          msg: 'Are you sure you want to remove this page?',
+          title: this.translate('apis.creation.v2.documentation.removePageTitle'),
+          msg: this.translate('apis.creation.v2.documentation.removePageMessage'),
         },
       })
       .then(() => {
@@ -593,6 +609,7 @@ ApiCreationV2ControllerAjs.$inject = [
   'ngIfMatchEtagInterceptor',
   'ngRouter',
   'GroupService',
+  'ngLanguageService',
 ];
 
 export default ApiCreationV2ControllerAjs;

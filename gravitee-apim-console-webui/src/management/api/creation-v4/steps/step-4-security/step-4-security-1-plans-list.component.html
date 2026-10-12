@@ -16,14 +16,20 @@
 
 -->
 <div class="step-4-security-1-plans-list__header">
-  <div class="step-4-security-1-plans-list__header__title">Your API plans</div>
+  <div class="step-4-security-1-plans-list__header__title">{{ 'apis.creation.v4.security.yourPlans' | translate }}</div>
 
   <div
-    [matTooltip]="'No compatible plan type enabled for entrypoints. This is configured under Settings > Portal > Settings > Console.'"
+    [matTooltip]="'apis.creation.v4.security.noCompatiblePlans' | translate"
     [matTooltipDisabled]="planMenuItems?.length > 0"
   >
-    <button mat-stroked-button type="button" aria-label="Add new plan" [matMenuTriggerFor]="menu" [disabled]="planMenuItems?.length === 0">
-      <mat-icon svgIcon="gio:plus"></mat-icon>Add plan
+    <button
+      mat-stroked-button
+      type="button"
+      [attr.aria-label]="'apis.creation.v4.security.addPlanAria' | translate"
+      [matMenuTriggerFor]="menu"
+      [disabled]="planMenuItems?.length === 0"
+    >
+      <mat-icon svgIcon="gio:plus"></mat-icon>{{ 'apis.creation.v4.security.addPlan' | translate }}
     </button>
     <mat-menu #menu="matMenu">
       <button mat-menu-item *ngFor="let planMenuItem of planMenuItems" (click)="addPlan(planMenuItem)">{{ planMenuItem.name }}</button>
@@ -31,27 +37,44 @@
   </div>
 </div>
 <form [formGroup]="form" (ngSubmit)="save()">
-  <table mat-table class="step-4-security-1-plans-list__table" [dataSource]="plans" aria-label="security plans">
+  <table
+    mat-table
+    class="step-4-security-1-plans-list__table"
+    [dataSource]="plans"
+    [attr.aria-label]="'apis.creation.v4.security.tableAria' | translate"
+  >
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef>Name</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'apis.creation.v4.security.name' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
     <ng-container matColumnDef="mode">
-      <th mat-header-cell *matHeaderCellDef>Mode</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'apis.creation.v4.security.mode' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.mode }}</td>
     </ng-container>
     <ng-container matColumnDef="security">
-      <th mat-header-cell *matHeaderCellDef>Security</th>
+      <th mat-header-cell *matHeaderCellDef>{{ 'apis.creation.v4.security.securityCol' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.security?.type }}</td>
     </ng-container>
     <ng-container matColumnDef="actions">
       <th mat-header-cell *matHeaderCellDef></th>
       <td mat-cell *matCellDef="let element">
         <div class="step-4-security-1-plans-list__table__actions">
-          <button type="button" mat-icon-button aria-label="Edit plan" matTooltip="Edit plan" (click)="editPlan(element)">
+          <button
+            type="button"
+            mat-icon-button
+            [attr.aria-label]="'apis.creation.v4.security.editPlan' | translate"
+            [matTooltip]="'apis.creation.v4.security.editPlan' | translate"
+            (click)="editPlan(element)"
+          >
             <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
           </button>
-          <button type="button" mat-icon-button aria-label="Remove plan" matTooltip="Remove plan" (click)="removePlan(element)">
+          <button
+            type="button"
+            mat-icon-button
+            [attr.aria-label]="'apis.creation.v4.security.removePlan' | translate"
+            [matTooltip]="'apis.creation.v4.security.removePlan' | translate"
+            (click)="removePlan(element)"
+          >
             <mat-icon svgIcon="gio:cancel"></mat-icon>
           </button>
         </div>
@@ -62,9 +85,9 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
   </table>
   <div class="api-creation-v4__step__footer">
-    <button mat-stroked-button type="button" (click)="goBack()">Previous</button>
+    <button mat-stroked-button type="button" (click)="goBack()">{{ 'apis.creation.v4.previous' | translate }}</button>
     <button mat-flat-button data-testid="validate_plans_button" color="primary" type="submit" [disabled]="form.invalid">
-      Validate my plans
+      {{ 'apis.creation.v4.security.validate' | translate }}
     </button>
   </div>
 </form>

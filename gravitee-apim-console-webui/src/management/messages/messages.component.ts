@@ -13,17 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { sortBy } from 'lodash';
 import { Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
 
 import { RoleService } from '../../services-ngx/role.service';
 import { HttpMessagePayload, MessageScope, TextMessagePayload } from '../../entities/message/messagePayload';
 import { MessageService } from '../../services-ngx/message.service';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { Role } from '../../entities/role/role';
 
 @Component({
   selector: 'messages',
@@ -32,17 +35,14 @@ import { SnackBarService } from '../../services-ngx/snack-bar.service';
   standalone: false,
 })
 export class MessagesComponent implements OnInit, OnDestroy {
-  channels = [
-    { id: 'PORTAL', name: 'Portal Notifications' },
-    { id: 'MAIL', name: 'Email' },
-    { id: 'HTTP', name: 'POST HTTP Message' },
-  ];
+  channels: { id: string; name: string }[] = [];
 
   form: UntypedFormGroup;
   recipients: { name: string; displayName: string }[];
   scope: MessageScope;
   sending = false;
   private apiId: string;
+  private roles: Role[] = [];
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   constructor(
@@ -50,29 +50,20 @@ export class MessagesComponent implements OnInit, OnDestroy {
     private readonly roleService: RoleService,
     private readonly messageService: MessageService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit(): void {
     this.apiId = this.activatedRoute.snapshot.params.apiId;
     this.scope = this.apiId ? 'APPLICATION' : 'ENVIRONMENT';
+    this.buildChannels();
     this.roleService
       .list(this.scope)
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(roles => {
-        const sortedRoles = sortBy(roles, ['name']);
-        this.recipients = sortedRoles.map(role => {
-          const displayName =
-            this.scope === 'APPLICATION'
-              ? `Members with the ${role.name} role on applications subscribed to this API`
-              : `Members with the ${role.name} role on this environment`;
-          return {
-            name: role.name,
-            displayName,
-          };
-        });
-        if (this.apiId) {
-          this.recipients.unshift({ name: 'API_SUBSCRIBERS', displayName: 'API subscribers' });
-        }
+        this.roles = sortBy(roles, ['name']);
+        this.buildRecipients();
         this.form = new UntypedFormGroup({
           channel: new UntypedFormControl('PORTAL', [Validators.required]),
           recipients: new UntypedFormControl([], [Validators.required]),
@@ -96,6 +87,15 @@ export class MessagesComponent implements OnInit, OnDestroy {
           }
         });
       });
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        this.buildChannels();
+        if (this.roles.length) {
+          this.buildRecipients();
+        }
+      });
   }
 
   ngOnDestroy(): void {
@@ -112,12 +112,16 @@ export class MessagesComponent implements OnInit, OnDestroy {
     obs.subscribe({
       next: res => {
         this.sending = false;
-        this.snackBarService.success(`Message sent to ${res} recipient${res > 1 ? 's' : ''}`);
+        this.snackBarService.success(
+          this.languageService.translate(res > 1 ? 'messages.success.many' : 'messages.success.one', { count: res }),
+        );
       },
       error: error => {
         this.sending = false;
-        let message = `Message could not be sent`;
-        if (error?.error?.message) message += ` because of ${error.error.message}`;
+        let message = this.languageService.translate('messages.error');
+        if (error?.error?.message) {
+          message = this.languageService.translate('messages.errorBecause', { reason: error.error.message });
+        }
         this.snackBarService.error(message);
       },
     });
@@ -125,6 +129,30 @@ export class MessagesComponent implements OnInit, OnDestroy {
 
   requiredPermission() {
     return this.scope === 'APPLICATION' ? { anyOf: ['api-message-c'] } : { anyOf: ['environment-message-c'] };
+  }
+
+  private buildChannels() {
+    this.channels = [
+      { id: 'PORTAL', name: this.languageService.translate('messages.channels.portal') },
+      { id: 'MAIL', name: this.languageService.translate('messages.channels.email') },
+      { id: 'HTTP', name: this.languageService.translate('messages.channels.http') },
+    ];
+  }
+
+  private buildRecipients() {
+    this.recipients = this.roles.map(role => ({
+      name: role.name,
+      displayName: this.languageService.translate(
+        this.scope === 'APPLICATION' ? 'messages.recipient.applicationRole' : 'messages.recipient.environmentRole',
+        { role: role.name },
+      ),
+    }));
+    if (this.apiId) {
+      this.recipients.unshift({
+        name: 'API_SUBSCRIBERS',
+        displayName: this.languageService.translate('messages.recipient.apiSubscribers'),
+      });
+    }
   }
 
   private getHttpPayload(): HttpMessagePayload {

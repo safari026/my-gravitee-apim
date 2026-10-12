@@ -18,14 +18,19 @@
 <mat-card class="card">
   <mat-card-header>
     <mat-card-title class="title"
-      >API Request Stats <mat-icon class="title__tooltip" svgIcon="gio:info" matTooltip="Excluding Websocket, Webhook and SSE"
-    /></mat-card-title>
+      >{{ 'dashboard.requestStats.title' | translate }}
+      <mat-icon
+        class="title__tooltip"
+        svgIcon="gio:info"
+        [matTooltip]="'dashboard.requestStats.tooltip' | translate"
+      />
+    </mat-card-title>
   </mat-card-header>
   @if (data) {
     <div class="stats">
       <div class="stats__body">
         <div class="stats__body__title">
-          <span>Requests</span>
+          <span>{{ 'dashboard.requestStats.requests' | translate }}</span>
         </div>
         <div class="stats__body__rows">
           <div class="stats__body__row">
@@ -38,7 +43,7 @@
                 -
               }
             </span>
-            <span class="stats__body__row__label">Per second</span>
+            <span class="stats__body__row__label">{{ 'dashboard.requestStats.perSecond' | translate }}</span>
           </div>
           <div class="stats__body__row">
             <span
@@ -52,14 +57,14 @@
                 -
               }
             </span>
-            <span class="stats__body__row__label">Total</span>
+            <span class="stats__body__row__label">{{ 'dashboard.requestStats.total' | translate }}</span>
           </div>
         </div>
       </div>
 
       <div class="stats__body">
         <div class="stats__body__title">
-          <span>Response Time</span>
+          <span>{{ 'dashboard.requestStats.responseTime' | translate }}</span>
         </div>
         <div class="stats__body__rows">
           <div class="stats__body__row">
@@ -67,12 +72,12 @@
               @if (data.responseMinTime) {
                 {{ data.responseMinTime | number: '.1-2' }} ms
               } @else if (data.responseMinTime === 0 && data.requestsTotal) {
-                {{ subMillisecondLabel }}
+                {{ 'dashboard.requestStats.subMillisecond' | translate }}
               } @else {
                 -
               }
             </span>
-            <span class="stats__body__row__label">Min</span>
+            <span class="stats__body__row__label">{{ 'dashboard.requestStats.min' | translate }}</span>
           </div>
           <div class="stats__body__row">
             <span class="stats__body__row__value">
@@ -82,7 +87,7 @@
                 -
               }
             </span>
-            <span class="stats__body__row__label">Max</span>
+            <span class="stats__body__row__label">{{ 'dashboard.requestStats.max' | translate }}</span>
           </div>
           <div class="stats__body__row">
             <span class="stats__body__row__value">
@@ -92,12 +97,12 @@
                 -
               }
             </span>
-            <span class="stats__body__row__label">Average</span>
+            <span class="stats__body__row__label">{{ 'dashboard.requestStats.average' | translate }}</span>
           </div>
         </div>
       </div>
     </div>
   } @else {
-    <div class="mat-body no-content">No content to display</div>
+    <div class="mat-body no-content">{{ 'dashboard.empty' | translate }}</div>
   }
 </mat-card>

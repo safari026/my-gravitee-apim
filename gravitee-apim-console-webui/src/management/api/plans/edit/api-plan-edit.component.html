@@ -18,7 +18,7 @@
 <div>
   <span class="md-headline">
     <gio-go-back-button [routerLink]="'../'" [queryParams]="{ status: currentPlanStatus ?? 'PUBLISHED' }"></gio-go-back-button>
-    Plan
+    {{ 'apis.plans.edit.title' | translate }}
   </span>
 </div>
 <form *ngIf="planForm && planMenuItem" autocomplete="off" gioFormFocusInvalid [formGroup]="planForm" (ngSubmit)="onSubmit()">
@@ -52,7 +52,7 @@
       data-testid="api_plans_previousstep"
       (click)="apiPlanForm.previousStep()"
     >
-      Back
+      {{ 'apis.plans.edit.back' | translate }}
     </button>
     <button
       *ngIf="mode === 'create' && apiPlanForm.hasNextStep() === true"
@@ -63,7 +63,7 @@
       data-testid="api_plans_nextstep"
       (click)="apiPlanForm.waitForNextStep()"
     >
-      Next
+      {{ 'apis.plans.edit.next' | translate }}
     </button>
   </gio-save-bar>
 </form>

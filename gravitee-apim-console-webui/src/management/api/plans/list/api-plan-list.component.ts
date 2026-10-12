@@ -35,6 +35,7 @@ import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { Api, ApiV4, Plan, PLAN_STATUS, PlanStatus, UpdateApiV4 } from '../../../../entities/management-api-v2';
 import { ApiPlanV2Service } from '../../../../services-ngx/api-plan-v2.service';
 import { PlanActionEvent, PlanDS } from '../../component/plan/plan-list/plan-list.component';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-plan-list',
@@ -64,7 +65,12 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly languageService: LanguageService,
   ) {}
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.languageService.translate(`apis.plans.${key}`, params);
+  }
 
   public ngOnInit(): void {
     this.status = this.activatedRoute.snapshot.queryParams?.status ?? 'PUBLISHED';
@@ -179,7 +185,7 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
           return EMPTY;
         }),
         map(plan => {
-          this.snackBarService.success(`The plan ${plan.name} has been published with success.`);
+          this.snackBarService.success(this.t('snackbar.published', { name: plan.name }));
           this.ngOnInit();
         }),
         takeUntil(this.unsubscribe$),
@@ -192,10 +198,9 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `Deprecate plan`,
-          content: `A deprecated plan is no longer available on the Developer Portal and new subscriptions to the plan cannot be created. Existing subscriptions are maintained.
-          <br /><br />Are you sure you want to deprecate the plan: ${plan.name}?`,
-          confirmButton: `Deprecate`,
+          title: this.t('deprecateDialog.title'),
+          content: this.t('deprecateDialog.content', { name: plan.name }),
+          confirmButton: this.t('deprecateDialog.confirm'),
         },
         role: 'alertdialog',
         id: 'deprecatePlanDialog',
@@ -209,7 +214,7 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
           return EMPTY;
         }),
         map(plan => {
-          this.snackBarService.success(`The plan ${plan.name} has been deprecated with success.`);
+          this.snackBarService.success(this.t('snackbar.deprecated', { name: plan.name }));
           this.ngOnInit();
         }),
         takeUntil(this.unsubscribe$),
@@ -224,24 +229,24 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
         switchMap(subscriptions => {
           let content = '';
           if (plan.security?.type === 'KEY_LESS') {
-            content = 'A keyless plan may have consumers. <br/>' + 'By closing this plan you will remove free access to this API.';
+            content = this.t('closeDialog.keyless');
           } else {
             if (subscriptions.page.size === 0) {
-              content = 'No subscription is associated to this plan. You can delete it safely.';
+              content = this.t('closeDialog.noSubscriptions');
             } else if (subscriptions.page.size > 0) {
-              content = `There are <code>subscriptions</code> subscription(s) associated to this plan.<br/> By closing this plan, all relative active subscriptions will also be closed.`;
+              content = this.t('closeDialog.withSubscriptions');
             }
           }
           return this.matDialog
             .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
               width: '500px',
               data: {
-                title: `Close plan`,
-                warning: `This operation is irreversible.`,
-                validationMessage: `Please, type in the name of the plan <code>${plan.name}</code> to confirm.`,
+                title: this.t('closeDialog.title'),
+                warning: this.t('closeDialog.warning'),
+                validationMessage: this.t('closeDialog.validation', { name: plan.name }),
                 validationValue: plan.name,
                 content,
-                confirmButton: 'Yes, close this plan.',
+                confirmButton: this.t('closeDialog.confirm'),
               },
               role: 'alertdialog',
               id: 'closePlanDialog',
@@ -255,7 +260,7 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
           return EMPTY;
         }),
         map(plan => {
-          this.snackBarService.success(`The plan ${plan.name} has been closed with success.`);
+          this.snackBarService.success(this.t('snackbar.closed', { name: plan.name }));
           this.ngOnInit();
         }),
         takeUntil(this.unsubscribe$),
@@ -268,9 +273,9 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `Publish plan`,
-          content: `Are you sure you want to publish the plan ${plan.name}?`,
-          confirmButton: `Publish`,
+          title: this.t('publishDialog.title'),
+          content: this.t('publishDialog.content', { name: plan.name }),
+          confirmButton: this.t('publishDialog.confirm'),
         },
         role: 'alertdialog',
         id: 'publishPlanDialog',
@@ -317,40 +322,40 @@ export class ApiPlanListComponent implements OnInit, OnDestroy {
     const plansList = plansToClose.map(p => `- <strong>${p.name}</strong> (${this.getSecurityTypeLabel(p.security.type)})`).join('\n');
 
     if (plan.security.type === 'KEY_LESS') {
-      planTypeToPublish = 'Keyless';
+      planTypeToPublish = this.t('publishCloseDialog.typeKeyless');
       if (hasMtls || hasAuth) {
-        ifSubscriptionContent = '<b>If there are subscriptions associated to these plans, they will be closed!</b>';
+        ifSubscriptionContent = this.t('publishCloseDialog.subscriptionWarning');
       }
     } else if (plan.security.type === 'MTLS') {
-      planTypeToPublish = 'mTLS';
+      planTypeToPublish = this.t('publishCloseDialog.typeMtls');
       if (hasAuth) {
-        ifSubscriptionContent = '<b>If there are subscriptions associated to these plans, they will be closed!</b>';
+        ifSubscriptionContent = this.t('publishCloseDialog.subscriptionWarning');
       }
     } else {
-      planTypeToPublish = 'authentication';
+      planTypeToPublish = this.t('publishCloseDialog.typeAuthentication');
       if (hasMtls) {
-        ifSubscriptionContent = '<b>If there are subscriptions associated to these plans, they will be closed!</b>';
+        ifSubscriptionContent = this.t('publishCloseDialog.subscriptionWarning');
       }
     }
 
-    const content = `Kafka APIs cannot have Keyless, mTLS, and authentication (OAuth2, JWT, API Key) plans published together.
-Are you sure you want to publish the <b>${planTypeToPublish}</b> plan <b>${plan.name}</b>?
-
-The following ${plansToClose.length > 1 ? 'plans' : 'plan'} will be closed automatically:
-${plansList}
-
-${ifSubscriptionContent}`;
+    const content = this.t('publishCloseDialog.kafkaRule', {
+      planType: planTypeToPublish,
+      name: plan.name,
+      plansLabel: plansToClose.length > 1 ? this.t('publishCloseDialog.plans') : this.t('publishCloseDialog.plan'),
+      plansList,
+      subscriptionWarning: ifSubscriptionContent,
+    });
 
     return this.matDialog
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: '500px',
         data: {
-          title: `Publish plan and close current one${plansToClose.length > 1 ? 's' : ''}`,
-          warning: `This operation is irreversible.`,
-          validationMessage: `Please, type in the name of the plan <code>${plan.name}</code> to confirm.`,
+          title: plansToClose.length > 1 ? this.t('publishCloseDialog.titleMany') : this.t('publishCloseDialog.titleOne'),
+          warning: this.t('closeDialog.warning'),
+          validationMessage: this.t('closeDialog.validation', { name: plan.name }),
           validationValue: plan.name,
           content,
-          confirmButton: `Publish & Close`,
+          confirmButton: this.t('publishCloseDialog.confirm'),
         },
         role: 'alertdialog',
         id: 'publishNativeKafkaPlanDialog',
@@ -364,14 +369,11 @@ ${ifSubscriptionContent}`;
   }
 
   private getSecurityTypeLabel(type?: string): string {
-    const labels: Record<string, string> = {
-      KEY_LESS: 'Keyless',
-      MTLS: 'mTLS',
-      API_KEY: 'API Key',
-      OAUTH2: 'OAuth2',
-      JWT: 'JWT',
-    };
-    return labels[type] || type;
+    if (!type) {
+      return type;
+    }
+    const translated = this.languageService.translate(`apis.plans.securityTypes.${type}`);
+    return translated === `apis.plans.securityTypes.${type}` ? type : translated;
   }
 
   private initPlansTableDS(selectedStatus: PlanStatus, fullReload = false): void {
@@ -440,10 +442,9 @@ ${ifSubscriptionContent}`;
         .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
           width: '450px',
           data: {
-            title: 'Allow multi JWT/OAuth2 subscriptions',
-            content: `By turning on this option, you will allow an application to subscribe to more than one JWT/OAuth2 plan. Be sure you understand the consequences, and you have configured Selection rules or Sharding Tags on plans. Otherwise, we cannot predict which plan will be used to secure requests.
-Do you want to continue?`,
-            confirmButton: 'Continue',
+            title: this.t('allowMultiDialog.title'),
+            content: this.t('allowMultiDialog.content'),
+            confirmButton: this.t('allowMultiDialog.confirm'),
           },
         })
         .afterClosed()
@@ -464,10 +465,10 @@ Do you want to continue?`,
           }),
           tap(api => {
             this.api = api;
-            this.snackBarService.success('API updated successfully');
+            this.snackBarService.success(this.t('snackbar.updated'));
           }),
           catchError(({ error }) => {
-            this.snackBarService.error(error?.message ?? 'An error occurred');
+            this.snackBarService.error(error?.message ?? this.t('snackbar.error'));
             (this.api as ApiV4).allowMultiJwtOauth2Subscriptions = false;
             this.cdr.markForCheck();
             return EMPTY;
@@ -485,10 +486,10 @@ Do you want to continue?`,
         .pipe(
           tap(api => {
             this.api = api;
-            this.snackBarService.success('API updated successfully');
+            this.snackBarService.success(this.t('snackbar.updated'));
           }),
           catchError(({ error }) => {
-            this.snackBarService.error(error?.message ?? 'An error occurred');
+            this.snackBarService.error(error?.message ?? this.t('snackbar.error'));
             return EMPTY;
           }),
           takeUntil(this.unsubscribe$),

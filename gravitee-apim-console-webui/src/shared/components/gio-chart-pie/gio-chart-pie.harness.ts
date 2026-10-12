@@ -20,6 +20,7 @@ export class GioChartPieHarness extends ComponentHarness {
 
   protected getPieChart = this.locatorForOptional('.gio-chart-pie__chart');
   protected getNoDataDisplayed = this.locatorForOptional('.gio-chart-pie__no-data');
+  protected getNoDataBody = this.locatorForOptional('.gio-chart-pie__no-data .mat-body');
 
   async hasNoData(): Promise<boolean> {
     return this.getNoDataDisplayed()
@@ -31,5 +32,10 @@ export class GioChartPieHarness extends ComponentHarness {
     return this.getPieChart()
       .then(v => !!v)
       .catch(_ => false);
+  }
+
+  async getNoDataText(): Promise<string> {
+    const body = await this.getNoDataBody();
+    return body ? body.text() : '';
   }
 }

@@ -30,18 +30,18 @@
           <div class="details-card__header__info-inputs">
             <div class="details-card__header__info-inputs__first-row">
               <mat-form-field class="details-card__header__info-inputs__first-row__name-field">
-                <mat-label>Name</mat-label>
+                <mat-label>{{ 'apis.general.form.name' | translate }}</mat-label>
                 <input #apiName matInput formControlName="name" data-testid="api_info_namefield" required />
                 @if (apiDetailsForm.controls.name.hasError('required')) {
-                  <mat-error>Name is required.</mat-error>
+                  <mat-error>{{ 'apis.general.form.nameRequired' | translate }}</mat-error>
                 }
               </mat-form-field>
 
               <mat-form-field class="details-card__header__info-inputs__first-row__version-field">
-                <mat-label>Version</mat-label>
+                <mat-label>{{ 'apis.general.form.version' | translate }}</mat-label>
                 <input #apiVersion matInput formControlName="version" data-testid="api_info_versionfield" required maxlength="32" />
                 @if (apiDetailsForm.controls.version.hasError('required')) {
-                  <mat-error>Version is required.</mat-error>
+                  <mat-error>{{ 'apis.general.form.versionRequired' | translate }}</mat-error>
                 }
                 @if (apiDetailsForm.controls.version.hasError('version')) {
                   <mat-error>{{ apiDetailsForm.controls.version.getError('version') }}</mat-error>
@@ -50,12 +50,12 @@
             </div>
             <div class="details-card__header__info-inputs__second-row">
               <mat-form-field class="details-card__header__info-inputs__second-row__description-field">
-                <mat-label>Description</mat-label>
+                <mat-label>{{ 'apis.general.form.description' | translate }}</mat-label>
                 <textarea matInput formControlName="description" data-testid="api_info_descriptionfield"></textarea>
               </mat-form-field>
 
               <mat-form-field class="details-card__header__info-inputs__second-row__labels-field">
-                <mat-label>Labels</mat-label>
+                <mat-label>{{ 'apis.general.form.labels' | translate }}</mat-label>
                 <gio-form-tags-input
                   formControlName="labels"
                   data-testid="api_info_labelsfield"
@@ -65,7 +65,7 @@
               </mat-form-field>
 
               <mat-form-field class="details-card__header__info-inputs__second-row__categories-field">
-                <mat-label>Categories</mat-label>
+                <mat-label>{{ 'apis.general.form.categories' | translate }}</mat-label>
                 <mat-select formControlName="categories" data-testid="api_info_categoriesdropdown" multiple>
                   @for (category of apiCategories; track category) {
                     <mat-option [value]="category.key">
@@ -75,18 +75,20 @@
                       }
                     </mat-option>
                   } @empty {
-                    <mat-option data-testid="api_info_categorieslist-unavailable" disabled> No categories available </mat-option>
+                    <mat-option data-testid="api_info_categorieslist-unavailable" disabled>{{
+                      'apis.general.form.noCategories' | translate
+                    }}</mat-option>
                   }
                 </mat-select>
               </mat-form-field>
 
               @if (canDisplayV4EmulationEngineToggle) {
                 <gio-form-slide-toggle class="details-card__header__info-inputs__second-row__emulate-v4-engine-field">
-                  Emulate v4 engine
+                  {{ 'apis.general.form.emulateV4' | translate }}
                   <mat-slide-toggle
                     gioFormSlideToggle
                     formControlName="emulateV4Engine"
-                    aria-label="Emulate v4 engine"
+                    [attr.aria-label]="'apis.general.form.emulateV4' | translate"
                     name="emulateV4Engine"
                   />
                 </gio-form-slide-toggle>
@@ -95,18 +97,18 @@
               @if (canDisplayAllowInApiProduct) {
                 <gio-form-slide-toggle class="details-card__header__info-inputs__second-row__allow-in-api-products-field">
                   <span
-                    matTooltip="API is currently used in API Products"
+                    [matTooltip]="'apis.general.form.allowInApiProductsTooltip' | translate"
                     [matTooltipDisabled]="
                       !isApiUsedInProducts() ||
                       !apiDetailsForm.get('allowedInApiProducts')?.disabled ||
                       !apiDetailsForm.get('allowedInApiProducts')?.value
                     "
-                    >Allow in API Products</span
+                    >{{ 'apis.general.form.allowInApiProducts' | translate }}</span
                   >
                   <mat-slide-toggle
                     gioFormSlideToggle
                     formControlName="allowedInApiProducts"
-                    aria-label="Allow in API Products"
+                    [attr.aria-label]="'apis.general.form.allowInApiProducts' | translate"
                     name="allowedInApiProducts"
                   />
                 </gio-form-slide-toggle>
@@ -116,10 +118,10 @@
           <div class="details-card__header__right-coll">
             <div class="details-card__header__right-coll__media" [formGroup]="apiImagesForm">
               <gio-form-file-picker class="details-card__header__right-coll__media__picture" formControlName="picture" accept="image/*">
-                <gio-form-file-picker-label>API picture</gio-form-file-picker-label>
+                <gio-form-file-picker-label>{{ 'apis.general.form.picture' | translate }}</gio-form-file-picker-label>
                 <gio-form-file-picker-add-button class="details-card__header__right-coll__media__picture__btn">
                   <span class="details-card__header__right-coll__media__picture__btn__text">
-                    Click here or drag an image <br />Max 500KB</span
+                    {{ 'apis.general.form.dropImage' | translate }} <br />{{ 'apis.general.form.maxImage' | translate }}</span
                   >
                   <gio-avatar
                     class="details-card__header__right-coll__media__picture__btn__default-avatar"
@@ -136,33 +138,33 @@
                 formControlName="background"
                 accept="image/*"
               >
-                <gio-form-file-picker-label>API background</gio-form-file-picker-label>
+                <gio-form-file-picker-label>{{ 'apis.general.form.background' | translate }}</gio-form-file-picker-label>
                 <gio-form-file-picker-add-button class="details-card__header__right-coll__media__background__btn">
                   <span class="details-card__header__right-coll__media__background__btn__text">
-                    Click here or drag an image <br />Max 500KB</span
+                    {{ 'apis.general.form.dropImage' | translate }} <br />{{ 'apis.general.form.maxImage' | translate }}</span
                   >
                 </gio-form-file-picker-add-button>
-                <gio-form-file-picker-empty><span>No background defined</span></gio-form-file-picker-empty>
+                <gio-form-file-picker-empty><span>{{ 'apis.general.form.noBackground' | translate }}</span></gio-form-file-picker-empty>
               </gio-form-file-picker>
             </div>
 
             <div class="details-card__header__right-coll__info">
               <dl class="gio-description-list">
-                <dt>Owner</dt>
+                <dt>{{ 'apis.general.form.owner' | translate }}</dt>
                 <dd gioClipboardCopyWrapper [contentToCopy]="apiOwner">{{ apiOwner }}</dd>
 
-                <dt>Created</dt>
+                <dt>{{ 'apis.general.form.created' | translate }}</dt>
                 <dd>{{ apiCreatedAt | date: 'medium' }}</dd>
 
                 @if (integrationId) {
-                  <dt>From integration</dt>
+                  <dt>{{ 'apis.general.form.fromIntegration' | translate }}</dt>
                   <dd>
                     <a [routerLink]="'../../integrations/' + integrationId"> {{ integrationName }}</a>
                   </dd>
                 }
 
                 @if (apiProducts().length > 0) {
-                  <dt>Included in</dt>
+                  <dt>{{ 'apis.general.form.includedIn' | translate }}</dt>
                   <dd>
                     @let displayedProducts = apiProducts().slice(0, displayedApiProductsCount);
                     @let remainingCount = apiProducts().length - displayedApiProductsCount;
@@ -180,13 +182,13 @@
                         class="included-in-more-link"
                         data-testid="api_info_included_in_more"
                       >
-                        +{{ remainingCount }} more
+                        {{ 'apis.general.form.more' | translate: { count: remainingCount } }}
                       </button>
                     }
                   </dd>
                 }
 
-                <dt>Last connection</dt>
+                <dt>{{ 'apis.general.form.lastConnection' | translate }}</dt>
                 <dd>{{ apiLastDeploymentAt | date: 'medium' }}</dd>
               </dl>
             </div>
@@ -204,7 +206,7 @@
           (click)="exportApi()"
         >
           <mat-icon svgIcon="gio:upload" />
-          Export
+          {{ 'apis.general.actions.export' | translate }}
         </button>
         <button
           *gioPermission="{ anyOf: ['api-definition-c'] }"
@@ -214,7 +216,7 @@
           (click)="importApi()"
         >
           <mat-icon svgIcon="gio:download" />
-          Import
+          {{ 'common.import' | translate }}
         </button>
         <button
           *gioPermission="{ anyOf: ['api-definition-c'] }"
@@ -225,7 +227,7 @@
           (click)="duplicateApi()"
         >
           <mat-icon svgIcon="gio:copy" />
-          Duplicate
+          {{ 'apis.general.actions.duplicate' | translate }}
         </button>
         <button
           *gioPermission="{ anyOf: ['api-definition-u'] }"
@@ -236,7 +238,7 @@
           (click)="promoteApi()"
         >
           <mat-icon svgIcon="gio:language" />
-          Promote
+          {{ 'apis.general.actions.promote' | translate }}
         </button>
         @if (api.definitionVersion === 'V2') {
           <button
@@ -247,7 +249,7 @@
             data-testid="api_info_migrate_menu"
             (click)="migrateToV4()"
           >
-            Migrate to v4
+            {{ 'apis.general.actions.migrateToV4' | translate }}
           </button>
         }
       </mat-card-actions>

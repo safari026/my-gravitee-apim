@@ -17,8 +17,7 @@
 -->
 
 <gio-banner-info>
-  Each API is monitored by a periodic HTTP request to the health check endpoint. The API backend receives the request and responds, and the
-  health check service determines if the response is as expected.
+  {{ 'dashboard.healthCheck.banner' | translate }}
 </gio-banner-info>
 
 <mat-card>
@@ -27,7 +26,7 @@
       <gio-quick-time-range [formControl]="timeFrameControl" (onRefreshClicked)="onRefreshClicked()"></gio-quick-time-range>
       <!-- button to set filter-->
       <button mat-stroked-button class="only-configured-button" (click)="onOnlyHCConfigured()">
-        Filter to APIs with Health Check enabled
+        {{ 'dashboard.healthCheck.filterEnabled' | translate }}
       </button>
     </div>
     <gio-banner
@@ -41,21 +40,25 @@
           : 'info'
       "
     >
-      API Health Check Report
+      {{ 'dashboard.healthCheck.reportTitle' | translate }}
       <span gioBannerBody>
         @if (allApisHCStatus().isLoading) {
-          Loading...
+          {{ 'dashboard.healthCheck.loading' | translate }}
         } @else {
           @if (allApisHCStatus().inError === 0 && allApisHCStatus().inWarning === 0) {
-            All APIs are operational
+            {{ 'dashboard.healthCheck.allOperational' | translate }}
           } @else {
             @if (allApisHCStatus().inError > 0) {
-              {{ allApisHCStatus().inError == 1 ? '1 API is' : allApisHCStatus().inError + ' APIs are' }} in error (HealthCheck availability
-              <= 80%)<br />
+              {{
+                (allApisHCStatus().inError === 1 ? 'dashboard.healthCheck.oneInError' : 'dashboard.healthCheck.manyInError')
+                  | translate: { count: allApisHCStatus().inError }
+              }}<br />
             }
             @if (allApisHCStatus().inWarning > 0) {
-              {{ allApisHCStatus().inWarning == 1 ? '1 API is' : allApisHCStatus().inWarning + ' APIs are' }}
-              in warning (HealthCheck availability <= 95%)
+              {{
+                (allApisHCStatus().inWarning === 1 ? 'dashboard.healthCheck.oneInWarning' : 'dashboard.healthCheck.manyInWarning')
+                  | translate: { count: allApisHCStatus().inWarning }
+              }}
             }
           }
         }
@@ -64,12 +67,12 @@
   </mat-card-content>
 
   <gio-table-wrapper
-    [searchLabel]="'Search APIs | name:&quot;My api *&quot; ownerName:admin'"
+    [searchLabel]="'dashboard.healthCheck.searchLabel' | translate"
     [length]="apisTableDSUnpaginatedLength"
     [filters]="filters"
     (filtersChange)="onFiltersChanged($event)"
   >
-    <table mat-table matSort [dataSource]="apisTableDS()" id="apisTable" aria-label="Apis table">
+    <table mat-table matSort [dataSource]="apisTableDS()" id="apisTable" [attr.aria-label]="'dashboard.healthCheck.tableAria' | translate">
       <!-- Picture Column -->
       <ng-container matColumnDef="picture">
         <th mat-header-cell *matHeaderCellDef id="picture"></th>
@@ -80,7 +83,7 @@
 
       <!-- Display Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef mat-sort-header id="name">Name</th>
+        <th mat-header-cell *matHeaderCellDef mat-sort-header id="name">{{ 'dashboard.table.name' | translate }}</th>
         <td mat-cell *matCellDef="let element" title="{{ element.name }} ({{ element.version }})">
           {{ element.name }} ({{ element.version }})
         </td>
@@ -91,24 +94,28 @@
         <th mat-header-cell *matHeaderCellDef id="states"></th>
         <td mat-cell *matCellDef="let element">
           @if (element.state === 'STARTED') {
-            <mat-icon matTooltip="Started" class="states__api-started" size="20" svgIcon="gio:play-circle" />
+            <mat-icon [matTooltip]="'dashboard.state.started' | translate" class="states__api-started" size="20" svgIcon="gio:play-circle" />
           } @else {
-            <mat-icon matTooltip="Stopped" class="states__api-not-started" size="20" svgIcon="gio:stop-circle" />
+            <mat-icon [matTooltip]="'dashboard.state.stopped' | translate" class="states__api-not-started" size="20" svgIcon="gio:stop-circle" />
           }
           @if (element.isNotSynced$ | async) {
-            <mat-icon matTooltip="API out of sync" class="states__api-is-not-synced" size="20" svgIcon="gio:refresh-cw" />
+            <mat-icon [matTooltip]="'dashboard.healthCheck.outOfSync' | translate" class="states__api-is-not-synced" size="20" svgIcon="gio:refresh-cw" />
           }
           @if (element.lifecycleState === 'PUBLISHED') {
-            <mat-icon matTooltip="Published" class="states__api-published" size="20" svgIcon="gio:cloud-published" />
+            <mat-icon [matTooltip]="'dashboard.lifecycle.published' | translate" class="states__api-published" size="20" svgIcon="gio:cloud-published" />
           } @else {
-            <mat-icon matTooltip="Unpublished" class="states__api-not-published" size="20" svgIcon="gio:cloud-unpublished" />
+            <mat-icon [matTooltip]="'dashboard.lifecycle.unpublished' | translate" class="states__api-not-published" size="20" svgIcon="gio:cloud-unpublished" />
           }
           @if (element.origin === 'KUBERNETES') {
-            <mat-icon matTooltip="Kubernetes Origin" class="states__api-origin" size="20" svgIcon="gio:kubernetes" />
+            <mat-icon [matTooltip]="'dashboard.healthCheck.kubernetesOrigin' | translate" class="states__api-origin" size="20" svgIcon="gio:kubernetes" />
           }
           @if (element.workflowBadge) {
-            <span [ngClass]="element.workflowBadge.class" class="states__api-workflow-badge" [matTooltip]="element.workflowBadge.text">
-              {{ element.workflowBadge.text }}
+            <span
+              [ngClass]="element.workflowBadge.class"
+              class="states__api-workflow-badge"
+              [matTooltip]="element.workflowBadge.text | translate"
+            >
+              {{ element.workflowBadge.text | translate }}
             </span>
           }
         </td>
@@ -116,22 +123,22 @@
 
       <!-- API Availability Column -->
       <ng-container matColumnDef="availability">
-        <th mat-header-cell *matHeaderCellDef id="availability">API Availability</th>
+        <th mat-header-cell *matHeaderCellDef id="availability">{{ 'dashboard.healthCheck.availability' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           @if (element.availability$ | async; as availability) {
             @switch (availability['type']) {
               @case ('configured') {
                 <gio-circular-percentage
                   class="chart__gauge"
-                  matTooltip="HealthCheck availability"
+                  [matTooltip]="'dashboard.healthCheck.hcAvailabilityTooltip' | translate"
                   [score]="availability['healthCheckAvailability']"
                 />
               }
               @case ('no-data') {
-                No data to display
+                {{ 'dashboard.noData' | translate }}
               }
               @case ('not-configured') {
-                Health check has not been configured
+                {{ 'dashboard.healthCheck.notConfigured' | translate }}
               }
             }
           }
@@ -145,7 +152,11 @@
           @if (path2dashboard(element); as path) {
             <div class="actions__edit">
               <a [routerLink]="path">
-                <button mat-icon-button aria-label="Button to view API Health-check" matTooltip="View API Health-check">
+                <button
+                  mat-icon-button
+                  [attr.aria-label]="'dashboard.healthCheck.viewAria' | translate"
+                  [matTooltip]="'dashboard.healthCheck.viewTooltip' | translate"
+                >
                   <mat-icon svgIcon="gio:eye-empty" />
                 </button>
               </a>
@@ -160,9 +171,9 @@
       <!-- Row shown when there is no data -->
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
         @if (!apisTableDS()) {
-          <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">Loading...</td>
+          <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">{{ 'dashboard.healthCheck.loading' | translate }}</td>
         } @else if (apisTableDS().length === 0) {
-          <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No APIs to display.</td>
+          <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">{{ 'dashboard.healthCheck.noApis' | translate }}</td>
         }
       </tr>
     </table>

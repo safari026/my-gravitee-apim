@@ -23,6 +23,7 @@ import { catchError, map, takeUntil, tap } from 'rxjs/operators';
 import { Api } from '../../../../entities/management-api-v2';
 import { ApiService } from '../../../../services-ngx/api.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type ApiPortalDetailsExportV2DialogData = {
   api: Api;
@@ -37,14 +38,14 @@ export type ApiPortalDetailsExportV2DialogData = {
 export class ApiGeneralInfoExportV2DialogComponent implements OnDestroy {
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
-  public jsonOptions = [{ id: 'default', label: 'Current version', isDeprecated: false }];
+  public jsonOptions = [{ id: 'default', labelKey: 'apis.general.export.currentVersion', isDeprecated: false }];
 
   public jsonOptionsCheckbox = [
-    { id: 'groups', label: 'Groups', checked: true },
-    { id: 'members', label: 'Members', checked: true },
-    { id: 'pages', label: 'Pages', checked: true },
-    { id: 'plans', label: 'Plans', checked: true },
-    { id: 'metadata', label: 'Metadata', checked: true },
+    { id: 'groups', checked: true },
+    { id: 'members', checked: true },
+    { id: 'pages', checked: true },
+    { id: 'plans', checked: true },
+    { id: 'metadata', checked: true },
   ];
 
   public exportJsonFrom: UntypedFormGroup;
@@ -59,6 +60,7 @@ export class ApiGeneralInfoExportV2DialogComponent implements OnDestroy {
     @Inject(MAT_DIALOG_DATA) dialogData: ApiPortalDetailsExportV2DialogData,
     private readonly apiService: ApiService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {
     this.apiId = dialogData.api.id;
 
@@ -107,7 +109,7 @@ export class ApiGeneralInfoExportV2DialogComponent implements OnDestroy {
           anchor.click();
         }),
         catchError(() => {
-          this.snackBarService.error('An error occurred while export the API.');
+          this.snackBarService.error(this.languageService.translate('apis.general.snackbar.exportError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

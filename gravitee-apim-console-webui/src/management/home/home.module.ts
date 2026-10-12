@@ -52,6 +52,7 @@ import { MessagesComponent } from '../messages/messages.component';
 import { GioPermissionModule } from '../../shared/components/gio-permission/gio-permission.module';
 import { ApiAnalyticsResponseStatusRangesComponent } from '../../shared/components/api-analytics-response-status-ranges/api-analytics-response-status-ranges.component';
 import { TopApisWidgetComponent } from '../../shared/components/top-apis-widget/top-apis-widget.component';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 const homeRoutes: Route[] = [
   {
@@ -123,6 +124,7 @@ const homeRoutes: Route[] = [
     ResponseTimesComponent,
     TopApplicationsByRequestsComponent,
     TopFailedApisComponent,
+    TranslatePipe,
   ],
   declarations: [HomeLayoutComponent, HomeOverviewComponent, HomeApiHealthCheckComponent],
 })

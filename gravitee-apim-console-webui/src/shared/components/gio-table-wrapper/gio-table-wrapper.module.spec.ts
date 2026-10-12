@@ -27,6 +27,9 @@ import { GioTableWrapperModule } from './gio-table-wrapper.module';
 import { GioTableWrapperFilters } from './gio-table-wrapper.component';
 import { GioTableWrapperHarness } from './gio-table-wrapper.harness';
 
+import { GioTestingModule } from '../../testing';
+import { LanguageService } from '../../i18n/language.service';
+
 describe('GioTableWrapperComponent', () => {
   describe('simple usage', () => {
     @Component({
@@ -65,7 +68,7 @@ describe('GioTableWrapperComponent', () => {
     beforeEach(() => {
       TestBed.configureTestingModule({
         declarations: [TestComponent],
-        imports: [NoopAnimationsModule, GioTableWrapperModule, MatTableModule, MatSortModule, MatIconTestingModule],
+        imports: [NoopAnimationsModule, GioTableWrapperModule, MatTableModule, MatSortModule, MatIconTestingModule, GioTestingModule],
       });
       fixture = TestBed.createComponent(TestComponent);
       component = fixture.componentInstance;
@@ -74,6 +77,16 @@ describe('GioTableWrapperComponent', () => {
 
     afterEach(() => {
       jest.clearAllMocks();
+      localStorage.removeItem('gio-console-lang');
+    });
+
+    it('should use translated search label by default', async () => {
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="search"]').textContent).toContain('Search');
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.querySelector('[data-testid="search"]').textContent).toContain('Поиск');
     });
 
     it('should emit default initial filtersChange', async () => {

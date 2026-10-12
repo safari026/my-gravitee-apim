@@ -26,6 +26,7 @@ import { Constants } from '../../../entities/Constants';
 import { ApiFederated, ApiFederatedAgent } from '../../../entities/management-api-v2';
 import { ApiDocumentationV2Service } from '../../../services-ngx/api-documentation-v2.service';
 import { EnvironmentSettingsService } from '../../../services-ngx/environment-settings.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Injectable()
 export class ApiFederatedMenuService implements ApiMenuService {
@@ -35,7 +36,12 @@ export class ApiFederatedMenuService implements ApiMenuService {
     private readonly apiDocumentationV2Service: ApiDocumentationV2Service,
     private readonly environmentSettingsService: EnvironmentSettingsService,
     @Inject(Constants) private readonly constants: Constants,
+    private readonly languageService: LanguageService,
   ) {}
+
+  private t(key: string): string {
+    return this.languageService.translate(`apis.navigation.${key}`);
+  }
 
   public getMenu(api: ApiFederated | ApiFederatedAgent): {
     subMenuItems: MenuItem[];
@@ -57,7 +63,7 @@ export class ApiFederatedMenuService implements ApiMenuService {
 
     const tabs: MenuItem[] = [
       {
-        displayName: 'General',
+        displayName: this.t('items.general'),
         routerLink: '.',
         routerLinkActiveOptions: { exact: true },
       },
@@ -65,14 +71,14 @@ export class ApiFederatedMenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-member-r'])) {
       tabs.push({
-        displayName: 'User Permissions',
+        displayName: this.t('items.userPermissions'),
         routerLink: 'members',
       });
     }
 
     if (this.permissionService.hasAnyMatching(['api-audit-r']) && api.definitionVersion !== 'FEDERATED_AGENT') {
       tabs.push({
-        displayName: 'Audit Logs',
+        displayName: this.t('items.auditLogs'),
         routerLink: 'v4/audit',
         license,
         iconRight$,
@@ -80,12 +86,12 @@ export class ApiFederatedMenuService implements ApiMenuService {
     }
 
     return {
-      displayName: 'Configuration',
+      displayName: this.t('items.configuration'),
       icon: 'settings',
       routerLink: '',
       header: {
-        title: 'Configuration',
-        subtitle: 'Manage general settings, user permissions, properties, and resources, and track changes to your API',
+        title: this.t('items.configuration'),
+        subtitle: this.t('subtitles.configuration'),
       },
       tabs: tabs,
     };
@@ -97,11 +103,11 @@ export class ApiFederatedMenuService implements ApiMenuService {
     }
     return [
       {
-        displayName: 'API Score',
+        displayName: this.t('items.apiScore'),
         icon: 'shield-check',
         routerLink: 'api-score',
         header: {
-          title: 'API Score',
+          title: this.t('items.apiScore'),
         },
       },
     ];
@@ -116,28 +122,28 @@ export class ApiFederatedMenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-plan-r'])) {
       tabs.push({
-        displayName: 'Plans',
+        displayName: this.t('items.plans'),
         routerLink: 'plans',
       });
     }
 
     if (this.permissionService.hasAnyMatching(['api-subscription-r'])) {
       tabs.push({
-        displayName: 'Subscriptions',
+        displayName: this.t('items.subscriptions'),
         routerLink: 'subscriptions',
       });
     }
 
     return [
       {
-        displayName: 'Consumers',
+        displayName: this.t('items.consumers'),
         icon: 'cloud-consumers',
         routerLink: '',
         header: {
-          title: 'Consumers',
-          subtitle: 'Manage how your API is consumed',
+          title: this.t('items.consumers'),
+          subtitle: this.t('subtitles.consumers'),
         },
-        tabs: [...tabs, { displayName: 'Broadcasts', routerLink: 'messages' }],
+        tabs: [...tabs, { displayName: this.t('items.broadcasts'), routerLink: 'messages' }],
       },
     ];
   }
@@ -148,12 +154,12 @@ export class ApiFederatedMenuService implements ApiMenuService {
     if (this.permissionService.hasAnyMatching(['api-documentation-r'])) {
       tabs.push(
         {
-          displayName: 'Main Pages',
+          displayName: this.t('items.mainPages'),
           routerLink: 'v4/documentation/main-pages',
           routerLinkActiveOptions: { exact: false },
         },
         {
-          displayName: 'Documentation Pages',
+          displayName: this.t('items.documentationPages'),
           routerLink: 'v4/documentation/pages',
           routerLinkActiveOptions: { exact: false },
         },
@@ -162,21 +168,21 @@ export class ApiFederatedMenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-metadata-r'])) {
       tabs.push({
-        displayName: 'Metadata',
+        displayName: this.t('items.metadata'),
         routerLink: 'v4/documentation/metadata',
         routerLinkActiveOptions: { exact: true },
       });
     }
 
     return {
-      displayName: 'Documentation',
+      displayName: this.t('items.documentation'),
       icon: 'book',
       routerLink: '',
       header: {
-        title: 'Documentation',
-        subtitle: 'Documentation pages appear in the Developer Portal and inform API consumers how to use your API',
+        title: this.t('items.documentation'),
+        subtitle: this.t('subtitles.documentation'),
         action: {
-          text: 'Open API in Developer Portal',
+          text: this.t('items.openInPortal'),
           targetUrl: this.apiDocumentationV2Service.getApiPortalUrl(api.id),
           disabled: api.lifecycleState !== 'PUBLISHED',
           disabledTooltip: this.apiDocumentationV2Service.getApiNotInPortalTooltip(api.lifecycleState),

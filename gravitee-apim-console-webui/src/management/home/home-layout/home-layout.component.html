@@ -25,7 +25,11 @@
     [routerLink]="tab.routerLink"
     [attr.data-testid]="tab.dataTestId"
   >
-    <span [innerHTML]="tab.label | async"></span>
+    @if (tab.useTaskLabel) {
+      <span [innerHTML]="taskLabel | async"></span>
+    } @else {
+      {{ tab.labelKey | translate }}
+    }
   </a>
 </nav>
 <mat-tab-nav-panel #tabPanel>

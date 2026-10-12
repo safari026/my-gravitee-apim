@@ -33,10 +33,11 @@ import { TopApplication } from '../../../../entities/analytics/analytics';
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'top-applications-by-requests',
-  imports: [MatCardModule, GioTableWrapperModule, MatTableModule, MatSortModule, DecimalPipe, GioLoaderModule],
+  imports: [MatCardModule, GioTableWrapperModule, MatTableModule, MatSortModule, DecimalPipe, GioLoaderModule, TranslatePipe],
   templateUrl: './top-applications-by-requests.component.html',
   styleUrl: './top-applications-by-requests.component.scss',
 })

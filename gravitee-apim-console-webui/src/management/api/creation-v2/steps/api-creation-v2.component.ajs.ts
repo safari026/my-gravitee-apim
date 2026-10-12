@@ -20,6 +20,7 @@ const ApiCreationV2ComponentAjs: ng.IComponentOptions = {
     tenants: '<',
     groups: '<',
     activatedRoute: '<',
+    language: '<',
   },
   template: require('html-loader!./api-creation.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: 'ApiCreationV2AjsController',

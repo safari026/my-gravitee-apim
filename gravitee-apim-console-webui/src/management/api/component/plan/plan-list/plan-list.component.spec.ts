@@ -23,6 +23,7 @@ import { PlanListComponentHarness } from './plan-list.component.harness';
 
 import { PLAN_STATUS, PlanStatus, fakePlanV4 } from '../../../../../entities/management-api-v2';
 import { PlanMenuItemVM } from '../../../../../services-ngx/constants.service';
+import { GioTestingModule } from '../../../../../shared/testing';
 
 const PLAN_MENU_ITEMS: PlanMenuItemVM[] = [
   { planFormType: 'API_KEY', name: 'API Key' },
@@ -58,7 +59,7 @@ describe('PlanListComponent', () => {
     }> = {},
   ) {
     await TestBed.configureTestingModule({
-      imports: [PlanListComponent, NoopAnimationsModule, MatIconTestingModule],
+      imports: [PlanListComponent, NoopAnimationsModule, MatIconTestingModule, GioTestingModule],
     }).compileComponents();
 
     fixture = TestBed.createComponent(PlanListComponent);
@@ -138,8 +139,8 @@ describe('PlanListComponent', () => {
       await create({});
       const toggles = await harness.getStatusFilterToggles();
       const labels = await Promise.all(toggles.map(t => t.getText()));
-      expect(labels.some(l => l.includes('PUBLISHED'))).toBe(true);
-      expect(labels.some(l => l.includes('STAGING'))).toBe(true);
+      expect(labels.some(l => l.includes('Published'))).toBe(true);
+      expect(labels.some(l => l.includes('Staging'))).toBe(true);
     });
 
     it('emits selected status when status toggle is clicked', async () => {

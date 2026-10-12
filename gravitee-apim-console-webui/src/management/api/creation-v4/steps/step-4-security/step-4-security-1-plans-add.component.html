@@ -29,11 +29,11 @@
 
   <div class="api-creation-v4__step__footer">
     <button mat-stroked-button type="button" *ngIf="apiPlanForm.hasPreviousStep() === false" (click)="onExitPlanCreation()">
-      Exit the plan creation
+      {{ 'apis.creation.v4.security.exitPlan' | translate }}
     </button>
 
     <button mat-stroked-button type="button" *ngIf="apiPlanForm.hasPreviousStep() === true" (click)="apiPlanForm.previousStep()">
-      Previous
+      {{ 'apis.creation.v4.previous' | translate }}
     </button>
 
     <button
@@ -44,7 +44,7 @@
       type="button"
       (click)="apiPlanForm.waitForNextStep()"
     >
-      Next
+      {{ 'apis.creation.v4.next' | translate }}
     </button>
 
     <button
@@ -55,7 +55,7 @@
       type="submit"
       [disabled]="form.invalid"
     >
-      {{ plan ? 'Save changes' : 'Add plan' }}
+      {{ (plan ? 'apis.creation.v4.security.saveChanges' : 'apis.creation.v4.security.addPlan') | translate }}
     </button>
   </div>
 </form>

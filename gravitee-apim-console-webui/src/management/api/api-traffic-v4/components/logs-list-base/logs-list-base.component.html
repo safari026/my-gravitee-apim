@@ -57,7 +57,9 @@
                 }
               }
             </div>
-            <button mat-raised-button class="apply-visible-columns" (click)="updateVisibleColumns()">Apply</button>
+            <button mat-raised-button class="apply-visible-columns" (click)="updateVisibleColumns()">
+              {{ 'common.apply' | translate }}
+            </button>
           </mat-menu>
         </th>
         <td mat-cell *matCellDef="let log"></td>
@@ -75,8 +77,8 @@
           </div>
         } @else {
           <div class="table__empty-state">
-            <div class="mat-h3">No data to display</div>
-            <div>More data may be available. Try widening your timeframe or adjusting your filters.</div>
+            <div class="mat-h3">{{ 'common.noDataToDisplay' | translate }}</div>
+            <div>{{ 'common.tryWideningTimeframe' | translate }}</div>
           </div>
         }
       </td>

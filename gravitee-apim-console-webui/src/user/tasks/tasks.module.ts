@@ -25,6 +25,8 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { TasksComponent } from './tasks.component';
 import { TasksAcceptPromotionDialogComponent } from './tasks-accept-promotion-dialog.component';
 
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -36,6 +38,7 @@ import { TasksAcceptPromotionDialogComponent } from './tasks-accept-promotion-di
 
     GioLoaderModule,
     GioBannerModule,
+    TranslatePipe,
   ],
   declarations: [TasksComponent, TasksAcceptPromotionDialogComponent],
 })

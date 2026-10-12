@@ -133,4 +133,10 @@ export const ruDashboard = {
       needChanges: 'Требуются изменения',
     },
   },
+  v2UnmatchedCalls: {
+    caption: 'Таблица вызовов V2 API, которые не совпали ни с одним context path',
+    date: 'Дата',
+    method: 'Method',
+    path: 'Path',
+  },
 } as const;

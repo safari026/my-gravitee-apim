@@ -38,6 +38,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
 import { ApiPlanFormModule } from '../component/plan/api-plan-form.module';
 import { GioGoBackButtonModule } from '../../../shared/components/gio-go-back-button/gio-go-back-button.module';
 import { PlanListComponent } from '../component/plan/plan-list/plan-list.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiPlanListComponent, ApiPlanEditComponent],
@@ -67,6 +68,7 @@ import { PlanListComponent } from '../component/plan/plan-list/plan-list.compone
     MatMenuModule,
     PlanListComponent,
     KafkaBootstrapPortChangeDialogComponent,
+    TranslatePipe,
   ],
 })
 export class ApiPlansModule {}

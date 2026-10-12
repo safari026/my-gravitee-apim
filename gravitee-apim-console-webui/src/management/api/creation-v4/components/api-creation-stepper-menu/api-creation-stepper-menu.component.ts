@@ -40,4 +40,16 @@ export class ApiCreationStepperMenuComponent {
 
   @Output()
   goToStep = new EventEmitter<string>();
+
+  private readonly menuLabelKeys: Record<string, string> = {
+    'API details': 'apis.creation.v4.menu.details',
+    Entrypoints: 'apis.creation.v4.menu.entrypoints',
+    Endpoints: 'apis.creation.v4.menu.endpoints',
+    Security: 'apis.creation.v4.menu.security',
+    Summary: 'apis.creation.v4.menu.summary',
+  };
+
+  menuLabelKey(label: string): string {
+    return this.menuLabelKeys[label] ?? label;
+  }
 }

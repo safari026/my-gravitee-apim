@@ -25,6 +25,7 @@ import { catchError, map, takeUntil, tap } from 'rxjs/operators';
 import { Api } from '../../../../entities/management-api-v2';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type ApiGeneralDetailsExportV4DialogData = {
   api: Api;
@@ -47,11 +48,11 @@ export class ApiGeneralInfoExportV4DialogComponent implements OnDestroy {
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
   public optionsCheckbox = [
-    { id: 'groups', label: 'Groups', checked: true },
-    { id: 'members', label: 'Members', checked: true },
-    { id: 'pages', label: 'Pages', checked: true },
-    { id: 'plans', label: 'Plans', checked: true },
-    { id: 'metadata', label: 'Metadata', checked: true },
+    { id: 'groups', checked: true },
+    { id: 'members', checked: true },
+    { id: 'pages', checked: true },
+    { id: 'plans', checked: true },
+    { id: 'metadata', checked: true },
   ];
 
   public exportFrom: FormGroup<ExportFrom>;
@@ -68,6 +69,7 @@ export class ApiGeneralInfoExportV4DialogComponent implements OnDestroy {
     private readonly snackBarService: SnackBarService,
     private readonly iconRegistry: MatIconRegistry,
     private readonly sanitizer: DomSanitizer,
+    private readonly languageService: LanguageService,
   ) {
     this.iconRegistry.addSvgIcon('terraform', this.sanitizer.bypassSecurityTrustResourceUrl('assets/terraform-svgrepo-com.svg'));
     this.apiId = dialogData.api.id;
@@ -118,7 +120,7 @@ export class ApiGeneralInfoExportV4DialogComponent implements OnDestroy {
           anchor.click();
         }),
         catchError(() => {
-          this.snackBarService.error('An error occurred while export the API.');
+          this.snackBarService.error(this.languageService.translate('apis.general.snackbar.exportError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

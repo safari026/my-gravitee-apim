@@ -32,6 +32,7 @@ import {
   GioInformationDialogComponent,
   GioConnectorDialogData,
 } from '../component/gio-information-dialog/gio-information-dialog.component';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-creation-get-started',
@@ -59,6 +60,7 @@ export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
     private readonly policyService: PolicyService,
     private readonly snackBarService: SnackBarService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -99,7 +101,7 @@ export class ApiCreationGetStartedComponent implements OnInit, OnDestroy {
         filter(apiId => !!apiId),
         tap(apiId => this.router.navigate(['..', apiId], { relativeTo: this.activatedRoute })),
         catchError(err => {
-          this.snackBarService.error(err.error?.message ?? 'An error occurred while importing the API.');
+          this.snackBarService.error(err.error?.message ?? this.languageService.translate('apis.creation.importError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

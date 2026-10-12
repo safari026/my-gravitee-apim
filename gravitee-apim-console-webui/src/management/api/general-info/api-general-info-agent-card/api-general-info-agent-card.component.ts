@@ -24,6 +24,7 @@ import { MatExpansionPanel, MatExpansionPanelHeader } from '@angular/material/ex
 import { MatDivider } from '@angular/material/divider';
 
 import { ApiFederatedAgent } from '../../../../entities/management-api-v2';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'api-general-info-agent-card',
@@ -42,6 +43,7 @@ import { ApiFederatedAgent } from '../../../../entities/management-api-v2';
     MatExpansionPanelHeader,
     MatExpansionPanel,
     MatDivider,
+    TranslatePipe,
   ],
 })
 export class ApiGeneralInfoAgentCardComponent {

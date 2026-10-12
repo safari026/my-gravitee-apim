@@ -20,9 +20,10 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { GioRequestStatsComponent } from './gio-request-stats.component';
 
 import { GioShortNumberPipeModule } from '../../../../shared/utils/shortNumber.pipe.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
-  imports: [CommonModule, GioShortNumberPipeModule, MatTooltipModule],
+  imports: [CommonModule, GioShortNumberPipeModule, MatTooltipModule, TranslatePipe],
   declarations: [GioRequestStatsComponent],
   exports: [GioRequestStatsComponent],
 })

@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, DestroyRef, Injector, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { isEmpty } from 'lodash';
+import { skip } from 'rxjs/operators';
 
 import { GioChartPieInput } from '../../../../shared/components/gio-chart-pie/gio-chart-pie.component';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type ApiLifecycleStateData = {
   values?: { [key: string]: number };
@@ -24,19 +27,19 @@ export type ApiLifecycleStateData = {
 
 const LIFECYCLE_STATE_DISPLAYABLE = {
   CREATED: {
-    label: 'Created',
+    labelKey: 'dashboard.lifecycle.created',
     color: '#6978ff',
   },
   DEPRECATED: {
-    label: 'Deprecated',
+    labelKey: 'dashboard.lifecycle.deprecated',
     color: '#bf3f0e',
   },
   PUBLISHED: {
-    label: 'Published',
+    labelKey: 'dashboard.lifecycle.published',
     color: '#02c37f',
   },
   UNPUBLISHED: {
-    label: 'Unpublished',
+    labelKey: 'dashboard.lifecycle.unpublished',
     color: '#d3d5dc',
   },
 };
@@ -52,6 +55,16 @@ export class GioApiLifecycleStateComponent implements OnChanges {
 
   chartPieInput: GioChartPieInput[];
   isEmpty = true;
+
+  constructor(
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly destroyRef: DestroyRef,
+  ) {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.buildDataSource());
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) {
@@ -69,7 +82,7 @@ export class GioApiLifecycleStateComponent implements OnChanges {
         }
 
         return {
-          label: `${status.label}`,
+          label: this.languageService.translate(status.labelKey),
           color: `${status.color}`,
           value,
         };

@@ -45,6 +45,8 @@ import { ApiNavigationDisabledComponent } from './api-navigation-disabled/api-na
 import { ApiNavigationHeaderComponent } from './api-navigation-header/api-navigation-header.component';
 import { ActionButtonsDirective } from './api-navigation-header/action-buttons.directive';
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -68,6 +70,7 @@ import { ActionButtonsDirective } from './api-navigation-header/action-buttons.d
     RouterModule,
     GioMenuModule,
     ActionButtonsDirective,
+    TranslatePipe,
   ],
   declarations: [
     ApiNavigationComponent,

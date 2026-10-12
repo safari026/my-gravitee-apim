@@ -57,6 +57,7 @@ import {
   ApiImportV4FormDialogData,
 } from '../import-v4/api-import-v4-form-dialog/api-import-v4-form-dialog.component';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { ApiV2Service } from '../../../services-ngx/api-v2.service';
 import { Api, ApiType, ApiV2, ApiV4, UpdateApi, UpdateApiV2, UpdateApiV4 } from '../../../entities/management-api-v2';
 import { ApiProductInfo } from '../../../entities/management-api-v2/api-product/apiProductInfo';
@@ -135,7 +136,12 @@ export class ApiGeneralInfoComponent implements OnInit, OnDestroy {
     private readonly matDialog: MatDialog,
     private readonly integrationsService: IntegrationsService,
     @Inject(Constants) private readonly constants: Constants,
+    private readonly languageService: LanguageService,
   ) {}
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.languageService.translate(`apis.general.${key}`, params);
+  }
 
   private refresh$ = new Subject<void>();
 
@@ -397,7 +403,7 @@ export class ApiGeneralInfoComponent implements OnInit, OnDestroy {
           return of(api);
         }),
         tap(() => {
-          this.snackBarService.success('Configuration successfully saved!');
+          this.snackBarService.success(this.t('snackbar.saved'));
         }),
         catchError(err => {
           this.snackBarService.error(err.error?.message ?? err.message);
@@ -417,7 +423,7 @@ export class ApiGeneralInfoComponent implements OnInit, OnDestroy {
       this.matDialog
         .open<ApiImportV4FormDialogComponent, ApiImportV4FormDialogData, string | undefined>(ApiImportV4FormDialogComponent, {
           data: { apiId: this.apiId, apiName: this.api.name },
-          ariaLabel: `Import API — ${this.api.name}`,
+          ariaLabel: this.t('actions.importAria', { name: this.api.name }),
           width: GIO_DIALOG_WIDTH.LARGE,
           maxHeight: API_IMPORT_V4_FORM_DIALOG_MAX_HEIGHT,
           role: 'dialog',
@@ -430,7 +436,7 @@ export class ApiGeneralInfoComponent implements OnInit, OnDestroy {
             this.refresh$.next();
           }),
           catchError(err => {
-            this.snackBarService.error(err.error?.message ?? err.message ?? 'An error occurred while importing the API.');
+            this.snackBarService.error(err.error?.message ?? err.message ?? this.t('snackbar.importError'));
             return EMPTY;
           }),
           takeUntil(this.unsubscribe$),
@@ -459,7 +465,7 @@ export class ApiGeneralInfoComponent implements OnInit, OnDestroy {
           this.refresh$.next();
         }),
         catchError(err => {
-          this.snackBarService.error(err.error?.message ?? 'An error occurred while importing the API.');
+          this.snackBarService.error(err.error?.message ?? this.t('snackbar.importError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
@@ -547,8 +553,7 @@ export class ApiGeneralInfoComponent implements OnInit, OnDestroy {
       )
       .subscribe({
         next: () => {
-          const successMessage = 'API Migrated to v4 successfully!\nYou can now deploy the migrated API when ready.';
-          this.snackBarService.success(successMessage);
+          this.snackBarService.success(this.t('snackbar.migrateSuccess'));
           this.ngOnInit();
         },
         error: err => {

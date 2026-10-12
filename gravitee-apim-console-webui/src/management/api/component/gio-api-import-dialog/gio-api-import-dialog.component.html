@@ -15,23 +15,25 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title class="title">{{ isUpdateMode ? 'Update the API' : 'Import an API' }}</span>
+<span mat-dialog-title class="title">{{
+  isUpdateMode ? ('apis.creation.importV2.updateTitle' | translate) : ('apis.creation.importV2.title' | translate)
+}}</span>
 
 <mat-dialog-content class="content">
   <mat-tab-group dynamicHeight mat-stretch-tabs [(selectedIndex)]="selectedTabIndex" (selectedTabChange)="onSelectedTab($event)">
     <!-- Import file -->
-    <mat-tab [label]="tabLabels.UploadFile">
+    <mat-tab [label]="'apis.creation.importV2.tabs.uploadFile' | translate">
       <div *ngIf="selectedTabIndex === 0" class="content__file-tab">
         <div class="content__file-tab__file">
           <api-import-file-picker (onFilePicked)="onImportFile($event)">
             <div class="content__file-tab__file__add-btn__wrapper">
               <p class="mat-body-strong">
-                Drag and drop a file to upload it. <br />
-                Alternatively, click here to choose a file.
+                {{ 'apis.creation.importV2.dropHint' | translate }} <br />
+                {{ 'apis.creation.importV2.clickHint' | translate }}
               </p>
               <p>
-                Supported file formats: yml, yaml, json, wsdl, xml.<br />
-                Supported API Definition: V2, V4.
+                {{ 'apis.creation.importV2.supportedFormats' | translate }}<br />
+                {{ 'apis.creation.importV2.supportedDefinitions' | translate }}
               </p>
             </div>
           </api-import-file-picker>
@@ -42,12 +44,12 @@
       </div>
     </mat-tab>
     <!-- Swagger / OpenAPI link -->
-    <mat-tab [label]="tabLabels.SwaggerOpenAPI">
+    <mat-tab [label]="'apis.creation.importV2.tabs.swaggerOpenApi' | translate">
       <div class="content__url-tab">
         <mat-form-field class="content__url-tab__field">
-          <mat-label>Swagger descriptor URL</mat-label>
+          <mat-label>{{ 'apis.creation.importV2.swaggerUrl' | translate }}</mat-label>
           <input matInput type="url" [formControl]="descriptorUrlForm" required />
-          <mat-error *ngIf="descriptorUrlForm?.hasError('required')">URL is required.</mat-error>
+          <mat-error *ngIf="descriptorUrlForm?.hasError('required')">{{ 'apis.creation.importV2.urlRequired' | translate }}</mat-error>
         </mat-form-field>
 
         <div class="content__url-tab__config">
@@ -56,22 +58,22 @@
       </div>
     </mat-tab>
     <!-- API definition link -->
-    <mat-tab [label]="tabLabels.ApiDefinition">
+    <mat-tab [label]="'apis.creation.importV2.tabs.apiDefinition' | translate">
       <div class="content__url-tab">
         <mat-form-field class="content__url-tab__field">
-          <mat-label>Api definition URL</mat-label>
+          <mat-label>{{ 'apis.creation.importV2.apiDefinitionUrl' | translate }}</mat-label>
           <input matInput type="url" [formControl]="descriptorUrlForm" required />
-          <mat-error *ngIf="descriptorUrlForm?.hasError('required')">URL is required.</mat-error>
+          <mat-error *ngIf="descriptorUrlForm?.hasError('required')">{{ 'apis.creation.importV2.urlRequired' | translate }}</mat-error>
         </mat-form-field>
       </div>
     </mat-tab>
     <!-- API definition link -->
-    <mat-tab [label]="tabLabels.WSDL">
+    <mat-tab [label]="'apis.creation.importV2.tabs.wsdl' | translate">
       <div class="content__url-tab">
         <mat-form-field class="content__url-tab__field">
-          <mat-label>WSDL descriptor URL</mat-label>
+          <mat-label>{{ 'apis.creation.importV2.wsdlUrl' | translate }}</mat-label>
           <input matInput type="url" [formControl]="descriptorUrlForm" required />
-          <mat-error *ngIf="descriptorUrlForm?.hasError('required')">URL is required.</mat-error>
+          <mat-error *ngIf="descriptorUrlForm?.hasError('required')">{{ 'apis.creation.importV2.urlRequired' | translate }}</mat-error>
         </mat-form-field>
 
         <div class="content__url-tab__config">
@@ -83,35 +85,40 @@
 
   <ng-template #configs>
     <div *ngIf="configsForm && importType !== 'GRAVITEE'" class="configs" [formGroup]="configsForm">
-      <h4>Configuration imported from the {{ importType === 'WSDL' ? 'WSDL' : 'swagger' }} descriptor</h4>
+      <h4>
+        {{
+          'apis.creation.importV2.configFromDescriptor'
+            | translate: { type: importType === 'WSDL' ? 'WSDL' : 'swagger' }
+        }}
+      </h4>
 
       <div class="configs__checkbox">
         <mat-checkbox formControlName="importDocumentation">
-          Create documentation
+          {{ 'apis.creation.importV2.createDocumentation' | translate }}
           <div class="configs__checkbox__warn">
-            This will overwrite documentation if there is only one existing, or create it if it does not exist yet.
+            {{ 'apis.creation.importV2.createDocumentationWarn' | translate }}
           </div>
         </mat-checkbox>
       </div>
 
       <div class="configs__checkbox">
         <mat-checkbox formControlName="importPathMapping">
-          Create the path mapping for analytics
-          <div class="configs__checkbox__warn">This will overwrite all the path-mappings.</div>
+          {{ 'apis.creation.importV2.createPathMapping' | translate }}
+          <div class="configs__checkbox__warn">{{ 'apis.creation.importV2.createPathMappingWarn' | translate }}</div>
         </mat-checkbox>
       </div>
 
       <div class="configs__checkbox">
         <mat-checkbox formControlName="importPolicyPaths">
-          Create flows on paths
-          <div class="configs__checkbox__warn">This will overwrite all the policies.</div>
+          {{ 'apis.creation.importV2.createFlows' | translate }}
+          <div class="configs__checkbox__warn">{{ 'apis.creation.importV2.createFlowsWarn' | translate }}</div>
         </mat-checkbox>
       </div>
 
       <div *ngFor="let policy of policies" class="configs__checkbox policies-section" formGroupName="importPolicies">
         <mat-checkbox [formControlName]="policy.id">
-          Apply {{ policy.name }} policy
-          <div class="configs__checkbox__warn">This will overwrite all the existing policy.</div>
+          {{ 'apis.creation.importV2.applyPolicy' | translate: { name: policy.name } }}
+          <div class="configs__checkbox__warn">{{ 'apis.creation.importV2.applyPolicyWarn' | translate }}</div>
         </mat-checkbox>
       </div>
     </div>
@@ -119,7 +126,7 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions">
-  <button class="confirm-dialog__cancel-button" mat-flat-button [mat-dialog-close]="false">Cancel</button>
+  <button class="confirm-dialog__cancel-button" mat-flat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
   <button
     class="confirm-dialog__confirm-button"
     color="primary"
@@ -128,6 +135,6 @@
     [disabled]="!isImportValid || isImportingApi()"
     (click)="onImport()"
   >
-    Import
+    {{ 'apis.creation.importV2.import' | translate }}
   </button>
 </mat-dialog-actions>

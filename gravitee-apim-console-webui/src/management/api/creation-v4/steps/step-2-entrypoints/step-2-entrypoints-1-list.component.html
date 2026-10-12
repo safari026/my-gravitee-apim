@@ -18,9 +18,9 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 2</div>
-      <div class="api-creation-v4__step__header__subtitle">Select your API entrypoints</div>
-      <p class="api-creation-v4__step__header__paragraph-light">Choose how your users will consume your API</p>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 2 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.entrypoints.subtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.entrypoints.hint' | translate }}</p>
     </div>
 
     <form *ngIf="formGroup" [formGroup]="formGroup" (ngSubmit)="save()">
@@ -34,7 +34,7 @@
       <mat-card class="step-2-entrypoints-1-list__banner">
         <mat-card-content class="step-2-entrypoints-1-list__banner__container">
           <h3 class="mat-h3 step-2-entrypoints-1-list__banner__title">
-            Explore Gravitee’s brand new plugin marketplace
+            {{ 'apis.creation.v4.entrypoints.marketplace' | translate }}
             <mat-icon svgIcon="gio:right-circle" class="step-2-entrypoints-1-list__banner__icon"></mat-icon>
           </h3>
         </mat-card-content>
@@ -49,9 +49,9 @@
       </div>
 
       <div class="api-creation-v4__step__footer">
-        <button mat-stroked-button type="button" (click)="goBack()">Previous</button>
+        <button mat-stroked-button type="button" (click)="goBack()">{{ 'apis.creation.v4.previous' | translate }}</button>
         <button data-testid="select_entrypoints_button" mat-flat-button color="primary" type="submit" [disabled]="formGroup.invalid">
-          Select my entrypoints
+          {{ 'apis.creation.v4.entrypoints.select' | translate }}
         </button>
       </div>
     </form>

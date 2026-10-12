@@ -87,7 +87,9 @@ export class PlanListComponentHarness extends ComponentHarness {
   }
 
   async selectStatusFilter(text: string | RegExp): Promise<void> {
-    const toggle = await this.locatorFor(MatButtonToggleHarness.with({ text }))();
+    const flags = text instanceof RegExp ? `${text.flags}${text.flags.includes('i') ? '' : 'i'}` : 'i';
+    const pattern = text instanceof RegExp ? text.source : text;
+    const toggle = await this.locatorFor(MatButtonToggleHarness.with({ text: new RegExp(pattern, flags) }))();
     return toggle.toggle();
   }
 

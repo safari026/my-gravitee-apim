@@ -22,13 +22,16 @@ import { GioChartPieModule } from './gio-chart-pie.module';
 import { GioChartPieComponent } from './gio-chart-pie.component';
 import { GioChartPieHarness } from './gio-chart-pie.harness';
 
+import { GioTestingModule } from '../../testing';
+import { LanguageService } from '../../i18n/language.service';
+
 describe('GioChartPieComponent', () => {
   let fixture: ComponentFixture<GioChartPieComponent>;
   let loader: HarnessLoader;
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, GioChartPieModule],
+      imports: [NoopAnimationsModule, GioChartPieModule, GioTestingModule],
       providers: [],
     });
     fixture = TestBed.createComponent(GioChartPieComponent);
@@ -36,8 +39,23 @@ describe('GioChartPieComponent', () => {
   });
 
   it('should show message when no data', async () => {
+    fixture.detectChanges();
     const pieChart = await loader.getHarness(GioChartPieHarness);
     expect(await pieChart.hasNoData()).toBeTruthy();
     expect(await pieChart.displaysChart()).toBeFalsy();
+    expect(await pieChart.getNoDataText()).toContain('No data to display');
+  });
+
+  it('should switch empty state to Russian and back', async () => {
+    fixture.detectChanges();
+    const pieChart = await loader.getHarness(GioChartPieHarness);
+
+    TestBed.inject(LanguageService).setLanguage('ru');
+    fixture.detectChanges();
+    expect(await pieChart.getNoDataText()).toContain('Нет данных для отображения');
+
+    TestBed.inject(LanguageService).setLanguage('en');
+    fixture.detectChanges();
+    expect(await pieChart.getNoDataText()).toContain('No data to display');
   });
 });

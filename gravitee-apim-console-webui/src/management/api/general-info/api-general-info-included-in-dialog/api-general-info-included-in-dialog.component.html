@@ -17,18 +17,20 @@
 -->
 
 <h4 mat-dialog-title class="title">
-  <div data-testid="included-in-dialog-title">Included in {{ data.apiProducts?.length ?? 0 }} API Products</div>
+  <div data-testid="included-in-dialog-title">{{
+    'apis.general.includedIn.title' | translate: { count: data.apiProducts?.length ?? 0 }
+  }}</div>
 </h4>
 
 <mat-dialog-content class="content">
   <mat-form-field appearance="outline" class="search-field">
-    <mat-label>Search API Products</mat-label>
+    <mat-label>{{ 'apis.general.includedIn.search' | translate }}</mat-label>
     <input
       matInput
       type="search"
       [ngModel]="searchTerm()"
       (ngModelChange)="searchTerm.set($event)"
-      placeholder="Search API Products"
+      [placeholder]="'apis.general.includedIn.search' | translate"
       data-testid="included-in-dialog-search"
     />
     <mat-icon matPrefix>search</mat-icon>
@@ -43,7 +45,9 @@
       </li>
     } @empty {
       <li>
-        <div class="api-products-list__empty" data-testid="included-in-dialog-empty">No API Products matching your search</div>
+        <div class="api-products-list__empty" data-testid="included-in-dialog-empty">{{
+          'apis.general.includedIn.empty' | translate
+        }}</div>
       </li>
     }
   </ul>

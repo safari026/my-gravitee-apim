@@ -18,11 +18,9 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 2</div>
-      <div class="api-creation-v4__step__header__subtitle">Select how you want your backend service exposed</div>
-      <p class="api-creation-v4__step__header__paragraph-light">
-        Choose the consumption style of your API based on your upstream backend service architecture
-      </p>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 2 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.architecture.subtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.architecture.hint' | translate }}</p>
     </div>
 
     <form *ngIf="form" [formGroup]="form">
@@ -33,20 +31,17 @@
           [class.gio-selection__selected]="form.controls['architecture'].value === 'PROXY'"
         >
           <gio-selection-list-option-layout>
-            <gio-selection-list-option-layout-title> Proxy Generic Protocol </gio-selection-list-option-layout-title>
+            <gio-selection-list-option-layout-title> {{ 'apis.creation.v4.architecture.proxyTitle' | translate }} </gio-selection-list-option-layout-title>
 
             <gio-selection-list-option-layout-body>
-              <p>
-                Choose this mode if you want to proxy an upstream HTTP or TCP service such as a REST API, SOAP service, WebSocket server or
-                gRPC service.
-              </p>
+              <p>{{ 'apis.creation.v4.architecture.proxyBody' | translate }}</p>
               <div class="option__badges">
-                Can proxy
+                {{ 'apis.creation.v4.architecture.canProxy' | translate }}
                 <span class="gio-badge-neutral gio-caption-2"> REST API </span>
                 <span class="gio-badge-neutral gio-caption-2"> SOAP API </span>
                 <span class="gio-badge-neutral gio-caption-2"> WebSocket Server </span>
                 <span class="gio-badge-neutral gio-caption-2"> gRPC Service </span>
-                Via
+                {{ 'apis.creation.v4.architecture.via' | translate }}
                 <span class="gio-badge-neutral gio-caption-2"> HTTP </span>
                 <span class="gio-badge-neutral gio-caption-2"> TCP </span>
               </div>
@@ -57,16 +52,13 @@
         <mat-radio-button value="MESSAGE" [class.gio-selection__selected]="form.controls['architecture'].value === 'MESSAGE'">
           <gio-selection-list-option-layout>
             <gio-selection-list-option-layout-title>
-              <div class="option__badges">Protocol Mediation</div>
+              <div class="option__badges">{{ 'apis.creation.v4.architecture.mediationTitle' | translate }}</div>
             </gio-selection-list-option-layout-title>
 
             <gio-selection-list-option-layout-body>
-              <p>
-                This mode serves incoming requests on a generic protocol such as HTTP and translates the request into a specialized backend
-                protocol such as Kafka or Solace.
-              </p>
+              <p>{{ 'apis.creation.v4.architecture.mediationBody' | translate }}</p>
               <div class="option__badges">
-                Can expose
+                {{ 'apis.creation.v4.architecture.canExpose' | translate }}
                 <span class="gio-badge-neutral gio-caption-2">Kafka</span>
                 <span class="gio-badge-neutral gio-caption-2">MQTT</span>
                 <span class="gio-badge-neutral gio-caption-2">RabbitMQ</span>
@@ -86,16 +78,13 @@
           <gio-selection-list-option-layout>
             <gio-selection-list-option-layout-title>
               <div class="option__kafka-title option__badges">
-                <div>Kafka Protocol</div>
-                <span class="gio-badge-accent">New</span>
+                <div>{{ 'apis.creation.v4.architecture.kafkaTitle' | translate }}</div>
+                <span class="gio-badge-accent">{{ 'apis.creation.v4.newBadge' | translate }}</span>
               </div>
             </gio-selection-list-option-layout-title>
 
             <gio-selection-list-option-layout-body>
-              <p class="option__kafka-description">
-                Choose this mode if you want to proxy the native Kafka protocol. In this case, the gateway acts as a Kafka broker to Kafka
-                clients.
-              </p>
+              <p class="option__kafka-description">{{ 'apis.creation.v4.architecture.kafkaBody' | translate }}</p>
             </gio-selection-list-option-layout-body>
           </gio-selection-list-option-layout>
           <div *ngIf="isMissingNativeKafkaReactor$ | async">
@@ -110,15 +99,15 @@
           <gio-selection-list-option-layout>
             <gio-selection-list-option-layout-title>
               <div class="option__badges">
-                <div>AI Gateway</div>
-                <span class="gio-badge-accent">New</span>
+                <div>{{ 'apis.creation.v4.architecture.aiTitle' | translate }}</div>
+                <span class="gio-badge-accent">{{ 'apis.creation.v4.newBadge' | translate }}</span>
               </div>
             </gio-selection-list-option-layout-title>
 
             <gio-selection-list-option-layout-body>
-              <p>Mode for proxying and managing AI definitions.</p>
+              <p>{{ 'apis.creation.v4.architecture.aiBody' | translate }}</p>
               <div class="option__badges">
-                Supports
+                {{ 'apis.creation.v4.architecture.supports' | translate }}
                 <span class="gio-badge-neutral gio-caption-2">A2A Protocol</span>
                 <span class="gio-badge-neutral gio-caption-2">MCP Proxy</span>
                 <span class="gio-badge-neutral gio-caption-2">LLM Proxy</span>
@@ -136,9 +125,9 @@
       </mat-radio-group>
 
       <div class="api-creation-v4__step__footer">
-        <button mat-stroked-button type="button" (click)="goBack()">Previous</button>
+        <button mat-stroked-button type="button" (click)="goBack()">{{ 'apis.creation.v4.previous' | translate }}</button>
         <button data-testid="select_architecture_button" mat-flat-button color="primary" [disabled]="form.invalid" (click)="save()">
-          Select my API architecture
+          {{ 'apis.creation.v4.architecture.select' | translate }}
         </button>
       </div>
     </form>

@@ -15,24 +15,19 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>Promote the API</h2>
+<h2 mat-dialog-title>{{ 'tasks.promoteDialog.title' | translate }}</h2>
 
 <mat-dialog-content class="promote__content">
   <gio-banner-info>
-    Sharding tags
-    <span gioBannerBody>The sharding tags of the promotion must exist in this environment.</span>
+    {{ 'tasks.promoteDialog.shardingTags' | translate }}
+    <span gioBannerBody>{{ 'tasks.promoteDialog.shardingTagsBody' | translate }}</span>
   </gio-banner-info>
 
-  <div *ngIf="data.isApiUpdate">
-    Since the API <code>{{ data.apiName }}</code> has already been promoted to
-    <strong>{{ data.targetEnvironmentName }}</strong> environment, accepting this promotion will update it.
-  </div>
-  <div *ngIf="!data.isApiUpdate">
-    Accepting this promotion will create a new API in <strong>{{ data.targetEnvironmentName }}</strong> environment.
-  </div>
+  <div *ngIf="data.isApiUpdate" [innerHTML]="'tasks.promoteDialog.update' | translate: { apiName: data.apiName, environment: data.targetEnvironmentName }"></div>
+  <div *ngIf="!data.isApiUpdate" [innerHTML]="'tasks.promoteDialog.create' | translate: { environment: data.targetEnvironmentName }"></div>
 </mat-dialog-content>
 
 <mat-dialog-actions class="actions">
-  <button type="button" class="actions__cancelBtn" mat-flat-button [mat-dialog-close]="false">Cancel</button>
-  <button type="submit" color="primary" mat-raised-button role="dialog" [mat-dialog-close]="{ accepted: true }">Accept</button>
+  <button type="button" class="actions__cancelBtn" mat-flat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
+  <button type="submit" color="primary" mat-raised-button role="dialog" [mat-dialog-close]="{ accepted: true }">{{ 'tasks.accept' | translate }}</button>
 </mat-dialog-actions>

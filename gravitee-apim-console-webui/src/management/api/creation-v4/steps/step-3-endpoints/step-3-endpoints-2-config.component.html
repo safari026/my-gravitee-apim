@@ -18,11 +18,9 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 3</div>
-      <div class="api-creation-v4__step__header__subtitle">Configure your API endpoints access</div>
-      <p class="api-creation-v4__step__header__paragraph-light">
-        Choose the type of event-brokers/backend that will be exposed through the API
-      </p>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 3 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.endpoints.configSubtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.endpoints.hint' | translate }}</p>
     </div>
 
     <form *ngIf="formGroup" [formGroup]="formGroup" (ngSubmit)="save()">
@@ -39,7 +37,7 @@
               required="true"
               data-testid="api_creation_v4_ep_name_input"
             />
-            <mat-label>Name</mat-label>
+            <mat-label>{{ 'apis.creation.v4.endpoints.name' | translate }}</mat-label>
           </mat-form-field>
           <gio-form-json-schema
             [jsonSchema]="endpointSchemas[endpoint.id].config"
@@ -61,9 +59,9 @@
       </div>
 
       <div class="api-creation-v4__step__footer">
-        <button mat-stroked-button type="button" (click)="goBack()">Previous</button>
+        <button mat-stroked-button type="button" (click)="goBack()">{{ 'apis.creation.v4.previous' | translate }}</button>
         <button mat-flat-button data-testid="validate_endpoint_button" color="primary" type="submit" [disabled]="formGroup.invalid">
-          Validate my endpoints
+          {{ 'apis.creation.v4.endpoints.validate' | translate }}
         </button>
       </div>
     </form>

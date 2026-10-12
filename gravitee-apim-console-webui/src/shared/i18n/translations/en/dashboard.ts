@@ -133,4 +133,10 @@ export const enDashboard = {
       needChanges: 'Need changes',
     },
   },
+  v2UnmatchedCalls: {
+    caption: "Table with V2 API calls that didn't match any context path",
+    date: 'Date',
+    method: 'Method',
+    path: 'Path',
+  },
 } as const;

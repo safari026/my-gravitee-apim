@@ -17,7 +17,12 @@
 -->
 <ng-container *ngIf="secureForm" [formGroup]="secureForm">
   <ng-container>
-    <h2 id="security-configuration-title">{{ securityType.name }} authentication configuration</h2>
+    <h2 id="security-configuration-title">
+      {{
+        'apis.plans.form.authenticationConfig'
+          | translate: { name: (('apis.plans.planTypes.' + securityType.planFormType) | translate) }
+      }}
+    </h2>
 
     <gio-form-json-schema
       *ngIf="securityConfigSchema"
@@ -26,18 +31,18 @@
       [jsonSchema]="securityConfigSchema"
     ></gio-form-json-schema>
 
-    <h2>Additional selection rule</h2>
+    <h2>{{ 'apis.plans.form.additionalSelectionRule' | translate }}</h2>
 
     <gio-banner-info>
-      Define an additional rule when you're managing multiple plans of the same type to improve the plan's selection process.
+      {{ 'apis.plans.form.additionalSelectionRuleBody' | translate }}
       <span gioBannerBody>
-        For example, if you want to check the issuer of a jwt token: &#123;#context.attributes['jwt'].claims['iss'] == 'my-issuer'&#125;
+        {{ 'apis.plans.form.additionalSelectionRuleExample' | translate }}
       </span>
     </gio-banner-info>
     <mat-form-field class="selectionRule-field">
-      <mat-label>Selection Rule</mat-label>
+      <mat-label>{{ 'apis.plans.form.selectionRule' | translate }}</mat-label>
       <input matInput formControlName="selectionRule" />
-      <mat-hint> Support EL (e.g: &#123;#context.attributes['jwt'].claims['iss'] == 'my-issuer'&#125;)</mat-hint>
+      <mat-hint>{{ 'apis.plans.form.selectionRuleHint' | translate }}</mat-hint>
     </mat-form-field>
   </ng-container>
 </ng-container>

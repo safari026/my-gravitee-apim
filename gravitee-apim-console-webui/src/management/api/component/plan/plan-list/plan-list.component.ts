@@ -26,6 +26,7 @@ import { GioIconsModule } from '@gravitee/ui-particles-angular';
 
 import { Plan, PlanStatus } from '../../../../../entities/management-api-v2';
 import { PlanMenuItemVM } from '../../../../../services-ngx/constants.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 export type PlanDS = Plan & { securityTypeLabel: string };
 
@@ -63,6 +64,7 @@ export interface PlanListContext {
     MatMenuModule,
     MatTooltipModule,
     GioIconsModule,
+    TranslatePipe,
   ],
 })
 export class PlanListComponent {

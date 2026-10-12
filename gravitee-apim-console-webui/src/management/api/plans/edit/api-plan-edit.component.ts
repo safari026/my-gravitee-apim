@@ -30,6 +30,7 @@ import { Api, ApiV4, CreatePlanV2, CreatePlanV4, KafkaListener, Plan, PlanStatus
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { ApiPlanV2Service } from '../../../../services-ngx/api-plan-v2.service';
 import { isApiV4 } from '../../../../util/isApiV2orV4';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-plan-edit',
@@ -65,6 +66,7 @@ export class ApiPlanEditComponent implements OnInit, OnDestroy {
     private readonly permissionService: GioPermissionService,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -95,7 +97,7 @@ export class ApiPlanEditComponent implements OnInit, OnDestroy {
           });
         }),
         catchError(error => {
-          this.snackBarService.error(error.error?.message ?? 'An error occurred.');
+          this.snackBarService.error(error.error?.message ?? this.languageService.translate('apis.plans.edit.loadError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
@@ -167,9 +169,9 @@ export class ApiPlanEditComponent implements OnInit, OnDestroy {
     confirm$
       .pipe(
         switchMap(confirmed => (confirmed ? savePlan$ : EMPTY)),
-        tap(() => this.snackBarService.success('Configuration successfully saved!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('apis.plans.edit.saved'))),
         catchError(error => {
-          this.snackBarService.error(error.error?.message ?? 'An error occurs while saving configuration');
+          this.snackBarService.error(error.error?.message ?? this.languageService.translate('apis.plans.edit.saveError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

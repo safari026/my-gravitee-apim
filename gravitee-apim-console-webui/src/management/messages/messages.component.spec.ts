@@ -30,6 +30,7 @@ import { RoleService } from '../../services-ngx/role.service';
 import { fakeRole } from '../../entities/role/role.fixture';
 import { HttpMessagePayload, TextMessagePayload } from '../../entities/message/messagePayload';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
+import { LanguageService } from '../../shared/i18n/language.service';
 import { GioTestingPermissionProvider } from '../../shared/components/gio-permission/gio-permission.service';
 
 describe('MessagesComponent', () => {
@@ -228,6 +229,26 @@ describe('MessagesComponent', () => {
         params: {},
       };
       expectSendFromPortalRequest(payload);
+    });
+  });
+
+  describe('i18n', () => {
+    beforeEach(async () => await init());
+
+    it('should switch page chrome to Russian and back', async () => {
+      expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Send a Broadcast Message');
+      expect(await harness.getAvailableChannel()).toEqual(['Portal Notifications', 'Email', 'POST HTTP Message']);
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Отправить рассылку');
+      expect(await harness.getAvailableChannel()).toEqual(['Уведомления портала', 'Email', 'HTTP POST-сообщение']);
+
+      TestBed.inject(LanguageService).setLanguage('en');
+      fixture.detectChanges();
+
+      expect(fixture.nativeElement.querySelector('h1').textContent).toContain('Send a Broadcast Message');
     });
   });
 

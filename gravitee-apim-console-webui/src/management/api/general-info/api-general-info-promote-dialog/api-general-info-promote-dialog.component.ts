@@ -25,6 +25,7 @@ import { CockpitService, UtmCampaign } from '../../../../services-ngx/cockpit.se
 import { PromotionService } from '../../../../services-ngx/promotion.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { Api } from '../../../../entities/management-api-v2';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type ApiPortalDetailsPromoteDialogData = {
   api: Api;
@@ -43,6 +44,7 @@ export class ApiGeneralInfoPromoteDialogComponent {
   private readonly snackBarService = inject(SnackBarService);
   private readonly cockpitService = inject(CockpitService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   public state: 'loading' | 'hasCockpit' | 'meetCockpit' = 'loading';
   public apiId: string;
@@ -89,7 +91,9 @@ export class ApiGeneralInfoPromoteDialogComponent {
             return EMPTY;
           }
 
-          this.snackBarService.error(error.error?.message ?? error.message ?? 'An error occurred while loading promotion targets.');
+          this.snackBarService.error(
+            error.error?.message ?? error.message ?? this.languageService.translate('apis.general.snackbar.promoteLoadError'),
+          );
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -104,10 +108,12 @@ export class ApiGeneralInfoPromoteDialogComponent {
       .promote(this.apiId, promotionTarget)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Promotion requested.');
+          this.snackBarService.success(this.languageService.translate('apis.general.snackbar.promoteRequested'));
         }),
         catchError(error => {
-          this.snackBarService.error(error.error?.message ?? error.message ?? 'An error occurred while requesting promotion.');
+          this.snackBarService.error(
+            error.error?.message ?? error.message ?? this.languageService.translate('apis.general.snackbar.promoteRequestError'),
+          );
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

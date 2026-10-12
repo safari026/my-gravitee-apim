@@ -12,6 +12,7 @@ export const enCommon = {
   selectPage: 'Select page',
   hits: 'Nb hits',
   hitsTotal: 'Nb hits total',
+  total: 'Total',
   noStatus: 'No status',
   add: 'Add',
   create: 'Create',

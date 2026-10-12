@@ -18,11 +18,9 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 3</div>
-      <div class="api-creation-v4__step__header__subtitle">Select your API endpoints access</div>
-      <p class="api-creation-v4__step__header__paragraph-light">
-        Choose the type of event-brokers/backend that will be exposed through the API
-      </p>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 3 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.endpoints.subtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.endpoints.hint' | translate }}</p>
     </div>
 
     <form *ngIf="formGroup" [formGroup]="formGroup" (ngSubmit)="save()">
@@ -44,8 +42,12 @@
               <div class="gio-connector-list__option-centered">
                 <mat-icon class="api-creation-v4__icon" [svgIcon]="endpoint.icon"></mat-icon>
                 {{ endpoint.name }}
-                <span class="gio-badge-accent api-creation-v4__badge" *ngIf="endpoint.isEnterprise">Enterprise</span>
-                <span class="gio-badge-warning api-creation-v4__badge" *ngIf="!endpoint.deployed">Not deployed</span>
+                <span class="gio-badge-accent api-creation-v4__badge" *ngIf="endpoint.isEnterprise">{{
+                  'apis.creation.v4.enterprise' | translate
+                }}</span>
+                <span class="gio-badge-warning api-creation-v4__badge" *ngIf="!endpoint.deployed">{{
+                  'apis.creation.v4.notDeployed' | translate
+                }}</span>
               </div>
             </gio-selection-list-option-layout-title>
 
@@ -56,7 +58,7 @@
             <gio-selection-list-option-layout-action>
               <button type="button" mat-stroked-button (click)="onMoreInfoClick($event, endpoint)">
                 <mat-icon svgIcon="gio:eye-empty"></mat-icon>
-                More information
+                {{ 'apis.creation.v4.moreInformation' | translate }}
               </button>
             </gio-selection-list-option-layout-action>
           </gio-selection-list-option-layout>
@@ -72,8 +74,10 @@
       </div>
 
       <div class="api-creation-v4__step__footer">
-        <button mat-stroked-button type="button" (click)="goBack()">Previous</button>
-        <button mat-flat-button color="primary" type="submit" [disabled]="formGroup.invalid">Select my endpoints</button>
+        <button mat-stroked-button type="button" (click)="goBack()">{{ 'apis.creation.v4.previous' | translate }}</button>
+        <button mat-flat-button color="primary" type="submit" [disabled]="formGroup.invalid">{{
+          'apis.creation.v4.endpoints.select' | translate
+        }}</button>
       </div>
     </form>
   </mat-card-content>
