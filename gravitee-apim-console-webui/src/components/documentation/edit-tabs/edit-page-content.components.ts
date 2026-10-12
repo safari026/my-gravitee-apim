@@ -16,6 +16,7 @@
 import { IController, IScope } from 'angular';
 
 import { PageType } from '../../../services/documentation.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import '@gravitee/ui-components/wc/gv-code';
 
 interface IPageScope extends IScope {
@@ -33,7 +34,12 @@ class EditPageContentComponentController implements IController {
   // for asciidoc & swagger
   codeMirrorOptions: any;
 
-  constructor(private $scope: IPageScope) {}
+  constructor(
+    private $scope: IPageScope,
+    private readonly ngLanguageService: LanguageService,
+  ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   isAsciiDoc(): boolean {
     return PageType.ASCIIDOC === this.pageType;
@@ -69,7 +75,7 @@ class EditPageContentComponentController implements IController {
     }
   }
 }
-EditPageContentComponentController.$inject = ['$scope'];
+EditPageContentComponentController.$inject = ['$scope', 'ngLanguageService'];
 
 export const EditPageContentComponent: ng.IComponentOptions = {
   bindings: {

@@ -21,6 +21,8 @@ import { catchError, distinctUntilChanged, shareReplay, takeUntil, tap } from 'r
 import { GioLicenseService } from '@gravitee/ui-particles-angular';
 import { ActivatedRoute, Router } from '@angular/router';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 import { Environment } from '../../../entities/environment/environment';
 import { GroupMapping, IdentityProvider, RoleMapping } from '../../../entities/identity-provider';
 import { EnvironmentService } from '../../../services-ngx/environment.service';
@@ -90,7 +92,18 @@ export class OrgSettingsIdentityProviderComponent implements OnInit, OnDestroy {
     private readonly licenseService: GioLicenseService,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly languageService: LanguageService,
   ) {}
+
+  get identityProviderTypeLabel(): string {
+    const labels: Partial<Record<NonNullable<IdentityProvider['type']>, string>> = {
+      GRAVITEEIO_AM: this.languageService.translate('settings.organization.identityProvider.graviteeAm'),
+      OIDC: this.languageService.translate('settings.organization.identityProvider.openIdConnect'),
+      GOOGLE: this.languageService.translate('settings.organization.identityProvider.google'),
+      GITHUB: this.languageService.translate('settings.organization.identityProvider.github'),
+    };
+    return this.identityProviderType ? labels[this.identityProviderType] ?? this.identityProviderType : '';
+  }
 
   ngOnInit() {
     this.hasOpenidConnectSsoLock$ = this.licenseService.isMissingFeature$(this.openidConnectSsoLicenseOptions.feature);
@@ -191,7 +204,7 @@ export class OrgSettingsIdentityProviderComponent implements OnInit, OnDestroy {
     upsertIdentityProvider$
       .pipe(
         tap(() => {
-          this.snackBarService.success('Identity provider successfully saved!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.identityProvider.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

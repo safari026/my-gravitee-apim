@@ -26,6 +26,7 @@ import { ConsoleSettingsService } from '../../../services-ngx/console-settings.s
 import { ConsoleSettings } from '../../../entities/consoleSettings';
 import { CorsUtil } from '../../../shared/utils';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'org-settings-general',
@@ -39,8 +40,6 @@ export class OrgSettingsGeneralComponent implements OnInit, OnDestroy {
   formSettings: UntypedFormGroup;
 
   settings: ConsoleSettings;
-
-  providedConfigurationMessage = 'Configuration provided by the system';
 
   httpMethods = CorsUtil.httpMethods;
 
@@ -56,6 +55,7 @@ export class OrgSettingsGeneralComponent implements OnInit, OnDestroy {
     private readonly consoleSettingsService: ConsoleSettingsService,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -161,9 +161,9 @@ export class OrgSettingsGeneralComponent implements OnInit, OnDestroy {
           {
             width: '450px',
             data: {
-              title: 'Are you sure?',
-              content: 'Do you want to remove all cross-origin restrictions?',
-              confirmButton: 'Yes, I want to allow all origins.',
+              title: this.languageService.translate('settings.organization.general.allowAllOriginsTitle'),
+              content: this.languageService.translate('settings.organization.general.allowAllOriginsContent'),
+              confirmButton: this.languageService.translate('settings.organization.general.allowAllOriginsConfirm'),
             },
             role: 'alertdialog',
             id: 'allowAllOriginsConfirmDialog',
@@ -277,7 +277,7 @@ export class OrgSettingsGeneralComponent implements OnInit, OnDestroy {
     this.consoleSettingsService
       .save(updatedSettingsPayload)
       .pipe(
-        tap(() => this.snackBarService.success('Configuration successfully saved!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.organization.general.saved'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.ngOnInit());

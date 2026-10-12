@@ -21,6 +21,7 @@ import { distinctUntilChanged, takeUntil, tap } from 'rxjs/operators';
 
 import { MetadataFormat } from '../../../entities/metadata/metadata';
 import { MAIL_PATTERN, URL_PATTERN } from '../../../shared/utils';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 export interface GioMetadataDialogData {
   key?: string;
@@ -54,8 +55,20 @@ export class GioMetadataDialogComponent implements OnInit, AfterViewChecked {
     private readonly dialogRef: MatDialogRef<GioMetadataDialogData, GioMetadataDialogData>,
     @Inject(MAT_DIALOG_DATA) dialogData: GioMetadataDialogData,
     private readonly formBuilder: UntypedFormBuilder,
+    private readonly languageService: LanguageService,
   ) {
     this.metadata = dialogData;
+  }
+
+  get dialogTitle(): string {
+    if (this.metadata.defaultValue) {
+      return this.languageService.translate('settings.metadata.dialog.overrideTitle');
+    }
+    const action = this.languageService.translate(
+      this.metadata.action === 'Create' ? 'settings.metadata.dialog.createAction' : 'settings.metadata.dialog.updateAction',
+    );
+    const type = this.languageService.translate(`settings.metadata.headerTypes.${this.metadata.referenceType}`);
+    return this.languageService.translate('settings.metadata.dialog.actionTitle', { action, type });
   }
 
   ngOnInit() {

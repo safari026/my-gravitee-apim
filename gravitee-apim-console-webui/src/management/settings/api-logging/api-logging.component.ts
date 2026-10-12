@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { AbstractControl, UntypedFormBuilder, UntypedFormGroup, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { Subject } from 'rxjs';
 import { takeUntil, tap } from 'rxjs/operators';
@@ -34,8 +35,11 @@ import { WindowedCount, WindowedCountFormatError } from '../../api/reporter-sett
   standalone: false,
 })
 export class ApiLoggingComponent implements OnInit, OnDestroy {
+  private readonly languageService = inject(LanguageService);
   isLoading = true;
-  providedConfigurationMessage = 'Configuration provided by the system';
+  get providedConfigurationMessage(): string {
+    return this.languageService.translate('settings.systemConfig');
+  }
   apiLoggingForm: UntypedFormGroup;
   canUpdateSettings: boolean;
   settings: ConsoleSettings;
@@ -136,7 +140,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
     this.consoleSettingsService
       .save(settingsToSave)
       .pipe(
-        tap(() => this.snackBarService.success('Configuration successfully saved!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.apiLogging.saved'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.ngOnInit());
@@ -160,7 +164,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultLowerThanLimit',
-        message: 'Default should be greater than Limit',
+        message: this.languageService.translate('settings.apiLogging.defaultLowerThanLimit'),
       };
 
       if (defaultControl.value < limitControl.value) {
@@ -183,7 +187,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultGreaterThanLimit',
-        message: 'Default should be lower than Limit',
+        message: this.languageService.translate('settings.apiLogging.defaultGreaterThanLimit'),
       };
 
       if (defaultControl.value > limitControl.value) {
@@ -206,7 +210,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultLowerThanLimit',
-        message: 'Default should be greater than Limit',
+        message: this.languageService.translate('settings.apiLogging.defaultLowerThanLimit'),
       };
 
       try {
@@ -237,7 +241,7 @@ export class ApiLoggingComponent implements OnInit, OnDestroy {
 
       const error = {
         key: 'defaultLowerThanLimit',
-        message: 'Default must be a lower rate than limit',
+        message: this.languageService.translate('settings.apiLogging.defaultLowerThanMaxRate'),
       };
 
       try {

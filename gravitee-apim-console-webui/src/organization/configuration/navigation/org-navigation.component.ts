@@ -14,12 +14,16 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Router } from '@angular/router';
+import { Subject } from 'rxjs';
+import { takeUntil } from 'rxjs/operators';
 
 import { GroupItem, OrganizationNavigationService } from './organization-navigation.service';
 
 import { Constants } from '../../../entities/Constants';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'org-navigation',
@@ -27,21 +31,36 @@ import { Constants } from '../../../entities/Constants';
   templateUrl: './org-navigation.component.html',
   standalone: false,
 })
-export class OrgNavigationComponent implements OnInit {
+export class OrgNavigationComponent implements OnInit, OnDestroy {
   public groupItems: GroupItem[] = [];
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly router: Router,
     @Inject(Constants) private readonly constants: Constants,
     private readonly organizationNavigationService: OrganizationNavigationService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit(): void {
-    this.groupItems = this.organizationNavigationService.getOrganizationNavigationRoutes();
+    this.refreshNavigation();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshNavigation());
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   goBack() {
     // Reloads current environment if exists, otherwise loads the default root path
     this.router.navigate([this.constants.org.currentEnv?.id ?? '/']);
+  }
+
+  private refreshNavigation() {
+    this.groupItems = this.organizationNavigationService.getOrganizationNavigationRoutes();
   }
 }

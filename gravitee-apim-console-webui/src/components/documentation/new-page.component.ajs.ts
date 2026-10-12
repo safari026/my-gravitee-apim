@@ -20,6 +20,7 @@ import { Dictionary, keyBy } from 'lodash';
 
 import { DocumentationQuery, DocumentationService, PageType } from '../../services/documentation.service';
 import NotificationService from '../../services/notification.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 interface IPageScope extends IScope {
   getContentMode: string;
@@ -49,10 +50,13 @@ class NewPageComponentController implements IController {
     private readonly Constants,
     private $scope: IPageScope,
     private readonly ngRouter: Router,
+    private readonly ngLanguageService: LanguageService,
   ) {
     this.error = null;
     this.$scope.getContentMode = 'inline';
   }
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     this.apiId = this.activatedRoute.snapshot.params.apiId;
@@ -90,24 +94,16 @@ class NewPageComponentController implements IController {
   }
 
   getPageName(): string {
-    switch (this.page.type) {
-      case PageType.ASCIIDOC:
-        return 'New AsciiDoc';
-      case PageType.ASYNCAPI:
-        return 'New AsyncApi';
-      case PageType.FOLDER:
-        return 'New Folder';
-      case PageType.LINK:
-        return 'New Link';
-      case PageType.MARKDOWN_TEMPLATE:
-        return 'New Markdown Template';
-      case PageType.MARKDOWN:
-        return 'New Markdown Page';
-      case PageType.SWAGGER:
-        return 'New Swagger Template';
-      default:
-        return 'New Page';
-    }
+    const keyByType: Record<string, string> = {
+      [PageType.ASCIIDOC]: 'settings.documentation.newTitles.ASCIIDOC',
+      [PageType.ASYNCAPI]: 'settings.documentation.newTitles.ASYNCAPI',
+      [PageType.FOLDER]: 'settings.documentation.newTitles.FOLDER',
+      [PageType.LINK]: 'settings.documentation.newTitles.LINK',
+      [PageType.MARKDOWN_TEMPLATE]: 'settings.documentation.newTitles.MARKDOWN_TEMPLATE',
+      [PageType.MARKDOWN]: 'settings.documentation.newTitles.MARKDOWN',
+      [PageType.SWAGGER]: 'settings.documentation.newTitles.SWAGGER',
+    };
+    return this.translate(keyByType[this.page.type] ?? 'settings.documentation.newTitles.default');
   }
 
   isFolder(): boolean {
@@ -138,9 +134,9 @@ class NewPageComponentController implements IController {
       .then((response: any) => {
         const page = response.data;
         if (page.messages && page.messages.length > 0) {
-          this.NotificationService.showError("'" + page.name + "' has been created (with validation errors)");
+          this.NotificationService.showError(this.translate('settings.documentation.createdWithErrors', { name: page.name }));
         } else {
-          this.NotificationService.show("'" + page.name + "' has been created");
+          this.NotificationService.show(this.translate('settings.documentation.created', { name: page.name }));
         }
         if (gotoParent) {
           this.gotoParent();
@@ -149,7 +145,7 @@ class NewPageComponentController implements IController {
         }
       })
       .catch(err => {
-        this.error = { ...err.data, title: 'Sorry, unable to create page' };
+        this.error = { ...err.data, title: this.translate('settings.documentation.unableToCreate') };
       });
   }
 
@@ -179,7 +175,7 @@ class NewPageComponentController implements IController {
     this.ngRouter.navigate(['../', page.id], { queryParams: { type: page.type }, relativeTo: this.activatedRoute });
   }
 }
-NewPageComponentController.$inject = ['NotificationService', 'DocumentationService', 'Constants', '$scope', 'ngRouter'];
+NewPageComponentController.$inject = ['NotificationService', 'DocumentationService', 'Constants', '$scope', 'ngRouter', 'ngLanguageService'];
 
 export const DocumentationNewPageComponentAjs: ng.IComponentOptions = {
   bindings: {
@@ -191,6 +187,7 @@ export const DocumentationNewPageComponentAjs: ng.IComponentOptions = {
     pagesToLink: '<',
     params: '<',
     activatedRoute: '<',
+    language: '<',
   },
   template: require('html-loader!./new-page.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: NewPageComponentController,

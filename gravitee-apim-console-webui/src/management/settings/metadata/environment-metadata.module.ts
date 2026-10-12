@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -24,6 +25,6 @@ import { GioMetadataModule } from '../../../components/gio-metadata/gio-metadata
 @NgModule({
   declarations: [EnvironmentMetadataComponent],
   exports: [EnvironmentMetadataComponent],
-  imports: [CommonModule, GioMetadataModule, MatDialogModule],
+  imports: [CommonModule, GioMetadataModule, MatDialogModule, TranslatePipe],
 })
 export class EnvironmentMetadataModule {}

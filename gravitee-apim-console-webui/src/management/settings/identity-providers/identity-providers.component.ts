@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnInit } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { combineLatest, EMPTY, Subject } from 'rxjs';
 import { catchError, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
@@ -46,6 +47,7 @@ interface IdentityProviderForm {
   standalone: false,
 })
 export class IdentityProvidersComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   identityProvidersForm: FormGroup;
   settings: PortalSettings;
   activatedIdentityProvider: IdentityProviderActivation[] = [];
@@ -125,7 +127,7 @@ export class IdentityProvidersComponent implements OnInit {
           }),
         ),
         tap(() => {
-          this.snackBarService.success('Authentication configuration successfully updated!');
+          this.snackBarService.success(this.languageService.translate('settings.authentication.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -149,11 +151,13 @@ export class IdentityProvidersComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `${element.isActivated ? 'Deactivate' : 'Activate'} an Identity Provider`,
-          content: `Are you sure you want to ${element.activated ? 'deactivate' : 'activate'} the identity provider <strong>${
-            element.name
-          }</strong>?`,
-          confirmButton: 'Ok',
+          title: this.languageService.translate(
+            element.isActivated ? 'settings.authentication.deactivateTitle' : 'settings.authentication.activateTitle',
+          ),
+          content: this.languageService.translate(
+            element.isActivated ? 'settings.authentication.deactivateContent' : 'settings.authentication.activateContent',
+          ),
+          confirmButton: this.languageService.translate('settings.authentication.ok'),
         },
         role: 'alertdialog',
         id: 'activateIdentityProviderConfirmDialog',
@@ -175,7 +179,10 @@ export class IdentityProvidersComponent implements OnInit {
         }),
         tap(() =>
           this.snackBarService.success(
-            `Identity Provider ${element.name} successfully ${element.isActivated ? 'deactivated' : 'activated'}!`,
+            this.languageService.translate(
+              element.isActivated ? 'settings.authentication.deactivated' : 'settings.authentication.activated',
+              { name: element.name },
+            ),
           ),
         ),
         takeUntil(this.unsubscribe$),

@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { catchError, filter, finalize, map, switchMap } from 'rxjs/operators';
@@ -99,9 +101,11 @@ export interface GroupsResponse {
     MatTabsModule,
     MatMenuModule,
     GioTableWrapperModule,
+    TranslatePipe,
   ],
 })
 export class GroupsComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   groups$: Observable<Group[]> = of([]);
   columnDefs: string[] = ['name', 'actions'];
   settingsForm: FormGroup<{ userGroupRequired: FormControl<boolean> }>;
@@ -166,7 +170,7 @@ export class GroupsComponent implements OnInit {
           this.isLoading = false;
         }),
         catchError(() => {
-          this.snackBarService.error('Error occurred while loading groups.');
+          this.snackBarService.error(this.languageService.translate('settings.groups.loadError'));
           this.isLoading = false;
           return of([]);
         }),
@@ -191,7 +195,7 @@ export class GroupsComponent implements OnInit {
             this.initializeFormValues();
           }),
           catchError(() => {
-            this.snackBarService.error(`Error occurred while fetching console settings.`);
+            this.snackBarService.error(this.languageService.translate('settings.groups.settingsLoadError'));
             return EMPTY;
           }),
           takeUntilDestroyed(this.destroyRef),
@@ -211,9 +215,9 @@ export class GroupsComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete Group',
-          content: `Are you sure, you want to delete the group?`,
-          confirmButton: 'Yes',
+          title: this.languageService.translate('settings.groups.deleteTitle'),
+          content: this.languageService.translate('settings.groups.deleteContent'),
+          confirmButton: this.languageService.translate('settings.groups.yes'),
           cancelButton: 'No',
         },
         role: 'alertdialog',
@@ -230,10 +234,10 @@ export class GroupsComponent implements OnInit {
       )
       .subscribe({
         next: _ => {
-          this.snackBarService.success(`Successfully deleted the group.`);
+          this.snackBarService.success(this.languageService.translate('settings.groups.deleted'));
           this.loadGroups();
         },
-        error: () => this.snackBarService.error(`Error while deleting the group.`),
+        error: () => this.snackBarService.error(this.languageService.translate('settings.groups.deleteError')),
       });
   }
 
@@ -246,10 +250,10 @@ export class GroupsComponent implements OnInit {
         tap(response => {
           this.settings = response;
           this.initializeFormValues();
-          this.snackBarService.success('Successfully updated groups settings.');
+          this.snackBarService.success(this.languageService.translate('settings.groups.settingsUpdated'));
         }),
         catchError(() => {
-          this.snackBarService.error('Error occurred while saving groups settings.');
+          this.snackBarService.error(this.languageService.translate('settings.groups.settingsUpdateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -54,6 +55,7 @@ import { SharedPolicyGroup, SharedPolicyGroupHistoriesSortByParam, toReadableFlo
 import { GioTableWrapperModule } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../../../shared/components/gio-permission/gio-permission.module';
 import { SnackBarService } from '../../../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import { GioPermissionService } from '../../../../../shared/components/gio-permission/gio-permission.service';
 
 type PageTableVM = {
@@ -83,10 +85,12 @@ type PageTableVM = {
     MatIcon,
     MatCheckbox,
     FormsModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharedPolicyGroupHistoryComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
@@ -116,12 +120,15 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
   protected compareSPG?: [PageTableVM['items'][number], PageTableVM['items'][number]] = [null, null];
   protected get compareTwoSPGLabel(): string {
     if (this.compareSPG[0] === null) {
-      return 'Select two versions to compare';
+      return this.languageService.translate('settings.sharedPolicyGroups.compareSelectTwo');
     }
     if (this.compareSPG[1] === null) {
-      return `Select another version to compare`;
+      return this.languageService.translate('settings.sharedPolicyGroups.compareSelectAnother');
     }
-    return `Compare version ${this.compareSPG[0].sharedPolicyGroup.version} with ${this.compareSPG[1].sharedPolicyGroup.version}`;
+    return this.languageService.translate('settings.sharedPolicyGroups.compareVersionWith', {
+      left: this.compareSPG[0].sharedPolicyGroup.version,
+      right: this.compareSPG[1].sharedPolicyGroup.version,
+    });
   }
   protected get disableCompareTwoSPG(): boolean {
     return this.compareSPG.filter(e => !isNil(e)).length < 2;
@@ -129,8 +136,10 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
   protected get comparePendingSPGLabel(): string {
     const lastSelected = this.compareSPG.filter(e => !isNil(e))?.pop();
     return lastSelected
-      ? `Compare version ${lastSelected.sharedPolicyGroup.version} with version to be deployed`
-      : 'Select a version to compare with version to be deployed';
+      ? this.languageService.translate('settings.sharedPolicyGroups.compareVersionPending', {
+          version: lastSelected.sharedPolicyGroup.version,
+        })
+      : this.languageService.translate('settings.sharedPolicyGroups.compareSelectPending');
   }
   protected get disableComparePendingSPG(): boolean {
     return this.compareSPG.filter(e => !isNil(e)).length < 1;
@@ -211,11 +220,13 @@ export class SharedPolicyGroupHistoryComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.snackBarService.success('Version has been restored. Review changes and click ‘Deploy’ to finalize the restoration.');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.restoreSuccess'));
           this.router.navigate(['../'], { relativeTo: this.activatedRoute });
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group restore!');
+          this.snackBarService.error(
+            error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.restoreError'),
+          );
         },
       });
   }

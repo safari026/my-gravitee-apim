@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -72,6 +73,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     MatOptionModule,
     MatSelectModule,
     GioTopBarLinkModule,
+    TranslatePipe,
   ],
 })
 export class PortalSettingsModule {}

@@ -15,9 +15,16 @@
  */
 import '@gravitee/ui-components/wc/gv-documentation';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 class PageAsciiDocComponentController implements ng.IComponentController {
   pageContent: any;
+
+  constructor(private readonly ngLanguageService: LanguageService) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 }
+PageAsciiDocComponentController.$inject = ['ngLanguageService'];
 
 export const PageAsciiDocComponent: ng.IComponentOptions = {
   template: require('html-loader!./page-asciidoc.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

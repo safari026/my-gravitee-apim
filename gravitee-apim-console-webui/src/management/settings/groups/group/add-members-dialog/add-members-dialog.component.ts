@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
@@ -54,6 +55,7 @@ import { Group } from '../../../../../entities/group/group';
     MatAutocompleteModule,
     MatListModule,
     MatChipsModule,
+    TranslatePipe,
   ],
   templateUrl: './add-members-dialog.component.html',
   styleUrl: './add-members-dialog.component.scss',

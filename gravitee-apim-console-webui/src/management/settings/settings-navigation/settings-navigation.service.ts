@@ -17,6 +17,7 @@ import { Injectable } from '@angular/core';
 import { MenuSearchItem } from '@gravitee/ui-particles-angular';
 
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { cleanRouterLink } from '../../../util/router-link.util';
 
 export interface MenuItem {
@@ -33,110 +34,113 @@ export interface GroupItem {
 
 @Injectable({ providedIn: 'root' })
 export class SettingsNavigationService {
-  constructor(private readonly permissionService: GioPermissionService) {}
+  constructor(
+    private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
+  ) {}
 
   public getSettingsNavigationRoutes(): GroupItem[] {
     const items: GroupItem[] = [
       {
-        title: 'Portal',
+        title: this.t('settings.navigation.groups.portal'),
         items: [
           {
-            displayName: 'Analytics',
+            displayName: this.t('settings.navigation.items.analytics'),
             routerLink: './analytics',
             permissions: ['environment-dashboard-r'],
           },
           {
-            displayName: 'API Portal Information',
+            displayName: this.t('settings.navigation.items.apiPortalHeader'),
             routerLink: './api-portal-header',
             permissions: ['environment-api_header-r'],
           },
           {
-            displayName: 'API Quality',
+            displayName: this.t('settings.navigation.items.apiQuality'),
             routerLink: './api-quality-rules',
             permissions: ['environment-quality_rule-r'],
           },
           {
-            displayName: 'Authentication',
+            displayName: this.t('settings.navigation.items.authentication'),
             routerLink: './identity-providers',
             permissions: ['organization-identity_provider-r', 'environment-identity_provider_activation-r'],
           },
           {
-            displayName: 'Categories',
+            displayName: this.t('settings.navigation.items.categories'),
             routerLink: './categories',
             permissions: ['environment-category-r'],
           },
           {
-            displayName: 'Client Registration',
+            displayName: this.t('settings.navigation.items.clientRegistration'),
             routerLink: './client-registration-providers',
             permissions: ['environment-client_registration_provider-r'],
           },
           {
-            displayName: 'Documentation',
+            displayName: this.t('settings.navigation.items.documentation'),
             routerLink: './documentation',
             permissions: ['environment-documentation-r'],
           },
           {
-            displayName: 'Metadata',
+            displayName: this.t('settings.navigation.items.metadata'),
             routerLink: './metadata',
             permissions: ['environment-metadata-r'],
           },
           {
-            displayName: 'Settings',
+            displayName: this.t('settings.navigation.items.portal'),
             routerLink: './portal',
             permissions: ['environment-settings-r'],
           },
           {
-            displayName: 'Theme',
+            displayName: this.t('settings.navigation.items.theme'),
             routerLink: './theme',
             permissions: ['environment-theme-r'],
           },
           {
-            displayName: 'Featured APIs',
+            displayName: this.t('settings.navigation.items.topApis'),
             routerLink: './top-apis',
             permissions: ['environment-top_apis-r'],
           },
         ],
       },
       {
-        title: 'Gateway',
+        title: this.t('settings.navigation.groups.gateway'),
         items: [
           {
-            displayName: 'API Logging',
+            displayName: this.t('settings.navigation.items.apiLogging'),
             routerLink: './api-logging',
             permissions: ['organization-settings-r'],
           },
           {
-            displayName: 'Dictionaries',
+            displayName: this.t('settings.navigation.items.dictionaries'),
             routerLink: './dictionaries',
             permissions: ['environment-dictionary-r'],
           },
           {
-            displayName: 'Shared Policy Groups',
+            displayName: this.t('settings.navigation.items.sharedPolicyGroups'),
             routerLink: './shared-policy-groups',
             permissions: ['environment-shared_policy_group-r'],
           },
         ],
       },
       {
-        title: 'User Management',
+        title: this.t('settings.navigation.groups.userManagement'),
         items: [
           {
-            displayName: 'User Fields',
+            displayName: this.t('settings.navigation.items.userFields'),
             routerLink: './custom-user-fields',
             permissions: ['organization-custom_user_fields-r'],
           },
           {
-            displayName: 'Groups',
+            displayName: this.t('settings.navigation.items.groups'),
             routerLink: './groups',
             permissions: ['environment-group-r'],
           },
         ],
       },
       {
-        title: 'Notifications',
+        title: this.t('settings.navigation.groups.notifications'),
         items: [
           {
-            displayName: 'Notification settings',
+            displayName: this.t('settings.navigation.items.notifications'),
             routerLink: './notifications',
             permissions: ['environment-notification-r'],
           },
@@ -157,10 +161,14 @@ export class SettingsNavigationService {
         return {
           name: item.displayName,
           routerLink: `/${environmentId}/settings/${cleanRouterLink(item.routerLink)}`,
-          category: `Environment / ${groupItem.title}`,
+          category: this.t('settings.navigation.searchCategory', { group: groupItem.title }),
           groupIds: [environmentId],
         };
       }),
     );
+  }
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.languageService.translate(key, params);
   }
 }

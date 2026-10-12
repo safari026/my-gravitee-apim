@@ -25,6 +25,7 @@ import { Role } from '../../../../entities/role/role';
 import { RoleService } from '../../../../services-ngx/role.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { Constants } from '../../../../entities/Constants';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 type RolePermissionsTableDM = {
   permissionName: string;
@@ -55,10 +56,10 @@ export class OrgSettingsRoleComponent implements OnInit, OnDestroy {
       label: string;
     }
   > = {
-    C: { state: 'unchecked', label: 'Select all' },
-    R: { state: 'unchecked', label: 'Select all' },
-    U: { state: 'unchecked', label: 'Select all' },
-    D: { state: 'unchecked', label: 'Select all' },
+    C: { state: 'unchecked', label: '' },
+    R: { state: 'unchecked', label: '' },
+    U: { state: 'unchecked', label: '' },
+    D: { state: 'unchecked', label: '' },
   };
 
   private unsubscribe$ = new Subject<boolean>();
@@ -69,9 +70,19 @@ export class OrgSettingsRoleComponent implements OnInit, OnDestroy {
     @Inject(Constants) private readonly constants: Constants,
     private readonly roleService: RoleService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
+  get roleScopeLabel(): string {
+    return this.languageService.translate(`settings.organization.roles.scopes.${this.roleScope}`);
+  }
+
   ngOnInit(): void {
+    const selectAllLabel = this.languageService.translate('settings.organization.role.selectAll');
+    this.selectAllCheckbox.C.label = selectAllLabel;
+    this.selectAllCheckbox.R.label = selectAllLabel;
+    this.selectAllCheckbox.U.label = selectAllLabel;
+    this.selectAllCheckbox.D.label = selectAllLabel;
     this.roleScope = this.activatedRoute.snapshot.params.roleScope;
     this.isEditMode = !!this.activatedRoute.snapshot.params.role;
     this.roleName = this.activatedRoute.snapshot.params.role;
@@ -167,7 +178,7 @@ export class OrgSettingsRoleComponent implements OnInit, OnDestroy {
     createOrUpdateRole$
       .pipe(
         tap(() => {
-          this.snackBarService.success('Role successfully saved!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.role.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -204,7 +215,9 @@ export class OrgSettingsRoleComponent implements OnInit, OnDestroy {
 
     this.selectAllCheckbox[rightKey] = {
       state: nbChecked === nbPermissions ? 'checked' : nbChecked === 0 ? 'unchecked' : 'indeterminate',
-      label: `${nbChecked === nbPermissions ? 'Deselect' : 'Select'} all`,
+      label: this.languageService.translate(
+        nbChecked === nbPermissions ? 'settings.organization.role.deselectAll' : 'settings.organization.role.selectAll',
+      ),
     };
   }
 

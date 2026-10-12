@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 import { Role } from 'src/entities/role/role';
 import { GroupMembership } from 'src/entities/group/groupMember';
 
@@ -137,9 +139,11 @@ export interface TooManyUsersDialogData {
     MatMenuModule,
     GioTableWrapperModule,
     GioBannerModule,
+    TranslatePipe,
   ],
 })
 export class GroupComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   group$: Observable<Group> = of(null);
   groupMembers$: Observable<Member[]> = of([]);
   invitations$: Observable<Invitation[]> = of([]);
@@ -524,7 +528,7 @@ export class GroupComponent implements OnInit {
       .saveOrUpdate(this.mode, this.mapUpdatedGroup())
       .pipe(
         tap((group: Group) => {
-          this.snackBarService.success(`Successfully saved the group.`);
+          this.snackBarService.success(this.languageService.translate('settings.groups.saved'));
 
           if (this.mode === 'new') {
             this.router.navigate(['..', group.id], { relativeTo: this.route });
@@ -562,11 +566,11 @@ export class GroupComponent implements OnInit {
   private deleteMember(member: Member, dialogResult: DeleteMemberDialogResult) {
     return this.groupService.deleteMember(this.groupId, member.id).pipe(
       tap(() => {
-        this.snackBarService.success('Successfully deleted member from the group.');
+        this.snackBarService.success(this.languageService.translate('settings.groups.memberDeleted'));
         this.initializeGroupMembers();
       }),
       catchError(() => {
-        this.snackBarService.error('Error occurred while deleting member from the group.');
+        this.snackBarService.error(this.languageService.translate('settings.groups.memberDeleteError'));
         return EMPTY;
       }),
       map(() => dialogResult),
@@ -577,11 +581,11 @@ export class GroupComponent implements OnInit {
     if (member.roles['API'] === RoleName.PRIMARY_OWNER || member.roles['API_PRODUCT'] === RoleName.PRIMARY_OWNER) {
       return this.groupService.addOrUpdateMemberships(this.groupId, [dialogResult.primaryOwnerMembership]).pipe(
         tap(() => {
-          this.snackBarService.success('Successfully transferred the ownership.');
+          this.snackBarService.success(this.languageService.translate('settings.groups.ownershipTransferred'));
           this.initializeGroupMembers();
         }),
         catchError(() => {
-          this.snackBarService.error('Error occurred while transferring the ownership.');
+          this.snackBarService.error(this.languageService.translate('settings.groups.ownershipTransferError'));
           return EMPTY;
         }),
       );
@@ -614,11 +618,11 @@ export class GroupComponent implements OnInit {
         switchMap(dialogResult =>
           this.groupService.addOrUpdateMemberships(this.groupId, dialogResult?.memberships).pipe(
             tap(() => {
-              this.snackBarService.success('Successfully saved edited member(s) of the group.');
+              this.snackBarService.success(this.languageService.translate('settings.groups.membersEdited'));
               this.initializeGroupMembers();
             }),
             catchError(() => {
-              this.snackBarService.error('Error occurred while saving edited member(s) of the group.');
+              this.snackBarService.error(this.languageService.translate('settings.groups.membersEditError'));
               return EMPTY;
             }),
           ),
@@ -652,11 +656,11 @@ export class GroupComponent implements OnInit {
         switchMap(dialogResult =>
           this.groupService.addOrUpdateMemberships(this.groupId, dialogResult.memberships).pipe(
             tap(() => {
-              this.snackBarService.success('Successfully added member(s) to the group.');
+              this.snackBarService.success(this.languageService.translate('settings.groups.membersAdded'));
               this.initializeGroupMembers();
             }),
             catchError(() => {
-              this.snackBarService.error('Error occurred while adding members to the group.');
+              this.snackBarService.error(this.languageService.translate('settings.groups.membersAddError'));
               return EMPTY;
             }),
           ),
@@ -689,7 +693,7 @@ export class GroupComponent implements OnInit {
           this.groupService.inviteMember(this.groupId, dialogResult.invitation).pipe(
             tap(response => {
               if (response.status === 200) {
-                this.snackBarService.success('Successfully invited user to the group.');
+                this.snackBarService.success(this.languageService.translate('settings.groups.invited'));
                 this.initializeInvitations();
                 this.initializeGroupMembers();
               } else if (response.status === 202) {
@@ -697,7 +701,7 @@ export class GroupComponent implements OnInit {
               }
             }),
             catchError(() => {
-              this.snackBarService.error('Error while inviting member to the group.');
+              this.snackBarService.error(this.languageService.translate('settings.groups.inviteError'));
               return EMPTY;
             }),
           ),
@@ -711,10 +715,10 @@ export class GroupComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete Invitation',
-          content: `You are trying to delete an invitation sent to ${email}. Do you want to continue?`,
-          confirmButton: 'Continue',
-          cancelButton: 'Cancel',
+          title: this.languageService.translate('settings.groups.deleteInvitationTitle'),
+          content: this.languageService.translate('settings.groups.deleteInvitationContent', { email }),
+          confirmButton: this.languageService.translate('settings.groups.continue'),
+          cancelButton: this.languageService.translate('common.cancel'),
         },
         role: 'alertdialog',
         id: 'deleteInvitationDialog',
@@ -728,11 +732,11 @@ export class GroupComponent implements OnInit {
         switchMap(() =>
           this.groupService.deleteInvitation(this.groupId, invitationId).pipe(
             tap(() => {
-              this.snackBarService.success(`Successfully deleted the invitation.`);
+              this.snackBarService.success(this.languageService.translate('settings.groups.invitationDeleted'));
               this.initializeInvitations();
             }),
             catchError(() => {
-              this.snackBarService.error(`Error occurred while deleting the invitation.`);
+              this.snackBarService.error(this.languageService.translate('settings.groups.invitationDeleteError'));
               return EMPTY;
             }),
           ),
@@ -746,10 +750,10 @@ export class GroupComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Add group to existing APIs',
-          content: `You are trying to add the group to all the existing APIs. Do you want to continue?`,
-          confirmButton: 'Continue',
-          cancelButton: 'Cancel',
+          title: this.languageService.translate('settings.groups.addToExistingApisTitle'),
+          content: this.languageService.translate('settings.groups.addToExistingApisContent'),
+          confirmButton: this.languageService.translate('settings.groups.continue'),
+          cancelButton: this.languageService.translate('common.cancel'),
         },
         role: 'alertdialog',
         id: 'confirmDialog',
@@ -766,10 +770,10 @@ export class GroupComponent implements OnInit {
       .subscribe({
         next: () => {
           this.initializeGroupAPIs();
-          this.snackBarService.success(`Successfully added the group to existing APIs.`);
+          this.snackBarService.success(this.languageService.translate('settings.groups.addedToExistingApis'));
         },
         error: () => {
-          this.snackBarService.error(`Error occurred while adding the group to existing APIs.`);
+          this.snackBarService.error(this.languageService.translate('settings.groups.addToExistingApisError'));
         },
       });
   }
@@ -778,10 +782,10 @@ export class GroupComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Add group to existing API Products',
-          content: `You are trying to add the group to all the existing API Products. Do you want to continue?`,
-          confirmButton: 'Continue',
-          cancelButton: 'Cancel',
+          title: this.languageService.translate('settings.groups.addToExistingApiProductsTitle'),
+          content: this.languageService.translate('settings.groups.addToExistingApiProductsContent'),
+          confirmButton: this.languageService.translate('settings.groups.continue'),
+          cancelButton: this.languageService.translate('common.cancel'),
         },
         role: 'alertdialog',
         id: 'confirmDialog',
@@ -798,10 +802,10 @@ export class GroupComponent implements OnInit {
       .subscribe({
         next: () => {
           this.initializeGroupAPIProducts();
-          this.snackBarService.success(`Successfully added the group to existing API Products.`);
+          this.snackBarService.success(this.languageService.translate('settings.groups.addedToExistingApiProducts'));
         },
         error: () => {
-          this.snackBarService.error(`Error occurred while adding the group to existing API Products.`);
+          this.snackBarService.error(this.languageService.translate('settings.groups.addToExistingApiProductsError'));
         },
       });
   }
@@ -810,10 +814,10 @@ export class GroupComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Add group to existing applications',
-          content: `You are trying to add the group to all the existing applications. Do you want to continue?`,
-          confirmButton: 'Continue',
-          cancelButton: 'Cancel',
+          title: this.languageService.translate('settings.groups.addToExistingAppsTitle'),
+          content: this.languageService.translate('settings.groups.addToExistingAppsContent'),
+          confirmButton: this.languageService.translate('settings.groups.continue'),
+          cancelButton: this.languageService.translate('common.cancel'),
         },
         role: 'alertdialog',
         id: 'confirmDialog',
@@ -830,10 +834,10 @@ export class GroupComponent implements OnInit {
       .subscribe({
         next: () => {
           this.initializeGroupApplications();
-          this.snackBarService.success(`Successfully added the group to existing applications.`);
+          this.snackBarService.success(this.languageService.translate('settings.groups.addedToExistingApps'));
         },
         error: () => {
-          this.snackBarService.error(`Error occurred while adding the group to existing applications.`);
+          this.snackBarService.error(this.languageService.translate('settings.groups.addToExistingAppsError'));
         },
       });
   }

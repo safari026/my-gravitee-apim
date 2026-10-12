@@ -19,22 +19,24 @@
   <form *ngIf="!isLoading" [formGroup]="identityProviderFormGroup" (ngSubmit)="onSubmit()" autocomplete="off" gioFormFocusInvalid>
     <h1>
       <gio-go-back-button routerLink=".."></gio-go-back-button>
-      <ng-container *ngIf="mode === 'new'">Create a new identity provider</ng-container>
-      <ng-container *ngIf="mode === 'edit'">Update {{ identityProviderType | titlecase }} identity provider</ng-container>
+      <ng-container *ngIf="mode === 'new'">{{ 'settings.organization.identityProvider.createTitle' | translate }}</ng-container>
+      <ng-container *ngIf="mode === 'edit'">{{
+        'settings.organization.identityProvider.updateTitle' | translate: { type: identityProviderTypeLabel }
+      }}</ng-container>
     </h1>
 
     <mat-card *ngIf="mode === 'new'" class="identity-provider__card">
       <mat-card-content>
-        <h2 gioTableOfContents>Provider type</h2>
+        <h2 gioTableOfContents>{{ 'settings.organization.identityProvider.providerType' | translate }}</h2>
 
         <gio-form-selection-inline class="identity-provider__card__provider-type-group" formControlName="type">
           <gio-form-selection-inline-card class="identity-provider__card__provider-type-group__button" value="GRAVITEEIO_AM">
             <img
               class="identity-provider__card__provider-type-group__button__logo"
               [src]="'assets/logo_graviteeio_am-idp.svg'"
-              alt="ravitee.io AM Logo"
+              [attr.alt]="'settings.organization.identityProvider.graviteeAmLogoAlt' | translate"
             />
-            <p class="identity-provider__card__provider-type-group__button__label">Gravitee.io AM</p>
+            <p class="identity-provider__card__provider-type-group__button__label">{{ 'settings.organization.identityProvider.graviteeAm' | translate }}</p>
           </gio-form-selection-inline-card>
 
           <gio-form-selection-inline-card
@@ -46,27 +48,27 @@
             <img
               class="identity-provider__card__provider-type-group__button__logo"
               [src]="'assets/logo_oidc-idp.svg'"
-              alt="OpenID Connect Logo"
+              [attr.alt]="'settings.organization.identityProvider.oidcLogoAlt' | translate"
             />
-            <p class="identity-provider__card__provider-type-group__button__label">OpenID Connect</p>
+            <p class="identity-provider__card__provider-type-group__button__label">{{ 'settings.organization.identityProvider.openIdConnect' | translate }}</p>
           </gio-form-selection-inline-card>
 
           <gio-form-selection-inline-card class="identity-provider__card__provider-type-group__button" value="GOOGLE">
             <img
               class="identity-provider__card__provider-type-group__button__logo"
               [src]="'assets/logo_google-idp.svg'"
-              alt="Google Logo"
+              [attr.alt]="'settings.organization.identityProvider.googleLogoAlt' | translate"
             />
-            <p class="identity-provider__card__provider-type-group__button__label">Google</p>
+            <p class="identity-provider__card__provider-type-group__button__label">{{ 'settings.organization.identityProvider.google' | translate }}</p>
           </gio-form-selection-inline-card>
 
           <gio-form-selection-inline-card class="identity-provider__card__provider-type-group__button" value="GITHUB">
             <img
               class="identity-provider__card__provider-type-group__button__logo"
               [src]="'assets/logo_github-idp.svg'"
-              alt="Github Logo"
+              [attr.alt]="'settings.organization.identityProvider.githubLogoAlt' | translate"
             />
-            <p class="identity-provider__card__provider-type-group__button__label">Github</p>
+            <p class="identity-provider__card__provider-type-group__button__label">{{ 'settings.organization.identityProvider.github' | translate }}</p>
           </gio-form-selection-inline-card>
         </gio-form-selection-inline>
       </mat-card-content>
@@ -74,64 +76,66 @@
 
     <mat-card class="identity-provider__card">
       <mat-card-content>
-        <h2 gioTableOfContents>General</h2>
+        <h2 gioTableOfContents>{{ 'settings.organization.shared.general' | translate }}</h2>
 
         <mat-form-field class="identity-provider__card__form-field">
-          <mat-label>Name</mat-label>
+          <mat-label>{{ 'settings.organization.shared.name' | translate }}</mat-label>
           <input matInput name="name" minlength="2" maxlength="50" formControlName="name" required />
-          <mat-hint>Identity provider name. The name will be used to define the authentication endpoint</mat-hint>
+          <mat-hint>{{ 'settings.organization.identityProvider.nameHint' | translate }}</mat-hint>
 
-          <mat-error *ngIf="identityProviderFormGroup.get('name').hasError('required')">Identity provider name is required.</mat-error>
-          <mat-error *ngIf="identityProviderFormGroup.get('name').hasError('maxlength')"
-            >The identity provider has to be less than 50 characters long.</mat-error
-          >
-          <mat-error *ngIf="identityProviderFormGroup.get('name').hasError('minlength')"
-            >The identity provider has to be more than 2 characters long.</mat-error
-          >
+          <mat-error *ngIf="identityProviderFormGroup.get('name').hasError('required')">{{
+            'settings.organization.identityProvider.nameRequired' | translate
+          }}</mat-error>
+          <mat-error *ngIf="identityProviderFormGroup.get('name').hasError('maxlength')">{{
+            'settings.organization.identityProvider.nameMax' | translate
+          }}</mat-error>
+          <mat-error *ngIf="identityProviderFormGroup.get('name').hasError('minlength')">{{
+            'settings.organization.identityProvider.nameMin' | translate
+          }}</mat-error>
         </mat-form-field>
 
         <mat-form-field class="identity-provider__card__form-field">
-          <mat-label>Description</mat-label>
+          <mat-label>{{ 'settings.organization.shared.description' | translate }}</mat-label>
           <input matInput name="description" formControlName="description" />
-          <mat-hint>Provide a description of the identity provider</mat-hint>
+          <mat-hint>{{ 'settings.organization.identityProvider.descriptionHint' | translate }}</mat-hint>
         </mat-form-field>
 
         <!-- Note: Token exchange endpoint ?? -->
 
         <gio-form-slide-toggle class="identity-provider__card__form-field">
-          <gio-form-label>Allow portal authentication to use this identity provider</gio-form-label>
+          <gio-form-label>{{ 'settings.organization.identityProvider.allowPortalAuth' | translate }}</gio-form-label>
           <mat-slide-toggle
             gioFormSlideToggle
-            aria-label="Allow identity provider for portal"
+            [attr.aria-label]="'settings.organization.identityProvider.allowPortalAuthAria' | translate"
             name="identityProviderEnabled"
             formControlName="enabled"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <gio-form-slide-toggle class="identity-provider__card__form-field">
-          <gio-form-label>A public email is required to be able to authenticate</gio-form-label>
+          <gio-form-label>{{ 'settings.organization.identityProvider.publicEmailRequired' | translate }}</gio-form-label>
           <mat-slide-toggle
             gioFormSlideToggle
-            aria-label="A public email is required"
+            [attr.aria-label]="'settings.organization.identityProvider.publicEmailRequiredAria' | translate"
             name="identityProviderEmailRequired"
             formControlName="emailRequired"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
         <div class="identity-provider__card__form-field radio-group">
-          <label class="mat-body-strong">Group and role mappings</label>
-          <div>Platform administrators still have the ability to override mappings</div>
+          <label class="mat-body-strong">{{ 'settings.organization.identityProvider.groupRoleMappings' | translate }}</label>
+          <div>{{ 'settings.organization.identityProvider.mappingsOverrideHint' | translate }}</div>
           <mat-radio-group
             class="identity-provider__card__form-field__radio-group"
-            aria-label="Select an option"
+            [attr.aria-label]="'settings.organization.identityProvider.selectOptionAria' | translate"
             formControlName="syncMappings"
           >
-            <mat-radio-button class="identity-provider__card__form-field__radio-group__button" [value]="false"
-              >Computed only during first user authentication</mat-radio-button
-            >
-            <mat-radio-button class="identity-provider__card__form-field__radio-group__button" [value]="true"
-              >Computed during each user authentication</mat-radio-button
-            >
+            <mat-radio-button class="identity-provider__card__form-field__radio-group__button" [value]="false">{{
+              'settings.organization.identityProvider.mappingsFirstAuth' | translate
+            }}</mat-radio-button>
+            <mat-radio-button class="identity-provider__card__form-field__radio-group__button" [value]="true">{{
+              'settings.organization.identityProvider.mappingsEachAuth' | translate
+            }}</mat-radio-button>
           </mat-radio-group>
         </div>
       </mat-card-content>
@@ -149,7 +153,7 @@
 
     <mat-card *ngIf="mode === 'edit'" class="identity-provider__card" formArrayName="groupMappings">
       <mat-card-content>
-        <h2 gioTableOfContents>Groups Mapping</h2>
+        <h2 gioTableOfContents>{{ 'settings.organization.identityProvider.groupsMapping' | translate }}</h2>
         <mat-card
           *ngFor="let groupMappingControl of $any(identityProviderFormGroup.get('groupMappings'))?.controls; index as groupMappingIndex"
           [formGroupName]="groupMappingIndex"
@@ -157,56 +161,62 @@
         >
           <mat-card-content class="identity-provider__card__group-mapping__content">
             <mat-form-field class="identity-provider__card__group-mapping__content__form-field">
-              <mat-label>Condition</mat-label>
+              <mat-label>{{ 'settings.organization.identityProvider.condition' | translate }}</mat-label>
               <input #groupMappingConditionInput matInput name="condition" formControlName="condition" required />
-              <mat-hint>The condition which should be validated to associate below groups at login time.</mat-hint>
-              <mat-error *ngIf="groupMappingControl.get('condition').hasError('required')">Condition is required.</mat-error>
+              <mat-hint>{{ 'settings.organization.identityProvider.conditionHint' | translate }}</mat-hint>
+              <mat-error *ngIf="groupMappingControl.get('condition').hasError('required')">{{
+                'settings.organization.identityProvider.conditionRequired' | translate
+              }}</mat-error>
             </mat-form-field>
 
             <mat-form-field class="identity-provider__card__group-mapping__content__form-field">
-              <mat-label>Group</mat-label>
+              <mat-label>{{ 'settings.organization.identityProvider.group' | translate }}</mat-label>
               <mat-select formControlName="groups" multiple required>
                 <mat-option *ngFor="let group of groups$ | async" [value]="group.id">{{ group.name }}</mat-option>
               </mat-select>
-              <mat-error *ngIf="groupMappingControl.get('groups').hasError('required')">At least one group is required.</mat-error>
+              <mat-error *ngIf="groupMappingControl.get('groups').hasError('required')">{{
+                'settings.organization.identityProvider.groupRequired' | translate
+              }}</mat-error>
             </mat-form-field>
           </mat-card-content>
           <mat-card-actions align="end">
             <button mat-button type="button" (click)="removeGroupMappingFromIdentityProviderFormGroup(groupMappingIndex)">
-              <mat-icon>delete</mat-icon> Delete
+              <mat-icon>delete</mat-icon> {{ 'common.delete' | translate }}
             </button>
           </mat-card-actions>
         </mat-card>
       </mat-card-content>
       <mat-card-actions>
         <button mat-button color="accent" type="button" (click)="addGroupMappingToIdentityProviderFormGroup()">
-          <mat-icon>add</mat-icon> Add group mapping
+          <mat-icon>add</mat-icon> {{ 'settings.organization.identityProvider.addGroupMapping' | translate }}
         </button>
       </mat-card-actions>
     </mat-card>
 
     <mat-card *ngIf="mode === 'edit'" class="identity-provider__card" formArrayName="roleMappings">
       <mat-card-content>
-        <h2 gioTableOfContents>Roles Mapping</h2>
+        <h2 gioTableOfContents>{{ 'settings.organization.identityProvider.rolesMapping' | translate }}</h2>
         <mat-card
           *ngFor="let roleMappingControl of $any(identityProviderFormGroup.get('roleMappings'))?.controls; index as roleMappingIndex"
           [formGroupName]="roleMappingIndex"
         >
           <mat-card-content class="identity-provider__card__role-mapping">
             <mat-form-field class="identity-provider__card__role-mapping__form-field">
-              <mat-label>Condition</mat-label>
+              <mat-label>{{ 'settings.organization.identityProvider.condition' | translate }}</mat-label>
               <input matInput name="condition" formControlName="condition" required />
-              <mat-hint>The condition which should be validated to associate below groups at login time.</mat-hint>
-              <mat-error *ngIf="roleMappingControl.get('condition').hasError('required')">Condition is required.</mat-error>
+              <mat-hint>{{ 'settings.organization.identityProvider.conditionHint' | translate }}</mat-hint>
+              <mat-error *ngIf="roleMappingControl.get('condition').hasError('required')">{{
+                'settings.organization.identityProvider.conditionRequired' | translate
+              }}</mat-error>
             </mat-form-field>
 
             <mat-form-field class="identity-provider__card__role-mapping__form-field">
-              <mat-label>Organization roles</mat-label>
+              <mat-label>{{ 'settings.organization.identityProvider.organizationRoles' | translate }}</mat-label>
               <mat-select formControlName="organizations" multiple required>
                 <mat-option *ngFor="let role of organizationRoles$ | async" [value]="role.name">{{ role.name }}</mat-option>
-                <mat-error *ngIf="roleMappingControl.get('organizations').hasError('required')"
-                  >At least one organization role is required.</mat-error
-                >
+                <mat-error *ngIf="roleMappingControl.get('organizations').hasError('required')">{{
+                  'settings.organization.identityProvider.orgRoleRequired' | translate
+                }}</mat-error>
               </mat-select>
             </mat-form-field>
 
@@ -214,26 +224,26 @@
               mat-table
               [dataSource]="environments$ | async"
               class="identity-provider__card__role-mapping__table"
-              aria-label="Environment role selection"
+              [attr.aria-label]="'settings.organization.identityProvider.envRoleTableAria' | translate"
             >
               <!-- Name Column -->
               <ng-container matColumnDef="name">
-                <th mat-header-cell id="name" *matHeaderCellDef>Name</th>
+                <th mat-header-cell id="name" *matHeaderCellDef>{{ 'settings.organization.shared.name' | translate }}</th>
                 <td mat-cell *matCellDef="let environment">{{ environment.name }}</td>
               </ng-container>
 
               <!-- Description Column -->
               <ng-container matColumnDef="description">
-                <th mat-header-cell id="description" *matHeaderCellDef>Description</th>
+                <th mat-header-cell id="description" *matHeaderCellDef>{{ 'settings.organization.shared.description' | translate }}</th>
                 <td mat-cell *matCellDef="let environment">{{ environment.description }}</td>
               </ng-container>
 
               <!-- Actions Column -->
               <ng-container matColumnDef="actions">
-                <th mat-header-cell id="actions" *matHeaderCellDef>Roles selected</th>
+                <th mat-header-cell id="actions" *matHeaderCellDef>{{ 'settings.organization.identityProvider.rolesSelected' | translate }}</th>
                 <td mat-cell *matCellDef="let environment" formGroupName="environments">
                   <mat-form-field>
-                    <mat-label>Roles</mat-label>
+                    <mat-label>{{ 'settings.organization.shared.roles' | translate }}</mat-label>
                     <mat-select [formControlName]="environment.id" multiple>
                       <mat-option *ngFor="let role of environmentRoles$ | async" [value]="role.name">{{ role.name }}</mat-option>
                     </mat-select>
@@ -248,14 +258,14 @@
 
           <mat-card-actions align="end">
             <button mat-button type="button" (click)="removeRoleMappingFromIdentityProviderFormGroup(roleMappingIndex)">
-              <mat-icon>delete</mat-icon> Delete
+              <mat-icon>delete</mat-icon> {{ 'common.delete' | translate }}
             </button>
           </mat-card-actions>
         </mat-card>
       </mat-card-content>
       <mat-card-actions>
         <button mat-button color="accent" type="button" (click)="addRoleMappingToIdentityProviderFormGroup()">
-          <mat-icon>add</mat-icon> Add role mapping
+          <mat-icon>add</mat-icon> {{ 'settings.organization.identityProvider.addRoleMapping' | translate }}
         </button>
       </mat-card-actions>
     </mat-card>
@@ -270,7 +280,7 @@
   </form>
 
   <gio-table-of-contents
-    [sectionNames]="{ '': 'Identity provider' }"
+    [sectionNames]="{ '': ('settings.organization.identityProvider.tocTitle' | translate) }"
     scrollingContainer="#gio-toc-scrolling-container"
   ></gio-table-of-contents>
 </div>

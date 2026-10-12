@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function DialogDictionaryAddPropertyController($scope, $mdDialog) {
+function DialogDictionaryAddPropertyController($scope, $mdDialog, ngLanguageService) {
+  this.translate = (key, params) => ngLanguageService.translate(key, params);
+
   this.hide = function () {
     $mdDialog.hide();
   };
@@ -27,6 +29,6 @@ function DialogDictionaryAddPropertyController($scope, $mdDialog) {
     $mdDialog.hide(property);
   };
 }
-DialogDictionaryAddPropertyController.$inject = ['$scope', '$mdDialog'];
+DialogDictionaryAddPropertyController.$inject = ['$scope', '$mdDialog', 'ngLanguageService'];
 
 export default DialogDictionaryAddPropertyController;

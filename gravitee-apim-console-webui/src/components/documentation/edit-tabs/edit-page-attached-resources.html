@@ -19,15 +19,15 @@
   <table md-table class="gv-table-dense">
     <thead md-head>
       <tr md-row>
-        <th md-column>Name</th>
-        <th md-column>Type</th>
-        <th md-column width="1%" nowrap>Created at</th>
+        <th md-column>{{$ctrl.translate('settings.documentation.name')}}</th>
+        <th md-column>{{$ctrl.translate('settings.documentation.type')}}</th>
+        <th md-column width="1%" nowrap>{{$ctrl.translate('settings.documentation.createdAt')}}</th>
         <th md-column width="48px"></th>
       </tr>
     </thead>
     <tbody md-body>
       <tr md-row ng-if="!$ctrl.attachedResources || !$ctrl.attachedResources.length || $ctrl.attachedResources.length <= 0">
-        <td md-cell colspan="4"><span>No attached resources</span></td>
+        <td md-cell colspan="4"><span>{{$ctrl.translate('settings.documentation.noAttached')}}</span></td>
       </tr>
       <tr
         md-row
@@ -45,7 +45,7 @@
             permission
             permission-only="['environment-documentation-u', 'api-documentation-u']"
           >
-            <md-tooltip md-direction="top" md-visible="false">Remove</md-tooltip>
+            <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('common.remove')}}</md-tooltip>
           </ng-md-icon>
         </td>
       </tr>
@@ -58,10 +58,10 @@
     permission
     permission-only="['environment-documentation-u', 'api-documentation-u']"
     type="button"
-    aria-label="Add new resource"
+    aria-label="{{$ctrl.translate('settings.documentation.addResource')}}"
     class="md-raised md-primary"
     ng-click="$ctrl.addAttachedResource()"
   >
-    Add a new resource
+    {{$ctrl.translate('settings.documentation.addResource')}}
   </md-button>
 </div>

@@ -1,3 +1,5 @@
+import { enOrganizationPages } from './organization-pages';
+
 export const enSettings = {
   navigation: {
     root: 'Settings',
@@ -566,6 +568,16 @@ export const enSettings = {
     globalBadge: 'Global',
     globalTooltip: 'Inherited global metadata',
     empty: 'No metadata found',
+    titleWithType: '{type} metadata',
+    addWithType: 'Add {type} Metadata',
+    filterBySource: 'Filter by source',
+    resetFilters: 'Reset filters',
+    tableCaptionWithType: '{type} metadata table',
+    headerTypes: {
+      Global: 'Global',
+      API: 'API',
+      Application: 'Notification Template',
+    },
     sortByKey: 'Sort by key',
     sortByName: 'Sort by name',
     sortByFormat: 'Sort by format',
@@ -584,6 +596,9 @@ export const enSettings = {
       createTitle: 'Create Global metadata',
       updateTitle: 'Update Global metadata',
       overrideTitle: 'Override global metadata',
+      actionTitle: '{action} {type} metadata',
+      createAction: 'Create',
+      updateAction: 'Update',
       key: 'Key',
       name: 'Name',
       format: 'Format',
@@ -1137,6 +1152,12 @@ export const enSettings = {
     openWebsite: 'Open Website',
     openSettings: 'Open Settings',
     cors: 'CORS',
+    corsAllowOrigin: 'Allow-Origin',
+    corsAllowMethods: 'Access-Control-Allow-Methods',
+    corsAllowHeaders: 'Allow-Headers',
+    corsExposedHeaders: 'Exposed-Headers',
+    swaggerUi: 'Swagger-UI',
+    redoc: 'Redoc',
     smtp: 'SMTP',
     enableEmailing: 'Enable Emailing',
     host: 'Host',
@@ -1224,5 +1245,34 @@ export const enSettings = {
     fileInvalid: 'File is not valid (error: {error})',
     inheritedFrom: '(inherited from {description})',
     useParent: 'Use {description}: {value}',
+  },
+
+  organization: {
+    navigation: {
+      root: 'Organization',
+      settingsTitle: 'Organization Settings',
+      searchCategory: 'Organization / {group}',
+      groups: {
+        console: 'Console',
+        userManagement: 'User Management',
+        gateway: 'Gateway',
+        notifications: 'Notifications',
+        audit: 'Audit',
+        graviteeCloud: 'Gravitee Cloud',
+      },
+      items: {
+        authentication: 'Authentication',
+        settings: 'Settings',
+        users: 'Users',
+        roles: 'Roles',
+        entrypoints: 'Entrypoints & Sharding Tags',
+        tenants: 'Tenants',
+        policies: 'Policies',
+        templates: 'Templates',
+        audit: 'Audit',
+        graviteeCloud: 'Discover Gravitee Cloud',
+      },
+    },
+    ...enOrganizationPages,
   },
 } as const;

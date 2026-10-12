@@ -31,6 +31,7 @@ import {
   GioUsersSelectorData,
 } from '../../../shared/components/gio-users-selector/gio-users-selector.component';
 import { SearchableUser } from '../../../entities/user/searchableUser';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'org-settings-role-members',
@@ -54,7 +55,12 @@ export class OrgSettingsRoleMembersComponent implements OnInit, OnDestroy {
     private readonly roleService: RoleService,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
+
+  get roleScopeLabel(): string {
+    return this.languageService.translate(`settings.organization.roles.scopes.${this.roleScope}`);
+  }
 
   ngOnInit(): void {
     this.roleScope = this.activatedRoute.snapshot.params.roleScope;
@@ -109,7 +115,7 @@ export class OrgSettingsRoleMembersComponent implements OnInit, OnDestroy {
           ),
         ),
         tap(() => {
-          this.snackBarService.success('Membership successfully created');
+          this.snackBarService.success(this.languageService.translate('settings.organization.roleMembers.membershipCreated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -124,9 +130,13 @@ export class OrgSettingsRoleMembersComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete a membership',
-          content: `Are you sure you want to delete the role <strong>${this.roleScope} - ${this.role}</strong> to user <strong>${membership.displayName}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.roleMembers.deleteTitle'),
+          content: this.languageService.translate('settings.organization.roleMembers.deleteContent', {
+            roleScope: this.roleScopeLabel,
+            role: this.role,
+            name: membership.displayName,
+          }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteMembershipConfirmDialog',
@@ -135,7 +145,7 @@ export class OrgSettingsRoleMembersComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.roleService.deleteMembership(this.roleScope, this.role, membership.id)),
-        tap(() => this.snackBarService.success(`Membership has been successfully deleted`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.organization.roleMembers.membershipDeleted'))),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;

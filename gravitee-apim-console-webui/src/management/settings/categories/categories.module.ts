@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatDialogModule } from '@angular/material/dialog';
@@ -70,6 +71,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     GioTableWrapperModule,
     MatRadioGroup,
     MatRadioButton,
+    TranslatePipe,
   ],
 })
 export class CategoriesModule {}

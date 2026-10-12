@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { Component, Input } from '@angular/core';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
@@ -20,7 +21,7 @@ import { SharedPolicyGroup } from '../../../../entities/management-api-v2';
 
 @Component({
   selector: 'shared-policy-groups-state-badge',
-  imports: [MatTooltipModule],
+  imports: [MatTooltipModule, TranslatePipe],
   templateUrl: './shared-policy-groups-state-badge.component.html',
   styleUrl: './shared-policy-groups-state-badge.component.scss',
 })

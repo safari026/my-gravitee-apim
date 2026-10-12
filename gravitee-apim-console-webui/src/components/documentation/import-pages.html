@@ -17,30 +17,29 @@
 -->
 <div class="gv-forms gv-forms" layout="column">
   <div class="gv-forms-header">
-    <h1>Import Files</h1>
-    <a ng-click="$ctrl.cancel()">Back to Documentation</a>
+    <h1>{{$ctrl.translate('settings.documentation.importFiles')}}</h1>
+    <a ng-click="$ctrl.cancel()">{{$ctrl.translate('settings.documentation.backToDocumentation')}}</a>
   </div>
   <div class="gv-form">
     <h2></h2>
     <div class="gv-form-content" layout="column">
       <div class="gv-page-draft-banner">
         <ng-md-icon icon="warning" class="gv-warning"></ng-md-icon>
-        All files (with a supported page type) will be imported, generating one request by file to import.<br />
-        If you use an external source with rate limiting, you can reach your maximum requests authorized.
+        {{$ctrl.translate('settings.documentation.importWarning1')}}<br />
+        {{$ctrl.translate('settings.documentation.importWarning2')}}
       </div>
 
       <blockquote>
         <p style="font-size: 12px">
           <ng-md-icon icon="info" style="fill: grey"></ng-md-icon>
-          You can import a whole directory (only available in few sources), or import a Gravitee.io descriptor (refer to the documentation).
-          If the filepath is not filled, the root directory will be imported.
+          {{$ctrl.translate('settings.documentation.importHint')}}
         </p>
       </blockquote>
 
       <gv-edit-page-fetchers
         fetchers="$ctrl.fetchers"
         page="$ctrl.page"
-        title="'Select your source:'"
+        title="$ctrl.translate('settings.documentation.selectSource')"
         with-publish-option="true"
       ></gv-edit-page-fetchers>
 
@@ -51,7 +50,7 @@
           ng-click="$ctrl.import()"
           ng-disabled="!$ctrl.page.source.type || $ctrl.importInProgress"
         >
-          Import
+          {{$ctrl.translate('common.import')}}
         </md-button>
       </div>
     </div>

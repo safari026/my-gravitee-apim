@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -55,10 +57,12 @@ import { toReadableFlowPhase } from '../../../../../entities/management-api-v2';
     GioPolicyGroupStudioComponent,
     MatTooltip,
     SharedPolicyGroupsStateBadgeComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharedPolicyGroupStudioComponent {
+  private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly sharedPolicyGroupsService = inject(SharedPolicyGroupsService);
   private readonly activatedRoute = inject(ActivatedRoute);
@@ -116,11 +120,13 @@ export class SharedPolicyGroupStudioComponent {
       )
       .subscribe({
         next: () => {
-          this.snackBarService.success('Shared Policy Group updated');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.updated'));
           this.refresh$.next();
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group update!');
+          this.snackBarService.error(
+            error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.updateError'),
+          );
         },
       });
   }
@@ -131,11 +137,13 @@ export class SharedPolicyGroupStudioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.snackBarService.success('Shared Policy Group deployed successfully');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.deployed'));
           this.refresh$.next();
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group deployment!');
+          this.snackBarService.error(
+            error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.deployError'),
+          );
         },
       });
   }
@@ -146,11 +154,13 @@ export class SharedPolicyGroupStudioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.snackBarService.success('Shared Policy Group undeployed successfully');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.undeployed'));
           this.refresh$.next();
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group undeployment!');
+          this.snackBarService.error(
+            error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.undeployError'),
+          );
         },
       });
   }
@@ -168,12 +178,14 @@ export class SharedPolicyGroupStudioComponent {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.snackBarService.success('Shared Policy Group updated');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.updated'));
           this.refresh$.next();
         },
         error: error => {
           this.enableSaveButton = true;
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group update!');
+          this.snackBarService.error(
+            error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.updateError'),
+          );
         },
       });
   }
@@ -188,6 +200,7 @@ export class SharedPolicyGroupStudioComponent {
       this.matDialog,
       this.snackBarService,
       this.sharedPolicyGroupsService,
+      this.languageService,
       this.activatedRoute.snapshot.params.sharedPolicyGroupId,
       () => {
         this.router.navigate(['../..'], { relativeTo: this.activatedRoute });

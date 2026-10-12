@@ -17,6 +17,7 @@ import { IScope } from 'angular';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import DictionaryService from '../../../services/dictionary.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class DictionariesController {
   private dictionaries: any;
@@ -25,12 +26,33 @@ class DictionariesController {
     private DictionaryService: DictionaryService,
     private $rootScope: IScope,
     private ngRouter: Router,
+    private ngLanguageService: LanguageService,
+    private $scope: IScope,
   ) {
     this.$rootScope = $rootScope;
   }
 
   $onInit() {
     this.DictionaryService.list().then(response => (this.dictionaries = response.data));
+  }
+
+  $onChanges() {
+    this.$scope.$applyAsync();
+  }
+
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
+
+  displayType(type: string): string {
+    if (type === 'MANUAL' || type === 'DYNAMIC') {
+      return this.translate('settings.dictionaries.types.' + type);
+    }
+    return type;
+  }
+
+  displayState(state: string): string {
+    return state === 'STARTED' ? this.translate('settings.dictionaries.started') : this.translate('settings.dictionaries.stopped');
   }
 
   goTo(dictionaryId: string) {
@@ -40,5 +62,5 @@ class DictionariesController {
     this.ngRouter.navigate(['new'], { relativeTo: this.activatedRoute });
   }
 }
-DictionariesController.$inject = ['DictionaryService', '$rootScope', 'ngRouter'];
+DictionariesController.$inject = ['DictionaryService', '$rootScope', 'ngRouter', 'ngLanguageService', '$scope'];
 export default DictionariesController;

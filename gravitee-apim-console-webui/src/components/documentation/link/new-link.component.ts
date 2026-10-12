@@ -16,6 +16,7 @@
 import { IController } from 'angular';
 
 import { DocumentationService } from '../../../services/documentation.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class DocumentationNewLinkComponentController implements IController {
   page: any;
@@ -25,7 +26,12 @@ class DocumentationNewLinkComponentController implements IController {
   pageList: any;
   onSave: () => void;
 
-  constructor(private readonly DocumentationService: DocumentationService) {}
+  constructor(
+    private readonly DocumentationService: DocumentationService,
+    private readonly ngLanguageService: LanguageService,
+  ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   checkIfFolder() {
     if (this.page.content) {
@@ -61,7 +67,7 @@ class DocumentationNewLinkComponentController implements IController {
     }
   }
 }
-DocumentationNewLinkComponentController.$inject = ['DocumentationService'];
+DocumentationNewLinkComponentController.$inject = ['DocumentationService', 'ngLanguageService'];
 
 export const DocumentationNewLinkComponent: ng.IComponentOptions = {
   bindings: {

@@ -17,8 +17,8 @@
 -->
 <div style="display: inline-block" ng-if="$ctrl.fetchers != null">
   <md-input-container class="md-block" ng-if="$ctrl.withPublishOption">
-    <md-checkbox ng-model="$ctrl.page.published" aria-label="Published" class="md-align-top-left" flex>
-      Publish all imported pages
+    <md-checkbox ng-model="$ctrl.page.published" aria-label="{{$ctrl.translate('settings.documentation.published')}}" class="md-align-top-left" flex>
+      {{$ctrl.translate('settings.documentation.publishImported')}}
     </md-checkbox>
   </md-input-container>
 
@@ -29,7 +29,7 @@
       ng-repeat="fetcher in $ctrl.fetchers"
       ng-click="$ctrl.configureFetcher(fetcher)"
       ng-class="{'md-raised': fetcher.id === $ctrl.page.source.type}"
-      aria-label="fetcher"
+      aria-label="{{fetcher.name || fetcher.id}}"
     >
       <md-icon md-svg-icon="assets/logo_{{fetcher.id | lowercase}}.svg" style="width: 80px; height: 40px"></md-icon>
     </md-button>

@@ -18,20 +18,20 @@
 <span mat-dialog-title>Version {{ sharedPolicyGroup.version }} details</span>
 
 <mat-dialog-content>
-  <div class="mat-h4">Read-only version state</div>
+  <div class="mat-h4">{{ 'settings.sharedPolicyGroups.readOnlyState' | translate }}</div>
 
   <mat-form-field class="form-field">
-    <mat-label>Name</mat-label>
-    <input type="text" aria-label="Name" matInput [value]="sharedPolicyGroup.name" readonly />
+    <mat-label>{{ 'settings.analytics.name' | translate }}</mat-label>
+    <input type="text" [attr.aria-label]="'settings.analytics.name' | translate" matInput [value]="sharedPolicyGroup.name" readonly />
   </mat-form-field>
 
   <mat-form-field class="form-field">
-    <mat-label>Description</mat-label>
+    <mat-label>{{ 'settings.authentication.description' | translate }}</mat-label>
     <textarea matInput [value]="sharedPolicyGroup.description ?? ''" readonly></textarea>
   </mat-form-field>
 
   <mat-form-field class="form-field">
-    <mat-label>Prerequisite message</mat-label>
+    <mat-label>{{ 'settings.sharedPolicyGroups.prerequisiteMessage' | translate }}</mat-label>
     <textarea matInput [value]="sharedPolicyGroup.prerequisiteMessage ?? ''" readonly></textarea>
   </mat-form-field>
 
@@ -55,14 +55,14 @@
     <gio-banner-info class="restore-banner">
       You are about to apply a previous version.
       <span gioBannerBody
-        >By clicking on Save, you will overwrite any pending changes and apply the modifications. Are you sure you want to continue?</span
+        >{{ 'settings.sharedPolicyGroups.restoreBannerBody' | translate }}</span
       >
       <div gioBannerAction>
-        <button mat-raised-button color="primary" (click)="onRestore()">Save</button>
+        <button mat-raised-button color="primary" (click)="onRestore()">{{ 'common.save' | translate }}</button>
       </div>
     </gio-banner-info>
   } @else if (!isReadOnly) {
-    <button mat-flat-button color="primary" (click)="startRestore = true">Restore version</button>
+    <button mat-flat-button color="primary" (click)="startRestore = true">{{ 'settings.sharedPolicyGroups.restoreVersion' | translate }}</button>
   }
-  <button mat-flat-button cdkFocusInitial [mat-dialog-close]="false">Close</button>
+  <button mat-flat-button cdkFocusInitial [mat-dialog-close]="false">{{ 'common.close' | translate }}</button>
 </mat-dialog-actions>

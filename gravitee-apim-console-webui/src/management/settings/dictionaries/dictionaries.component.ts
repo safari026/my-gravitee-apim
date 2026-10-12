@@ -15,7 +15,13 @@
  */
 import { Component, ElementRef, Injector, SimpleChange } from '@angular/core';
 import { UpgradeComponent } from '@angular/upgrade/static';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
+import { skip, takeUntil } from 'rxjs/operators';
+
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Language } from '../../../shared/i18n/translations';
 
 @Component({
   template: '',
@@ -26,20 +32,41 @@ import { ActivatedRoute } from '@angular/router';
   },
 })
 export class DictionariesComponent extends UpgradeComponent {
+  language: Language;
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     elementRef: ElementRef,
     injector: Injector,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly languageService: LanguageService,
   ) {
     super('settingsDictionariesAjs', elementRef, injector);
+    this.language = this.languageService.currentLanguage();
+    toObservable(this.languageService.currentLanguage, { injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.language = language;
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
   }
 
   override ngOnInit() {
     // Hack to Force the binding between Angular and AngularJS
     this.ngOnChanges({
       activatedRoute: new SimpleChange(null, this.activatedRoute, true),
+      language: new SimpleChange(null, this.languageService.currentLanguage(), true),
     });
 
     super.ngOnInit();
+  }
+
+  override ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+
+    super.ngOnDestroy();
   }
 }

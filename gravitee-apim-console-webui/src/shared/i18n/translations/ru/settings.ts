@@ -1,3 +1,5 @@
+import { ruOrganizationPages } from './organization-pages';
+
 export const ruSettings = {
   navigation: {
     root: 'Настройки',
@@ -566,6 +568,16 @@ export const ruSettings = {
     globalBadge: 'Глобальные',
     globalTooltip: 'Унаследованные глобальные метаданные',
     empty: 'Метаданные не найдены',
+    titleWithType: 'Метаданные: {type}',
+    addWithType: 'Добавить метаданные: {type}',
+    filterBySource: 'Фильтр по источнику',
+    resetFilters: 'Сбросить фильтры',
+    tableCaptionWithType: 'Таблица метаданных: {type}',
+    headerTypes: {
+      Global: 'Глобальные',
+      API: 'API',
+      Application: 'Шаблон уведомления',
+    },
     sortByKey: 'Сортировать по ключу',
     sortByName: 'Сортировать по имени',
     sortByFormat: 'Сортировать по формату',
@@ -584,6 +596,9 @@ export const ruSettings = {
       createTitle: 'Создать глобальные метаданные',
       updateTitle: 'Обновить глобальные метаданные',
       overrideTitle: 'Переопределить глобальные метаданные',
+      actionTitle: '{action} метаданные {type}',
+      createAction: 'Создать',
+      updateAction: 'Обновить',
       key: 'Ключ',
       name: 'Имя',
       format: 'Формат',
@@ -1137,6 +1152,12 @@ export const ruSettings = {
     openWebsite: 'Открыть сайт',
     openSettings: 'Открыть настройки',
     cors: 'CORS',
+    corsAllowOrigin: 'Allow-Origin',
+    corsAllowMethods: 'Access-Control-Allow-Methods',
+    corsAllowHeaders: 'Allow-Headers',
+    corsExposedHeaders: 'Exposed-Headers',
+    swaggerUi: 'Swagger-UI',
+    redoc: 'Redoc',
     smtp: 'SMTP',
     enableEmailing: 'Включить почту',
     host: 'Хост',
@@ -1224,5 +1245,34 @@ export const ruSettings = {
     fileInvalid: 'Файл недействителен (ошибка: {error})',
     inheritedFrom: '(унаследовано от {description})',
     useParent: 'Использовать {description}: {value}',
+  },
+
+  organization: {
+    navigation: {
+      root: 'Организация',
+      settingsTitle: 'Настройки организации',
+      searchCategory: 'Организация / {group}',
+      groups: {
+        console: 'Консоль',
+        userManagement: 'Управление пользователями',
+        gateway: 'Шлюз',
+        notifications: 'Уведомления',
+        audit: 'Аудит',
+        graviteeCloud: 'Gravitee Cloud',
+      },
+      items: {
+        authentication: 'Аутентификация',
+        settings: 'Настройки',
+        users: 'Пользователи',
+        roles: 'Роли',
+        entrypoints: 'Точки входа и теги шардирования',
+        tenants: 'Тенанты',
+        policies: 'Политики',
+        templates: 'Шаблоны',
+        audit: 'Аудит',
+        graviteeCloud: 'Открыть Gravitee Cloud',
+      },
+    },
+    ...ruOrganizationPages,
   },
 } as const;

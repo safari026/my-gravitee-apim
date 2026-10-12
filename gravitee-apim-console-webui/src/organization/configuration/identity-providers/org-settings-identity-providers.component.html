@@ -15,23 +15,20 @@
     limitations under the License.
 
 -->
-<h1>Authentication</h1>
+<h1>{{ 'settings.organization.identityProviders.title' | translate }}</h1>
 
-<h4>
-  By creating identity provider, you are providing capabilities to users to login into the portal / management-ui using external user
-  accounts from GitHub, Google, OpenID Connect server or Gravitee.io AM.
-</h4>
+<h4>{{ 'settings.organization.identityProviders.intro' | translate }}</h4>
 
 <mat-card class="org-settings-identity-providers__config-card">
   <mat-card-content>
-    <h2>Configuration</h2>
+    <h2>{{ 'settings.organization.shared.configuration' | translate }}</h2>
     <mat-slide-toggle
       [checked]="consoleSettings?.authentication?.localLogin?.enabled"
       [disabled]="isReadonlySetting('console.authentication.localLogin.enabled') || !hasActivatedIdp()"
       [matTooltip]="getLocalLoginTooltipMessage()"
       [matTooltipDisabled]="getLocalLoginTooltipMessage() === null"
       (change)="updateLocalLogin($event.checked)"
-      >Show login form on management console
+      >{{ 'settings.organization.identityProviders.showLoginForm' | translate }}
     </mat-slide-toggle>
   </mat-card-content>
 </mat-card>
@@ -39,9 +36,9 @@
 <mat-card class="org-settings-identity-providers__list-card">
   <mat-card-content>
     <div class="org-settings-identity-providers__list-card__title">
-      <h2>Identity Providers</h2>
+      <h2>{{ 'settings.organization.identityProviders.identityProviders' | translate }}</h2>
 
-      <button [routerLink]="'new'" mat-raised-button color="primary"><mat-icon>add</mat-icon>Add an identity provider</button>
+      <button [routerLink]="'new'" mat-raised-button color="primary"><mat-icon>add</mat-icon>{{ 'settings.organization.identityProviders.addIdentityProvider' | translate }}</button>
     </div>
   </mat-card-content>
 
@@ -51,19 +48,23 @@
       [dataSource]="filteredTableData"
       class="org-settings-identity-providers__table"
       id="identityProvidersTable"
-      aria-label="Identity Providers table"
+      [attr.aria-label]="'settings.organization.identityProviders.tableAria' | translate"
     >
       <!-- Logo Column -->
       <ng-container matColumnDef="logo">
         <th mat-header-cell *matHeaderCellDef id="logo"></th>
         <td mat-cell *matCellDef="let element">
-          <img class="org-settings-identity-providers__table__logo" [src]="element.logo" alt="Logo of {{ element.name }}" />
+          <img
+            class="org-settings-identity-providers__table__logo"
+            [src]="element.logo"
+            [attr.alt]="'settings.organization.shared.logoOf' | translate: { name: element.name }"
+          />
         </td>
       </ng-container>
 
       <!-- Id Column -->
       <ng-container matColumnDef="id">
-        <th mat-header-cell *matHeaderCellDef id="id">Id</th>
+        <th mat-header-cell *matHeaderCellDef id="id">{{ 'settings.organization.shared.id' | translate }}</th>
         <td mat-cell *matCellDef="let element" [routerLink]="element.id">
           <a>{{ element.id }}</a>
         </td>
@@ -71,7 +72,7 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+        <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.organization.shared.name' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.name }}
         </td>
@@ -79,23 +80,23 @@
 
       <!-- Description Column -->
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef id="description">Description</th>
+        <th mat-header-cell *matHeaderCellDef id="description">{{ 'settings.organization.shared.description' | translate }}</th>
         <td mat-cell *matCellDef="let element">{{ element.description }}</td>
       </ng-container>
 
       <!-- Activated Column -->
       <ng-container matColumnDef="activated">
-        <th mat-header-cell *matHeaderCellDef id="activated">Status</th>
+        <th mat-header-cell *matHeaderCellDef id="activated">{{ 'settings.organization.shared.status' | translate }}</th>
         <td mat-cell *matCellDef="let element">
-          <span *ngIf="element.activated" class="gio-badge-success">Activated</span>
-          <span *ngIf="!element.activated" class="gio-badge-warning">Deactivated</span>
+          <span *ngIf="element.activated" class="gio-badge-success">{{ 'settings.organization.shared.activated' | translate }}</span>
+          <span *ngIf="!element.activated" class="gio-badge-warning">{{ 'settings.organization.shared.deactivated' | translate }}</span>
         </td>
       </ng-container>
 
       <!-- Sync Column -->
       <ng-container matColumnDef="sync">
         <th mat-header-cell *matHeaderCellDef id="sync">
-          <div class="org-settings-identity-providers__table__centered-cell">Sync</div>
+          <div class="org-settings-identity-providers__table__centered-cell">{{ 'settings.organization.identityProviders.sync' | translate }}</div>
         </th>
         <td mat-cell *matCellDef="let element">
           <div class="org-settings-identity-providers__table__centered-cell">
@@ -107,7 +108,7 @@
       <!-- Available on the Portal Column -->
       <ng-container matColumnDef="availableOnPortal">
         <th mat-header-cell *matHeaderCellDef id="availableOnPortal">
-          <div class="org-settings-identity-providers__table__centered-cell">Available on dev portal</div>
+          <div class="org-settings-identity-providers__table__centered-cell">{{ 'settings.organization.identityProviders.availableOnDevPortal' | translate }}</div>
         </th>
         <td mat-cell *matCellDef="let element">
           <div class="org-settings-identity-providers__table__centered-cell">
@@ -118,7 +119,7 @@
 
       <!-- Updated at Column -->
       <ng-container matColumnDef="updatedAt">
-        <th mat-header-cell *matHeaderCellDef id="updatedAt">Updated at</th>
+        <th mat-header-cell *matHeaderCellDef id="updatedAt">{{ 'settings.organization.shared.updatedAt' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           {{ element.updatedAt | date: 'medium' }}
         </td>
@@ -133,10 +134,12 @@
               <button
                 (click)="onActivationToggleActionClicked(element)"
                 mat-icon-button
-                aria-label="Switch to toggle an identity provider activation"
-                matTooltip="
-            {{ element.activated ? 'Deactivate identity provider' : 'Activate identity provider' }}
-            "
+                [attr.aria-label]="'settings.organization.identityProviders.toggleActivationAria' | translate"
+                [matTooltip]="
+                  element.activated
+                    ? ('settings.organization.identityProviders.deactivateTooltip' | translate)
+                    : ('settings.organization.identityProviders.activateTooltip' | translate)
+                "
               >
                 <mat-icon>{{ element.activated ? 'toggle_off' : 'toggle_on' }}</mat-icon>
               </button>
@@ -144,8 +147,8 @@
             <button
               [routerLink]="element.id"
               mat-icon-button
-              aria-label="Button to edit an identity provider"
-              matTooltip="Edit identity provider"
+              [attr.aria-label]="'settings.organization.identityProviders.editAria' | translate"
+              [matTooltip]="'settings.organization.identityProviders.editTooltip' | translate"
             >
               <mat-icon>edit</mat-icon>
             </button>
@@ -153,8 +156,8 @@
               <button
                 (click)="onDeleteActionClicked(element)"
                 mat-icon-button
-                aria-label="Button to delete an identity provider"
-                matTooltip="Delete identity provider"
+                [attr.aria-label]="'settings.organization.identityProviders.deleteAria' | translate"
+                [matTooltip]="'settings.organization.identityProviders.deleteTooltip' | translate"
               >
                 <mat-icon>delete</mat-icon>
               </button>
@@ -168,7 +171,9 @@
 
       <!-- Row shown when there is no data -->
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-        <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No Identity Provider</td>
+        <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+          {{ 'settings.organization.identityProviders.noIdentityProvider' | translate }}
+        </td>
       </tr>
     </table>
   </gio-table-wrapper>

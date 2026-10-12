@@ -14,12 +14,13 @@
  * limitations under the License.
  */
 
-import angular from 'angular';
+import angular, { IScope } from 'angular';
 import { ActivatedRoute, Router } from '@angular/router';
 import { cloneDeep, filter, forEach } from 'lodash';
 
 import DictionaryService from '../../../services/dictionary.service';
 import NotificationService from '../../../services/notification.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class DictionaryController {
   private dictionary: any;
@@ -47,42 +48,10 @@ class DictionaryController {
     private NotificationService: NotificationService,
     private DictionaryService: DictionaryService,
     private ngRouter: Router,
+    private ngLanguageService: LanguageService,
+    private $scope: IScope,
   ) {
-    this.types = [
-      {
-        id: 'MANUAL',
-        name: 'Manual',
-      },
-      {
-        id: 'DYNAMIC',
-        name: 'Dynamic',
-      },
-    ];
-
-    this.providers = [
-      {
-        id: 'HTTP',
-        name: 'Custom (HTTP)',
-      },
-    ];
-
-    this.timeUnits = [
-      {
-        id: 'SECONDS',
-        name: 'Seconds',
-      },
-      {
-        id: 'MINUTES',
-        name: 'Minutes',
-      },
-      {
-        id: 'HOURS',
-        name: 'Hours',
-      },
-    ];
-
     this.joltSpecificationOptions = {
-      placeholder: 'Edit your JOLT specification here.',
       lineWrapping: true,
       lineNumbers: true,
       allowDropFileTypes: true,
@@ -98,6 +67,78 @@ class DictionaryController {
       autoCloseTags: true,
       controller: this,
     };
+
+    this.initLocalizedOptions();
+  }
+
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
+
+  $onChanges() {
+    this.initLocalizedOptions();
+    this.$scope.$applyAsync();
+  }
+
+  initLocalizedOptions() {
+    this.types = [
+      {
+        id: 'MANUAL',
+        name: this.translate('settings.dictionaries.types.MANUAL'),
+      },
+      {
+        id: 'DYNAMIC',
+        name: this.translate('settings.dictionaries.types.DYNAMIC'),
+      },
+    ];
+
+    this.providers = [
+      {
+        id: 'HTTP',
+        name: this.translate('settings.dictionaries.providers.HTTP'),
+      },
+    ];
+
+    this.timeUnits = [
+      {
+        id: 'SECONDS',
+        name: this.translate('settings.dictionaries.timeUnits.SECONDS'),
+      },
+      {
+        id: 'MINUTES',
+        name: this.translate('settings.dictionaries.timeUnits.MINUTES'),
+      },
+      {
+        id: 'HOURS',
+        name: this.translate('settings.dictionaries.timeUnits.HOURS'),
+      },
+    ];
+
+    this.joltSpecificationOptions = {
+      ...this.joltSpecificationOptions,
+      placeholder: this.translate('settings.dictionaries.joltPlaceholder'),
+    };
+  }
+
+  displayType(type: string) {
+    if (type === 'MANUAL' || type === 'DYNAMIC') {
+      return this.translate('settings.dictionaries.types.' + type);
+    }
+    return type;
+  }
+
+  displayProvider(id: string) {
+    if (id === 'HTTP') {
+      return this.translate('settings.dictionaries.providers.HTTP');
+    }
+    return id;
+  }
+
+  displayTimeUnit(id: string) {
+    if (id === 'SECONDS' || id === 'MINUTES' || id === 'HOURS') {
+      return this.translate('settings.dictionaries.timeUnits.' + id);
+    }
+    return id;
   }
 
   $onInit() {
@@ -148,12 +189,12 @@ class DictionaryController {
   update() {
     if (!this.updateMode) {
       this.DictionaryService.create(this.dictionary).then((response: any) => {
-        this.NotificationService.show('Dictionary ' + this.dictionary.name + ' has been created');
+        this.NotificationService.show(this.translate('settings.dictionaries.createSuccess', { name: this.dictionary.name }));
         this.ngRouter.navigate(['../', response.data.id], { relativeTo: this.activatedRoute });
       });
     } else {
       this.DictionaryService.update(this.dictionary).then(response => {
-        this.NotificationService.show('Dictionary ' + this.dictionary.name + ' has been updated');
+        this.NotificationService.show(this.translate('settings.dictionaries.updateSuccess', { name: this.dictionary.name }));
         this.dictionary = response.data;
         this.dictProperties = this.computeProperties();
         this.propertiesDirty = false;
@@ -169,14 +210,14 @@ class DictionaryController {
         template: require('html-loader!../../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Are you sure you want to delete this dictionary?',
-          confirmButton: 'Yes, delete it',
+          title: this.translate('settings.dictionaries.deleteConfirmTitle'),
+          confirmButton: this.translate('settings.dictionaries.deleteConfirmButton'),
         },
       })
       .then(response => {
         if (response) {
           this.DictionaryService.delete(this.dictionary).then(() => {
-            this.NotificationService.show('Dictionary ' + this.dictionary.name + ' has been deleted');
+            this.NotificationService.show(this.translate('settings.dictionaries.deleteSuccess', { name: this.dictionary.name }));
             this.ngRouter.navigate(['..'], { relativeTo: this.activatedRoute });
           });
         }
@@ -185,7 +226,7 @@ class DictionaryController {
 
   deploy() {
     this.DictionaryService.deploy(this.dictionary).then(response => {
-      this.NotificationService.show('Dictionary ' + this.dictionary.name + ' has been deployed');
+      this.NotificationService.show(this.translate('settings.dictionaries.deploySuccess', { name: this.dictionary.name }));
       this.dictionary = response.data;
       this.dictProperties = this.computeProperties();
       this.propertiesDirty = false;
@@ -194,7 +235,7 @@ class DictionaryController {
 
   start() {
     this.DictionaryService.start(this.dictionary).then(response => {
-      this.NotificationService.show('Dictionary ' + this.dictionary.name + ' has been started');
+      this.NotificationService.show(this.translate('settings.dictionaries.startSuccess', { name: this.dictionary.name }));
       this.dictionary = response.data;
       this.dictProperties = this.computeProperties();
       this.propertiesDirty = false;
@@ -203,7 +244,7 @@ class DictionaryController {
 
   stop() {
     this.DictionaryService.stop(this.dictionary).then(response => {
-      this.NotificationService.show('Dictionary ' + this.dictionary.name + ' has been stopped');
+      this.NotificationService.show(this.translate('settings.dictionaries.stopSuccess', { name: this.dictionary.name }));
       this.dictionary = response.data;
       this.dictProperties = this.computeProperties();
       this.propertiesDirty = false;
@@ -280,7 +321,7 @@ class DictionaryController {
 
   saveProperties() {
     this.DictionaryService.update(this.dictionary).then(response => {
-      this.NotificationService.show('Properties has been updated');
+      this.NotificationService.show(this.translate('settings.dictionaries.propertiesUpdated'));
       this.dictionary = response.data;
       this.dictProperties = this.computeProperties();
       this.propertiesDirty = false;
@@ -335,6 +376,6 @@ class DictionaryController {
     this.ngRouter.navigate(['..'], { relativeTo: this.activatedRoute });
   }
 }
-DictionaryController.$inject = ['$mdDialog', 'NotificationService', 'DictionaryService', 'ngRouter'];
+DictionaryController.$inject = ['$mdDialog', 'NotificationService', 'DictionaryService', 'ngRouter', 'ngLanguageService', '$scope'];
 
 export default DictionaryController;

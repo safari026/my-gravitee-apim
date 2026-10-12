@@ -20,6 +20,7 @@ import { concat, Dictionary, filter, keyBy, orderBy, reduceRight } from 'lodash'
 
 import { DocumentationQuery, DocumentationService, FolderSituation, PageType } from '../../services/documentation.service';
 import NotificationService from '../../services/notification.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 interface IDocumentationManagementScope extends IScope {
   renameFolder: boolean;
@@ -49,7 +50,10 @@ class DocumentationManagementComponentController implements IController {
     private $scope: IDocumentationManagementScope,
     private readonly $mdDialog: angular.material.IDialogService,
     private readonly ngRouter: Router,
+    private readonly ngLanguageService: LanguageService,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     // remove the ROOT page
@@ -60,24 +64,39 @@ class DocumentationManagementComponentController implements IController {
     this.systemFoldersById = keyBy(this.systemFolders, 'id');
 
     this.currentFolder = this.getFolder(this.rootDir);
-    const folderSituation = this.DocumentationService.getFolderSituation(this.systemFoldersById, this.foldersById, this.rootDir);
-    this.supportedTypes = this.DocumentationService.supportedTypes(folderSituation)
-      .filter(type => !this.apiId || type !== PageType.MARKDOWN_TEMPLATE)
-      .map(type => ({
-        type,
-        tooltip: type.replace('_', ' '),
-      }));
+    this.refreshSupportedTypeTooltips();
     this.breadcrumb = this.generateBreadcrumb();
     this.$scope.renameFolder = false;
     this.$scope.translateFolder = false;
   }
 
   $onChanges(onChangesObj: angular.IOnChangesObject) {
-    this.pages = onChangesObj.pages.currentValue;
-    this.parent = onChangesObj.parent.currentValue;
+    if (onChangesObj.pages) {
+      this.pages = onChangesObj.pages.currentValue;
+    }
+    if (onChangesObj.parent) {
+      this.parent = onChangesObj.parent.currentValue;
+    }
 
-    // Reload component with new input
-    this.$onInit();
+    if (onChangesObj.pages || onChangesObj.parent || onChangesObj.folders || onChangesObj.systemFolders || onChangesObj.apiId) {
+      this.$onInit();
+    } else if (onChangesObj.language) {
+      this.refreshSupportedTypeTooltips();
+      this.$scope.$applyAsync();
+    }
+  }
+
+  private refreshSupportedTypeTooltips() {
+    if (!this.systemFoldersById || !this.foldersById) {
+      return;
+    }
+    const folderSituation = this.DocumentationService.getFolderSituation(this.systemFoldersById, this.foldersById, this.rootDir);
+    this.supportedTypes = this.DocumentationService.supportedTypes(folderSituation)
+      .filter(type => !this.apiId || type !== PageType.MARKDOWN_TEMPLATE)
+      .map(type => ({
+        type,
+        tooltip: this.translate(`settings.documentation.types.${type}`),
+      }));
   }
 
   isFolder(type: string): boolean {
@@ -124,7 +143,7 @@ class DocumentationManagementComponentController implements IController {
 
   renameFolder() {
     this.DocumentationService.partialUpdate('name', this.newFolderName, this.rootDir, this.apiId).then(response => {
-      this.NotificationService.show('Folder ' + this.newFolderName + ' has been changed with success');
+      this.NotificationService.show(this.translate('settings.documentation.folderRenamed', { name: this.newFolderName }));
       this.breadcrumb[this.breadcrumb.length - 1].name = response.data.name;
       this.toggleRenameFolder();
     });
@@ -137,7 +156,13 @@ class DocumentationManagementComponentController implements IController {
       this.rootDir,
       this.apiId,
     ).then(response => {
-      this.NotificationService.show(`Folder is now ${response.data.visibility}`);
+      this.NotificationService.show(
+        this.translate(
+          response.data.visibility === 'PUBLIC'
+            ? 'settings.documentation.folderNowPublic'
+            : 'settings.documentation.folderNowPrivate',
+        ),
+      );
       this.currentFolder.visibility = response.data.visibility;
     });
   }
@@ -169,7 +194,7 @@ class DocumentationManagementComponentController implements IController {
         template: require('html-loader!./dialog/selectfolder.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Create shortcut for "' + page.name + '" in...',
+          title: this.translate('settings.documentation.createShortcutTitle', { name: page.name }),
           folders: this.generateCreateShortCutFolder(),
         },
       })
@@ -189,7 +214,7 @@ class DocumentationManagementComponentController implements IController {
             },
           };
           this.DocumentationService.create(newLink, this.apiId).then(() => {
-            this.NotificationService.show('"Link to ' + page.name + '" has been created with success');
+            this.NotificationService.show(this.translate('settings.documentation.linkCreated', { name: page.name }));
             this.refresh();
           });
         }
@@ -231,14 +256,14 @@ class DocumentationManagementComponentController implements IController {
         template: require('html-loader!./dialog/selectfolder.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Move "' + page.name + '" to...',
+          title: this.translate('settings.documentation.moveTitle', { name: page.name }),
           folders: this.generateMoveToFolder(page.id, page.type),
         },
       })
       .then(destinationId => {
         if (destinationId) {
           this.DocumentationService.partialUpdate('parentId', destinationId === -1 ? '' : destinationId, page.id, this.apiId).then(() => {
-            this.NotificationService.show('"' + page.name + '" has been moved with success');
+            this.NotificationService.show(this.translate('settings.documentation.moved', { name: page.name }));
             this.refresh();
           });
         }
@@ -349,13 +374,17 @@ class DocumentationManagementComponentController implements IController {
 
   togglePublish(page: any) {
     if (page.generalConditions) {
-      this.NotificationService.showError('Page ' + page.name + ' is used as general conditions');
+      this.NotificationService.showError(this.translate('settings.documentation.usedAsGc', { name: page.name }));
     } else {
       this.DocumentationService.partialUpdate('published', !page.published, page.id, this.apiId).then(() => {
         page.published = !page.published;
         const message = this.isMarkdownTemplate(page.type)
-          ? 'Template ' + page.name + ' has been made ' + (page.published ? '' : 'un') + 'available with success'
-          : 'Page ' + page.name + ' has been ' + (page.published ? '' : 'un') + 'published with success';
+          ? this.translate(page.published ? 'settings.documentation.templateAvailable' : 'settings.documentation.templateUnavailable', {
+              name: page.name,
+            })
+          : this.translate(page.published ? 'settings.documentation.pagePublished' : 'settings.documentation.pageUnpublished', {
+              name: page.name,
+            });
         this.NotificationService.show(message);
       });
     }
@@ -364,7 +393,7 @@ class DocumentationManagementComponentController implements IController {
   upward(page: any) {
     page.order = page.order - 1;
     this.DocumentationService.partialUpdate('order', page.order, page.id, this.apiId).then(() => {
-      this.NotificationService.show('Page ' + page.name + ' order has been changed with success');
+      this.NotificationService.show(this.translate('settings.documentation.orderChanged', { name: page.name }));
       this.refresh();
     });
   }
@@ -372,7 +401,7 @@ class DocumentationManagementComponentController implements IController {
   downward(page: any) {
     page.order = page.order + 1;
     this.DocumentationService.partialUpdate('order', page.order, page.id, this.apiId).then(() => {
-      this.NotificationService.show('Page ' + page.name + ' order has been changed with success');
+      this.NotificationService.show(this.translate('settings.documentation.orderChanged', { name: page.name }));
       this.refresh();
     });
   }
@@ -385,16 +414,16 @@ class DocumentationManagementComponentController implements IController {
         template: require('html-loader!../dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Would you like to remove "' + page.name + '"?',
-          msg: page.type !== 'LINK' ? 'All related links will also be removed.' : '',
-          confirmButton: 'Remove',
+          title: this.translate('settings.documentation.removeTitle', { name: page.name }),
+          msg: page.type !== 'LINK' ? this.translate('settings.documentation.removeRelatedLinks') : '',
+          confirmButton: this.translate('common.remove'),
         },
       })
       .then(response => {
         if (response) {
           this.DocumentationService.remove(page.id, this.apiId)
             .then(() => {
-              this.NotificationService.show('Page ' + page.name + ' has been removed');
+              this.NotificationService.show(this.translate('settings.documentation.pageRemoved', { name: page.name }));
               this.refresh();
               this.refreshCurrentFolder();
               if (this.currentTranslation?.id === page.id) {
@@ -402,7 +431,7 @@ class DocumentationManagementComponentController implements IController {
               }
             })
             .catch(err => {
-              const errorMessage = err?.data?.message || 'An unexpected error occurred while removing the page/folder.';
+              const errorMessage = err?.data?.message || this.translate('settings.documentation.removeError');
               this.NotificationService.showError(errorMessage);
             });
         }
@@ -448,7 +477,7 @@ class DocumentationManagementComponentController implements IController {
     this.DocumentationService.fetchAll(this.apiId)
       .then(() => {
         this.refresh();
-        this.NotificationService.show('Pages has been successfully fetched');
+        this.NotificationService.show(this.translate('settings.documentation.pagesFetched'));
       })
       .finally(() => {
         this.fetchAllInProgress = false;
@@ -468,12 +497,12 @@ class DocumentationManagementComponentController implements IController {
     if (!this.currentTranslation.id) {
       this.DocumentationService.create(this.currentTranslation, this.apiId).then((response: any) => {
         const page = response.data;
-        this.NotificationService.show("'" + page.name + "' has been created");
+        this.NotificationService.show(this.translate('settings.documentation.created', { name: page.name }));
         this.refreshCurrentFolder();
       });
     } else {
       this.DocumentationService.update(this.currentTranslation, this.apiId).then(() => {
-        this.NotificationService.show("'" + this.currentTranslation.name + "' has been updated");
+        this.NotificationService.show(this.translate('settings.documentation.updated', { name: this.currentTranslation.name }));
         this.refreshCurrentFolder();
       });
     }
@@ -490,7 +519,14 @@ class DocumentationManagementComponentController implements IController {
     };
   }
 }
-DocumentationManagementComponentController.$inject = ['NotificationService', 'DocumentationService', '$scope', '$mdDialog', 'ngRouter'];
+DocumentationManagementComponentController.$inject = [
+  'NotificationService',
+  'DocumentationService',
+  '$scope',
+  '$mdDialog',
+  'ngRouter',
+  'ngLanguageService',
+];
 
 export const DocumentationManagementComponentAjs: ng.IComponentOptions = {
   bindings: {
@@ -500,6 +536,7 @@ export const DocumentationManagementComponentAjs: ng.IComponentOptions = {
     apiId: '<',
     parent: '<',
     activatedRoute: '<',
+    language: '<',
   },
   template: require('html-loader!./documentation-management.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: DocumentationManagementComponentController,

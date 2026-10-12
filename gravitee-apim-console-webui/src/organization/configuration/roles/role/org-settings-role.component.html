@@ -18,30 +18,37 @@
 <div class="org-settings-role">
   <h1>
     <gio-go-back-button [routerLink]="isEditMode ? '../../../roles' : '../../roles'"></gio-go-back-button>
-    {{ (isEditMode ? 'Update' : 'Create') + ' role in the ' + (roleScope | titlecase) + ' scope' }}
+    {{
+      (isEditMode ? 'settings.organization.role.updateTitle' : 'settings.organization.role.createTitle')
+        | translate: { scope: roleScopeLabel }
+    }}
   </h1>
-  <h4>Manage CRUD (Create, Read, Update, Delete) permissions for this role {{ roleName }} in the {{ roleScope | titlecase }} scope.</h4>
+  <h4>{{ 'settings.organization.role.subtitle' | translate: { name: roleName, scope: roleScopeLabel } }}</h4>
 
   <form *ngIf="!isLoading" autocomplete="off" [formGroup]="roleForm" (ngSubmit)="onSubmit()">
-    <gio-banner-info *ngIf="isReadOnly">System role are not editable</gio-banner-info>
+    <gio-banner-info *ngIf="isReadOnly">{{ 'settings.organization.role.systemNotEditable' | translate }}</gio-banner-info>
 
     <mat-card>
       <mat-card-content class="org-settings-role__role-card">
         <mat-form-field>
-          <mat-label>Role name</mat-label>
+          <mat-label>{{ 'settings.organization.role.roleName' | translate }}</mat-label>
           <input class="org-settings-role__role-card__field__name" matInput formControlName="name" required />
-          <mat-hint>The name cannot be changed after it has been created.</mat-hint>
-          <mat-error *ngIf="roleForm.get('name').hasError('required')">Name is required.</mat-error>
+          <mat-hint>{{ 'settings.organization.role.nameHint' | translate }}</mat-hint>
+          <mat-error *ngIf="roleForm.get('name').hasError('required')">{{ 'settings.organization.role.nameRequiredError' | translate }}</mat-error>
         </mat-form-field>
 
         <mat-form-field>
-          <mat-label>Role description</mat-label>
+          <mat-label>{{ 'settings.organization.role.roleDescription' | translate }}</mat-label>
           <input matInput formControlName="description" />
         </mat-form-field>
 
         <gio-form-slide-toggle>
-          <gio-form-label>Default role</gio-form-label>
-          <mat-slide-toggle gioFormSlideToggle aria-label="Default role toggle" formControlName="default"></mat-slide-toggle>
+          <gio-form-label>{{ 'settings.organization.role.defaultRole' | translate }}</gio-form-label>
+          <mat-slide-toggle
+            gioFormSlideToggle
+            [attr.aria-label]="'settings.organization.role.defaultRoleAria' | translate"
+            formControlName="default"
+          ></mat-slide-toggle>
         </gio-form-slide-toggle>
       </mat-card-content>
     </mat-card>
@@ -52,16 +59,16 @@
         mat-table
         [dataSource]="rolePermissionsTableDS"
         id="rolePermissionsTable"
-        aria-label="Role CRUD permissions table"
+        [attr.aria-label]="'settings.organization.role.permissionsTableAria' | translate"
       >
         <!-- Name Column -->
         <ng-container matColumnDef="permissionName">
-          <th mat-header-cell *matHeaderCellDef id="permissionName">Permission</th>
+          <th mat-header-cell *matHeaderCellDef id="permissionName">{{ 'settings.organization.shared.permission' | translate }}</th>
           <td mat-cell *matCellDef="let permission">
             <span>{{ permission.permissionName }}</span>
 
             <div *ngIf="permission.isMovedToOrganizationScope" class="mat-caption permission-moved">
-              This permission has been moved to ORGANIZATION scope
+              {{ 'settings.organization.role.permissionMoved' | translate }}
             </div>
           </td>
         </ng-container>
@@ -69,7 +76,7 @@
         <!-- Create Column -->
         <ng-container matColumnDef="create">
           <th mat-header-cell *matHeaderCellDef id="create">
-            Create
+            {{ 'settings.organization.shared.create' | translate }}
             <div>
               <mat-checkbox
                 (change)="toggleAll('C', $event)"
@@ -89,7 +96,7 @@
         <!-- Read Column -->
         <ng-container matColumnDef="read">
           <th mat-header-cell *matHeaderCellDef id="read">
-            Read
+            {{ 'settings.organization.shared.read' | translate }}
             <div>
               <mat-checkbox
                 (change)="toggleAll('R', $event)"
@@ -109,7 +116,7 @@
         <!-- Update Column -->
         <ng-container matColumnDef="update">
           <th mat-header-cell *matHeaderCellDef id="update">
-            Update
+            {{ 'settings.organization.shared.update' | translate }}
             <div>
               <mat-checkbox
                 (change)="toggleAll('U', $event)"
@@ -129,7 +136,7 @@
         <!-- Delete Column -->
         <ng-container matColumnDef="delete">
           <th mat-header-cell *matHeaderCellDef id="delete">
-            Delete
+            {{ 'settings.organization.shared.delete' | translate }}
             <div>
               <mat-checkbox
                 (change)="toggleAll('D', $event)"
@@ -150,7 +157,9 @@
         <tr mat-row *matRowDef="let row; columns: rolePermissionsTableDisplayedColumns"></tr>
 
         <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-          <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="rolePermissionsTableDisplayedColumns.length">No permission</td>
+          <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="rolePermissionsTableDisplayedColumns.length">
+            {{ 'settings.organization.role.noPermission' | translate }}
+          </td>
         </tr>
       </table>
     </mat-card>

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 import { Component, Inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -23,7 +24,7 @@ import { TooManyUsersDialogData } from '../group.component';
 
 @Component({
   selector: 'too-many-users-dialog',
-  imports: [MatCardModule, MatDialogModule, MatButtonModule, GioBannerModule],
+  imports: [MatCardModule, MatDialogModule, MatButtonModule, GioBannerModule, TranslatePipe],
   templateUrl: './too-many-users-dialog.component.html',
   styleUrl: './too-many-users-dialog.component.scss',
 })

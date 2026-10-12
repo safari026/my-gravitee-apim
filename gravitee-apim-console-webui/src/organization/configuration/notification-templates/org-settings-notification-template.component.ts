@@ -25,6 +25,7 @@ import { AlertService } from '../../../services-ngx/alert.service';
 import { Scope } from '../../../entities/alert';
 import { NotificationTemplate } from '../../../entities/notification/notificationTemplate';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 const TEMPLATES_TO_INCLUDE_SCOPE = 'TEMPLATES_TO_INCLUDE';
 
@@ -47,6 +48,15 @@ export class OrgSettingsNotificationTemplateComponent implements OnInit, OnDestr
 
   isTemplateToInclude = false;
 
+  get includeHintHtml(): string {
+    if (!this.notificationTemplates?.length) {
+      return '';
+    }
+    return this.languageService.translate('settings.organization.notificationTemplate.includeHint', {
+      name: this.notificationTemplates[0].name,
+    });
+  }
+
   private scopeParam: string;
   private hookParam: string;
   private templateNameParam?: string;
@@ -58,6 +68,7 @@ export class OrgSettingsNotificationTemplateComponent implements OnInit, OnDestr
     private readonly notificationTemplateService: NotificationTemplateService,
     private readonly alertService: AlertService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {
     this.scopeParam = this.activatedRoute.snapshot.params.scope;
     this.isTemplateToInclude = this.scopeParam.toUpperCase() === TEMPLATES_TO_INCLUDE_SCOPE;
@@ -107,7 +118,9 @@ export class OrgSettingsNotificationTemplateComponent implements OnInit, OnDestr
     }
 
     const templateLabel = this.isTemplateToInclude ? this.templateNameParam : this.hookParam;
-    this.snackBarService.error(`Notification template "${templateLabel}" does not exist.`);
+    this.snackBarService.error(
+      this.languageService.translate('settings.organization.notificationTemplate.templateNotFound', { label: templateLabel }),
+    );
     void this.router.navigate(['../..'], { relativeTo: this.activatedRoute });
     return false;
   }
@@ -170,7 +183,7 @@ export class OrgSettingsNotificationTemplateComponent implements OnInit, OnDestr
     combineLatest(requests)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Template has been successfully saved!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.notificationTemplate.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

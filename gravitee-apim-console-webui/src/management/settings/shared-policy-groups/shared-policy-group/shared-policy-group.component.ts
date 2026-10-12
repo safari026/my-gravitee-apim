@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { MatTabsModule } from '@angular/material/tabs';
 import { MatAnchor } from '@angular/material/button';
@@ -21,7 +22,7 @@ import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'shared-policy-group',
-  imports: [MatTabsModule, MatAnchor, MatIcon, RouterModule],
+  imports: [MatTabsModule, MatAnchor, MatIcon, RouterModule, TranslatePipe],
   templateUrl: './shared-policy-group.component.html',
   styleUrl: './shared-policy-group.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

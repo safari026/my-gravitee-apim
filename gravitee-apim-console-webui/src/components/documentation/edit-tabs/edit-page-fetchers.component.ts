@@ -15,6 +15,8 @@
  */
 import angular, { IController, IScope } from 'angular';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
+
 interface IPageScope extends IScope {
   fetcherJsonSchema: {
     type: string;
@@ -32,7 +34,12 @@ class EditPageFetchersComponentController implements IController {
 
   fetcherJsonSchemaForm: string[];
 
-  constructor(private $scope: IPageScope) {}
+  constructor(
+    private $scope: IPageScope,
+    private readonly ngLanguageService: LanguageService,
+  ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onChanges() {
     if (this.fetchers != null) {
@@ -59,7 +66,7 @@ class EditPageFetchersComponentController implements IController {
     this.$scope.fetcherJsonSchema = angular.fromJson(fetcher.schema);
   }
 }
-EditPageFetchersComponentController.$inject = ['$scope'];
+EditPageFetchersComponentController.$inject = ['$scope', 'ngLanguageService'];
 
 export const EditPageFetchersComponent: ng.IComponentOptions = {
   bindings: {

@@ -15,35 +15,45 @@
     limitations under the License.
 
 -->
-<h1>Tenants</h1>
+<h1>{{ 'settings.organization.tenants.title' | translate }}</h1>
 
-<h4>
-  Copy/paste the tenant's key to the API gateway configuration file in order to resolve API endpoints according to the configured tenant.
-</h4>
+<h4>{{ 'settings.organization.tenants.intro' | translate }}</h4>
 
 <div class="add-button-container" *gioPermission="{ anyOf: ['organization-tenant-c'] }">
-  <button (click)="onAddTenantClicked()" mat-raised-button color="primary" aria-label="Button to add a tenant" data-testid="add-tenant">
-    <mat-icon>add</mat-icon>Add a tenant
+  <button
+    (click)="onAddTenantClicked()"
+    mat-raised-button
+    color="primary"
+    [attr.aria-label]="'settings.organization.tenants.addTenantAria' | translate"
+    data-testid="add-tenant"
+  >
+    <mat-icon>add</mat-icon>{{ 'settings.organization.tenants.addTenant' | translate }}
   </button>
 </div>
 
 <gio-table-wrapper [length]="tenantsTableUnpaginatedLength" (filtersChange)="onFiltersChanged($event)">
-  <table mat-table [dataSource]="tenantsDataSource" class="tenants-table" id="tenantsTable" aria-label="Tenant table">
+  <table
+    mat-table
+    [dataSource]="tenantsDataSource"
+    class="tenants-table"
+    id="tenantsTable"
+    [attr.aria-label]="'settings.organization.tenants.tableAria' | translate"
+  >
     <!-- Id Column -->
     <ng-container matColumnDef="key">
-      <th mat-header-cell *matHeaderCellDef id="key">Key</th>
+      <th mat-header-cell *matHeaderCellDef id="key">{{ 'settings.organization.shared.key' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.key }}</td>
     </ng-container>
 
     <!-- Name Column -->
     <ng-container matColumnDef="name">
-      <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+      <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.organization.shared.name' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.name }}</td>
     </ng-container>
 
     <!-- Description Column -->
     <ng-container matColumnDef="description">
-      <th mat-header-cell *matHeaderCellDef id="description">Description</th>
+      <th mat-header-cell *matHeaderCellDef id="description">{{ 'settings.organization.shared.description' | translate }}</th>
       <td mat-cell *matCellDef="let element">{{ element.description }}</td>
     </ng-container>
 
@@ -56,8 +66,8 @@
             <button
               (click)="onEditTenantClicked(element)"
               mat-icon-button
-              aria-label="Button to edit a tenant"
-              matTooltip="Edit tenant"
+              [attr.aria-label]="'settings.organization.tenants.editTenantAria' | translate"
+              [matTooltip]="'settings.organization.tenants.editTenantTooltip' | translate"
               data-testid="edit-tenant"
             >
               <mat-icon>edit</mat-icon>
@@ -67,8 +77,8 @@
             <button
               (click)="onDeleteTenantClicked(element)"
               mat-icon-button
-              aria-label="Button to delete a tenant"
-              matTooltip="Delete tenant"
+              [attr.aria-label]="'settings.organization.tenants.deleteTenantAria' | translate"
+              [matTooltip]="'settings.organization.tenants.deleteTenantTooltip' | translate"
               data-testid="delete-tenant"
             >
               <mat-icon>delete</mat-icon>
@@ -82,7 +92,7 @@
     <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
     <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-      <td class="mat-mdc-cell mdc-data-table__cell" colspan="4">No tenant</td>
+      <td class="mat-mdc-cell mdc-data-table__cell" colspan="4">{{ 'settings.organization.tenants.noTenant' | translate }}</td>
     </tr>
   </table>
 </gio-table-wrapper>

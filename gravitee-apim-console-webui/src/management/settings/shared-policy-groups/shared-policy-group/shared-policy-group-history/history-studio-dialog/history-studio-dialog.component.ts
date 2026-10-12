@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, inject, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -52,6 +53,7 @@ export type HistoryStudioDialogResult = false | 'RESTORE_VERSION';
     MatLabel,
     ReactiveFormsModule,
     GioBannerModule,
+    TranslatePipe,
   ],
 })
 export class HistoryStudioDialogComponent {

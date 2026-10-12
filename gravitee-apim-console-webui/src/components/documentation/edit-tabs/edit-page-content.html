@@ -53,6 +53,6 @@
 
 <!-- import file -->
 <div style="display: inline-block" ng-if="$ctrl.canUpdate">
-  <h3>Select a file to import:</h3>
+  <h3>{{$ctrl.translate('settings.documentation.selectFile')}}</h3>
   <input type="file" filecontent="$ctrl.page.content" filename="pageContentFile.name" />
 </div>

@@ -19,7 +19,7 @@
   <div>
     <md-icon md-svg-src="assets/logo_{{$ctrl.page.type | lowercase}}.svg" style="margin: 0 8px 12px 0"></md-icon>
     <h1>{{$ctrl.getPageName()}}</h1>
-    <a ng-click="$ctrl.cancel()">Back to Documentation</a>
+    <a ng-click="$ctrl.cancel()">{{$ctrl.translate('settings.documentation.backToDocumentation')}}</a>
   </div>
 
   <!-- FOLDER or LINK -->
@@ -42,23 +42,23 @@
     <div class="gv-form-content" layout="column">
       <div layout="row">
         <md-input-container class="md-block" flex>
-          <label>Name</label>
+          <label>{{$ctrl.translate('settings.documentation.name')}}</label>
           <input ng-model="$ctrl.page.name" required />
         </md-input-container>
       </div>
       <md-input-container ng-if="!$ctrl.isMarkdownTemplate()" class="md-block gv-input-container-dense">
-        <md-checkbox ng-model="$ctrl.page.homepage" aria-label="set as homepage" class="md-warn md-align-top-left" flex>
-          Set as homepage
+        <md-checkbox ng-model="$ctrl.page.homepage" aria-label="{{$ctrl.translate('settings.documentation.setAsHomepage')}}" class="md-warn md-align-top-left" flex>
+          {{$ctrl.translate('settings.documentation.setAsHomepage')}}
         </md-checkbox>
       </md-input-container>
       <md-input-container class="md-block gv-input-container-dense">
         <md-checkbox
           ng-model="$ctrl.page.published"
-          aria-label="{{!$ctrl.isMarkdownTemplate() ? 'Published' : 'Available'}}"
+          aria-label="{{!$ctrl.isMarkdownTemplate() ? $ctrl.translate('settings.documentation.published') : $ctrl.translate('settings.documentation.available')}}"
           class="md-align-top-left"
           flex
         >
-          {{!$ctrl.isMarkdownTemplate() ? 'Publish this page' : 'Make template available'}}
+          {{!$ctrl.isMarkdownTemplate() ? $ctrl.translate('settings.documentation.publishPage') : $ctrl.translate('settings.documentation.makeTemplateAvailable')}}
         </md-checkbox>
       </md-input-container>
       <md-input-container ng-if="!$ctrl.isMarkdownTemplate()" class="md-block gv-input-container-dense">
@@ -66,24 +66,24 @@
           ng-model="$ctrl.page.visibility"
           ng-false-value="'PUBLIC'"
           ng-true-value="'PRIVATE'"
-          aria-label="visibility"
+          aria-label="{{$ctrl.translate('settings.documentation.makePrivate')}}"
           class="md-align-top-left"
           flex
         >
-          Make private <i>(Deny access to anonymous user)</i>
+          {{$ctrl.translate('settings.documentation.makePrivate')}} <i>({{$ctrl.translate('settings.documentation.makePrivateHint')}})</i>
         </md-checkbox>
       </md-input-container>
-      <h3>How to get the content ?</h3>
+      <h3>{{$ctrl.translate('settings.documentation.howToGetContent')}}</h3>
       <md-radio-group ng-model="getContentMode" ng-change="$ctrl.changeContentMode(getContentMode)">
-        <md-radio-button value="inline" class="md-primary" selected>Fill the content inline</md-radio-button>
-        <md-radio-button value="import">Import from file</md-radio-button>
-        <md-radio-button value="fetcher">Import from an external source (gitlab, bitbucket, ...)</md-radio-button>
+        <md-radio-button value="inline" class="md-primary" selected>{{$ctrl.translate('settings.documentation.fillInline')}}</md-radio-button>
+        <md-radio-button value="import">{{$ctrl.translate('settings.documentation.importFromFile')}}</md-radio-button>
+        <md-radio-button value="fetcher">{{$ctrl.translate('settings.documentation.importFromSource')}}</md-radio-button>
       </md-radio-group>
 
       <!-- MARKDOWN-TEMPLATE selection -->
       <div layout-gt-sm="row">
         <md-input-container ng-if="($ctrl.isMarkdown() || $ctrl.isMarkdownTemplate()) && $ctrl.templates.length > 0" flex-gt-xs>
-          <label>Template</label>
+          <label>{{$ctrl.translate('settings.documentation.template')}}</label>
           <md-select ng-model="$ctrl.selectedTemplate" ng-change="$ctrl.onChangeMarkdownTemplate()">
             <md-option ng-repeat="template in $ctrl.templates" ng-value="template">
               <div ng-if="template.type">
@@ -92,17 +92,17 @@
               </div>
             </md-option>
           </md-select>
-          <div class="hint">Choose a template</div>
+          <div class="hint">{{$ctrl.translate('settings.documentation.chooseTemplate')}}</div>
         </md-input-container>
       </div>
 
       <div class="gv-page-info-banner" ng-if="($ctrl.isMarkdown() || $ctrl.isMarkdownTemplate()) && $ctrl.templates.length > 0">
         <ng-md-icon icon="info" class="gv-info"></ng-md-icon>
-        Selecting a template will override the current documentation.
+        {{$ctrl.translate('settings.documentation.templateOverride')}}
       </div>
 
       <!-- edit inline -->
-      <h3 ng-if="'inline' === getContentMode">Type your documentation here:</h3>
+      <h3 ng-if="'inline' === getContentMode">{{$ctrl.translate('settings.documentation.typeHere')}}</h3>
       <gv-edit-page-content
         ng-if="'inline' === getContentMode"
         can-update="true"
@@ -113,7 +113,7 @@
 
       <!-- import file -->
       <div ng-if="'import' === getContentMode" style="display: inline-block">
-        <h3>Select a file to import:</h3>
+        <h3>{{$ctrl.translate('settings.documentation.selectFile')}}</h3>
         <input type="file" filecontent="$ctrl.page.content" filename="$ctrl.page.name" />
       </div>
 
@@ -122,13 +122,13 @@
         ng-if="'fetcher' === getContentMode"
         fetchers="$ctrl.resolvedFetchers"
         page="$ctrl.page"
-        title="'Select your source:'"
+        title="$ctrl.translate('settings.documentation.selectSource')"
       ></gv-edit-page-fetchers>
 
       <gv-error error="$ctrl.error"></gv-error>
 
       <div class="md-actions gravitee-api-save-button" layout="row" style="padding-top: 32px">
-        <md-button class="md-raised md-primary" type="submit" ng-click="$ctrl.save(false)" ng-disabled="!$ctrl.page.name"> Save </md-button>
+        <md-button class="md-raised md-primary" type="submit" ng-click="$ctrl.save(false)" ng-disabled="!$ctrl.page.name"> {{$ctrl.translate('common.save')}} </md-button>
       </div>
     </div>
   </div>

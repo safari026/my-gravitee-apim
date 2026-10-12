@@ -27,6 +27,7 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { OrganizationService } from '../../../services-ngx/organization.service';
 import { GioTableWrapperFilters } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 type TableData = {
   logo: string;
@@ -46,7 +47,6 @@ type TableData = {
   standalone: false,
 })
 export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy {
-  providedConfigurationMessage = 'Configuration provided by the system';
 
   displayedColumns: string[] = ['logo', 'id', 'name', 'description', 'activated', 'sync', 'availableOnPortal', 'updatedAt', 'actions'];
   tableData: TableData[] = [];
@@ -63,6 +63,7 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
     private readonly organizationService: OrganizationService,
     private readonly snackBarService: SnackBarService,
     private readonly matDialog: MatDialog,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -94,9 +95,11 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete an Identity Provider',
-          content: `Are you sure you want to delete the identity provider <strong>${identityProvider.name}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.identityProviders.deleteTitle'),
+          content: this.languageService.translate('settings.organization.identityProviders.deleteContent', {
+            name: identityProvider.name,
+          }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteIdentityProviderConfirmDialog',
@@ -105,7 +108,11 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.identityProviderService.delete(identityProvider.id)),
-        tap(() => this.snackBarService.success(`Identity Provider ${identityProvider.name} successfully deleted!`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.identityProviders.deleted', { name: identityProvider.name }),
+          ),
+        ),
 
         takeUntil(this.unsubscribe$),
       )
@@ -117,11 +124,20 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `${identityProvider.activated ? 'Deactivate' : 'Activate'} an Identity Provider`,
-          content: `Are you sure you want to ${identityProvider.activated ? 'deactivate' : 'activate'} the identity provider <strong>${
-            identityProvider.name
-          }</strong>?`,
-          confirmButton: 'Ok',
+          title: this.languageService.translate(
+            identityProvider.activated
+              ? 'settings.organization.identityProviders.deactivateTitle'
+              : 'settings.organization.identityProviders.activateTitle',
+          ),
+          content: this.languageService.translate('settings.organization.identityProviders.toggleContent', {
+            action: this.languageService.translate(
+              identityProvider.activated
+                ? 'settings.organization.identityProviders.deactivateAction'
+                : 'settings.organization.identityProviders.activateAction',
+            ),
+            name: identityProvider.name,
+          }),
+          confirmButton: this.languageService.translate('settings.organization.shared.ok'),
         },
         role: 'alertdialog',
         id: 'deleteIdentityProviderConfirmDialog',
@@ -138,7 +154,12 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
         }),
         tap(() =>
           this.snackBarService.success(
-            `Identity Provider ${identityProvider.name} successfully ${identityProvider.activated ? 'activated' : 'deactivated'}!`,
+            this.languageService.translate(
+              identityProvider.activated
+                ? 'settings.organization.identityProviders.activatedSuccess'
+                : 'settings.organization.identityProviders.deactivatedSuccess',
+              { name: identityProvider.name },
+            ),
           ),
         ),
         takeUntil(this.unsubscribe$),
@@ -158,7 +179,9 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
         },
       })
       .pipe(
-        tap(() => this.snackBarService.success('Configuration successfully updated!')),
+        tap(() =>
+          this.snackBarService.success(this.languageService.translate('settings.organization.identityProviders.configUpdated')),
+        ),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(updatedConsoleSettings => {
@@ -206,10 +229,10 @@ export class OrgSettingsIdentityProvidersComponent implements OnInit, OnDestroy 
 
   getLocalLoginTooltipMessage(): string | null {
     if (this.isReadonlySetting('console.authentication.localLogin.enabled')) {
-      return this.providedConfigurationMessage;
+      return this.languageService.translate('settings.systemConfig');
     }
     if (!this.hasActivatedIdp()) {
-      return 'You must create and activate an identity provider to be able to update this setting';
+      return this.languageService.translate('settings.organization.identityProviders.localLoginRequiresIdp');
     }
     return null;
   }

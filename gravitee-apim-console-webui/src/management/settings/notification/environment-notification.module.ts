@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
 import { CommonModule } from '@angular/common';
@@ -28,6 +29,6 @@ import { NotificationModule } from '../../../components/notification';
 @NgModule({
   declarations: [EnvironmentNotificationComponent],
   exports: [],
-  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule, NotificationModule, MatSnackBarModule],
+  imports: [CommonModule, MatCardModule, MatButtonModule, MatIconModule, MatDialogModule, NotificationModule, MatSnackBarModule, TranslatePipe],
 })
 export class EnvironmentNotificationModule {}

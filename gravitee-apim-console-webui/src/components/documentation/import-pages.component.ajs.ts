@@ -20,6 +20,7 @@ import { forEach, isNil } from 'lodash';
 
 import { DocumentationService } from '../../services/documentation.service';
 import NotificationService from '../../services/notification.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 interface IPageScope extends IScope {
   fetcherJsonSchema: string;
@@ -39,7 +40,10 @@ class ImportPagesComponentController implements IController {
     private readonly DocumentationService: DocumentationService,
     private $scope: IPageScope,
     private ngRouter: Router,
+    private readonly ngLanguageService: LanguageService,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   $onInit() {
     this.apiId = this.activatedRoute.snapshot.params.apiId;
@@ -67,22 +71,18 @@ class ImportPagesComponentController implements IController {
         if (this.page.id) {
           if (response.data.messages && response.data.messages.length > 0) {
             this.NotificationService.showError(
-              "'" +
-                response.data.length +
-                "' elements has been updated (with validation errors - check the bottom of the page for details)",
+              this.translate('settings.documentation.importUpdatedErrors', { count: response.data.length }),
             );
           } else {
-            this.NotificationService.show("'" + response.data.length + "' elements has been updated.");
+            this.NotificationService.show(this.translate('settings.documentation.importUpdated', { count: response.data.length }));
           }
         } else {
           if (response.data.messages && response.data.messages.length > 0) {
             this.NotificationService.showError(
-              "'" +
-                response.data.length +
-                "' elements has been created (with validation errors - check the bottom of the page for details)",
+              this.translate('settings.documentation.importCreatedErrors', { count: response.data.length }),
             );
           } else {
-            this.NotificationService.show("'" + response.data.length + "' elements has been created.");
+            this.NotificationService.show(this.translate('settings.documentation.importCreated', { count: response.data.length }));
           }
         }
         this.ngRouter.navigate(['..'], { relativeTo: this.activatedRoute });
@@ -96,13 +96,14 @@ class ImportPagesComponentController implements IController {
     this.ngRouter.navigate(['..'], { relativeTo: this.activatedRoute });
   }
 }
-ImportPagesComponentController.$inject = ['NotificationService', 'DocumentationService', '$scope', 'ngRouter'];
+ImportPagesComponentController.$inject = ['NotificationService', 'DocumentationService', '$scope', 'ngRouter', 'ngLanguageService'];
 
 export const DocumentationImportPagesComponentAjs: ng.IComponentOptions = {
   bindings: {
     resolvedFetchers: '<',
     resolvedRootPage: '<',
     activatedRoute: '<',
+    language: '<',
   },
   template: require('html-loader!./import-pages.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: ImportPagesComponentController,

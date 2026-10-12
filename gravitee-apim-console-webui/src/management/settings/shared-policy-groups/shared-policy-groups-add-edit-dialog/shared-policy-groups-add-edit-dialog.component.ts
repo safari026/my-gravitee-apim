@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Inject } from '@angular/core';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { Component, inject, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -25,7 +27,7 @@ import { GioFormFocusInvalidModule } from '@gravitee/ui-particles-angular';
 import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
-import { ApiV4, SharedPolicyGroup, FlowPhase, toReadableFlowPhase } from '../../../../entities/management-api-v2';
+import { ApiV4, SharedPolicyGroup, FlowPhase } from '../../../../entities/management-api-v2';
 
 export type SharedPolicyGroupAddEditDialogData =
   | {
@@ -61,9 +63,12 @@ const PHASE_BY_API_TYPE: Record<ApiV4['type'], FlowPhase[]> = {
     MatInput,
     MatButtonToggleModule,
     GioFormFocusInvalidModule,
+    TranslatePipe,
   ],
 })
 export class SharedPolicyGroupsAddEditDialogComponent {
+  private readonly languageService = inject(LanguageService);
+
   protected apiTypeLabel: string;
 
   protected formGroup: FormGroup<{
@@ -85,8 +90,14 @@ export class SharedPolicyGroupsAddEditDialogComponent {
     this.isEdit = isEdit(data);
     const apiType = isEdit(data) ? data.sharedPolicyGroup.apiType : data.apiType;
 
-    this.apiTypeLabel = apiType === 'MESSAGE' ? 'Message' : 'Proxy';
-    this.phases = PHASE_BY_API_TYPE[apiType].map(phase => ({ name: toReadableFlowPhase(phase), value: phase }));
+    this.apiTypeLabel =
+      apiType === 'MESSAGE'
+        ? this.languageService.translate('settings.sharedPolicyGroups.messageApi')
+        : this.languageService.translate('settings.sharedPolicyGroups.proxyApi');
+    this.phases = PHASE_BY_API_TYPE[apiType].map(phase => ({
+      name: this.languageService.translate(`settings.sharedPolicyGroups.phases.${phase}`),
+      value: phase,
+    }));
 
     this.formGroup = new FormGroup({
       name: new FormControl(isEdit(data) ? data.sharedPolicyGroup.name : '', Validators.required),

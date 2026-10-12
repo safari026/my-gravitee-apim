@@ -15,11 +15,15 @@
  */
 import { Component, ElementRef, Inject, Injector, SimpleChange } from '@angular/core';
 import { UpgradeComponent } from '@angular/upgrade/static';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
+import { Subject } from 'rxjs';
+import { skip, takeUntil } from 'rxjs/operators';
 
 import { GroupService } from '../../services-ngx/group.service';
 import { DocumentationService } from '../../services/documentation.service';
 import FetcherService from '../../services/fetcher.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   template: '',
@@ -30,6 +34,8 @@ import FetcherService from '../../services/fetcher.service';
   },
 })
 export class DocumentationImportPagesComponent extends UpgradeComponent {
+  private unsubscribe$ = new Subject<void>();
+
   constructor(
     elementRef: ElementRef,
     injector: Injector,
@@ -37,8 +43,16 @@ export class DocumentationImportPagesComponent extends UpgradeComponent {
     public readonly groupService: GroupService,
     @Inject('ajsDocumentationService') private readonly ajsDocumentationService: DocumentationService,
     @Inject('ajsFetcherService') private readonly ajsFetcherService: FetcherService,
+    private readonly languageService: LanguageService,
   ) {
     super('documentationImportPagesAjs', elementRef, injector);
+    toObservable(this.languageService.currentLanguage, { injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
   }
 
   override ngOnInit() {
@@ -62,9 +76,17 @@ export class DocumentationImportPagesComponent extends UpgradeComponent {
         activatedRoute: new SimpleChange(null, this.activatedRoute, true),
         resolvedFetchers: new SimpleChange(null, resolvedFetchers, true),
         resolvedRootPage: new SimpleChange(null, resolvedRootPage, true),
+        language: new SimpleChange(null, this.languageService.currentLanguage(), true),
       });
 
       super.ngOnInit();
     });
+  }
+
+  override ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+
+    super.ngOnDestroy();
   }
 }

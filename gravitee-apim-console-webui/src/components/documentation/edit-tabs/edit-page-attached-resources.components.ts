@@ -17,6 +17,7 @@ import { IController } from 'angular';
 
 import { DocumentationService } from '../../../services/documentation.service';
 import NotificationService from '../../../services/notification.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class EditPageAttachedResourcesComponentController implements IController {
   apiId: string;
@@ -28,7 +29,10 @@ class EditPageAttachedResourcesComponentController implements IController {
     private readonly $mdDialog: angular.material.IDialogService,
     private readonly DocumentationService: DocumentationService,
     private readonly NotificationService: NotificationService,
+    private readonly ngLanguageService: LanguageService,
   ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   addAttachedResource() {
     this.$mdDialog
@@ -38,8 +42,8 @@ class EditPageAttachedResourcesComponentController implements IController {
         template: require('html-loader!../../dialog/fileChooser.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Select a file to attach',
-          confirmButton: 'Add',
+          title: this.translate('settings.documentation.selectFileToAttach'),
+          confirmButton: this.translate('common.add'),
         },
       })
       .then((response: any) => {
@@ -55,9 +59,9 @@ class EditPageAttachedResourcesComponentController implements IController {
 
           this.DocumentationService.addMedia(fd, this.page.id, this.apiId)
             .then(() => this.onSave())
-            .then(() => this.NotificationService.show(fileName + ' has been attached'))
+            .then(() => this.NotificationService.show(this.translate('settings.documentation.attached', { name: fileName })))
             .catch(error => {
-              this.NotificationService.showError(error.data?.message || 'An error occurred while uploading the media.');
+              this.NotificationService.showError(error.data?.message || this.translate('settings.documentation.attachError'));
             });
         }
       });
@@ -71,8 +75,8 @@ class EditPageAttachedResourcesComponentController implements IController {
         template: require('html-loader!../../dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Would you like to remove "' + resource.fileName + '"?',
-          confirmButton: 'Remove',
+          title: this.translate('settings.documentation.removeTitle', { name: resource.fileName }),
+          confirmButton: this.translate('common.remove'),
         },
       })
       .then(response => {
@@ -83,12 +87,12 @@ class EditPageAttachedResourcesComponentController implements IController {
           );
           this.DocumentationService.update(this.page, this.apiId)
             .then(() => this.onSave())
-            .then(() => this.NotificationService.show(resource.fileName + ' has been removed from page'));
+            .then(() => this.NotificationService.show(this.translate('settings.documentation.detached', { name: resource.fileName })));
         }
       });
   };
 }
-EditPageAttachedResourcesComponentController.$inject = ['$mdDialog', 'DocumentationService', 'NotificationService'];
+EditPageAttachedResourcesComponentController.$inject = ['$mdDialog', 'DocumentationService', 'NotificationService', 'ngLanguageService'];
 
 export const EditPageAttachedResourcesComponent: ng.IComponentOptions = {
   bindings: {
