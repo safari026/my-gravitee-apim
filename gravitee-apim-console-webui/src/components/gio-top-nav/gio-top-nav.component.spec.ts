@@ -104,6 +104,9 @@ describe('GioTopNavComponent', () => {
 
     expect(helpButtons()).toHaveLength(1);
     expect(languageButtons()).toHaveLength(1);
+    const languageIcon = languageButtons()[0].querySelector('mat-icon');
+    expect(languageIcon?.getAttribute('data-mat-icon-namespace')).toBe('gio');
+    expect(languageIcon?.getAttribute('data-mat-icon-name')).toBe('language');
   });
 
   it('keeps a single help button after inputs refresh as on section navigation', async () => {

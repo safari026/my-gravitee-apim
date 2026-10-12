@@ -23,6 +23,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   GioLicenseExpirationNotificationHarness,
   GioMenuSearchService,
+  GioMenuService,
   LICENSE_CONFIGURATION_TESTING,
 } from '@gravitee/ui-particles-angular';
 import { ActivatedRoute } from '@angular/router';
@@ -38,6 +39,7 @@ import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
 import { Constants } from '../../entities/Constants';
 import { EnvironmentSettingsService } from '../../services-ngx/environment-settings.service';
 import { Environment } from '../../entities/environment/environment';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 const PORTAL_SETTINGS_PERMISSIONS_SET = new Set(PORTAL_SETTINGS_PERMISSIONS);
 
@@ -135,6 +137,7 @@ describe('GioSideNavComponent', () => {
   };
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 
@@ -210,6 +213,158 @@ describe('GioSideNavComponent', () => {
       expect(searchItemNames).not.toContain('Kafka');
       expect(searchItemNames).not.toContain('Observability');
       expect(searchItemNames).not.toContain('Analytics');
+      expect(searchItemNames).toContain('Integrations');
+    });
+  });
+
+  describe('language switching', () => {
+    const flushLicenseRequests = () => {
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+    };
+
+    it('should rebuild menu labels when language changes without reload', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './home')?.displayName).toBe('Dashboard');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './integrations')?.displayName).toBe('Integrations');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './applications')?.displayName).toBe('Applications');
+      expect(fixture.componentInstance.footerMenuItems.find(item => item.routerLink === '/_organization')?.displayName).toBe(
+        'Organization',
+      );
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './home')?.displayName).toBe('Дашборд');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './integrations')?.displayName).toBe('Интеграции');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './applications')?.displayName).toBe('Приложения');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './settings')?.displayName).toBe('Настройки');
+      expect(fixture.componentInstance.footerMenuItems.find(item => item.routerLink === '/_organization')?.displayName).toBe('Организация');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './api-products')?.displayName).toBe('API-продукты');
+
+      const kafkaRu = fixture.componentInstance.mainMenuItems.find(item =>
+        item.items?.some(child => child.routerLink === './clusters/kafka-standalone'),
+      );
+      expect(kafkaRu?.displayName).toBe('Kafka');
+      expect(kafkaRu?.items?.[0]?.displayName).toBe('Автономный');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './integrations')?.displayName).toBe('Integrations');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './api-products')?.displayName).toBe('API Products');
+      expect(
+        fixture.componentInstance.mainMenuItems.find(item => item.items?.some(child => child.routerLink === './clusters/kafka-standalone'))
+          ?.displayName,
+      ).toBe('Kafka');
+    });
+
+    it('should rebuild search entries and keep Integrations when language changes', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      const addMenuSearchItems = jest.spyOn(menuSearchService, 'addMenuSearchItems');
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      const russianItems: { name: string; routerLink?: string }[] = addMenuSearchItems.mock.calls.at(-1)?.[0] ?? [];
+      const russianNames = russianItems.map(item => item.name);
+      expect(russianNames).toEqual(expect.arrayContaining(['Дашборд', 'API-продукты', 'Интеграции', 'Приложения']));
+      expect(russianNames).not.toContain('Наблюдаемость');
+      expect(russianNames).not.toContain('Аналитика');
+      expect(russianItems.some(item => item.routerLink?.includes('/integrations'))).toBe(true);
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      const englishItems: { name: string }[] = addMenuSearchItems.mock.calls.at(-1)?.[0] ?? [];
+      const englishNames = englishItems.map(item => item.name);
+      expect(englishNames).toEqual(expect.arrayContaining(['Dashboard', 'API Products', 'Integrations', 'Applications']));
+      expect(englishNames).not.toContain('Observability');
+
+      addMenuSearchItems.mockRestore();
+    });
+
+    it('should switch the search placeholder between EN and RU without reload', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      const searchInput = (): HTMLInputElement => fixture.nativeElement.querySelector('.gio-menu-search__input');
+      const searchAriaLabel = (): string | null =>
+        fixture.nativeElement.querySelector('gio-menu-search')?.getAttribute('aria-label') ?? null;
+
+      expect(searchInput().placeholder).toBe('Search');
+      expect(searchAriaLabel()).toBe('Search');
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(searchInput().placeholder).toBe('Поиск');
+      expect(searchAriaLabel()).toBe('Поиск');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(searchInput().placeholder).toBe('Search');
+      expect(searchAriaLabel()).toBe('Search');
+    });
+
+    it('should translate collapse and expand labels without reload', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      const collapseButton = (): HTMLElement => fixture.nativeElement.querySelector('.gio-menu-footer__collapse');
+      const collapseTitle = (): string => collapseButton()?.querySelector('.gio-menu-item__title')?.textContent?.trim() ?? '';
+
+      expect(collapseTitle()).toBe('Collapse menu');
+      expect(collapseButton().getAttribute('aria-label')).toBe('Collapse menu');
+      expect(collapseButton().getAttribute('title')).toBe('Collapse menu');
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(collapseTitle()).toBe('Свернуть меню');
+      expect(collapseButton().getAttribute('aria-label')).toBe('Свернуть меню');
+      expect(collapseButton().getAttribute('title')).toBe('Свернуть меню');
+
+      const menuService = TestBed.inject(GioMenuService);
+      menuService.reduce(true);
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(collapseTitle()).toBe('Развернуть меню');
+      expect(collapseButton().getAttribute('aria-label')).toBe('Развернуть меню');
+      expect(collapseButton().getAttribute('title')).toBe('Развернуть меню');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(collapseTitle()).toBe('Expand menu');
+      expect(collapseButton().getAttribute('aria-label')).toBe('Expand menu');
+      expect(collapseButton().getAttribute('title')).toBe('Expand menu');
+
+      menuService.reduce(false);
+      fixture.detectChanges();
+      flushLicenseRequests();
+
+      expect(collapseTitle()).toBe('Collapse menu');
+      expect(collapseButton().getAttribute('aria-label')).toBe('Collapse menu');
+      expect(collapseButton().getAttribute('title')).toBe('Collapse menu');
     });
   });
 

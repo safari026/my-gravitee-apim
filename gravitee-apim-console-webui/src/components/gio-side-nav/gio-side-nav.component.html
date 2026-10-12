@@ -22,12 +22,12 @@
         <gio-menu-selector
           [tabIndex]="1"
           [selectedItemValue]="currentEnv.id"
-          selectorTitle="Environment"
+          [selectorTitle]="'navigation.environment' | translate"
           [selectorItems]="environments"
           (selectChange)="changeCurrentEnv($event)"
         ></gio-menu-selector>
       </div>
-      <gio-menu-search (valueChanges)="navigate($event)"> </gio-menu-search>
+      <gio-menu-search [attr.aria-label]="'common.search' | translate" (valueChanges)="navigate($event)"></gio-menu-search>
     </gio-menu-header>
     <gio-menu-list>
       <ng-container *ngFor="let item of mainMenuItems">
