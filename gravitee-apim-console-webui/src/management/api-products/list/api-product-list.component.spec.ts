@@ -32,6 +32,7 @@ import { ApiProduct } from '../../../entities/management-api-v2/api-product';
 import { GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
 import { Constants } from '../../../entities/Constants';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApiProductListComponent', () => {
   let fixture: ComponentFixture<ApiProductListComponent>;
@@ -103,6 +104,26 @@ describe('ApiProductListComponent', () => {
     const emptyStateText = await emptyState.getText();
     expect(emptyStateText).toContain('No API Product created yet');
     expect(emptyStateText).toContain('Create API Products to group together your APIs.');
+  });
+
+  it('should update empty state when language changes', async () => {
+    const languageService = TestBed.inject(LanguageService);
+    await initComponent([]);
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const emptyStateRu = await loader.getHarness(ApiProductListEmptyStateHarness);
+    const ruText = await emptyStateRu.getText();
+    expect(ruText).toMatch(/API-продукты ещё не созданы|Не созданы/i);
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    await fixture.whenStable();
+
+    const emptyStateEn = await loader.getHarness(ApiProductListEmptyStateHarness);
+    expect(await emptyStateEn.getText()).toContain('No API Product created yet');
   });
 
   it('should display a table with one row', async () => {

@@ -80,6 +80,8 @@ import {
   ApiProductSubscriptionTransferDialogResult,
 } from '../components/dialogs/api-product-subscription-transfer-dialog.component';
 import { ApiSubscriptionsModule } from '../../../api/subscriptions/api-subscriptions.module';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 interface SubscriptionDetailVM {
   id: string;
@@ -133,6 +135,7 @@ interface ApiKeyVM {
     GioPermissionModule,
     GioTableWrapperModule,
     ApiSubscriptionsModule,
+    TranslatePipe,
   ],
 })
 export class ApiProductSubscriptionEditComponent {
@@ -142,6 +145,7 @@ export class ApiProductSubscriptionEditComponent {
   private readonly matDialog = inject(MatDialog);
   private readonly constants = inject<Constants>(Constants);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   private readonly apiProductId = toSignal(this.activatedRoute.params.pipe(map(param => param['apiProductId'] ?? '')), {
     initialValue: '',
@@ -213,14 +217,16 @@ export class ApiProductSubscriptionEditComponent {
           };
           return this.subscriptionService.accept(subscription.id, this.apiProductId(), acceptPayload);
         }),
-        catchError(err => this.handleError(err, 'Failed to validate subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.validateError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(updated => {
         if (updated.status === 'ACCEPTED') {
-          this.snackBarService.success('Subscription validated');
+          this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.validated'));
         } else {
-          this.snackBarService.error(`Subscription ${updated.status.toLowerCase()}`);
+          this.snackBarService.error(
+            this.languageService.translate('apiProducts.subscriptions.statusChanged', { status: updated.status.toLowerCase() }),
+          );
         }
         this.refreshSubscription.update(r => r + 1);
       });
@@ -242,11 +248,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(result => !!result),
         switchMap(result => this.subscriptionService.reject(sub.id, this.apiProductId(), result.reason)),
-        catchError(err => this.handleError(err, 'Failed to reject subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.rejectError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('Subscription rejected');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.rejected'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -272,24 +278,28 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(result => !!result),
         switchMap(result => this.subscriptionService.transfer(this.apiProductId(), sub.id, result.selectedPlanId)),
-        catchError(err => this.handleError(err, 'Failed to transfer subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.transferError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('Subscription successfully transferred');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.transferred'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
 
   protected pauseSubscription(): void {
     const sub = this.subscription();
-    let content = 'The application will not be able to consume this API product anymore.';
+    let content = this.languageService.translate('apiProducts.subscriptions.pauseContent');
     if (sub.plan.securityType === 'API_KEY' && !this.hasSharedApiKeyMode()) {
-      content += '<br/>All Api-keys associated to this subscription will be paused and unusable.';
+      content += this.languageService.translate('apiProducts.subscriptions.pauseApiKeys');
     }
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
-        data: { title: 'Pause your subscription', content, confirmButton: 'Pause' },
+        data: {
+          title: this.languageService.translate('apiProducts.subscriptions.pauseTitle'),
+          content,
+          confirmButton: this.languageService.translate('apiProducts.subscriptions.pause'),
+        },
         role: 'alertdialog',
         id: 'confirmPauseSubscriptionDialog',
       })
@@ -297,11 +307,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.subscriptionService.pause(sub.id, this.apiProductId())),
-        catchError(err => this.handleError(err, 'Failed to pause subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.pauseError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('Subscription paused');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.paused'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -311,9 +321,9 @@ export class ApiProductSubscriptionEditComponent {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         data: {
-          title: 'Resume your subscription',
-          content: 'The application will be able to consume your API Product.',
-          confirmButton: 'Resume',
+          title: this.languageService.translate('apiProducts.subscriptions.resumeTitle'),
+          content: this.languageService.translate('apiProducts.subscriptions.resumeContent'),
+          confirmButton: this.languageService.translate('apiProducts.subscriptions.resume'),
         },
         role: 'alertdialog',
         id: 'confirmResumeSubscriptionDialog',
@@ -322,11 +332,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.subscriptionService.resume(sub.id, this.apiProductId())),
-        catchError(err => this.handleError(err, 'Failed to resume subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.resumeError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('Subscription resumed');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.resumed'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -336,9 +346,9 @@ export class ApiProductSubscriptionEditComponent {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         data: {
-          title: 'Resume your failed subscription',
-          content: 'The application will be able to consume your API Product.',
-          confirmButton: 'Resume',
+          title: this.languageService.translate('apiProducts.subscriptions.resumeFailedTitle'),
+          content: this.languageService.translate('apiProducts.subscriptions.resumeContent'),
+          confirmButton: this.languageService.translate('apiProducts.subscriptions.resume'),
         },
         role: 'alertdialog',
         id: 'confirmResumeFailureSubscriptionDialog',
@@ -347,11 +357,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.subscriptionService.resumeFailure(sub.id, this.apiProductId())),
-        catchError(err => this.handleError(err, 'Failed to resume subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.resumeError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('Subscription resumed');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.resumed'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -385,24 +395,28 @@ export class ApiProductSubscriptionEditComponent {
             metadata: sub.metadata,
           }),
         ),
-        catchError(err => this.handleError(err, 'Failed to change end date')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.changeEndDateError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('End date successfully changed');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.endDateChanged'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
 
   protected closeSubscription(): void {
     const sub = this.subscription();
-    let content = `${sub.application.name} will no longer be able to consume your API Product.`;
+    let content = this.languageService.translate('apiProducts.subscriptions.closeContent', { name: sub.application.name });
     if (sub.plan.securityType === 'API_KEY' && !this.hasSharedApiKeyMode()) {
-      content += '<br/>All API keys associated to this subscription will be closed and unusable.';
+      content += this.languageService.translate('apiProducts.subscriptions.closeApiKeys');
     }
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
-        data: { title: 'Close your subscription', content, confirmButton: 'Close' },
+        data: {
+          title: this.languageService.translate('apiProducts.subscriptions.closeTitle'),
+          content,
+          confirmButton: this.languageService.translate('common.close'),
+        },
         role: 'alertdialog',
         id: 'confirmCloseSubscriptionDialog',
       })
@@ -410,11 +424,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.subscriptionService.close(sub.id, this.apiProductId())),
-        catchError(err => this.handleError(err, 'Failed to close subscription')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.closeError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('Subscription closed');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.closed'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -439,11 +453,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(result => !!result),
         switchMap(result => this.subscriptionService.renewApiKey(this.apiProductId(), sub.id, result.customApiKey)),
-        catchError(err => this.handleError(err, 'Failed to renew API Key')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.renewError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('API Key renewed');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.keyRenewed'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -452,7 +466,11 @@ export class ApiProductSubscriptionEditComponent {
     const sub = this.subscription();
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
-        data: { title: 'Revoke your API Key', content: "Revoke your subscription's API Key", confirmButton: 'Revoke' },
+        data: {
+          title: this.languageService.translate('apiProducts.subscriptions.revokeTitle'),
+          content: this.languageService.translate('apiProducts.subscriptions.revokeContent'),
+          confirmButton: this.languageService.translate('common.revoke'),
+        },
         role: 'alertdialog',
         id: 'revokeApiKeyDialog',
       })
@@ -460,11 +478,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.subscriptionService.revokeApiKey(this.apiProductId(), sub.id, apiKey.id)),
-        catchError(err => this.handleError(err, 'Failed to revoke API Key')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.revokeError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('API Key revoked');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.keyRevoked'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -486,11 +504,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(result => !!result),
         switchMap(result => this.subscriptionService.expireApiKey(this.apiProductId(), sub.id, apiKey.id, result.expirationDate)),
-        catchError(err => this.handleError(err, 'Failed to expire API Key')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.expireError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('API Key expiration validated');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.keyExpirationValidated'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -500,9 +518,9 @@ export class ApiProductSubscriptionEditComponent {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         data: {
-          title: 'Reactivate your API Key',
-          content: 'Reactivate your revoked or expired API Key',
-          confirmButton: 'Reactivate',
+          title: this.languageService.translate('apiProducts.subscriptions.reactivateTitle'),
+          content: this.languageService.translate('apiProducts.subscriptions.reactivateContent'),
+          confirmButton: this.languageService.translate('apiProducts.subscriptions.reactivate'),
         },
         role: 'alertdialog',
         id: 'reactivateApiKeyDialog',
@@ -511,11 +529,11 @@ export class ApiProductSubscriptionEditComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.subscriptionService.reactivateApiKey(this.apiProductId(), sub.id, apiKey.id)),
-        catchError(err => this.handleError(err, 'Failed to reactivate API Key')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.reactivateError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
-        this.snackBarService.success('API Key reactivated');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.keyReactivated'));
         this.refreshSubscription.update(r => r + 1);
       });
   }
@@ -573,7 +591,7 @@ export class ApiProductSubscriptionEditComponent {
     this.subscriptionService
       .listApiKeys(this.apiProductId(), this.subscriptionId(), page, perPage)
       .pipe(
-        catchError(err => this.handleError(err, 'Failed to load API keys')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.loadKeysError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(response => {
@@ -612,11 +630,11 @@ export class ApiProductSubscriptionEditComponent {
           );
         }
       }),
-      catchError(err => this.handleError(err, 'Failed to load subscription')),
+      catchError(err => this.handleError(err, this.languageService.translate('apiProducts.subscriptions.loadSubscriptionError'))),
     );
   }
 
-  private handleError(err: unknown, defaultMessage = 'An error occurred.'): Observable<never> {
+  private handleError(err: unknown, defaultMessage = this.languageService.translate('apiProducts.subscriptions.genericError')): Observable<never> {
     const message =
       (err as { error?: { message?: string }; message?: string })?.error?.message ??
       (err as { message?: string })?.message ??

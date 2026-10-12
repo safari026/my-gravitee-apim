@@ -32,6 +32,8 @@ import { GioAvatarModule, GioBannerModule, GioIconsModule } from '@gravitee/ui-p
 import { Api } from '../../../../entities/management-api-v2';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { getApiContextPath } from '../../../../shared/utils/api-access.util';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type ApiWithContextPath = Api & { contextPath: string | null };
 
@@ -60,6 +62,7 @@ export type ApiProductAddApiDialogResult = Api[] | undefined;
     GioAvatarModule,
     GioBannerModule,
     GioIconsModule,
+    TranslatePipe,
   ],
   standalone: true,
 })
@@ -67,6 +70,7 @@ export class ApiProductAddApiDialogComponent implements OnInit {
   private readonly injector = inject(Injector);
   private readonly dialogRef = inject(MatDialogRef<ApiProductAddApiDialogComponent>);
   private readonly apiService = inject(ApiV2Service);
+  private readonly languageService = inject(LanguageService);
   readonly data = inject<ApiProductAddApiDialogData>(MAT_DIALOG_DATA);
 
   readonly searchApiControl = new FormControl<string | Api>('');
@@ -140,7 +144,7 @@ export class ApiProductAddApiDialogComponent implements OnInit {
     const existingIds = this.data.existingApiIds || [];
     const errors = this.selectedApis()
       .filter(api => existingIds.includes(api.id))
-      .map(api => `API "${api.name}" is already in this API Product`);
+      .map(api => this.languageService.translate('apiProducts.apis.alreadyAdded', { name: api.name }));
 
     if (errors.length > 0) {
       this.validationError.set(errors.join(', '));

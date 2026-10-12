@@ -208,16 +208,19 @@ describe('GioSideNavComponent', () => {
       const searchItems: { name: string }[] = addSearchItemByGroupIds.mock.calls[0][0];
       const searchItemNames = searchItems.map(i => i.name);
 
-      // flat items with real routerLinks must appear
       expect(searchItemNames).toEqual(
-        expect.arrayContaining(['Dashboard', 'APIs', 'Applications', 'Gateways', 'Audit', 'Settings']),
+        expect.arrayContaining([
+          'Dashboard',
+          'APIs',
+          'API Products',
+          'Integrations',
+          'Applications',
+          'Gateways',
+          'Kafka',
+          'Audit',
+          'Settings',
+        ]),
       );
-      // hidden items and group-only items (no routerLink of their own) must NOT appear in search
-      expect(searchItemNames).not.toContain('Kafka');
-      expect(searchItemNames).not.toContain('API Products');
-      expect(searchItemNames).not.toContain('Integrations');
-      expect(searchItemNames).not.toContain('Observability');
-      expect(searchItemNames).not.toContain('Analytics');
     });
 
     const filterSearchNames = (query: string): string[] => {
@@ -230,13 +233,16 @@ describe('GioSideNavComponent', () => {
         .map(item => item.name);
     };
 
-    it('should not return hidden items for exact or partial search queries', async () => {
+    it('should return Kafka, API Products, and Integrations for exact or partial search queries', async () => {
       await init();
       expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
 
-      for (const query of ['Kafka', 'kaf', 'API Product', 'product', 'Integration', 'integ']) {
-        expect(filterSearchNames(query).join(' ')).not.toMatch(/Kafka|API Products|Integrations/i);
-      }
+      expect(filterSearchNames('Kafka')).toEqual(expect.arrayContaining(['Kafka']));
+      expect(filterSearchNames('kaf')).toEqual(expect.arrayContaining(['Kafka']));
+      expect(filterSearchNames('API Product')).toEqual(expect.arrayContaining(['API Products']));
+      expect(filterSearchNames('product')).toEqual(expect.arrayContaining(['API Products']));
+      expect(filterSearchNames('Integration')).toEqual(expect.arrayContaining(['Integrations']));
+      expect(filterSearchNames('integ')).toEqual(expect.arrayContaining(['Integrations']));
     });
 
     it('should still return allowed items for search and keep empty search empty', async () => {
@@ -246,6 +252,33 @@ describe('GioSideNavComponent', () => {
       expect(filterSearchNames('')).toEqual([]);
       expect(filterSearchNames('Dashboard')).toEqual(expect.arrayContaining(['Dashboard']));
       expect(filterSearchNames('zzzz-no-such-item')).toEqual([]);
+    });
+
+    it('should rebuild Kafka, API Products, and Integrations search entries when language changes', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+
+      expect(filterSearchNames('API-продукт')).toEqual(expect.arrayContaining(['API-продукты']));
+      expect(filterSearchNames('Интегр')).toEqual(expect.arrayContaining(['Интеграции']));
+      expect(filterSearchNames('Kafka')).toEqual(expect.arrayContaining(['Kafka']));
+      expect(filterSearchNames('Автоном')).toEqual(expect.arrayContaining(['Автономный']));
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+
+      expect(filterSearchNames('API Product')).toEqual(expect.arrayContaining(['API Products']));
+      expect(filterSearchNames('Integration')).toEqual(expect.arrayContaining(['Integrations']));
+      expect(filterSearchNames('Kafka')).toEqual(expect.arrayContaining(['Kafka']));
     });
   });
 
@@ -276,11 +309,27 @@ describe('GioSideNavComponent', () => {
       expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './settings')?.displayName).toBe('Настройки');
       expect(fixture.componentInstance.footerMenuItems.find(item => item.routerLink === '/_organization')?.displayName).toBe('Организация');
 
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './api-products')?.displayName).toBe('API-продукты');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './integrations')?.displayName).toBe('Интеграции');
+      const kafkaRu = fixture.componentInstance.mainMenuItems.find(item =>
+        item.items?.some(child => child.routerLink === './clusters/kafka-standalone'),
+      );
+      expect(kafkaRu?.displayName).toBe('Kafka');
+      expect(kafkaRu?.items?.[0]?.displayName).toBe('Автономный');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './api-products')?.displayName).toBe('API Products');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './integrations')?.displayName).toBe('Integrations');
       expect(
         fixture.componentInstance.mainMenuItems.find(item =>
           item.items?.some(child => child.routerLink === './clusters/kafka-standalone'),
-        ),
-      ).toBeUndefined();
+        )?.displayName,
+      ).toBe('Kafka');
     });
 
     it('should switch the search placeholder between EN and RU without reload', async () => {
@@ -336,21 +385,34 @@ describe('GioSideNavComponent', () => {
       });
     });
 
-    it('should hide Kafka, API Products, and Integrations from the menu regardless of permission', async () => {
+    it('should show Kafka, API Products, and Integrations when permission checks pass', async () => {
       await init();
       expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
 
       const routerLinks = fixture.componentInstance.mainMenuItems.map(item => item.routerLink);
       const routerBasePaths = fixture.componentInstance.mainMenuItems.map(item => item.routerBasePath);
 
-      expect(routerLinks).not.toContain('./api-products');
-      expect(routerLinks).not.toContain('./integrations');
-      expect(routerBasePaths.some(path => path?.endsWith('/clusters'))).toBe(false);
-      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Kafka')).toBeUndefined();
-      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'API Products')).toBeUndefined();
-      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Integrations')).toBeUndefined();
+      expect(routerLinks).toContain('./api-products');
+      expect(routerLinks).toContain('./integrations');
+      expect(routerBasePaths.some(path => path?.endsWith('/clusters'))).toBe(true);
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Kafka')).toBeDefined();
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'API Products')?.routerLink).toBe('./api-products');
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Integrations')?.routerLink).toBe('./integrations');
+      expect(
+        fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Kafka')?.items?.some(
+          child => child.routerLink === './clusters/kafka-standalone',
+        ),
+      ).toBe(true);
 
       expect(routerLinks).toEqual(expect.arrayContaining(['./home', './apis', './applications', './gateways', './audit', './settings']));
+    });
+
+    it('should hide API Products when the user lacks environment-api_product-r', async () => {
+      await init(true, true, true, false);
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './api-products')).toBeUndefined();
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './integrations')).toBeDefined();
     });
 
     it('should hide the Environment selector while keeping the current environment context', async () => {
@@ -456,7 +518,7 @@ describe('GioSideNavComponent', () => {
 
       expect(observability?.routerBasePath).toBe(`/${envHrid}/observability`);
       expect(analytics?.routerBasePath).toBe(`/${envHrid}/analytics`);
-      expect(kafka).toBeUndefined();
+      expect(kafka?.routerBasePath).toBe(`/${envHrid}/clusters`);
 
       ctrl.verify();
     });
@@ -521,7 +583,7 @@ describe('GioSideNavComponent', () => {
 
       expect(basePathOf('Observability')).toBe(`/${envHrid}/observability`);
       expect(basePathOf('Analytics')).toBe(`/${envHrid}/analytics`);
-      expect(basePathOf('Kafka')).toBeUndefined();
+      expect(basePathOf('Kafka')).toBe(`/${envHrid}/clusters`);
     });
 
     it('should build menu search router links from the URL segment', async () => {

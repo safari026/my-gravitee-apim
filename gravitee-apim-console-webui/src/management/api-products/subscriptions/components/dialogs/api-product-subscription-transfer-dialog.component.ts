@@ -24,6 +24,8 @@ import { MatRadioModule } from '@angular/material/radio';
 import { ApiProductPlanV2Service } from '../../../../../services-ngx/api-product-plan-v2.service';
 import { SnackBarService } from '../../../../../services-ngx/snack-bar.service';
 import { PlanSecurityType } from '../../../../../entities/management-api-v2';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 export interface ApiProductSubscriptionTransferDialogData {
   apiProductId: string;
@@ -46,7 +48,7 @@ interface PlanVM {
   templateUrl: './api-product-subscription-transfer-dialog.component.html',
   styleUrls: ['./api-product-subscription-transfer-dialog.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatRadioModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatDialogModule, MatRadioModule, TranslatePipe],
 })
 export class ApiProductSubscriptionTransferDialogComponent {
   private readonly dialogRef =
@@ -54,6 +56,7 @@ export class ApiProductSubscriptionTransferDialogComponent {
   private readonly data = inject<ApiProductSubscriptionTransferDialogData>(MAT_DIALOG_DATA);
   private readonly planService = inject(ApiProductPlanV2Service);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
 
   protected readonly form = new FormGroup({
     selectedPlanId: new FormControl('', { validators: [Validators.required], nonNullable: true }),
@@ -67,7 +70,7 @@ export class ApiProductSubscriptionTransferDialogComponent {
           .map((plan): PlanVM => ({ id: plan.id, name: plan.name, generalConditions: plan.generalConditions })),
       ),
       catchError(() => {
-        this.snackBarService.error('Unable to load plans. Please try again.');
+        this.snackBarService.error(this.languageService.translate('apiProducts.subscriptions.loadPlansError'));
         return of([] as PlanVM[]);
       }),
     ),

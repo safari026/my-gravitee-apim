@@ -18,20 +18,20 @@
 
 <mat-card class="danger-card">
   <mat-card-content>
-    <h3 class="danger-card__title">Danger Zone</h3>
+    <h3 class="danger-card__title">{{ 'apiProducts.danger.title' | translate }}</h3>
     <div class="danger-card__actions">
       <div class="danger-card__actions__action">
-        <span> Remove all the APIs of this API Product. </span>
+        <span> {{ 'apiProducts.danger.removeApis' | translate }} </span>
         <button mat-button color="warn" [disabled]="isReadOnly() || !apiProduct().apiIds?.length" (click)="onRemoveApis()">
-          Remove APIs
+          {{ 'apiProducts.danger.removeApisButton' | translate }}
         </button>
       </div>
 
       @if (canDelete()) {
         <div class="danger-card__actions__action">
-          <span class="gv-form-danger-text"> Delete this API Product. </span>
+          <span class="gv-form-danger-text"> {{ 'apiProducts.danger.delete' | translate }} </span>
           <button mat-button color="warn" [attr.data-testid]="'api_product_dangerzone_delete'" (click)="onDeleteApiProduct()">
-            Delete API Product
+            {{ 'apiProducts.danger.deleteButton' | translate }}
           </button>
         </div>
       }

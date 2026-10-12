@@ -30,6 +30,7 @@ import { SnackBarService } from '../../../../../services-ngx/snack-bar.service';
 import { ClusterService } from '../../../../../services-ngx/cluster.service';
 import { Cluster, UpdateCluster } from '../../../../../entities/management-api-v2';
 import { GioPermissionService } from '../../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'cluster-configuration',
@@ -63,6 +64,7 @@ export class ClusterConfigurationComponent implements OnInit {
   private readonly clusterService = inject(ClusterService);
   private readonly snackBarService = inject(SnackBarService);
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
 
   public ngOnInit() {
     this.isLoadingData = true;
@@ -96,7 +98,7 @@ export class ClusterConfigurationComponent implements OnInit {
     this.clusterService
       .update(this.initialCluster.id, configToUpdate)
       .pipe(
-        tap(() => this.snackBarService.success('Cluster configuration successfully updated!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('kafka.configuration.saved'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.ngOnInit());

@@ -13,6 +13,8 @@ import { enAnalytics } from './translations/en/analytics';
 import { enSettings } from './translations/en/settings';
 import { enAlerts } from './translations/en/alerts';
 import { enAudit } from './translations/en/audit';
+import { enApiProducts } from './translations/en/apiProducts';
+import { enKafka } from './translations/en/kafka';
 import { ruAuth } from './translations/ru/auth';
 import { ruCommon } from './translations/ru/common';
 import { ruNavigation } from './translations/ru/navigation';
@@ -28,6 +30,8 @@ import { ruAnalytics } from './translations/ru/analytics';
 import { ruSettings } from './translations/ru/settings';
 import { ruAlerts } from './translations/ru/alerts';
 import { ruAudit } from './translations/ru/audit';
+import { ruApiProducts } from './translations/ru/apiProducts';
+import { ruKafka } from './translations/ru/kafka';
 
 export type Language = 'en' | 'ru';
 
@@ -48,6 +52,8 @@ export const translations = {
     settings: enSettings,
     alerts: enAlerts,
     audit: enAudit,
+    apiProducts: enApiProducts,
+    kafka: enKafka,
   },
   ru: {
     auth: ruAuth,
@@ -65,5 +71,7 @@ export const translations = {
     settings: ruSettings,
     alerts: ruAlerts,
     audit: ruAudit,
+    apiProducts: ruApiProducts,
+    kafka: ruKafka,
   },
 } as const;

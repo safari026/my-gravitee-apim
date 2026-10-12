@@ -45,7 +45,9 @@
     <div class="api-product-navigation__content">
       @if (hasBreadcrumb()) {
         <gio-breadcrumb class="api-product-navigation__breadcrumb">
-          <a *gioBreadcrumbItem [routerLink]="['../../']" class="api-product-navigation__breadcrumb__item">API Products</a>
+          <a *gioBreadcrumbItem [routerLink]="['../../']" class="api-product-navigation__breadcrumb__item">{{
+            'apiProducts.navigation.breadcrumb' | translate
+          }}</a>
           <span *gioBreadcrumbItem class="api-product-navigation__breadcrumb__item">{{ currentApiProduct.name }}</span>
         </gio-breadcrumb>
       }

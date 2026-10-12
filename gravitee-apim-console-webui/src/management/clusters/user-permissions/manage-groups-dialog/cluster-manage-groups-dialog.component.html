@@ -15,13 +15,13 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>Manage groups</span>
+<span mat-dialog-title>{{ 'kafka.groups.title' | translate }}</span>
 
 <mat-dialog-content class="content">
   <ng-container *gioPermission="{ anyOf: ['cluster-definition-u'] }; else readOnlyGroups">
     @if (groupsControl) {
       <mat-form-field class="group-field">
-        <mat-label>Groups</mat-label>
+        <mat-label>{{ 'kafka.groups.groups' | translate }}</mat-label>
         <mat-select [formControl]="groupsControl" multiple>
           <mat-option *ngFor="let group of groups$ | async" [value]="group.id">{{ group.name }}</mat-option>
         </mat-select>
@@ -30,20 +30,20 @@
   </ng-container>
   <ng-template #readOnlyGroups>
     <div class="read-only-groups">
-      <span class="mat-subtitle-2">Associated groups: </span>
+      <span class="mat-subtitle-2">{{ 'kafka.groups.associated' | translate }}</span>
       <span class="mat-body">{{ readonlyGroupList$ | async }}</span>
     </div>
   </ng-template>
 </mat-dialog-content>
 <mat-dialog-actions align="end">
-  <button mat-button [mat-dialog-close]="undefined">Cancel</button>
+  <button mat-button [mat-dialog-close]="undefined">{{ 'common.cancel' | translate }}</button>
   <button
     *gioPermission="{ anyOf: ['cluster-definition-u'] }"
     color="primary"
-    aria-label="Save api groups"
+    [attr.aria-label]="'kafka.groups.saveAria' | translate"
     mat-raised-button
     (click)="save()"
   >
-    Save
+    {{ 'common.save' | translate }}
   </button>
 </mat-dialog-actions>

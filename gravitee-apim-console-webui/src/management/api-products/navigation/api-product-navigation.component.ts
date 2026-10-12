@@ -47,6 +47,8 @@ import { ApiProduct, VerifyApiProductDeployResponse } from '../../../entities/ma
 import { ApiProductV2Service } from '../../../services-ngx/api-product-v2.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 export interface MenuItem {
   displayName: string;
@@ -82,6 +84,7 @@ type TopBanner = {
     MatIconModule,
     MatTooltipModule,
     ApiProductNavigationTabsComponent,
+    TranslatePipe,
   ],
 })
 export class ApiProductNavigationComponent {
@@ -93,6 +96,7 @@ export class ApiProductNavigationComponent {
   private readonly permissionService = inject(GioPermissionService);
   private readonly matDialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   readonly isActionDisabled = signal(false);
   private readonly reloadCount = signal(0);
@@ -117,6 +121,7 @@ export class ApiProductNavigationComponent {
 
   readonly subMenuItems = computed(() => {
     this.navTrigger();
+    this.languageService.currentLanguage();
     return this.buildSubMenuItems();
   });
 
@@ -141,6 +146,7 @@ export class ApiProductNavigationComponent {
   readonly currentApiProduct = computed(() => this.apiProductData()[0]);
 
   readonly banners = computed<TopBanner[]>(() => {
+    this.languageService.currentLanguage();
     const [apiProduct, verifyDeployResponse] = this.apiProductData();
     if (!apiProduct) {
       return [];
@@ -148,20 +154,21 @@ export class ApiProductNavigationComponent {
 
     const banners: TopBanner[] = [];
     const canUpdateApiProduct = this.permissionService.hasAnyMatching(['api_product-definition-u']);
+    const t = (key: string) => this.languageService.translate(key);
 
     if (apiProduct.deploymentState === 'NEED_REDEPLOY' && verifyDeployResponse.ok) {
       banners.push(
         canUpdateApiProduct
           ? {
-              title: 'This API Product is out of sync.',
+              title: t('apiProducts.navigation.outOfSync'),
               type: 'warning',
               action: {
-                btnText: 'Deploy API Product',
+                btnText: t('apiProducts.navigation.deploy'),
                 onClick: () => this.openDeployDialog(apiProduct.id),
               },
             }
           : {
-              title: 'This API Product is out of sync.',
+              title: t('apiProducts.navigation.outOfSync'),
               type: 'warning',
             },
       );
@@ -169,8 +176,8 @@ export class ApiProductNavigationComponent {
 
     if (!verifyDeployResponse.ok) {
       banners.push({
-        title: 'This API Product cannot be deployed.',
-        body: verifyDeployResponse.reason ?? 'Deployment is not allowed.',
+        title: t('apiProducts.navigation.cannotDeploy'),
+        body: verifyDeployResponse.reason ?? t('apiProducts.navigation.deployNotAllowed'),
         type: 'error',
       });
     }
@@ -184,7 +191,7 @@ export class ApiProductNavigationComponent {
     }
     return this.apiProductV2Service.refreshLastApiProductFetch(apiProductId).pipe(
       catchError(err =>
-        this.handleLoadError(err, 'An error occurred while loading the API Product').pipe(
+        this.handleLoadError(err, this.languageService.translate('apiProducts.navigation.loadError')).pipe(
           map(() => [null, { ok: true }] as [null, VerifyApiProductDeployResponse]),
         ),
       ),
@@ -195,7 +202,9 @@ export class ApiProductNavigationComponent {
               this.apiProductV2Service.getLastApiProductFetch(apiProductId),
               this.apiProductV2Service
                 .verifyDeploy(apiProductId)
-                .pipe(catchError(() => of({ ok: false, reason: 'Could not verify deployment compatibility.' }))),
+                .pipe(
+                  catchError(() => of({ ok: false, reason: this.languageService.translate('apiProducts.navigation.verifyError') })),
+                ),
             ]),
       ),
     );
@@ -219,15 +228,17 @@ export class ApiProductNavigationComponent {
         filter((result): result is true => result === true),
         switchMap(() => this.apiProductV2Service.deploy(apiProductId)),
         tap(() => {
-          this.snackBarService.success('API Product successfully deployed.');
+          this.snackBarService.success(this.languageService.translate('apiProducts.navigation.deployed'));
           this.reloadCount.update(count => count + 1);
         }),
         catchError(err => {
           const message =
             (err as { error?: { message?: string }; message?: string })?.error?.message ??
             (err as { message?: string })?.message ??
-            'Unknown error';
-          this.snackBarService.error(`An error occurred while deploying the API Product. ${message}`);
+            this.languageService.translate('apiProducts.navigation.unknownError');
+          this.snackBarService.error(
+            this.languageService.translate('apiProducts.navigation.deployError', { reason: message }),
+          );
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -242,23 +253,32 @@ export class ApiProductNavigationComponent {
   }
 
   private buildSubMenuItems(): MenuItem[] {
-    const configurationTabs: ApiProductTabMenuItem[] = [{ displayName: 'General', routerLink: 'configuration/general' }];
+    const t = (key: string) => this.languageService.translate(key);
+    const configurationTabs: ApiProductTabMenuItem[] = [
+      { displayName: t('apiProducts.navigation.general'), routerLink: 'configuration/general' },
+    ];
     if (this.canAccessApiProductUserPermissions()) {
-      configurationTabs.push({ displayName: 'User Permissions', routerLink: 'configuration/members' });
+      configurationTabs.push({
+        displayName: t('apiProducts.navigation.userPermissions'),
+        routerLink: 'configuration/members',
+      });
     }
 
     const items: MenuItem[] = [
       {
-        displayName: 'Configuration',
+        displayName: t('apiProducts.navigation.configuration'),
         routerLink: 'configuration',
         icon: 'gio:settings',
-        header: { title: 'Configuration', subtitle: 'Manage general settings and user permissions.' },
+        header: {
+          title: t('apiProducts.navigation.configuration'),
+          subtitle: t('apiProducts.navigation.configurationSubtitle'),
+        },
         tabs: configurationTabs,
       },
     ];
 
     if (this.canAccessApiProductDefinition()) {
-      items.push({ displayName: 'APIs', routerLink: 'apis', icon: 'gio:cloud-settings' });
+      items.push({ displayName: t('apiProducts.navigation.apis'), routerLink: 'apis', icon: 'gio:cloud-settings' });
     }
 
     const hasPlanRead = this.permissionService.hasAnyMatching(['api_product-plan-r']);
@@ -266,27 +286,33 @@ export class ApiProductNavigationComponent {
     if (hasPlanRead || hasSubscriptionRead) {
       const tabs: ApiProductTabMenuItem[] = [];
       if (hasPlanRead) {
-        tabs.push({ displayName: 'Plans', routerLink: 'consumers/plans' });
+        tabs.push({ displayName: t('apiProducts.navigation.plans'), routerLink: 'consumers/plans' });
       }
       if (hasSubscriptionRead) {
-        tabs.push({ displayName: 'Subscriptions', routerLink: 'consumers/subscriptions' });
+        tabs.push({ displayName: t('apiProducts.navigation.subscriptions'), routerLink: 'consumers/subscriptions' });
       }
 
       items.push({
-        displayName: 'Consumers',
+        displayName: t('apiProducts.navigation.consumers'),
         routerLink: 'consumers',
         icon: 'gio:cloud-consumers',
-        header: { title: 'Consumers', subtitle: 'Manage how your API Product is consumed' },
+        header: {
+          title: t('apiProducts.navigation.consumers'),
+          subtitle: t('apiProducts.navigation.consumersSubtitle'),
+        },
         tabs,
       });
     }
 
     if (this.canAccessApiProductDefinition()) {
       items.push({
-        displayName: 'Deployment',
+        displayName: t('apiProducts.navigation.deployment'),
         routerLink: 'deployment',
         icon: 'gio:rocket',
-        header: { title: 'Deployment', subtitle: 'Manage sharding tags and where this API Product is deployed.' },
+        header: {
+          title: t('apiProducts.navigation.deployment'),
+          subtitle: t('apiProducts.navigation.deploymentSubtitle'),
+        },
       });
     }
 

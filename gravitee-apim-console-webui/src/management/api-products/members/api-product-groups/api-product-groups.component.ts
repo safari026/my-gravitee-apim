@@ -23,6 +23,8 @@ import { MatSelectModule } from '@angular/material/select';
 import { GioPermissionService } from '../../../../shared/components/gio-permission/gio-permission.service';
 import { Group } from '../../../../entities/management-api-v2';
 import { ApiProduct } from '../../../../entities/management-api-v2/api-product';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export interface ApiProductGroupsDialogData {
   apiProduct: ApiProduct;
@@ -40,12 +42,13 @@ interface ApiProductGroupsForm {
 @Component({
   selector: 'api-product-groups',
   standalone: true,
-  imports: [ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatSelectModule],
+  imports: [ReactiveFormsModule, MatButtonModule, MatFormFieldModule, MatSelectModule, TranslatePipe],
   templateUrl: './api-product-groups.component.html',
   styleUrls: ['./api-product-groups.component.scss'],
 })
 export class ApiProductGroupsComponent {
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
   private readonly formBuilder = inject(FormBuilder);
   private readonly dialogRef = inject<MatDialogRef<ApiProductGroupsComponent, ApiProductGroupsDialogResult>>(MatDialogRef);
   private readonly dialogData = inject<ApiProductGroupsDialogData>(MAT_DIALOG_DATA);
@@ -56,8 +59,12 @@ export class ApiProductGroupsComponent {
   public readonly isReadOnly: boolean = !this.permissionService.hasAnyMatching(['api_product-member-u']);
 
   private readonly userGroupList: Group[] = this.groupsWithId.filter(group => this.apiProduct.groups?.includes(group.id));
-  public readonly readOnlyGroupList: string =
-    this.userGroupList.length === 0 ? 'No groups associated' : this.userGroupList.map(g => g.name ?? '').join(', ');
+  get readOnlyGroupList(): string {
+    this.languageService.currentLanguage();
+    return this.userGroupList.length === 0
+      ? this.languageService.translate('apiProducts.members.noGroups')
+      : this.userGroupList.map(g => g.name ?? '').join(', ');
+  }
 
   public readonly form: FormGroup<ApiProductGroupsForm> = this.formBuilder.group<ApiProductGroupsForm>({
     selectedGroups: new FormControl<string[]>(

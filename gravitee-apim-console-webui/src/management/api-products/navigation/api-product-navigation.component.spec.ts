@@ -32,6 +32,7 @@ import { Constants } from '../../../entities/Constants';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
 import { ApiProductV2Service } from '../../../services-ngx/api-product-v2.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApiProductNavigationComponent', () => {
   const API_PRODUCT_ID = 'product-1';
@@ -114,6 +115,26 @@ describe('ApiProductNavigationComponent', () => {
     await fixture.whenStable();
     fixture.detectChanges();
 
+    expect(fixture.nativeElement.textContent).toContain('Configuration');
+  });
+
+  it('should update menu labels when language changes', async () => {
+    const languageService = TestBed.inject(LanguageService);
+    createFixture();
+    flushRequests(fakeApiProduct);
+    await fixture.whenStable();
+    fixture.detectChanges();
+
+    expect(fixture.nativeElement.textContent).toContain('Configuration');
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Конфигурация');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    await fixture.whenStable();
     expect(fixture.nativeElement.textContent).toContain('Configuration');
   });
 

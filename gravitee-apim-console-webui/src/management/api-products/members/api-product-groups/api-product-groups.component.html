@@ -17,15 +17,17 @@
 -->
 <div class="api-product-groups">
   <div class="api-product-groups__header">
-    <div class="api-product-groups__header__title" data-testid="api_product_groups_dialog_title">Manage groups</div>
-    <div class="api-product-groups__header__subtitle">Give groups access to your API Product through the API Management console</div>
+    <div class="api-product-groups__header__title" data-testid="api_product_groups_dialog_title">
+      {{ 'apiProducts.members.groupsTitle' | translate }}
+    </div>
+    <div class="api-product-groups__header__subtitle">{{ 'apiProducts.members.groupsSubtitle' | translate }}</div>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="save()">
     <div class="api-product-groups__body">
       @if (!isReadOnly) {
         <mat-form-field appearance="outline" class="api-product-groups__field" subscriptSizing="dynamic">
-          <mat-label>Groups</mat-label>
+          <mat-label>{{ 'apiProducts.members.groups' | translate }}</mat-label>
           <mat-select formControlName="selectedGroups" multiple>
             @for (availableGroup of groupsWithId; track availableGroup.id) {
               <mat-option [value]="availableGroup.id">{{ availableGroup.name }}</mat-option>
@@ -34,9 +36,9 @@
         </mat-form-field>
       } @else {
         <section class="api-product-groups__read-only" aria-labelledby="api-product-groups-readonly-heading">
-          <h3 id="api-product-groups-readonly-heading" class="mat-h4">Groups</h3>
+          <h3 id="api-product-groups-readonly-heading" class="mat-h4">{{ 'apiProducts.members.groups' | translate }}</h3>
           <div class="api-product-groups__body__read-only-groups">
-            <div class="mat-subtitle-2">Associated groups</div>
+            <div class="mat-subtitle-2">{{ 'apiProducts.members.associatedGroups' | translate }}</div>
             <span>{{ readOnlyGroupList }}</span>
           </div>
         </section>
@@ -48,12 +50,12 @@
         <button
           type="submit"
           color="primary"
-          aria-label="Save API Product groups"
+          [attr.aria-label]="'apiProducts.members.saveGroupsAria' | translate"
           mat-raised-button
           [disabled]="form.invalid"
           data-testid="api_product_groups_dialog_save"
         >
-          Save
+          {{ 'common.save' | translate }}
         </button>
       </div>
     }

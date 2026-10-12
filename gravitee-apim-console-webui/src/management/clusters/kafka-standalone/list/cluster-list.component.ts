@@ -42,6 +42,8 @@ import { GioPermissionService } from '../../../../shared/components/gio-permissi
 import { ClusterService } from '../../../../services-ngx/cluster.service';
 import { ClustersSortByParam } from '../../../../entities/management-api-v2';
 import { Constants } from '../../../../entities/Constants';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 type PageTableVM = {
   items: {
@@ -70,6 +72,7 @@ type PageTableVM = {
     GioPermissionModule,
     GioTableWrapperModule,
     RouterLink,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: true,
@@ -83,6 +86,7 @@ export class ClusterListComponent implements OnInit {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly router = inject(Router);
   public readonly constants = inject(Constants);
+  private readonly languageService = inject(LanguageService);
   public kafkaConsoleURL: string;
 
   private refreshPageTableVM$ = new BehaviorSubject<void>(undefined);
@@ -169,13 +173,13 @@ export class ClusterListComponent implements OnInit {
           });
         }),
         tap(cluster => {
-          this.snackBarService.success('Cluster created successfully');
+          this.snackBarService.success(this.languageService.translate('kafka.list.created'));
           return this.router.navigate([cluster.id], {
             relativeTo: this.activatedRoute,
           });
         }),
         catchError(e => {
-          this.snackBarService.error(e.error?.message ?? 'An error occurred while creating the cluster!');
+          this.snackBarService.error(e.error?.message ?? this.languageService.translate('kafka.list.createError'));
           return EMPTY;
         }),
       )
@@ -187,12 +191,12 @@ export class ClusterListComponent implements OnInit {
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: `Delete Cluster`,
-          content: `Are you sure you want to delete the Cluster?`,
-          confirmButton: `Yes, delete it`,
-          validationMessage: `Please, type in the name of the cluster <code>${cluster.name}</code> to confirm.`,
+          title: this.languageService.translate('kafka.general.deleteTitle'),
+          content: this.languageService.translate('kafka.general.deleteContent'),
+          confirmButton: this.languageService.translate('kafka.general.deleteConfirm'),
+          validationMessage: this.languageService.translate('kafka.general.deleteValidation', { name: cluster.name }),
           validationValue: cluster.name,
-          warning: `This operation is irreversible.`,
+          warning: this.languageService.translate('kafka.general.deleteWarning'),
         },
         role: 'alertdialog',
         id: 'clusterDeleteDialog',
@@ -205,7 +209,7 @@ export class ClusterListComponent implements OnInit {
           this.snackBarService.error(error.message);
           return EMPTY;
         }),
-        map(() => this.snackBarService.success(`The Cluster has been deleted.`)),
+        map(() => this.snackBarService.success(this.languageService.translate('kafka.list.deleted'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {

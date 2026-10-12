@@ -1,5 +1,10 @@
-import { translations } from './translations';
+import * as ts from 'typescript';
+
+import * as fs from 'fs';
+import * as path from 'path';
+
 import { LanguageService } from './language.service';
+import { translations } from './translations';
 
 type TranslationNode = string | { [key: string]: TranslationNode };
 
@@ -30,6 +35,63 @@ function prefixConflicts(paths: string[]): string[] {
   return conflicts;
 }
 
+function translationSourceFiles(): string[] {
+  const translationsDir = path.join(__dirname, 'translations');
+  return ['en', 'ru'].flatMap(locale => {
+    const localeDir = path.join(translationsDir, locale);
+    return fs
+      .readdirSync(localeDir)
+      .filter(file => file.endsWith('.ts'))
+      .map(file => path.join(localeDir, file));
+  });
+}
+
+function propertyKey(name: ts.PropertyName): string | undefined {
+  if (ts.isIdentifier(name) || ts.isStringLiteral(name) || ts.isNumericLiteral(name)) {
+    return name.text;
+  }
+  return undefined;
+}
+
+function collectDuplicateObjectProperties(filePath: string): Array<{ file: string; key: string; lines: number[] }> {
+  const sourceText = fs.readFileSync(filePath, 'utf8');
+  const sourceFile = ts.createSourceFile(filePath, sourceText, ts.ScriptTarget.Latest, true);
+  const duplicates: Array<{ file: string; key: string; lines: number[] }> = [];
+
+  const visit = (node: ts.Node): void => {
+    if (ts.isObjectLiteralExpression(node)) {
+      const seen = new Map<string, number[]>();
+
+      for (const property of node.properties) {
+        if (!ts.isPropertyAssignment(property) && !ts.isShorthandPropertyAssignment(property)) {
+          continue;
+        }
+
+        const key = propertyKey(property.name);
+        if (key === undefined) {
+          continue;
+        }
+
+        const line = sourceFile.getLineAndCharacterOfPosition(property.name.getStart(sourceFile)).line + 1;
+        const lines = seen.get(key) ?? [];
+        lines.push(line);
+        seen.set(key, lines);
+      }
+
+      for (const [key, lines] of seen) {
+        if (lines.length > 1) {
+          duplicates.push({ file: path.relative(path.join(__dirname, '../..'), filePath).replace(/\\/g, '/'), key, lines });
+        }
+      }
+    }
+
+    ts.forEachChild(node, visit);
+  };
+
+  visit(sourceFile);
+  return duplicates;
+}
+
 function collectNodeKinds(node: TranslationNode, prefix = ''): Array<{ path: string; kind: 'string' | 'object' }> {
   if (typeof node === 'string') {
     return [{ path: prefix, kind: 'string' }];
@@ -58,6 +120,12 @@ describe('i18n translations', () => {
   it('has no string/object path conflicts', () => {
     expect(prefixConflicts(enPaths)).toEqual([]);
     expect(prefixConflicts(ruPaths)).toEqual([]);
+  });
+
+  it('has no duplicate property names in a single object literal', () => {
+    const duplicates = translationSourceFiles().flatMap(filePath => collectDuplicateObjectProperties(filePath));
+
+    expect(duplicates).toEqual([]);
   });
 
   it('EN and RU use the same node types at every path', () => {
@@ -129,6 +197,10 @@ describe('i18n translations', () => {
     expect(languageService.translate('alerts.tabs.activity')).toBe('Activity');
     expect(languageService.translate('audit.title')).toBe('Audit');
     expect(languageService.translate('audit.columns.event')).toBe('Event');
+    expect(languageService.translate('apiProducts.list.title')).toBe('API Products');
+    expect(languageService.translate('apiProducts.create.title')).toBe('Create API Product');
+    expect(languageService.translate('kafka.list.title')).toBe('Kafka Standalones');
+    expect(languageService.translate('kafka.add.title')).toBe('Create a new cluster');
 
     languageService.setLanguage('ru');
     expect(languageService.translate('common.cancel')).toBe('Отмена');
@@ -164,6 +236,10 @@ describe('i18n translations', () => {
     expect(languageService.translate('alerts.tabs.activity')).toBe('Активность');
     expect(languageService.translate('audit.title')).toBe('Аудит');
     expect(languageService.translate('audit.columns.event')).toBe('Событие');
+    expect(languageService.translate('apiProducts.list.title')).toBe('API-продукты');
+    expect(languageService.translate('apiProducts.create.title')).toBe('Создать API-продукт');
+    expect(languageService.translate('kafka.list.title')).toBe('Автономные Kafka');
+    expect(languageService.translate('kafka.add.title')).toBe('Создать новый кластер');
 
     languageService.setLanguage('en');
     expect(languageService.translate('common.cancel')).toBe('Cancel');
@@ -176,5 +252,7 @@ describe('i18n translations', () => {
     expect(languageService.translate('settings.navigation.root')).toBe('Settings');
     expect(languageService.translate('alerts.list.title')).toBe('Alerts');
     expect(languageService.translate('audit.title')).toBe('Audit');
+    expect(languageService.translate('apiProducts.list.title')).toBe('API Products');
+    expect(languageService.translate('kafka.list.title')).toBe('Kafka Standalones');
   });
 });

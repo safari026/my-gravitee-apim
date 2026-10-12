@@ -47,9 +47,6 @@ interface MenuItem {
 
 export const SIDE_NAV_GROUP_ID = 'side-nav-items';
 
-const HIDDEN_SIDE_NAV_ROUTER_LINKS = new Set(['./api-products', './integrations']);
-const HIDDEN_KAFKA_ROUTER_BASE_PATH_SUFFIX = '/clusters';
-
 // prettier-ignore
 export const PORTAL_SETTINGS_PERMISSIONS = [
   'environment-settings-r',
@@ -384,7 +381,7 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
       ],
     });
 
-    return this.filterHiddenMenuItems(this.filterMenuByPermission(mainMenuItems));
+    return this.filterMenuByPermission(mainMenuItems);
   }
 
   private getMenuItemIconRight$(licenseOptions: LicenseOptions) {
@@ -419,17 +416,6 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
       .filter((item): item is MenuItem => item !== null);
   }
 
-  private isHiddenMenuItem(item: MenuItem): boolean {
-    if (item.routerLink && HIDDEN_SIDE_NAV_ROUTER_LINKS.has(item.routerLink)) {
-      return true;
-    }
-    return item.routerBasePath?.endsWith(HIDDEN_KAFKA_ROUTER_BASE_PATH_SUFFIX) === true;
-  }
-
-  private filterHiddenMenuItems(menuItems: MenuItem[]): MenuItem[] {
-    return menuItems.filter(item => !this.isHiddenMenuItem(item));
-  }
-
   private syncMenuSearchPlaceholder(): void {
     const searchInput = this.elementRef.nativeElement.querySelector<HTMLInputElement>('.gio-menu-search__input');
     if (searchInput) {
@@ -438,26 +424,37 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   private getSideNaveMenuSearchItems(): MenuSearchItem[] {
-    return this.mainMenuItems
+    const toSearchItem = (item: MenuItem, routerLink: string): MenuSearchItem => ({
+      name: item.displayName,
+      routerLink,
+      category: item.category,
+      groupIds: [SIDE_NAV_GROUP_ID],
+    });
+
+    const envPrefixedLink = (routerLink: string): string => `/${this.envHrid}/${cleanRouterLink(routerLink)}`;
+
+    const mainSearchItems = this.mainMenuItems.flatMap(item => {
+      const searchItems: MenuSearchItem[] = [];
+      const firstChildLink = item.items?.find(child => !!child.routerLink)?.routerLink;
+      const itemLink = item.routerLink ?? firstChildLink;
+
+      if (itemLink) {
+        searchItems.push(toSearchItem(item, envPrefixedLink(itemLink)));
+      }
+
+      for (const child of item.items ?? []) {
+        if (child.routerLink) {
+          searchItems.push(toSearchItem(child, envPrefixedLink(child.routerLink)));
+        }
+      }
+
+      return searchItems;
+    });
+
+    const footerSearchItems = this.footerMenuItems
       .filter(item => !!item.routerLink)
-      .filter(item => !this.isHiddenMenuItem(item))
-      .map(item => {
-        return {
-          name: item.displayName,
-          routerLink: `/${this.envHrid}/${cleanRouterLink(item.routerLink)}`,
-          category: item.category,
-          groupIds: [SIDE_NAV_GROUP_ID],
-        };
-      })
-      .concat(
-        this.footerMenuItems
-          .filter(item => !!item.routerLink)
-          .map(item => ({
-            name: item.displayName,
-            routerLink: `/${cleanRouterLink(item.routerLink)}`,
-            category: item.category,
-            groupIds: [SIDE_NAV_GROUP_ID],
-          })),
-      );
+      .map(item => toSearchItem(item, `/${cleanRouterLink(item.routerLink)}`));
+
+    return mainSearchItems.concat(footerSearchItems);
   }
 }

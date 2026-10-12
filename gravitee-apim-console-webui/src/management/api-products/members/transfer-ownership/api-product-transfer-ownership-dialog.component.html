@@ -17,25 +17,27 @@
 -->
 <div class="transfer-ownership">
   <div class="transfer-ownership__header">
-    <div class="transfer-ownership__header__title">Transfer ownership</div>
-    <div class="transfer-ownership__header__subtitle">Transfer ownership and grant access to your API Product to another user</div>
+    <div class="transfer-ownership__header__title">{{ 'apiProducts.transfer.title' | translate }}</div>
+    <div class="transfer-ownership__header__subtitle">{{ 'apiProducts.transfer.subtitle' | translate }}</div>
   </div>
 
   <form [formGroup]="form" (ngSubmit)="onSubmit()">
     @if (mode !== 'GROUP') {
-      <p>Select your preferred method for granting complete API Product access</p>
+      <p>{{ 'apiProducts.transfer.method' | translate }}</p>
       <mat-button-toggle-group
-        aria-label="Select User or Group"
+        [attr.aria-label]="'apiProducts.transfer.userOrGroupAria' | translate"
         class="transfer-ownership__body__userOrGroup__toggle-group"
         formControlName="userOrGroup"
       >
         <mat-button-toggle class="transfer-ownership__body__userOrGroup__toggle-group__toggle" value="apiProductMember">
-          API Product member
+          {{ 'apiProducts.transfer.member' | translate }}
         </mat-button-toggle>
-        <mat-button-toggle class="transfer-ownership__body__userOrGroup__toggle-group__toggle" value="user"> Other user </mat-button-toggle>
+        <mat-button-toggle class="transfer-ownership__body__userOrGroup__toggle-group__toggle" value="user">
+          {{ 'apiProducts.transfer.otherUser' | translate }}
+        </mat-button-toggle>
         @if (mode === 'HYBRID') {
           <mat-button-toggle class="transfer-ownership__body__userOrGroup__toggle-group__toggle" value="group">
-            Primary owner group
+            {{ 'apiProducts.transfer.poGroup' | translate }}
           </mat-button-toggle>
         }
       </mat-button-toggle-group>
@@ -44,7 +46,7 @@
     @if (userOrGroupValue() === 'apiProductMember') {
       <div class="transfer-ownership__body__userOrGroup">
         <mat-form-field class="transfer-ownership__body__userOrGroup__field">
-          <mat-label>Select product member</mat-label>
+          <mat-label>{{ 'apiProducts.transfer.selectMember' | translate }}</mat-label>
           <mat-select formControlName="user">
             @for (member of apiProductMembers; track member.id ?? $index) {
               <mat-option [value]="member">{{ member.displayName }}</mat-option>
@@ -63,13 +65,12 @@
       <div class="transfer-ownership__body__userOrGroup">
         @if (warnUseGroupAsPrimaryOwner) {
           <gio-banner-warning data-testid="transfer_ownership_groups_eligibility_banner">
-            You can't set a group as primary owner. To set a group as a primary owner, the group must contain a member with a primary owner
-            API Product role.
+            {{ 'apiProducts.transfer.groupWarning' | translate }}
           </gio-banner-warning>
         }
 
         <mat-form-field class="transfer-ownership__body__userOrGroup__field">
-          <mat-label>Select a primary owner group</mat-label>
+          <mat-label>{{ 'apiProducts.transfer.selectPoGroup' | translate }}</mat-label>
           <mat-select formControlName="groupId">
             @for (group of poGroups; track group.id ?? $index) {
               <mat-option [value]="group.id">{{ group.name }}</mat-option>
@@ -82,7 +83,7 @@
     @if (showRoleSection()) {
       <div class="transfer-ownership__body__userOrGroup">
         <mat-form-field class="transfer-ownership__body__userOrGroup__field">
-          <mat-label>New role for current Primary Owner</mat-label>
+          <mat-label>{{ 'apiProducts.transfer.newRole' | translate }}</mat-label>
           <mat-select formControlName="roleId">
             @for (role of poRoles; track role.name) {
               <mat-option [value]="role.name">{{ role.name }}</mat-option>
@@ -95,15 +96,14 @@
     @if (form.valid) {
       <gio-banner-warning data-testid="transfer_ownership_irreversible_banner">
         <div class="transfer-ownership__body__new-role">
-          This action cannot be undone. If you are the primary owner of this API Product, your role will be set to
-          <code>{{ form.controls.roleId.value }}</code
-          >.
+          {{ 'apiProducts.transfer.irreversible' | translate }}
+          <code>{{ form.controls.roleId.value }}</code>.
         </div>
       </gio-banner-warning>
     }
 
     <div class="transfer-ownership__actions">
-      <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">Transfer</button>
+      <button mat-raised-button color="primary" type="submit" [disabled]="!form.valid">{{ 'common.transfer' | translate }}</button>
     </div>
   </form>
 </div>

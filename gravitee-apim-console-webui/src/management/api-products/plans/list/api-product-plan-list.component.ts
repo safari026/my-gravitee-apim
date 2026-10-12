@@ -35,6 +35,7 @@ import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ConstantsService, PlanMenuItemVM } from '../../../../services-ngx/constants.service';
 import { Plan, PLAN_STATUS, PlanStatus } from '../../../../entities/management-api-v2';
 import { PlanActionEvent, PlanListComponent, PlanDS } from '../../../api/component/plan/plan-list/plan-list.component';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 const API_PRODUCT_PLAN_TYPES = ['API_KEY', 'JWT', 'MTLS'] as const;
 
@@ -55,6 +56,7 @@ export class ApiProductPlanListComponent {
   private readonly permissionService = inject(GioPermissionService);
   private readonly matDialog = inject(MatDialog);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
 
   private readonly filterOverride = signal<PlanStatus | null>(null);
 
@@ -78,7 +80,7 @@ export class ApiProductPlanListComponent {
           })),
         ),
         catchError((err: { error?: { message?: string } }) => {
-          this.snackBarService.error(err?.error?.message ?? 'An error occurred while loading plans.');
+          this.snackBarService.error(err?.error?.message ?? this.languageService.translate('apiProducts.plans.loadError'));
           return of([] as PlanDS[]);
         }),
       );
@@ -182,9 +184,9 @@ export class ApiProductPlanListComponent {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Publish plan',
-          content: `Are you sure you want to publish the plan ${plan.name}?`,
-          confirmButton: 'Publish',
+          title: this.languageService.translate('apiProducts.plans.publishTitle'),
+          content: this.languageService.translate('apiProducts.plans.publishContent', { name: plan.name }),
+          confirmButton: this.languageService.translate('apiProducts.plans.publish'),
         },
         role: 'alertdialog',
         id: 'publishPlanDialog',
@@ -200,7 +202,9 @@ export class ApiProductPlanListComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(published => {
-        this.snackBarService.success(`The plan ${published.name} has been published with success.`);
+        this.snackBarService.success(
+          this.languageService.translate('apiProducts.plans.publishSuccess', { name: published.name }),
+        );
         this.refreshPlansAfterStateChange();
       });
   }
@@ -211,9 +215,9 @@ export class ApiProductPlanListComponent {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Deprecate plan',
-          content: `A deprecated plan can no longer be used for new subscriptions. Existing subscriptions are maintained.<br /><br />Are you sure you want to deprecate the plan: ${plan.name}?`,
-          confirmButton: 'Deprecate',
+          title: this.languageService.translate('apiProducts.plans.deprecateTitle'),
+          content: this.languageService.translate('apiProducts.plans.deprecateContent', { name: plan.name }),
+          confirmButton: this.languageService.translate('apiProducts.plans.deprecate'),
         },
         role: 'alertdialog',
         id: 'deprecatePlanDialog',
@@ -229,7 +233,9 @@ export class ApiProductPlanListComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(deprecated => {
-        this.snackBarService.success(`The plan ${deprecated.name} has been deprecated with success.`);
+        this.snackBarService.success(
+          this.languageService.translate('apiProducts.plans.deprecateSuccess', { name: deprecated.name }),
+        );
         this.refreshPlansAfterStateChange();
       });
   }
@@ -240,12 +246,12 @@ export class ApiProductPlanListComponent {
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: '500px',
         data: {
-          title: 'Close plan',
-          warning: 'This operation is irreversible.',
-          validationMessage: `Please, type in the name of the plan <code>${plan.name}</code> to confirm.`,
+          title: this.languageService.translate('apiProducts.plans.closeTitle'),
+          warning: this.languageService.translate('apiProducts.plans.closeWarning'),
+          validationMessage: this.languageService.translate('apiProducts.plans.closeValidation', { name: plan.name }),
           validationValue: plan.name,
-          content: `No subscription is associated to this plan. You can delete it safely.`,
-          confirmButton: 'Yes, close this plan.',
+          content: this.languageService.translate('apiProducts.plans.closeContent'),
+          confirmButton: this.languageService.translate('apiProducts.plans.closeConfirm'),
         },
         role: 'alertdialog',
         id: 'closePlanDialog',
@@ -261,7 +267,7 @@ export class ApiProductPlanListComponent {
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(closed => {
-        this.snackBarService.success(`The plan ${closed.name} has been closed with success.`);
+        this.snackBarService.success(this.languageService.translate('apiProducts.plans.closeSuccess', { name: closed.name }));
         this.refreshPlansAfterStateChange();
       });
   }

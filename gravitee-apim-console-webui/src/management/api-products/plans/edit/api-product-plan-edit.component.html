@@ -18,7 +18,7 @@
 <div>
   <span class="md-headline">
     <gio-go-back-button [routerLink]="'../'" [queryParams]="{ status: currentPlanStatus() ?? 'PUBLISHED' }"></gio-go-back-button>
-    Plan
+    {{ 'apiProducts.plans.title' | translate }}
   </span>
 </div>
 
@@ -55,7 +55,7 @@
             data-testid="api_product_plans_previousstep"
             (click)="apiPlanForm.previousStep()"
           >
-            Back
+            {{ 'apiProducts.plans.back' | translate }}
           </button>
         }
         @if (mode() === 'create' && hasNextStep()) {
@@ -67,7 +67,7 @@
             data-testid="api_product_plans_nextstep"
             (click)="apiPlanForm.waitForNextStep()"
           >
-            Next
+            {{ 'apiProducts.plans.next' | translate }}
           </button>
         }
       </gio-save-bar>

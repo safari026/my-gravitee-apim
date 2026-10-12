@@ -59,6 +59,8 @@ import { ClusterService } from '../../../services-ngx/cluster.service';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioUsersSelectorModule } from '../../../shared/components/gio-users-selector/gio-users-selector.module';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 interface MemberDataSource {
   id: string;
@@ -97,6 +99,7 @@ export interface GroupsMembersVM {
     GioLoaderModule,
     GioUsersSelectorModule,
     ClusterGroupMembersComponent,
+    TranslatePipe,
   ],
 })
 export class ClusterUserPermissionsComponent implements OnInit {
@@ -120,6 +123,7 @@ export class ClusterUserPermissionsComponent implements OnInit {
   };
 
   private destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   constructor(
     private readonly matDialog: MatDialog,
@@ -170,7 +174,7 @@ export class ClusterUserPermissionsComponent implements OnInit {
       )
       .subscribe({
         error: error => {
-          this.snackBarService.error(error.error?.message ?? 'An error occurred while fetching members.');
+          this.snackBarService.error(error.error?.message ?? this.languageService.translate('kafka.members.loadError'));
         },
       });
   }
@@ -283,7 +287,7 @@ export class ClusterUserPermissionsComponent implements OnInit {
         this.form.get(member.id).reset();
         this.form.removeControl(member.id);
 
-        this.snackBarService.success(`Member ${member.displayName} has been removed.`);
+        this.snackBarService.success(this.languageService.translate('kafka.members.removed', { name: member.displayName }));
       },
       error: error => {
         this.snackBarService.error(error.message);
@@ -318,7 +322,7 @@ export class ClusterUserPermissionsComponent implements OnInit {
       .pipe(
         takeUntilDestroyed(this.destroyRef),
         tap(() => {
-          this.snackBarService.success('Changes successfully saved!');
+          this.snackBarService.success(this.languageService.translate('kafka.members.saved'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

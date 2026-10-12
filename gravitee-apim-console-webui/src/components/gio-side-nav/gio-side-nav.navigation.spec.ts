@@ -232,13 +232,13 @@ describe('GioSideNavComponent navigation (APIM-14748)', () => {
     expect(groupPathOf(router.url)).toBe('/DEFAULT/analytics');
   }));
 
-  it('should not show a Kafka sidebar group', fakeAsync(() => {
+  it('should show a Kafka sidebar group', fakeAsync(() => {
     setup(DEFAULT_ENV_WITHOUT_HRIDS);
 
     landOnUrl('/DEFAULT/home', DEFAULT_ENV_WITHOUT_HRIDS);
 
     const sideNav = fixture.debugElement.query(By.directive(GioSideNavComponent)).componentInstance as GioSideNavComponent;
-    expect(sideNav.mainMenuItems.some(item => item.routerBasePath?.endsWith('/clusters'))).toBe(false);
+    expect(sideNav.mainMenuItems.some(item => item.routerBasePath?.endsWith('/clusters'))).toBe(true);
   }));
 
   it('should keep using the hrid when the environment has one', fakeAsync(() => {

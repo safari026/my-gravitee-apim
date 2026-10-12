@@ -32,6 +32,8 @@ import { ApiProduct } from '../../../../entities/management-api-v2/api-product';
 import { ApiPlanFormModule } from '../../../api/component/plan/api-plan-form.module';
 import { ApiPlanFormComponent, PlanFormValue } from '../../../api/component/plan/api-plan-form.component';
 import { GioGoBackButtonModule } from '../../../../shared/components/gio-go-back-button/gio-go-back-button.module';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'api-product-plan-edit',
@@ -47,6 +49,7 @@ import { GioGoBackButtonModule } from '../../../../shared/components/gio-go-back
     GioSaveBarModule,
     GioGoBackButtonModule,
     ApiPlanFormModule,
+    TranslatePipe,
   ],
 })
 export class ApiProductPlanEditComponent {
@@ -57,6 +60,7 @@ export class ApiProductPlanEditComponent {
   private readonly apiProductV2Service = inject(ApiProductV2Service);
   private readonly permissionService = inject(GioPermissionService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
 
   private readonly apiPlanFormRef = viewChild<ApiPlanFormComponent>('apiPlanForm');
 
@@ -89,7 +93,9 @@ export class ApiProductPlanEditComponent {
     combineLatest([toObservable(this.apiProductId), toObservable(this.planId)]).pipe(
       switchMap(([apiProductId, planId]) => {
         if (!planId) return of(undefined as Plan | undefined);
-        return this.planService.get(apiProductId, planId).pipe(catchError(err => this.handleError(err, 'An error occurred.')));
+        return this.planService
+          .get(apiProductId, planId)
+          .pipe(catchError(err => this.handleError(err, this.languageService.translate('apiProducts.plans.loadError'))));
       }),
     ),
     { initialValue: null as Plan | undefined | null },
@@ -128,10 +134,10 @@ export class ApiProductPlanEditComponent {
     savePlan$
       .pipe(
         tap(() => {
-          this.snackBarService.success('Configuration successfully saved!');
+          this.snackBarService.success(this.languageService.translate('apiProducts.configuration.saved'));
           this.apiProductV2Service.notifyApiProductChanged();
         }),
-        catchError(err => this.handleError(err, 'An error occurred while saving configuration.')),
+        catchError(err => this.handleError(err, this.languageService.translate('apiProducts.configuration.updateError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {
@@ -146,7 +152,7 @@ export class ApiProductPlanEditComponent {
       });
   }
 
-  private handleError(err: unknown, defaultMessage = 'An error occurred.'): typeof EMPTY {
+  private handleError(err: unknown, defaultMessage = this.languageService.translate('apiProducts.subscriptions.genericError')): typeof EMPTY {
     const message = (err as { error?: { message?: string } })?.error?.message ?? defaultMessage;
     this.snackBarService.error(message);
     return EMPTY;

@@ -16,27 +16,39 @@
 
 -->
 <form [formGroup]="form" (ngSubmit)="onClose()">
-  <h2 mat-dialog-title>Transfer your subscription</h2>
+  <h2 mat-dialog-title>{{ 'apiProducts.subscriptions.transferTitle' | translate }}</h2>
 
   <mat-dialog-content>
     @if (plans().length > 0) {
       @if (showGeneralConditionsMsg()) {
-        <div>Plans with general conditions cannot be used</div>
+        <div>{{ 'apiProducts.subscriptions.transferPlansGcu' | translate }}</div>
       }
-      <mat-radio-group formControlName="selectedPlanId" aria-label="Select a plan" class="transfer-dialog__radio-group">
+      <mat-radio-group
+        formControlName="selectedPlanId"
+        [attr.aria-label]="'apiProducts.subscriptions.selectPlanAria' | translate"
+        class="transfer-dialog__radio-group"
+      >
         @for (plan of plans(); track plan.id) {
           <mat-radio-button [value]="plan.id" [disabled]="!!plan.generalConditions">{{ plan.name }}</mat-radio-button>
         }
       </mat-radio-group>
     } @else {
-      <div>No transferable plans available</div>
+      <div>{{ 'apiProducts.subscriptions.noTransferablePlans' | translate }}</div>
     }
   </mat-dialog-content>
 
   <mat-dialog-actions class="actions">
-    <button mat-flat-button type="button" [mat-dialog-close]="undefined">Cancel</button>
+    <button mat-flat-button type="button" [mat-dialog-close]="undefined">{{ 'common.cancel' | translate }}</button>
     @if (plans().length > 0) {
-      <button color="primary" type="submit" mat-raised-button aria-label="Transfer subscription" [disabled]="form.invalid">Transfer</button>
+      <button
+        color="primary"
+        type="submit"
+        mat-raised-button
+        [attr.aria-label]="'apiProducts.subscriptions.transferAria' | translate"
+        [disabled]="form.invalid"
+      >
+        {{ 'common.transfer' | translate }}
+      </button>
     }
   </mat-dialog-actions>
 </form>

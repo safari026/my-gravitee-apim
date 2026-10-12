@@ -39,6 +39,8 @@ import { ClusterService } from '../../../services-ngx/cluster.service';
 import { Cluster } from '../../../entities/management-api-v2';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'cluster-general',
@@ -57,6 +59,7 @@ import { GioPermissionService } from '../../../shared/components/gio-permission/
     MatSnackBarModule,
     MatDialogModule,
     GioPermissionModule,
+    TranslatePipe,
   ],
 })
 export class ClusterGeneralComponent implements OnInit {
@@ -76,6 +79,7 @@ export class ClusterGeneralComponent implements OnInit {
   private readonly matDialog = inject(MatDialog);
   private readonly router = inject(Router);
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
 
   public ngOnInit() {
     this.isLoadingData = true;
@@ -110,7 +114,7 @@ export class ClusterGeneralComponent implements OnInit {
     this.clusterService
       .update(this.initialCluster.id, clusterToUpdate)
       .pipe(
-        tap(() => this.snackBarService.success('Cluster details successfully updated!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('kafka.general.saved'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.ngOnInit());
@@ -123,14 +127,18 @@ export class ClusterGeneralComponent implements OnInit {
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: isDeployed ? `Undeploy and Delete Cluster` : `Delete Cluster`,
+          title: isDeployed
+            ? this.languageService.translate('kafka.general.undeployDeleteTitle')
+            : this.languageService.translate('kafka.general.deleteTitle'),
           content: isDeployed
-            ? `The Cluster is currently deployed. It will be undeployed and then deleted. Are you sure?`
-            : `Are you sure you want to delete the Cluster?`,
-          confirmButton: isDeployed ? `Yes, undeploy and delete it` : `Yes, delete it`,
-          validationMessage: `Please, type in the name of the cluster <code>${this.initialCluster.name}</code> to confirm.`,
+            ? this.languageService.translate('kafka.general.undeployDeleteContent')
+            : this.languageService.translate('kafka.general.deleteContent'),
+          confirmButton: isDeployed
+            ? this.languageService.translate('kafka.general.undeployDeleteConfirm')
+            : this.languageService.translate('kafka.general.deleteConfirm'),
+          validationMessage: this.languageService.translate('kafka.general.deleteValidation', { name: this.initialCluster.name }),
           validationValue: this.initialCluster.name,
-          warning: `This operation is irreversible.`,
+          warning: this.languageService.translate('kafka.general.deleteWarning'),
         },
         role: 'alertdialog',
         id: 'clusterDeleteDialog',
@@ -144,7 +152,7 @@ export class ClusterGeneralComponent implements OnInit {
           this.snackBarService.error(error.message);
           return EMPTY;
         }),
-        map(() => this.snackBarService.success(`The Cluster has been deleted.`)),
+        map(() => this.snackBarService.success(this.languageService.translate('kafka.general.deleted'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => {

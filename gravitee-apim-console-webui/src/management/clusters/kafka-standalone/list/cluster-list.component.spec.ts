@@ -36,6 +36,7 @@ import {
   expectListClusterRequest,
 } from '../../../../services-ngx/cluster.service.spec';
 import { fakeCluster, fakeCreateCluster, fakePagedResult } from '../../../../entities/management-api-v2';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 describe('ClustersListPageComponent', () => {
   let fixture: ComponentFixture<ClusterListComponent>;
@@ -116,6 +117,20 @@ describe('ClustersListPageComponent', () => {
     httpTestingController.verify({
       ignoreCancelled: true,
     });
+  });
+
+  it('should update list title when language changes', async () => {
+    const languageService = TestBed.inject(LanguageService);
+
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toMatch(/Автономные Kafka|Добавить кластер/);
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    await fixture.whenStable();
+    expect(fixture.nativeElement.textContent).toContain('Kafka Standalones');
   });
 
   it('should display clusters table', async () => {
