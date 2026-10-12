@@ -27,6 +27,9 @@ import { RouterModule } from '@angular/router';
 
 import { ResetPasswordComponent } from './reset-password.component';
 
+import { AuthLanguageToggleComponent } from '../auth-language-toggle.component';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [ResetPasswordComponent],
   exports: [ResetPasswordComponent],
@@ -43,6 +46,8 @@ import { ResetPasswordComponent } from './reset-password.component';
 
     GioIconsModule,
     GioBannerModule,
+    TranslatePipe,
+    AuthLanguageToggleComponent,
   ],
 })
 export class ResetPasswordModule {}

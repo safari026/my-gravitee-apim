@@ -23,6 +23,7 @@ import { ReCaptchaService } from '../../services-ngx/re-captcha.service';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { AuthService } from '../../auth/auth.service';
 import { CustomUserField } from '../../entities/customUserFields';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'sign-up',
@@ -51,6 +52,7 @@ export class SignUpComponent implements OnInit, OnDestroy {
     private readonly reCaptchaService: ReCaptchaService,
     private readonly snackBarService: SnackBarService,
     private readonly authService: AuthService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -99,14 +101,14 @@ export class SignUpComponent implements OnInit, OnDestroy {
           .pipe(
             tap(() => {
               this.signUpSuccess = true;
-              this.snackBarService.success('Your account has been created.');
+              this.snackBarService.success(this.languageService.translate('auth.signUp.accountCreated'));
             }),
             takeUntil(this.unsubscribe$),
           )
           .subscribe({
             error: e => {
               this.signUpInProgress = false;
-              this.snackBarService.error(e.error?.message ?? 'An error occurred while creating your account.');
+              this.snackBarService.error(e.error?.message ?? this.languageService.translate('auth.signUp.createError'));
             },
             next: () => {
               this.signUpInProgress = false;

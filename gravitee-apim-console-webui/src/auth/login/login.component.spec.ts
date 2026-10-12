@@ -111,4 +111,25 @@ describe('LoginComponent', () => {
     expect(fixture.nativeElement.textContent).toContain('Введите имя пользователя.');
     expect(fixture.nativeElement.textContent).toContain('Введите пароль.');
   });
+
+  it('should switch language from the auth toggle without reload', () => {
+    const languageButton = (): HTMLButtonElement => fixture.nativeElement.querySelector('[data-testid="auth-language-button"]');
+    const languageIcon = languageButton().querySelector('mat-icon');
+
+    expect(languageButton()).toBeTruthy();
+    expect(languageIcon?.getAttribute('data-mat-icon-namespace')).toBe('gio');
+    expect(languageIcon?.getAttribute('data-mat-icon-name')).toBe('language');
+    expect(languageButton().getAttribute('aria-label')).toBe('Switch language');
+
+    languageButton().click();
+    fixture.detectChanges();
+    expect(localStorage.getItem('gio-console-lang')).toBe('ru');
+    expect(fixture.nativeElement.textContent).toContain('Вход');
+    expect(languageButton().getAttribute('aria-label')).toBe('Переключить язык');
+
+    languageButton().click();
+    fixture.detectChanges();
+    expect(localStorage.getItem('gio-console-lang')).toBe('en');
+    expect(fixture.nativeElement.textContent).toContain('Sign In');
+  });
 });

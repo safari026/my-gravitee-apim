@@ -9,6 +9,8 @@ export const ruAuth = {
     errors: {
       usernameRequired: 'Введите имя пользователя.',
       passwordRequired: 'Введите пароль.',
+      noMethod: 'Нет доступного способа входа. Обратитесь к администратору.',
+      failed: 'Не удалось войти. Проверьте имя пользователя и пароль.',
     },
 
     signUp: {
@@ -43,5 +45,29 @@ export const ruAuth = {
 
     accountCreated: 'Аккаунт создан.',
     createError: 'Не удалось создать аккаунт.',
+  },
+
+  confirmPassword: 'Подтверждение пароля',
+  confirmPasswordRequired: 'Подтвердите пароль.',
+  passwordNotMatch: 'Пароль и подтверждение должны совпадать.',
+  contactAdmin: 'Если проблема сохраняется, обратитесь к администратору.',
+  token: {
+    invalid: 'Недействительный токен регистрации!',
+    expired: 'Срок действия токена регистрации истёк!',
+  },
+
+  signUpConfirm: {
+    title: 'Подтверждение аккаунта',
+    success: 'Аккаунт подтверждён',
+    accountConfirmed: 'Аккаунт подтверждён.',
+    confirmError: 'Не удалось подтвердить аккаунт.',
+  },
+
+  resetPassword: {
+    title: 'Сброс пароля',
+    submit: 'Сбросить пароль',
+    success: 'Пароль успешно сброшен.',
+    passwordReset: 'Пароль сброшен.',
+    resetError: 'Не удалось сбросить пароль.',
   },
 } as const;

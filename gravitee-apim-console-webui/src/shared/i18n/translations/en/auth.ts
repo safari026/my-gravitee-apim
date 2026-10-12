@@ -9,6 +9,8 @@ export const enAuth = {
     errors: {
       usernameRequired: 'Username is required.',
       passwordRequired: 'Password is required.',
+      noMethod: 'No login method available. Please contact your administrator.',
+      failed: 'Login failed! Check username and password.',
     },
 
     signUp: {
@@ -43,5 +45,29 @@ export const enAuth = {
 
     accountCreated: 'Your account has been created.',
     createError: 'An error occurred while creating your account.',
+  },
+
+  confirmPassword: 'Confirm password',
+  confirmPasswordRequired: 'Confirm password is required.',
+  passwordNotMatch: 'Password and confirm password must be the same.',
+  contactAdmin: 'Contact your administrator if the problem persists.',
+  token: {
+    invalid: 'Invalid registration token!',
+    expired: 'Your registration token has expired!',
+  },
+
+  signUpConfirm: {
+    title: 'Confirm your account',
+    success: 'Account confirmed',
+    accountConfirmed: 'Your account has been confirmed.',
+    confirmError: 'An error occurred while confirming your account.',
+  },
+
+  resetPassword: {
+    title: 'Reset password',
+    submit: 'Reset password',
+    success: 'Password successfully reset.',
+    passwordReset: 'Your password has been reset.',
+    resetError: 'An error occurred while resetting your password.',
   },
 } as const;

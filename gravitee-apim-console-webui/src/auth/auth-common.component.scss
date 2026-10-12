@@ -10,9 +10,16 @@ $typography: map.get(gio.$mat-theme, typography);
 }
 
 .card {
+  position: relative;
   max-width: 380px;
   margin: 100px auto 0 auto;
   padding: 32px;
+
+  &__language {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+  }
 
   &__header {
     display: flex;
