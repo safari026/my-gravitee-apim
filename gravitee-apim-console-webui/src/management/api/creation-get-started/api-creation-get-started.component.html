@@ -35,6 +35,23 @@
           <button mat-stroked-button (click)="goToApiImport()">{{ 'apis.creation.classic.importV2' | translate }}</button>
         </div>
       </div>
+
+      <div class="api-creation-get-started__row__card">
+        <div>
+          <mat-icon svgIcon="gio:rocket"></mat-icon>
+          <div class="mat-subtitle-1">{{ 'apis.creation.v4.card.title' | translate }}</div>
+          <div class="mat-body">{{ 'apis.creation.v4.card.description' | translate }}</div>
+        </div>
+
+        <div class="api-creation-get-started__row__card__action">
+          <button mat-flat-button [routerLink]="'./v4'" color="primary" data-testid="api_create_v4_button">{{
+            'apis.creation.v4.card.create' | translate
+          }}</button>
+          <button mat-stroked-button [routerLink]="'../import/v4'" data-testid="api_import_v4_button">{{
+            'apis.creation.v4.card.import' | translate
+          }}</button>
+        </div>
+      </div>
     </div>
   </mat-card-content>
 </mat-card>

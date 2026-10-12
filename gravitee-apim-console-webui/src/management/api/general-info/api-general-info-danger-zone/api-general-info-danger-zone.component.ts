@@ -34,6 +34,7 @@ import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { ApiReviewV2Service } from '../../../../services-ngx/api-review-v2.service';
 import { ApimFeature, UTMTags } from '../../../../shared/components/gio-license/gio-license-data';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-general-info-danger-zone',
@@ -51,7 +52,12 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
     private readonly snackBarService: SnackBarService,
     @Inject(Constants) private readonly constants: Constants,
     private readonly licenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.languageService.translate(`apis.general.${key}`, params);
+  }
 
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
@@ -151,9 +157,9 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Review API',
-          content: `Are you sure you want to ask for a review of the API?`,
-          confirmButton: 'Ask for review',
+          title: this.t('danger.reviewTitle'),
+          content: this.t('danger.reviewContent'),
+          confirmButton: this.t('danger.reviewConfirm'),
         },
         role: 'alertdialog',
         id: 'reviewApiDialog',
@@ -167,7 +173,7 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
           return EMPTY;
         }),
         tap(() => this.reloadDetails.emit()),
-        map(() => this.snackBarService.success(`Review has been asked.`)),
+        map(() => this.snackBarService.success(this.t('danger.reviewAsked'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
@@ -178,9 +184,9 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `${state === 'START' ? 'Start' : 'Stop'} API`,
-          content: `Are you sure you want to ${state === 'START' ? 'start' : 'stop'} the API?`,
-          confirmButton: `${state === 'START' ? 'Start' : 'Stop'}`,
+          title: state === 'START' ? this.t('danger.startTitle') : this.t('danger.stopTitle'),
+          content: state === 'START' ? this.t('danger.startContent') : this.t('danger.stopContent'),
+          confirmButton: state === 'START' ? this.t('danger.startConfirm') : this.t('danger.stopConfirm'),
         },
         role: 'alertdialog',
         id: 'lifecycleDialog',
@@ -194,24 +200,39 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
           return EMPTY;
         }),
         tap(() => this.reloadDetails.emit()),
-        map(() => this.snackBarService.success(`The API has been ${state === 'START' ? 'started' : 'stopped'} with success.`)),
+        map(() => this.snackBarService.success(state === 'START' ? this.t('danger.started') : this.t('danger.stopped'))),
       )
       .subscribe();
   }
 
   changeApiLifecycle(lifecycleState: 'PUBLISHED' | 'UNPUBLISHED' | 'DEPRECATED') {
-    const actionLabel = {
-      PUBLISHED: 'Publish',
-      UNPUBLISHED: 'Unpublish',
-      DEPRECATED: 'Deprecate',
+    const titles = {
+      PUBLISHED: this.t('danger.publishTitle'),
+      UNPUBLISHED: this.t('danger.unpublishTitle'),
+      DEPRECATED: this.t('danger.deprecateTitle'),
+    };
+    const contents = {
+      PUBLISHED: this.t('danger.publishContent'),
+      UNPUBLISHED: this.t('danger.unpublishContent'),
+      DEPRECATED: this.t('danger.deprecateContent'),
+    };
+    const confirms = {
+      PUBLISHED: this.t('danger.publishConfirm'),
+      UNPUBLISHED: this.t('danger.unpublishConfirm'),
+      DEPRECATED: this.t('danger.deprecateConfirm'),
+    };
+    const successes = {
+      PUBLISHED: this.t('danger.published'),
+      UNPUBLISHED: this.t('danger.unpublished'),
+      DEPRECATED: this.t('danger.deprecated'),
     };
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `${actionLabel[lifecycleState]} API`,
-          content: `Are you sure you want to ${actionLabel[lifecycleState].toLowerCase()} the API?`,
-          confirmButton: `${actionLabel[lifecycleState]}`,
+          title: titles[lifecycleState],
+          content: contents[lifecycleState],
+          confirmButton: confirms[lifecycleState],
         },
         role: 'alertdialog',
         id: 'apiLifecycleDialog',
@@ -233,24 +254,20 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
           return EMPTY;
         }),
         tap(() => this.reloadDetails.emit()),
-        map(() => this.snackBarService.success(`The API has been ${lifecycleState.toLowerCase()} with success.`)),
+        map(() => this.snackBarService.success(successes[lifecycleState])),
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
   }
 
   changeVisibility(visibility: 'PUBLIC' | 'PRIVATE') {
-    const actionLabel = {
-      PUBLIC: 'Make Public',
-      PRIVATE: 'Make Private',
-    };
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: `Change visibility`,
-          content: `Are you sure you want to make the API ${visibility.toLowerCase()}?`,
-          confirmButton: `${actionLabel[visibility]}`,
+          title: this.t('danger.changeVisibility'),
+          content: visibility === 'PUBLIC' ? this.t('danger.makePublicContent') : this.t('danger.makePrivateContent'),
+          confirmButton: visibility === 'PUBLIC' ? this.t('danger.makePublic') : this.t('danger.makePrivate'),
         },
         role: 'alertdialog',
         id: 'apiLifecycleDialog',
@@ -274,7 +291,7 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
           return EMPTY;
         }),
         tap(() => this.reloadDetails.emit()),
-        map(() => this.snackBarService.success(`The API has been made ${visibility.toLowerCase()} with success.`)),
+        map(() => this.snackBarService.success(visibility === 'PUBLIC' ? this.t('danger.madePublic') : this.t('danger.madePrivate'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
@@ -287,12 +304,12 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: '500px',
         data: {
-          title: `Delete API`,
-          content: `Are you sure you want to delete the API?`,
-          confirmButton: `Yes, delete it`,
-          validationMessage: `Please, type in the name of the api <code>${this.api.name}</code> to confirm.`,
+          title: this.t('danger.deleteTitle'),
+          content: this.t('danger.deleteContent'),
+          confirmButton: this.t('danger.deleteConfirm'),
+          validationMessage: this.t('danger.deleteValidation', { name: this.api.name }),
           validationValue: this.api.name,
-          warning: `This operation is irreversible.`,
+          warning: this.t('danger.deleteWarning'),
         },
         role: 'alertdialog',
         id: 'apiDeleteDialog',
@@ -305,7 +322,7 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
           this.snackBarService.error(error.message);
           return EMPTY;
         }),
-        map(() => this.snackBarService.success(`The API has been deleted.`)),
+        map(() => this.snackBarService.success(this.t('danger.deleted'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => {
@@ -318,12 +335,12 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData>(GioConfirmAndValidateDialogComponent, {
         width: '500px',
         data: {
-          title: `Detach API`,
-          content: `Are you sure you want to detach the API from its automation source?`,
-          confirmButton: `Yes, detach it`,
-          validationMessage: `Please, type in the name of the api <code>${this.api.name}</code> to confirm.`,
+          title: this.t('danger.detachTitle'),
+          content: this.t('danger.detachContent'),
+          confirmButton: this.t('danger.detachConfirm'),
+          validationMessage: this.t('danger.detachValidation', { name: this.api.name }),
           validationValue: this.api.name,
-          warning: `Any update made while the API was detached will be lost when the API is re-attached to the automation agent.`,
+          warning: this.t('danger.detachWarning'),
         },
         role: 'alertdialog',
         id: 'apiDetachDialog',
@@ -337,7 +354,7 @@ export class ApiGeneralInfoDangerZoneComponent implements OnChanges, OnDestroy, 
           return EMPTY;
         }),
         tap(() => this.reloadDetails.emit()),
-        map(() => this.snackBarService.success(`The API has been detached from its automation source.`)),
+        map(() => this.snackBarService.success(this.t('danger.detached'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe();

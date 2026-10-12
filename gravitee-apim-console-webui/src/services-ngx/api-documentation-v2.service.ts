@@ -19,6 +19,7 @@ import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 
 import { Constants } from '../entities/Constants';
+import { LanguageService } from '../shared/i18n/language.service';
 import {
   CreateDocumentation,
   Breadcrumb,
@@ -38,6 +39,7 @@ export interface ApiDocumentationPageResult {
 export class ApiDocumentationV2Service {
   constructor(
     private readonly http: HttpClient,
+    private readonly languageService: LanguageService,
     @Inject(Constants) private readonly constants: Constants,
   ) {}
   createDocumentationPage(apiId: string, createDocumentation: CreateDocumentation): Observable<Page> {
@@ -93,12 +95,12 @@ export class ApiDocumentationV2Service {
   getApiNotInPortalTooltip(apiLifecycleState: ApiLifecycleState): string {
     switch (apiLifecycleState) {
       case 'DEPRECATED':
-        return 'Deprecated APIs do not appear in the Developer Portal';
+        return this.languageService.translate('apis.navigation.portalTooltip.deprecated');
       case 'ARCHIVED':
-        return 'Archived APIs do not appear in the Developer Portal';
+        return this.languageService.translate('apis.navigation.portalTooltip.archived');
       case 'CREATED':
       case 'UNPUBLISHED':
-        return "Activate the Developer Portal by publishing your API under 'General > Info'";
+        return this.languageService.translate('apis.navigation.portalTooltip.unpublished');
       case 'PUBLISHED':
       default:
         return undefined;

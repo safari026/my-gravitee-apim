@@ -17,6 +17,7 @@ import { Component } from '@angular/core';
 import { ComponentFixture, TestBed, fakeAsync, tick } from '@angular/core/testing';
 import { HttpTestingController, provideHttpClientTesting } from '@angular/common/http/testing';
 import { provideHttpClient } from '@angular/common/http';
+import { By } from '@angular/platform-browser';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
 import { MatIconTestingModule } from '@angular/material/icon/testing';
 import { InteractivityChecker } from '@angular/cdk/a11y';
@@ -25,8 +26,9 @@ import { Router, RouterModule, Routes } from '@angular/router';
 import { GioMenuSearchService, LICENSE_CONFIGURATION_TESTING } from '@gravitee/ui-particles-angular';
 import { of } from 'rxjs';
 
-import { GioSideNavModule } from './gio-side-nav.module';
+import { GioSideNavComponent } from './gio-side-nav.component';
 import { GioSideNavHarness } from './gio-side-nav.component.harness';
+import { GioSideNavModule } from './gio-side-nav.module';
 
 import { Constants } from '../../entities/Constants';
 import { Environment } from '../../entities/environment/environment';
@@ -230,14 +232,13 @@ describe('GioSideNavComponent navigation (APIM-14748)', () => {
     expect(groupPathOf(router.url)).toBe('/DEFAULT/analytics');
   }));
 
-  it('should navigate to Kafka when the environment has no hrids', fakeAsync(() => {
+  it('should not show a Kafka sidebar group', fakeAsync(() => {
     setup(DEFAULT_ENV_WITHOUT_HRIDS);
 
     landOnUrl('/DEFAULT/home', DEFAULT_ENV_WITHOUT_HRIDS);
 
-    clickSidebarGroup('Kafka', DEFAULT_ENV_WITHOUT_HRIDS);
-
-    expect(groupPathOf(router.url)).toBe('/DEFAULT/clusters');
+    const sideNav = fixture.debugElement.query(By.directive(GioSideNavComponent)).componentInstance as GioSideNavComponent;
+    expect(sideNav.mainMenuItems.some(item => item.routerBasePath?.endsWith('/clusters'))).toBe(false);
   }));
 
   it('should keep using the hrid when the environment has one', fakeAsync(() => {

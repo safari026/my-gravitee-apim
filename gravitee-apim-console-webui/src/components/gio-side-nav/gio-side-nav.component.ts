@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ChangeDetectorRef, Component, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { AfterViewInit, ChangeDetectorRef, Component, ElementRef, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
 import { toObservable } from '@angular/core/rxjs-interop';
 import { GioLicenseService, GioMenuSearchService, LicenseOptions, MenuSearchItem, SelectorItem } from '@gravitee/ui-particles-angular';
 import { catchError, distinctUntilChanged, map, skip, switchMap, takeUntil } from 'rxjs/operators';
@@ -47,6 +47,9 @@ interface MenuItem {
 
 export const SIDE_NAV_GROUP_ID = 'side-nav-items';
 
+const HIDDEN_SIDE_NAV_ROUTER_LINKS = new Set(['./api-products', './integrations']);
+const HIDDEN_KAFKA_ROUTER_BASE_PATH_SUFFIX = '/clusters';
+
 // prettier-ignore
 export const PORTAL_SETTINGS_PERMISSIONS = [
   'environment-settings-r',
@@ -67,7 +70,7 @@ export const PORTAL_SETTINGS_PERMISSIONS = [
   styleUrls: ['./gio-side-nav.component.scss'],
   standalone: false,
 })
-export class GioSideNavComponent implements OnInit, OnDestroy {
+export class GioSideNavComponent implements OnInit, AfterViewInit, OnDestroy {
   private unsubscribe$ = new Subject<void>();
 
   public mainMenuItems: MenuItem[] = [];
@@ -93,6 +96,7 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     private readonly injector: Injector,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly settingsNavigationService: SettingsNavigationService,
+    private readonly elementRef: ElementRef<HTMLElement>,
   ) {}
 
   ngOnInit(): void {
@@ -134,6 +138,7 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
           this.gioMenuSearchService.removeMenuSearchItems([this.envHrid]);
           this.gioMenuSearchService.addMenuSearchItems(this.settingsNavigationService.getSettingsNavigationSearchItems(this.envHrid));
         }
+        this.syncMenuSearchPlaceholder();
         this.changeDetectorRef.markForCheck();
       });
 
@@ -142,6 +147,10 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
     }
 
     this.licenseExpirationDate$ = this.gioLicenseService.getExpiresAt$().pipe(distinctUntilChanged(), takeUntil(this.unsubscribe$));
+  }
+
+  ngAfterViewInit(): void {
+    this.syncMenuSearchPlaceholder();
   }
 
   ngOnDestroy(): void {
@@ -375,7 +384,7 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
       ],
     });
 
-    return this.filterMenuByPermission(mainMenuItems);
+    return this.filterHiddenMenuItems(this.filterMenuByPermission(mainMenuItems));
   }
 
   private getMenuItemIconRight$(licenseOptions: LicenseOptions) {
@@ -410,9 +419,28 @@ export class GioSideNavComponent implements OnInit, OnDestroy {
       .filter((item): item is MenuItem => item !== null);
   }
 
+  private isHiddenMenuItem(item: MenuItem): boolean {
+    if (item.routerLink && HIDDEN_SIDE_NAV_ROUTER_LINKS.has(item.routerLink)) {
+      return true;
+    }
+    return item.routerBasePath?.endsWith(HIDDEN_KAFKA_ROUTER_BASE_PATH_SUFFIX) === true;
+  }
+
+  private filterHiddenMenuItems(menuItems: MenuItem[]): MenuItem[] {
+    return menuItems.filter(item => !this.isHiddenMenuItem(item));
+  }
+
+  private syncMenuSearchPlaceholder(): void {
+    const searchInput = this.elementRef.nativeElement.querySelector<HTMLInputElement>('.gio-menu-search__input');
+    if (searchInput) {
+      searchInput.placeholder = this.languageService.translate('common.search');
+    }
+  }
+
   private getSideNaveMenuSearchItems(): MenuSearchItem[] {
     return this.mainMenuItems
       .filter(item => !!item.routerLink)
+      .filter(item => !this.isHiddenMenuItem(item))
       .map(item => {
         return {
           name: item.displayName,

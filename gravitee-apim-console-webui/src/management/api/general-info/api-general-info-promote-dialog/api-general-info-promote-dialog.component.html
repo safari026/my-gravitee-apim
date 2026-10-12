@@ -16,38 +16,38 @@
 
 -->
 <ng-container *ngIf="state === 'hasCockpit'">
-  <span mat-dialog-title>Promote the API</span>
+  <span mat-dialog-title>{{ 'apis.general.promote.title' | translate }}</span>
 
   <mat-dialog-content class="promote__content">
     <div *ngIf="promotionTargets.length > 0; else noEnvironment">
       <gio-banner-info *ngIf="hasPromotionInProgress">
-        Pending environments promotion
-        <span gioBannerBody>You will be able to promote them again after they have been accepted or rejected.</span>
+        {{ 'apis.general.promote.pendingTitle' | translate }}
+        <span gioBannerBody>{{ 'apis.general.promote.pendingBody' | translate }}</span>
       </gio-banner-info>
 
       <gio-banner-info>
-        Sharding tags
-        <span gioBannerBody>For your promotion to be accepted, your API deployment tags must exist in the targeted environment.</span>
+        {{ 'apis.general.promote.shardingTags' | translate }}
+        <span gioBannerBody>{{ 'apis.general.promote.shardingTagsBody' | translate }}</span>
       </gio-banner-info>
 
       <mat-form-field class="promote__content__promotion-targets">
-        <mat-label>Environment</mat-label>
+        <mat-label>{{ 'apis.general.promote.environment' | translate }}</mat-label>
         <mat-select [formControl]="promoteControl" data-testid="promotion-dialog-target-environment">
           <mat-option *ngFor="let target of promotionTargets" [value]="target.id" [disabled]="target.promotionInProgress">
-            {{ target.name }}{{ target.promotionInProgress ? ' (pending)' : '' }}
+            {{ target.name }}{{ target.promotionInProgress ? ('apis.general.promote.pendingSuffix' | translate) : '' }}
           </mat-option>
         </mat-select>
-        <mat-hint>Select the environment where you want to promote the API.</mat-hint>
+        <mat-hint>{{ 'apis.general.promote.environmentHint' | translate }}</mat-hint>
       </mat-form-field>
     </div>
 
     <ng-template #noEnvironment>
-      <gio-banner-warning>No environment is available to promote this API.</gio-banner-warning>
+      <gio-banner-warning>{{ 'apis.general.promote.noEnvironment' | translate }}</gio-banner-warning>
     </ng-template>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="actions">
-    <button mat-flat-button [mat-dialog-close]="false">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
     <button
       color="primary"
       mat-raised-button
@@ -55,40 +55,39 @@
       (click)="onPromote()"
       data-testid="promotion-dialog-confirm-button"
     >
-      Promote
+      {{ 'apis.general.actions.promote' | translate }}
     </button>
   </mat-dialog-actions>
 </ng-container>
 
 <ng-container *ngIf="state === 'meetCockpit'">
-  <h2 mat-dialog-title>Meet Gravitee Cloud</h2>
+  <h2 mat-dialog-title>{{ 'apis.general.promote.meetTitle' | translate }}</h2>
 
   <mat-dialog-content class="meet-cockpit__content">
-    <img class="meet-cockpit__content__logo" src="assets/gravitee_cloud_logo.png" alt="Logo of Gravitee.io Cloud" />
+    <img class="meet-cockpit__content__logo" src="assets/gravitee_cloud_logo.png" [alt]="'apis.general.promote.logoAlt' | translate" />
     <p>
-      <a [href]="cockpitURL" target="_blank">Gravitee Cloud</a> is a centralized, multi-tenancy tool for monitoring all your Gravitee.io
-      installations from one handy interactive dashboard.
+      <a [href]="cockpitURL" target="_blank">Gravitee Cloud</a>
+      {{ 'apis.general.promote.meetBody1' | translate }}
     </p>
     <p>
-      Create an account on <a [href]="cockpitURL" target="_blank">Gravitee Cloud</a>, register your current installation and start promoting
-      your APIs across multiple environments!`.
+      {{ 'apis.general.promote.meetBody2' | translate }}
     </p>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="actions">
-    <button mat-flat-button [mat-dialog-close]="false" data-testid="api_info_promote_ok">Ok</button>
+    <button mat-flat-button [mat-dialog-close]="false" data-testid="api_info_promote_ok">{{ 'apis.general.promote.ok' | translate }}</button>
   </mat-dialog-actions>
 </ng-container>
 
 <ng-container *ngIf="state === 'loading'">
-  <h2 mat-dialog-title>Promote the API</h2>
+  <h2 mat-dialog-title>{{ 'apis.general.promote.title' | translate }}</h2>
 
   <mat-dialog-content class="loading__content">
-    Loading...
+    {{ 'common.loading' | translate }}
     <mat-progress-bar mode="indeterminate"></mat-progress-bar>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end" class="actions">
-    <button mat-flat-button [mat-dialog-close]="false">Close</button>
+    <button mat-flat-button [mat-dialog-close]="false">{{ 'common.close' | translate }}</button>
   </mat-dialog-actions>
 </ng-container>

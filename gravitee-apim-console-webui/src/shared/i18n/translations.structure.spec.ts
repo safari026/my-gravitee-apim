@@ -104,6 +104,12 @@ describe('i18n translations', () => {
     expect(languageService.translate('apis.list.add')).toBe('Add API');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('NEXT');
     expect(languageService.translate('apis.creation.importV2.import')).toBe('Import');
+    expect(languageService.translate('apis.creation.v4.card.create')).toBe('Create V4 API');
+    expect(languageService.translate('apis.creation.importV4.title')).toBe('Import API');
+    expect(languageService.translate('apis.navigation.items.configuration')).toBe('Configuration');
+    expect(languageService.translate('apis.navigation.deploy.deploy')).toBe('Deploy');
+    expect(languageService.translate('apis.general.form.name')).toBe('Name');
+    expect(languageService.translate('apis.general.danger.title')).toBe('Danger Zone');
     expect(languageService.translate('applications.creation.title')).toBe('Application creation');
     expect(languageService.translate('applications.navigation.globalSettings')).toBe('Global settings');
     expect(languageService.translate('applications.list.title')).toBe('Applications');
@@ -135,6 +141,10 @@ describe('i18n translations', () => {
     expect(languageService.translate('apis.list.add')).toBe('Добавить API');
     expect(languageService.translate('apis.creation.v2.actions.next')).toBe('ДАЛЕЕ');
     expect(languageService.translate('apis.creation.importV2.import')).toBe('Импортировать');
+    expect(languageService.translate('apis.navigation.items.configuration')).toBe('Конфигурация');
+    expect(languageService.translate('apis.navigation.deploy.deploy')).toBe('Развернуть');
+    expect(languageService.translate('apis.general.form.name')).toBe('Название');
+    expect(languageService.translate('apis.general.danger.title')).toBe('Опасная зона');
     expect(languageService.translate('applications.creation.title')).toBe('Создание приложения');
     expect(languageService.translate('applications.list.title')).toBe('Приложения');
     expect(languageService.translate('applications.members.add')).toBe('Добавить участников');

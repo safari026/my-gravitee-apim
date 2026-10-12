@@ -24,6 +24,7 @@ import { Api, ApiV2, ApiV4, DuplicateFilteredField, HttpListener, TcpListener } 
 import { ApiService } from '../../../../services-ngx/api.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 import { hostSyncValidator } from '../../../../shared/validators/host/host-sync-validator.directive';
 import { hostAsyncValidator } from '../../../../shared/validators/host/host-async-validator.directive';
 import { contextPathModePathSyncValidator } from '../../../../shared/validators/context-path/context-path-sync-validator.directive';
@@ -53,11 +54,11 @@ interface DuplicateForm {
 export class ApiGeneralInfoDuplicateDialogComponent implements OnDestroy {
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
 
-  public optionsCheckbox: { id: DuplicateFilteredField; label: string; checked: boolean }[] = [
-    { id: 'GROUPS', label: 'Groups', checked: true },
-    { id: 'MEMBERS', label: 'Members', checked: true },
-    { id: 'PAGES', label: 'Pages', checked: true },
-    { id: 'PLANS', label: 'Plans', checked: true },
+  public optionsCheckbox: { id: DuplicateFilteredField; checked: boolean }[] = [
+    { id: 'GROUPS', checked: true },
+    { id: 'MEMBERS', checked: true },
+    { id: 'PAGES', checked: true },
+    { id: 'PLANS', checked: true },
   ];
 
   public duplicateApiForm: UntypedFormGroup;
@@ -73,6 +74,7 @@ export class ApiGeneralInfoDuplicateDialogComponent implements OnDestroy {
     private readonly apiService: ApiService,
     private readonly apiV2Service: ApiV2Service,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {
     this.apiId = dialogData.api.id;
     this.contextPathPlaceholder = extractContextPath(dialogData.api);
@@ -125,9 +127,11 @@ export class ApiGeneralInfoDuplicateDialogComponent implements OnDestroy {
         filteredFields: this.optionsCheckbox.filter(option => !configsFormValue.options[option.id]).map(option => option.id),
       })
       .pipe(
-        tap(() => this.snackBarService.success('API duplicated successfully.')),
+        tap(() => this.snackBarService.success(this.languageService.translate('apis.general.snackbar.duplicateSuccess'))),
         catchError(({ error }) => {
-          this.snackBarService.error(error.message ?? 'An error occurred while duplicate the API.');
+          this.snackBarService.error(
+            error.message ?? this.languageService.translate('apis.general.snackbar.duplicateError'),
+          );
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),

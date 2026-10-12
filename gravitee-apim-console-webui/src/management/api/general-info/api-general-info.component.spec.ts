@@ -40,6 +40,7 @@ import { ApiGeneralInfoComponent } from './api-general-info.component';
 import { ApiGeneralInfoExportV4DialogHarness } from './api-general-info-export-v4-dialog/api-general-info-export-v4-dialog.harness';
 import { ApiGeneralInfoQualityHarness } from './api-general-info-quality/api-general-info-quality.harness';
 
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
 import { Category } from '../../../entities/category/Category';
 import { Api, DefinitionVersion, fakeApiV2, fakeApiV4, fakeProxyTcpApiV4, fakeApiFederated } from '../../../entities/management-api-v2';
@@ -128,6 +129,7 @@ describe('ApiGeneralInfoComponent', () => {
   });
 
   afterEach(() => {
+    TestBed.inject(LanguageService).setLanguage('en');
     httpTestingController.verify({ ignoreCancelled: true });
     jest.resetAllMocks();
   });
@@ -377,6 +379,28 @@ describe('ApiGeneralInfoComponent', () => {
 
         const apiQualityInfo = await loader.getHarness(ApiGeneralInfoQualityHarness);
         expect(apiQualityInfo).toBeTruthy();
+      });
+
+      it('switches General Info labels EN → RU → EN without reload', async () => {
+        const languageService = TestBed.inject(LanguageService);
+        const api = fakeApiV2({ id: API_ID });
+        expectApiGetRequest(api);
+        expectCategoriesGetRequest();
+        await waitImageCheck();
+        fixture.detectChanges();
+
+        expect(fixture.nativeElement.textContent).toContain('Name');
+        expect(fixture.nativeElement.textContent).toContain('Danger Zone');
+
+        languageService.setLanguage('ru');
+        fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Название');
+        expect(fixture.nativeElement.textContent).toContain('Опасная зона');
+
+        languageService.setLanguage('en');
+        fixture.detectChanges();
+        expect(fixture.nativeElement.textContent).toContain('Name');
+        expect(fixture.nativeElement.textContent).toContain('Danger Zone');
       });
 
       it('should display migrate to v4 button for V2 APIs only', async () => {

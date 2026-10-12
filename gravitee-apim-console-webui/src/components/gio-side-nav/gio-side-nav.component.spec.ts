@@ -23,6 +23,7 @@ import { TestbedHarnessEnvironment } from '@angular/cdk/testing/testbed';
 import {
   GioLicenseExpirationNotificationHarness,
   GioMenuSearchService,
+  GioMenuSelectorHarness,
   LICENSE_CONFIGURATION_TESTING,
 } from '@gravitee/ui-particles-angular';
 import { ActivatedRoute } from '@angular/router';
@@ -209,12 +210,42 @@ describe('GioSideNavComponent', () => {
 
       // flat items with real routerLinks must appear
       expect(searchItemNames).toEqual(
-        expect.arrayContaining(['Dashboard', 'APIs', 'API Products', 'Applications', 'Gateways', 'Audit', 'Settings']),
+        expect.arrayContaining(['Dashboard', 'APIs', 'Applications', 'Gateways', 'Audit', 'Settings']),
       );
-      // group-only items (no routerLink of their own) must NOT appear in search
+      // hidden items and group-only items (no routerLink of their own) must NOT appear in search
       expect(searchItemNames).not.toContain('Kafka');
+      expect(searchItemNames).not.toContain('API Products');
+      expect(searchItemNames).not.toContain('Integrations');
       expect(searchItemNames).not.toContain('Observability');
       expect(searchItemNames).not.toContain('Analytics');
+    });
+
+    const filterSearchNames = (query: string): string[] => {
+      if (!query) {
+        return [];
+      }
+      const filterValue = query.toLowerCase().replace(/\s/g, '');
+      return menuSearchService.menuSearchItems
+        .filter(item => item.name.toLowerCase().replace(/\s/g, '').includes(filterValue))
+        .map(item => item.name);
+    };
+
+    it('should not return hidden items for exact or partial search queries', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      for (const query of ['Kafka', 'kaf', 'API Product', 'product', 'Integration', 'integ']) {
+        expect(filterSearchNames(query).join(' ')).not.toMatch(/Kafka|API Products|Integrations/i);
+      }
+    });
+
+    it('should still return allowed items for search and keep empty search empty', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      expect(filterSearchNames('')).toEqual([]);
+      expect(filterSearchNames('Dashboard')).toEqual(expect.arrayContaining(['Dashboard']));
+      expect(filterSearchNames('zzzz-no-such-item')).toEqual([]);
     });
   });
 
@@ -245,11 +276,42 @@ describe('GioSideNavComponent', () => {
       expect(fixture.componentInstance.mainMenuItems.find(item => item.routerLink === './settings')?.displayName).toBe('Настройки');
       expect(fixture.componentInstance.footerMenuItems.find(item => item.routerLink === '/_organization')?.displayName).toBe('Организация');
 
-      const kafkaItem = fixture.componentInstance.mainMenuItems.find(item =>
-        item.items?.some(child => child.routerLink === './clusters/kafka-standalone'),
-      );
-      expect(kafkaItem?.displayName).toBe('Kafka');
-      expect(kafkaItem?.items?.[0].displayName).toBe('Автономный');
+      expect(
+        fixture.componentInstance.mainMenuItems.find(item =>
+          item.items?.some(child => child.routerLink === './clusters/kafka-standalone'),
+        ),
+      ).toBeUndefined();
+    });
+
+    it('should switch the search placeholder between EN and RU without reload', async () => {
+      await init();
+      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
+
+      const searchInput = (): HTMLInputElement => fixture.nativeElement.querySelector('.gio-menu-search__input');
+      const searchAriaLabel = (): string | null =>
+        fixture.nativeElement.querySelector('gio-menu-search')?.getAttribute('aria-label') ?? null;
+
+      expect(searchInput().placeholder).toBe('Search');
+      expect(searchAriaLabel()).toBe('Search');
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+
+      expect(searchInput().placeholder).toBe('Поиск');
+      expect(searchAriaLabel()).toBe('Поиск');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      httpTestingController.match(`${LICENSE_CONFIGURATION_TESTING.resourceURL}`).forEach(request => {
+        request.flush({ tier: '', features: [], packs: [], expiresAt: new Date() });
+      });
+
+      expect(searchInput().placeholder).toBe('Search');
+      expect(searchAriaLabel()).toBe('Search');
     });
   });
 
@@ -274,34 +336,35 @@ describe('GioSideNavComponent', () => {
       });
     });
 
-    it('should show API Products menu item with license options', async () => {
+    it('should hide Kafka, API Products, and Integrations from the menu regardless of permission', async () => {
       await init();
       expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
 
-      const apiProductsItem = fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'API Products');
-      expect(apiProductsItem).toBeDefined();
-      expect(apiProductsItem?.routerLink).toBe('./api-products');
-      expect(apiProductsItem?.licenseOptions).toEqual({
-        feature: 'apim-api-products',
-        context: 'environment',
-      });
-      expect(apiProductsItem?.iconRight$).toBeDefined();
+      const routerLinks = fixture.componentInstance.mainMenuItems.map(item => item.routerLink);
+      const routerBasePaths = fixture.componentInstance.mainMenuItems.map(item => item.routerBasePath);
+
+      expect(routerLinks).not.toContain('./api-products');
+      expect(routerLinks).not.toContain('./integrations');
+      expect(routerBasePaths.some(path => path?.endsWith('/clusters'))).toBe(false);
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Kafka')).toBeUndefined();
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'API Products')).toBeUndefined();
+      expect(fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'Integrations')).toBeUndefined();
+
+      expect(routerLinks).toEqual(expect.arrayContaining(['./home', './apis', './applications', './gateways', './audit', './settings']));
     });
 
-    it('should hide API Products menu item when user lacks environment-api_product-r permission', async () => {
-      await init(true, true, true, false);
+    it('should hide the Environment selector while keeping the current environment context', async () => {
+      await init();
       expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
 
-      const apiProductsItem = fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'API Products');
-      expect(apiProductsItem).toBeUndefined();
-    });
-
-    it('should show API Products menu item when user has environment-api_product-r permission', async () => {
-      await init(true, true, true, true);
-      expectLicense({ tier: '', features: [], packs: [], expiresAt: new Date() });
-
-      const apiProductsItem = fixture.componentInstance.mainMenuItems.find(item => item.displayName === 'API Products');
-      expect(apiProductsItem).toBeDefined();
+      expect(await loader.getHarnessOrNull(GioMenuSelectorHarness)).toBeNull();
+      expect(fixture.nativeElement.querySelector('gio-menu-selector')).toBeNull();
+      expect(fixture.componentInstance.currentEnv).toEqual(
+        expect.objectContaining({
+          id: 'DEFAULT',
+        }),
+      );
+      expect(fixture.componentInstance.environments).toEqual([{ value: 'DEFAULT', displayValue: 'default' }]);
     });
 
     it('should show Portal Settings menu item when user has required portal permissions', async () => {
@@ -389,11 +452,11 @@ describe('GioSideNavComponent', () => {
       // After settings resolve, menu is rebuilt — paths must still use correct env hrid
       const observability = fix.componentInstance.mainMenuItems.find(i => i.displayName === 'Observability');
       const analytics = fix.componentInstance.mainMenuItems.find(i => i.displayName === 'Analytics');
-      const kafka = fix.componentInstance.mainMenuItems.find(i => i.displayName === 'Kafka');
+      const kafka = fix.componentInstance.mainMenuItems.find(i => i.routerBasePath?.endsWith('/clusters'));
 
       expect(observability?.routerBasePath).toBe(`/${envHrid}/observability`);
       expect(analytics?.routerBasePath).toBe(`/${envHrid}/analytics`);
-      expect(kafka?.routerBasePath).toBe(`/${envHrid}/clusters`);
+      expect(kafka).toBeUndefined();
 
       ctrl.verify();
     });
@@ -458,7 +521,7 @@ describe('GioSideNavComponent', () => {
 
       expect(basePathOf('Observability')).toBe(`/${envHrid}/observability`);
       expect(basePathOf('Analytics')).toBe(`/${envHrid}/analytics`);
-      expect(basePathOf('Kafka')).toBe(`/${envHrid}/clusters`);
+      expect(basePathOf('Kafka')).toBeUndefined();
     });
 
     it('should build menu search router links from the URL segment', async () => {

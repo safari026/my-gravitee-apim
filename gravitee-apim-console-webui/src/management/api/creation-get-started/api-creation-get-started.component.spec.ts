@@ -107,21 +107,21 @@ describe('ApiCreationGetStartedComponent', () => {
       await confirmDialog.close();
     });
 
-    it('should hide Design API, Create New API, Learn More, and not render Create new App', async () => {
+    it('should hide Design API and Learn More, and not render Create new App', async () => {
       httpTestingController.expectOne(`${CONSTANTS_TESTING.org.baseURL}/installation`).flush(fakeInstallation());
       fixture.detectChanges();
 
       const pageText = fixture.nativeElement.textContent as string;
       expect(pageText).not.toContain('Create new App');
-      expect(pageText).not.toContain('Create New API');
       expect(pageText).not.toContain('Design API');
       expect(pageText).not.toContain('Not sure which version to pick?');
       expect(pageText).not.toContain('Learn More');
       expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: /Design API/ }))).toHaveLength(0);
       expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Learn More' }))).toHaveLength(0);
-      expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Create V4 API' }))).toHaveLength(0);
-      expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Import V4 API' }))).toHaveLength(0);
 
+      expect(pageText).toContain('Create New API');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V4 API' }))).toBeTruthy();
       expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
       expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V2 API' }))).toBeTruthy();
       expect(pageText).toContain('Create Classic API');
@@ -133,9 +133,11 @@ describe('ApiCreationGetStartedComponent', () => {
 
       expect(fixture.nativeElement.textContent).toContain('Choose API creation method');
       expect(fixture.nativeElement.textContent).toContain('Create Classic API');
-      expect(fixture.nativeElement.textContent).not.toContain('Create New API');
+      expect(fixture.nativeElement.textContent).toContain('Create New API');
       expect(fixture.nativeElement.textContent).not.toContain('Learn More');
       expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Import V4 API' }))).toBeTruthy();
 
       const languageService = TestBed.inject(LanguageService);
       languageService.setLanguage('ru');
@@ -143,14 +145,15 @@ describe('ApiCreationGetStartedComponent', () => {
 
       expect(fixture.nativeElement.textContent).toContain('Выберите способ создания API');
       expect(fixture.nativeElement.textContent).toContain('Создать классический API');
-      expect(fixture.nativeElement.textContent).not.toContain('Создать новый API');
       expect(fixture.nativeElement.textContent).not.toContain('Choose API creation method');
       expect(fixture.nativeElement.textContent).not.toContain('Create Classic API');
       expect(fixture.nativeElement.textContent).not.toContain('Подробнее');
       expect(await loader.getHarness(MatButtonHarness.with({ text: 'Создать API V2' }))).toBeTruthy();
       expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать API V2' }))).toBeTruthy();
-      expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Создать API V4' }))).toHaveLength(0);
-      expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Импортировать API V4' }))).toHaveLength(0);
+      expect(fixture.nativeElement.textContent).toContain('Создать новый API');
+      expect(fixture.nativeElement.textContent).not.toContain('Create New API');
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Создать API V4' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Импортировать API V4' }))).toBeTruthy();
       expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Подробнее' }))).toHaveLength(0);
       expect(fixture.nativeElement.textContent).not.toContain('Design API');
 
@@ -160,6 +163,7 @@ describe('ApiCreationGetStartedComponent', () => {
       expect(fixture.nativeElement.textContent).toContain('Choose API creation method');
       expect(fixture.nativeElement.textContent).toContain('Create Classic API');
       expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V2 API' }))).toBeTruthy();
+      expect(await loader.getHarness(MatButtonHarness.with({ text: 'Create V4 API' }))).toBeTruthy();
       expect(await loader.getAllHarnesses(MatButtonHarness.with({ text: 'Learn More' }))).toHaveLength(0);
     });
   });

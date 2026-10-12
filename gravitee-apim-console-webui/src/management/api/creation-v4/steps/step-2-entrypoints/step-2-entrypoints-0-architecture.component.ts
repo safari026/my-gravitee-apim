@@ -28,6 +28,7 @@ import { UTMTags, ApimFeature } from '../../../../../shared/components/gio-licen
 import { ApiCreationPayload } from '../../models/ApiCreationPayload';
 import { ConnectorPluginsV2Service } from '../../../../../services-ngx/connector-plugins-v2.service';
 import { IconService } from '../../../../../services-ngx/icon.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'step-2-entrypoints-0-architecture',
@@ -60,6 +61,7 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
     private readonly matDialog: MatDialog,
     private readonly iconService: IconService,
     private readonly licenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -94,10 +96,10 @@ export class Step2Entrypoints0ArchitectureComponent implements OnInit, OnDestroy
       this.matDialog
         .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
           data: {
-            title: 'Are you sure?',
-            content: 'By changing the architecture type, all previously entered data in Endpoints and Security steps will be reset.',
-            confirmButton: 'Validate',
-            cancelButton: 'Discard',
+            title: this.languageService.translate('apis.creation.v4.confirm.title'),
+            content: this.languageService.translate('apis.creation.v4.confirm.architectureContent'),
+            confirmButton: this.languageService.translate('apis.creation.v4.confirm.validate'),
+            cancelButton: this.languageService.translate('apis.creation.v4.confirm.discard'),
           },
         })
         .afterClosed()

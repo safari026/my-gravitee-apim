@@ -24,6 +24,7 @@ import { GioTestingPermissionProvider } from '../../../shared/components/gio-per
 import { EnvironmentSettingsService } from '../../../services-ngx/environment-settings.service';
 import { ApiDocumentationV2Service } from '../../../services-ngx/api-documentation-v2.service';
 import { fakeApiV4 } from '../../../entities/management-api-v2';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('ApiV4MenuService', () => {
   let service: ApiV4MenuService;
@@ -213,5 +214,20 @@ describe('ApiV4MenuService', () => {
 
       expect(menu.subMenuItems.some(item => item.displayName === 'Logs')).toBe(false);
     });
+  });
+
+  it('should switch menu labels between EN and RU without reload', () => {
+    localStorage.removeItem('gio-console-lang');
+    service = TestBed.inject(ApiV4MenuService);
+    const languageService = TestBed.inject(LanguageService);
+    const api = fakeApiV4();
+
+    const configurationOf = () => service.getMenu(api).subMenuItems.find(item => item.icon === 'settings')?.displayName;
+
+    expect(configurationOf()).toBe('Configuration');
+    languageService.setLanguage('ru');
+    expect(configurationOf()).toBe('Конфигурация');
+    languageService.setLanguage('en');
+    expect(configurationOf()).toBe('Configuration');
   });
 });

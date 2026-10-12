@@ -26,6 +26,7 @@ import { ApiV4 } from '../../../entities/management-api-v2';
 import { ApiDocumentationV2Service } from '../../../services-ngx/api-documentation-v2.service';
 import { EnvironmentSettingsService } from '../../../services-ngx/environment-settings.service';
 import { ApiType } from '../../../entities/management-api-v2/api/v4/apiType';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Injectable()
 export class ApiV4MenuService implements ApiMenuService {
@@ -34,7 +35,12 @@ export class ApiV4MenuService implements ApiMenuService {
     private readonly gioLicenseService: GioLicenseService,
     private readonly apiDocumentationV2Service: ApiDocumentationV2Service,
     private readonly environmentSettingsService: EnvironmentSettingsService,
+    private readonly languageService: LanguageService,
   ) {}
+
+  private t(key: string): string {
+    return this.languageService.translate(`apis.navigation.${key}`);
+  }
   public getMenu(api: ApiV4): {
     subMenuItems: MenuItem[];
     groupItems: MenuGroupItem[];
@@ -68,7 +74,7 @@ export class ApiV4MenuService implements ApiMenuService {
 
     const tabs: MenuItem[] = [
       {
-        displayName: 'General',
+        displayName: this.t('items.general'),
         routerLink: '.',
         routerLinkActiveOptions: { exact: true },
       },
@@ -76,7 +82,7 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-member-r'])) {
       tabs.push({
-        displayName: 'User Permissions',
+        displayName: this.t('items.userPermissions'),
         routerLink: 'members',
       });
     }
@@ -84,11 +90,11 @@ export class ApiV4MenuService implements ApiMenuService {
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       tabs.push(
         {
-          displayName: 'Properties',
+          displayName: this.t('items.properties'),
           routerLink: 'properties',
         },
         {
-          displayName: 'Resources',
+          displayName: this.t('items.resources'),
           routerLink: 'resources',
           routerLinkActiveOptions: { exact: true },
         },
@@ -97,7 +103,7 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-notification-r'])) {
       tabs.push({
-        displayName: 'Notifications',
+        displayName: this.t('items.notifications'),
         routerLink: 'notifications',
         routerLinkActiveOptions: { exact: true },
       });
@@ -105,7 +111,7 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-audit-r'])) {
       tabs.push({
-        displayName: 'Audit Logs',
+        displayName: this.t('items.auditLogs'),
         routerLink: 'v4/audit',
         license,
         iconRight$,
@@ -113,12 +119,12 @@ export class ApiV4MenuService implements ApiMenuService {
     }
 
     return {
-      displayName: 'Configuration',
+      displayName: this.t('items.configuration'),
       icon: 'settings',
       routerLink: '',
       header: {
-        title: 'Configuration',
-        subtitle: 'Manage general settings, user permissions, properties, and resources, and track changes to your API',
+        title: this.t('items.configuration'),
+        subtitle: this.t('subtitles.configuration'),
       },
       tabs: tabs,
     };
@@ -126,11 +132,11 @@ export class ApiV4MenuService implements ApiMenuService {
 
   private addApiScoreMenuEntry(): MenuItem {
     return {
-      displayName: 'API Score',
+      displayName: this.t('items.apiScore'),
       icon: 'shield-check',
       routerLink: 'api-score',
       header: {
-        title: 'API Score',
+        title: this.t('items.apiScore'),
       },
     };
   }
@@ -139,7 +145,7 @@ export class ApiV4MenuService implements ApiMenuService {
     if (this.permissionService.hasAnyMatching(['api-alert-r'])) {
       return [
         {
-          displayName: 'Alerts',
+          displayName: this.t('items.alerts'),
           icon: 'alarm',
           routerLink: 'v4/alerts',
         },
@@ -151,11 +157,11 @@ export class ApiV4MenuService implements ApiMenuService {
 
   private addEntrypointsMenuEntry(hasTcpListeners: boolean, api: ApiV4): MenuItem {
     const menuItem: MenuItem = {
-      displayName: 'Entrypoints',
+      displayName: this.t('items.entrypoints'),
       icon: 'entrypoints',
       header: {
-        title: 'Entrypoints',
-        subtitle: 'Define the protocol and configuration settings by which the API consumer accesses the Gateway API',
+        title: this.t('items.entrypoints'),
+        subtitle: this.t('subtitles.entrypoints'),
       },
     };
 
@@ -168,28 +174,28 @@ export class ApiV4MenuService implements ApiMenuService {
 
     const tabs: MenuItem[] = [
       {
-        displayName: 'Entrypoints',
+        displayName: this.t('items.entrypoints'),
         routerLink: 'v4/entrypoints',
       },
     ];
 
     if (api.type === 'PROXY' && !hasTcpListeners) {
       tabs.push({
-        displayName: 'MCP Entrypoint',
+        displayName: this.t('items.mcpEntrypoint'),
         routerLink: 'v4/mcp',
       });
     }
 
     if (api.type !== 'MCP_PROXY' && api.type !== 'LLM_PROXY' && this.permissionService.hasAnyMatching(['api-response_templates-r'])) {
       tabs.push({
-        displayName: 'Response Templates',
+        displayName: this.t('items.responseTemplates'),
         routerLink: hasTcpListeners ? 'DISABLED' : 'response-templates',
       });
     }
 
     if (!hasTcpListeners) {
       tabs.push({
-        displayName: 'CORS',
+        displayName: this.t('items.cors'),
         routerLink: 'v4/cors',
       });
     }
@@ -203,12 +209,11 @@ export class ApiV4MenuService implements ApiMenuService {
 
   private addEndpointsMenuEntry(api: ApiV4, hasTcpListeners: boolean): MenuItem {
     const menuItem: MenuItem = {
-      displayName: 'Endpoints',
+      displayName: this.t('items.endpoints'),
       icon: 'endpoints',
       header: {
-        title: 'Endpoints',
-        subtitle:
-          'Define the protocol and configuration settings by which the Gateway API will fetch data from, or post data to, the backend API',
+        title: this.t('items.endpoints'),
+        subtitle: this.t('subtitles.endpoints'),
       },
     };
 
@@ -223,21 +228,21 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       tabs.push({
-        displayName: 'Endpoints',
+        displayName: this.t('items.endpoints'),
         routerLink: 'v4/endpoints',
       });
     }
 
     if ((api.type === 'PROXY' && !hasTcpListeners) || api.type === 'MESSAGE' || api.type === 'LLM_PROXY')
       tabs.push({
-        displayName: 'Failover',
+        displayName: this.t('items.failover'),
         routerLink: 'v4/failover',
       });
 
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       if (api.type === 'PROXY' && !hasTcpListeners) {
         tabs.push({
-          displayName: 'Health Check Dashboard',
+          displayName: this.t('items.healthCheckDashboard'),
           routerLink: 'v4/health-check-dashboard',
         });
       }
@@ -255,26 +260,26 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-plan-r'])) {
       tabs.push({
-        displayName: 'Plans',
+        displayName: this.t('items.plans'),
         routerLink: 'plans',
       });
     }
 
     if (this.permissionService.hasAnyMatching(['api-subscription-r']) && !hasTcpListeners) {
       tabs.push({
-        displayName: 'Subscriptions',
+        displayName: this.t('items.subscriptions'),
         routerLink: 'subscriptions',
       });
     }
 
-    tabs.push({ displayName: 'Broadcasts', routerLink: 'messages' });
+    tabs.push({ displayName: this.t('items.broadcasts'), routerLink: 'messages' });
     return {
-      displayName: 'Consumers',
+      displayName: this.t('items.consumers'),
       icon: 'cloud-consumers',
       routerLink: '',
       header: {
-        title: 'Consumers',
-        subtitle: 'Manage how your API is consumed',
+        title: this.t('items.consumers'),
+        subtitle: this.t('subtitles.consumers'),
       },
       tabs: tabs,
     };
@@ -286,12 +291,12 @@ export class ApiV4MenuService implements ApiMenuService {
     if (this.permissionService.hasAnyMatching(['api-documentation-r'])) {
       tabs.push(
         {
-          displayName: 'Main Pages',
+          displayName: this.t('items.mainPages'),
           routerLink: 'v4/documentation/main-pages',
           routerLinkActiveOptions: { exact: false },
         },
         {
-          displayName: 'Documentation Pages',
+          displayName: this.t('items.documentationPages'),
           routerLink: 'v4/documentation/pages',
           routerLinkActiveOptions: { exact: false },
         },
@@ -300,21 +305,21 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-metadata-r'])) {
       tabs.push({
-        displayName: 'Metadata',
+        displayName: this.t('items.metadata'),
         routerLink: 'v4/documentation/metadata',
         routerLinkActiveOptions: { exact: true },
       });
     }
 
     return {
-      displayName: 'Documentation',
+      displayName: this.t('items.documentation'),
       icon: 'book',
       routerLink: '',
       header: {
-        title: 'Documentation',
-        subtitle: 'Documentation pages appear in the Developer Portal and inform API consumers how to use your API',
+        title: this.t('items.documentation'),
+        subtitle: this.t('subtitles.documentation'),
         action: {
-          text: 'Open API in Developer Portal',
+          text: this.t('items.openInPortal'),
           targetUrl: this.apiDocumentationV2Service.getApiPortalUrl(api.id),
           disabled: api.lifecycleState !== 'PUBLISHED',
           disabledTooltip: this.apiDocumentationV2Service.getApiNotInPortalTooltip(api.lifecycleState),
@@ -329,32 +334,32 @@ export class ApiV4MenuService implements ApiMenuService {
 
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       tabs.push({
-        displayName: 'Configuration',
+        displayName: this.t('items.configuration'),
         routerLink: 'deployments',
       });
     }
 
     if (this.permissionService.hasAnyMatching(['api-event-r'])) {
       tabs.push({
-        displayName: 'Deployment History',
+        displayName: this.t('items.deploymentHistory'),
         routerLink: 'v4/history',
       });
     }
 
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       tabs.push({
-        displayName: 'Reporter Settings',
+        displayName: this.t('items.reporterSettings'),
         routerLink: 'reporter-settings',
       });
     }
 
     return {
-      displayName: 'Deployment',
+      displayName: this.t('items.deployment'),
       icon: 'rocket',
       routerLink: '',
       header: {
-        title: 'Deployment',
-        subtitle: 'Manage sharding tags, reporter settings and track every change of your API',
+        title: this.t('items.deployment'),
+        subtitle: this.t('subtitles.deployment'),
       },
       tabs: tabs,
     };
@@ -362,11 +367,11 @@ export class ApiV4MenuService implements ApiMenuService {
 
   private addPoliciesMenuEntry(hasTcpListeners: boolean): MenuItem {
     return {
-      displayName: 'Policies',
+      displayName: this.t('items.policies'),
       icon: 'shield-star',
       header: {
-        title: 'Policies',
-        subtitle: 'Policies let you customize and enhance your API behavior and functionality',
+        title: this.t('items.policies'),
+        subtitle: this.t('subtitles.policies'),
       },
       routerLink: hasTcpListeners ? 'DISABLED' : 'v4/policy-studio',
       tabs: undefined,
@@ -376,7 +381,7 @@ export class ApiV4MenuService implements ApiMenuService {
   private addApiTrafficMenuEntry(hasTcpListeners: boolean, apiType: ApiType): MenuItem | null {
     if (this.permissionService.hasAnyMatching(['api-analytics-r'])) {
       const baseMenuItem = {
-        displayName: 'API Traffic',
+        displayName: this.t('items.apiTraffic'),
         icon: 'bar-chart-2',
         routerLink: hasTcpListeners ? 'DISABLED' : 'v4/analytics',
       };
@@ -386,7 +391,7 @@ export class ApiV4MenuService implements ApiMenuService {
         return {
           ...baseMenuItem,
           header: {
-            title: 'API Traffic',
+            title: this.t('items.apiTraffic'),
           },
         };
       }
@@ -397,7 +402,7 @@ export class ApiV4MenuService implements ApiMenuService {
   private addLogs(hasTcpListeners: boolean): MenuItem | null {
     if (this.permissionService.hasAnyMatching(['api-log-r', 'api-log-u'])) {
       return {
-        displayName: 'Logs',
+        displayName: this.t('items.logs'),
         icon: 'align-justify',
         routerLink: hasTcpListeners ? 'DISABLED' : 'v4/runtime-logs',
       };
@@ -408,7 +413,7 @@ export class ApiV4MenuService implements ApiMenuService {
   private addNativeLogs(): MenuItem | null {
     if (this.permissionService.hasAnyMatching(['api-native_log-r'])) {
       return {
-        displayName: 'Logs',
+        displayName: this.t('items.logs'),
         icon: 'align-justify',
         routerLink: 'v4/runtime-logs-native',
       };
@@ -419,25 +424,25 @@ export class ApiV4MenuService implements ApiMenuService {
   private addApiRuntimeAlertsMenuEntry(): MenuItem {
     const tabs = [
       {
-        displayName: 'Alerts',
+        displayName: this.t('items.alerts'),
         routerLink: 'DISABLED',
       },
       {
-        displayName: 'Notifications',
+        displayName: this.t('items.notifications'),
         routerLink: 'DISABLED',
       },
       {
-        displayName: 'History',
+        displayName: this.t('items.history'),
         routerLink: 'DISABLED',
       },
     ];
     return {
-      displayName: 'Runtime Alerts',
+      displayName: this.t('items.runtimeAlerts'),
       icon: 'alarm',
       routerLink: '',
       header: {
-        title: 'Runtime Alerts',
-        subtitle: 'Gain actionable insights into API performance with real-time metrics and connection logs',
+        title: this.t('items.runtimeAlerts'),
+        subtitle: this.t('subtitles.runtimeAlerts'),
       },
       tabs,
     };
@@ -445,12 +450,11 @@ export class ApiV4MenuService implements ApiMenuService {
 
   private addDebugMenuEntry(): MenuItem {
     return {
-      displayName: 'Debug',
+      displayName: this.t('items.debug'),
       icon: 'verified',
       header: {
-        title: 'Debug',
-        subtitle:
-          'Debug an API by identifying, diagnosing, and fixing issues in its functionality, performance, or integration through inspecting requests, responses, logs and error messages.',
+        title: this.t('items.debug'),
+        subtitle: this.t('subtitles.debug'),
       },
       routerLink: 'v4/debug',
       tabs: undefined,
@@ -468,7 +472,7 @@ export class ApiV4MenuService implements ApiMenuService {
     }
 
     return {
-      displayName: 'Webhooks',
+      displayName: this.t('items.webhooks'),
       icon: 'webhook',
       routerLink: 'v4/webhook-logs',
     };

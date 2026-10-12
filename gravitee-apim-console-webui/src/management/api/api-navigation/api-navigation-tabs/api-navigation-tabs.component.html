@@ -30,7 +30,7 @@
     <a
       *ngIf="menuItem.routerLink === 'DISABLED'"
       mat-tab-link
-      matTooltip="Coming soon for V4 APIs"
+      [matTooltip]="'apis.navigation.comingSoonV4' | translate"
       matTooltipPosition="below"
       class="api-navigation-tabs__link"
       >{{ menuItem.displayName }} <mat-icon class="api-navigation-tabs__link__icon" svgIcon="gio:info"></mat-icon

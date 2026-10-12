@@ -15,12 +15,12 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title class="title">Duplicate API</span>
+<span mat-dialog-title class="title">{{ 'apis.general.duplicate.title' | translate }}</span>
 
 <mat-dialog-content *ngIf="duplicateApiForm" class="content" [formGroup]="duplicateApiForm">
   <div class="content__row">
     <mat-form-field *ngIf="duplicateApiForm.contains('contextPath')" class="content__row__entrypoint-field">
-      <mat-label>Context path</mat-label>
+      <mat-label>{{ 'apis.general.duplicate.contextPath' | translate }}</mat-label>
       <input
         #apiName
         matInput
@@ -29,16 +29,18 @@
         [placeholder]="contextPathPlaceholder"
         required
       />
-      <mat-error *ngIf="duplicateApiForm.controls.contextPath.hasError('required')">Context path is required.</mat-error>
+      <mat-error *ngIf="duplicateApiForm.controls.contextPath.hasError('required')">{{
+        'apis.creation.v2.fields.contextPathRequired' | translate
+      }}</mat-error>
       <mat-error *ngIf="duplicateApiForm.controls.contextPath.hasError('contextPath')">{{
         duplicateApiForm.controls.contextPath.getError('contextPath')
       }}</mat-error>
     </mat-form-field>
 
     <mat-form-field *ngIf="duplicateApiForm.contains('host')" class="content__row__entrypoint-field">
-      <mat-label>Host</mat-label>
+      <mat-label>{{ 'apis.general.duplicate.host' | translate }}</mat-label>
       <input #apiName matInput formControlName="host" data-testid="api_info_duplicate_host" [placeholder]="hostPlaceholder" required />
-      <mat-error *ngIf="duplicateApiForm.controls.host.hasError('required')">Host is required.</mat-error>
+      <mat-error *ngIf="duplicateApiForm.controls.host.hasError('required')">{{ 'apis.general.duplicate.hostRequired' | translate }}</mat-error>
       <mat-error *ngIf="duplicateApiForm.controls.host.hasError('max')">{{ duplicateApiForm.controls.host.getError('max') }}</mat-error>
       <mat-error *ngIf="duplicateApiForm.controls.host.hasError('format')">{{
         duplicateApiForm.controls.host.getError('format')
@@ -49,7 +51,7 @@
     </mat-form-field>
 
     <mat-form-field class="content__row__version-field">
-      <mat-label>Version</mat-label>
+      <mat-label>{{ 'apis.general.form.version' | translate }}</mat-label>
       <input
         #apiName
         matInput
@@ -59,22 +61,24 @@
         [placeholder]="versionPlaceholder"
         required
       />
-      <mat-error *ngIf="duplicateApiForm.controls.version.hasError('required')">Version is required.</mat-error>
+      <mat-error *ngIf="duplicateApiForm.controls.version.hasError('required')">{{
+        'apis.general.form.versionRequired' | translate
+      }}</mat-error>
       <mat-error *ngIf="duplicateApiForm.controls.version.hasError('version')">{{
         duplicateApiForm.controls.version.getError('version')
       }}</mat-error>
     </mat-form-field>
   </div>
-  <h5>Include additional data</h5>
+  <h5>{{ 'apis.general.include.title' | translate }}</h5>
   <div class="content__options" formGroupName="options">
     <mat-checkbox class="content__options__option" *ngFor="let option of optionsCheckbox" [formControlName]="option.id">
-      {{ option.label }}
+      {{ ('apis.general.include.' + option.id.toLowerCase()) | translate }}
     </mat-checkbox>
   </div>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions">
-  <button mat-flat-button [mat-dialog-close]="false">Cancel</button>
+  <button mat-flat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
   <button
     color="primary"
     mat-raised-button
@@ -82,6 +86,6 @@
     data-testid="api_info_duplicate_api"
     (click)="onDuplicate()"
   >
-    Duplicate
+    {{ 'apis.general.actions.duplicate' | translate }}
   </button>
 </mat-dialog-actions>

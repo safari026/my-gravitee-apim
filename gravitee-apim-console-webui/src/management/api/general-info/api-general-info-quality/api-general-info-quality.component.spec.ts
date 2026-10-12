@@ -23,6 +23,7 @@ import { SimpleChange } from '@angular/core';
 import { ApiGeneralInfoQualityComponent } from './api-general-info-quality.component';
 
 import { ApiGeneralInfoModule } from '../api-general-info.module';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../shared/testing';
 import { ApiQualityMetrics } from '../../../../entities/api';
 import { QualityRule } from '../../../../entities/qualityRule';
@@ -53,6 +54,7 @@ describe('ApiGeneralInfoQualityComponent', () => {
   });
 
   afterEach(() => {
+    TestBed.inject(LanguageService).setLanguage('en');
     httpTestingController.verify();
   });
 
@@ -65,6 +67,21 @@ describe('ApiGeneralInfoQualityComponent', () => {
 
     expect(qualityMetrics).toHaveLength(2);
     expect(Array.from(qualityMetrics).map(item => item.textContent)).toEqual(['Put your own logo', 'Custom rule']);
+
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(Array.from(fixture.nativeElement.querySelectorAll('.api-quality__content__list__item')).map(item => item.textContent)).toEqual([
+      'Загрузите свой логотип',
+      'Custom rule',
+    ]);
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(Array.from(fixture.nativeElement.querySelectorAll('.api-quality__content__list__item')).map(item => item.textContent)).toEqual([
+      'Put your own logo',
+      'Custom rule',
+    ]);
   });
 
   function expectQualityRulesGetRequest(qualityRules: QualityRule[] = []) {

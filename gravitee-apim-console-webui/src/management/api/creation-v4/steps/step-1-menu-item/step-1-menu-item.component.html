@@ -17,11 +17,11 @@
 -->
 <div *ngIf="menuItem" class="step-1-menu-item">
   <div class="step-1-menu-item__line">
-    <div>API name</div>
+    <div>{{ 'apis.creation.v4.step1.menuName' | translate }}</div>
     <div class="mat-subtitle-2">{{ menuItem.name }}</div>
   </div>
   <div class="step-1-menu-item__line">
-    <div>API version</div>
+    <div>{{ 'apis.creation.v4.step1.menuVersion' | translate }}</div>
     <div class="mat-subtitle-2">{{ menuItem.version }}</div>
   </div>
 </div>
