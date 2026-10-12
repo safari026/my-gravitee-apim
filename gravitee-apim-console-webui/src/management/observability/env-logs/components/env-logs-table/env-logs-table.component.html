@@ -22,7 +22,7 @@
   [isLoading]="isLoading()"
   storageKey="env-logs"
   tableId="envLogsTable"
-  ariaLabel="Environment logs table"
+  [ariaLabel]="'observability.logs.tableAria' | translate"
   (paginationUpdated)="paginationUpdated.emit($event)"
 >
   <ng-template #timestampTemplate let-log>
@@ -95,7 +95,11 @@
       @if (log.warnings?.length > 0) {
         <span
           class="gio-badge-warning"
-          [matTooltip]="log.warnings.length === 1 ? log.warnings[0].key : log.warnings.length + ' warning(s)'"
+          [matTooltip]="
+            log.warnings.length === 1
+              ? log.warnings[0].key
+              : ('observability.logs.warningsCount' | translate: { count: log.warnings.length })
+          "
         >
           <mat-icon svgIcon="gio:alert-circle"></mat-icon>
         </span>

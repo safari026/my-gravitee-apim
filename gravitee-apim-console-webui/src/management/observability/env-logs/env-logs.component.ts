@@ -53,6 +53,8 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioTableWrapperPagination } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { Pagination } from '../../../entities/management-api-v2';
 import { GioHeaderComponent } from '../../../shared/components/gio-header/gio-header.component';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 const EMPTY_FIELD = '—';
 const DEFAULT_PER_PAGE = 10;
@@ -75,6 +77,7 @@ const API_TYPE_LABELS: Record<LogApiType, string> = {
     MatCardModule,
     GioBannerModule,
     GioHeaderComponent,
+    TranslatePipe,
   ],
   providers: [
     DatePipe,
@@ -90,6 +93,7 @@ const API_TYPE_LABELS: Record<LogApiType, string> = {
 export class EnvLogsComponent {
   private readonly environmentLogsService = inject(EnvironmentLogsService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly datePipe = inject(DatePipe);
   private readonly dialog = inject(MatDialog);
   // Required so dialogs can resolve DashboardFiltersStore from this component's injector scope
@@ -99,7 +103,21 @@ export class EnvLogsComponent {
   private dialogOpen = false;
 
   protected readonly filtersStore = inject(DashboardFiltersStore);
-  protected readonly timeFrames = [...timeFrames, ...customTimeFrames];
+  protected readonly timeFrames = computed(() => {
+    const labels: Record<string, string> = {
+      '1m': 'dashboard.timeframe.lastMinute',
+      '5m': 'dashboard.timeframe.last5Minutes',
+      '1h': 'dashboard.timeframe.lastHour',
+      '1d': 'dashboard.timeframe.lastDay',
+      '1w': 'dashboard.timeframe.lastWeek',
+      '1M': 'dashboard.timeframe.lastMonth',
+      custom: 'dashboard.timeframe.custom',
+    };
+    return [...timeFrames, ...customTimeFrames].map(timeFrame => ({
+      ...timeFrame,
+      label: this.languageService.translate(labels[timeFrame.id] ?? timeFrame.label),
+    }));
+  });
 
   protected pagination = signal<Pagination>({ page: 1, perPage: DEFAULT_PER_PAGE, totalCount: 0 });
   protected loading = signal(true);
@@ -217,8 +235,8 @@ export class EnvLogsComponent {
         this.loading.set(false);
         const message =
           err instanceof HttpErrorResponse
-            ? `Request failed: ${err.status} ${err.statusText}`
-            : 'An unexpected error occurred while loading logs.';
+            ? this.languageService.translate('observability.logs.requestFailed', { status: err.status, statusText: err.statusText })
+            : this.languageService.translate('observability.logs.loadError');
         this.error.set(message);
         this.snackBarService.error(message);
         return EMPTY;

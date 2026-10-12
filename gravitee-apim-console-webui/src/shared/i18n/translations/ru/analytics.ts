@@ -7,6 +7,10 @@ export const ruAnalytics = {
     overview: 'Обзор платформы',
     selectDashboard: 'Выберите дашборд',
     dashboardAria: 'Выбор дашборда',
+    displayModeAria: 'Режим отображения',
+    all: 'Все',
+    onlyBackendHits: 'Только обращения к backend endpoint',
+    withoutBackendHits: 'Без обращений к backend endpoint',
   },
   events: {
     title: 'События API',

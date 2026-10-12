@@ -21,17 +21,27 @@ import AnalyticsService from '../../../services/analytics.service';
 const PlatformLogComponentAjs: ng.IComponentOptions = {
   bindings: {
     activatedRoute: '<',
+    language: '<',
   },
   controller: [
     'ngRouter',
     'NotificationService',
     'Constants',
     'AnalyticsService',
-    function (ngRouter: Router, NotificationService: NotificationService, Constants: any, AnalyticsService: AnalyticsService) {
+    'ngLanguageService',
+    function (
+      ngRouter: Router,
+      NotificationService: NotificationService,
+      Constants: any,
+      AnalyticsService: AnalyticsService,
+      ngLanguageService: { translate: (key: string, params?: Record<string, string | number>) => string },
+    ) {
       this.Constants = Constants;
       this.NotificationService = NotificationService;
       this.ngRouter = ngRouter;
       this.AnalyticsService = AnalyticsService;
+
+      this.translate = (key: string, params?: Record<string, string | number>): string => ngLanguageService.translate(key, params);
 
       this.$onInit = () => {
         this.AnalyticsService.getLog(this.activatedRoute.snapshot.params.logId, this.activatedRoute.snapshot.queryParams.timestamp).then(
@@ -92,7 +102,7 @@ const PlatformLogComponentAjs: ng.IComponentOptions = {
       };
 
       this.onCopyBodySuccess = function (evt) {
-        this.NotificationService.show('Body has been copied to clipboard');
+        this.NotificationService.show(this.translate('analytics.logs.details.bodyCopied'));
         evt.clearSelection();
       };
     },

@@ -30,6 +30,7 @@ export const ruDashboard = {
   timeframe: {
     label: 'Период',
     lastMinute: 'Последняя минута',
+    last5Minutes: 'Последние 5 минут',
     lastHour: 'Последний час',
     lastDay: 'Последний день',
     lastWeek: 'Последняя неделя',

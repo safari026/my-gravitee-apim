@@ -30,6 +30,7 @@ export const enDashboard = {
   timeframe: {
     label: 'Timeframe',
     lastMinute: 'Last minute',
+    last5Minutes: 'Last 5 minutes',
     lastHour: 'Last hour',
     lastDay: 'Last day',
     lastWeek: 'Last week',

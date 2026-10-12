@@ -30,7 +30,7 @@ import {
   timeFrames,
 } from '@gravitee/gravitee-dashboard';
 
-import { Component, DestroyRef, inject, Injector, input, output } from '@angular/core';
+import { Component, computed, DestroyRef, inject, Injector, input, output } from '@angular/core';
 import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
 import { ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
@@ -44,6 +44,7 @@ import {
   ObservabilityFiltersApiService,
 } from '../../../data-access/observability-filters-api.service';
 import { Constants } from '../../../../../entities/Constants';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'dashboard-viewer',
@@ -75,8 +76,23 @@ export class DashboardViewerComponent {
   private readonly dialog = inject(MatDialog);
   private readonly injector = inject(Injector);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
-  protected readonly timeFrames = [...timeFrames, ...customTimeFrames];
+  protected readonly timeFrames = computed(() => {
+    const labels: Record<string, string> = {
+      '1m': 'dashboard.timeframe.lastMinute',
+      '5m': 'dashboard.timeframe.last5Minutes',
+      '1h': 'dashboard.timeframe.lastHour',
+      '1d': 'dashboard.timeframe.lastDay',
+      '1w': 'dashboard.timeframe.lastWeek',
+      '1M': 'dashboard.timeframe.lastMonth',
+      custom: 'dashboard.timeframe.custom',
+    };
+    return [...timeFrames, ...customTimeFrames].map(timeFrame => ({
+      ...timeFrame,
+      label: this.languageService.translate(labels[timeFrame.id] ?? timeFrame.label),
+    }));
+  });
 
   openAddFilter(): void {
     const { from, to } = this.filtersStore.timeRangeEpoch();

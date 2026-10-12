@@ -52,6 +52,7 @@ import { DashboardService } from '../../data-access/dashboard.service';
 import { PagedResult } from '../../../../entities/management-api-v2';
 import { GioPermissionModule } from '../../../../shared/components/gio-permission/gio-permission.module';
 import { GioHeaderComponent } from '../../../../shared/components/gio-header/gio-header.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'dashboards-list',
@@ -82,6 +83,7 @@ import { GioHeaderComponent } from '../../../../shared/components/gio-header/gio
     RouterLink,
     GioPermissionModule,
     GioHeaderComponent,
+    TranslatePipe,
   ],
   templateUrl: './dashboards-list.component.html',
   styleUrls: ['./dashboards-list.component.scss'],

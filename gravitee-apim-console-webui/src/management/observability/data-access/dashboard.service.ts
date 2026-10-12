@@ -27,6 +27,7 @@ import { DashboardTemplate, HTTP_PROXY_TEMPLATE } from './templates';
 import { Constants } from '../../../entities/Constants';
 import { PagedResult } from '../../../entities/management-api-v2';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Injectable({
   providedIn: 'root',
@@ -37,9 +38,11 @@ export class DashboardService {
     @Inject(Constants) private readonly constants: Constants,
     private readonly dialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   readonly overviewDashboard = computed(() => {
+    this.languageService.currentLanguage();
     return this.createInitialOverview();
   });
 
@@ -77,9 +80,9 @@ export class DashboardService {
     return this.dialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete Dashboard',
-          content: `Are you sure you want to delete the dashboard "<strong>${this.escapeHtml(dashboard.name)}</strong>"?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('observability.dashboards.deleteTitle'),
+          content: this.languageService.translate('observability.dashboards.deleteContent', { name: this.escapeHtml(dashboard.name) }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteDashboardConfirmDialog',
@@ -88,9 +91,13 @@ export class DashboardService {
       .pipe(
         filter(confirmed => confirmed === true),
         switchMap(() => this.delete(dashboard.id)),
-        tap(() => this.snackBarService.success(`Dashboard "${dashboard.name}" deleted successfully.`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('observability.dashboards.deleteSuccess', { name: dashboard.name }),
+          ),
+        ),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'An error occurred while deleting the dashboard.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('observability.dashboards.deleteError'));
           return EMPTY;
         }),
       );
@@ -137,12 +144,16 @@ export class DashboardService {
     return {
       ...template.initialConfig,
       id: 'default-overview',
-      name: template.name,
+      name: this.languageService.translate(`observability.templates.${template.id}.name`),
       createdBy: 'System',
       createdAt: new Date().toDateString(),
       lastModified: new Date().toDateString(),
       labels: template.initialConfig.labels ?? {},
-      widgets: template.initialConfig.widgets ?? [],
+      widgets: (template.initialConfig.widgets ?? []).map(widget => ({
+        ...widget,
+        title: this.languageService.translate(`observability.widgets.${widget.id}.title`),
+        description: this.languageService.translate(`observability.widgets.${widget.id}.description`),
+      })),
     } satisfies Dashboard;
   }
 }

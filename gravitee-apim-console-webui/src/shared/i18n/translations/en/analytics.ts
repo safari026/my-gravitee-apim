@@ -7,6 +7,10 @@ export const enAnalytics = {
     overview: 'Platform Overview',
     selectDashboard: 'Select a dashboard',
     dashboardAria: 'Dashboard selection',
+    displayModeAria: 'Display mode',
+    all: 'All',
+    onlyBackendHits: 'Only hits to the backend endpoint',
+    withoutBackendHits: 'Without hits to the backend endpoint',
   },
   events: {
     title: 'API Events',

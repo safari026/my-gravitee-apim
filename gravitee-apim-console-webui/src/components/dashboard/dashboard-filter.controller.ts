@@ -18,6 +18,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { isEmpty, keys, map, remove, uniqBy } from 'lodash';
 
 import AnalyticsService from '../../services/analytics.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 class DashboardFilterController implements IOnInit, IOnDestroy {
   private readonly fields: any;
@@ -32,6 +33,7 @@ class DashboardFilterController implements IOnInit, IOnDestroy {
     private readonly ngRouter: Router,
     private readonly AnalyticsService: AnalyticsService,
     private readonly $timeout: ng.ITimeoutService,
+    private readonly ngLanguageService: LanguageService,
   ) {
     this.fields = {};
     this.filters = [];
@@ -185,7 +187,11 @@ class DashboardFilterController implements IOnInit, IOnDestroy {
     });
     this.createAndSendQuery(lastFilter.silent);
   }
+
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
 }
-DashboardFilterController.$inject = ['$rootScope', 'ngRouter', 'AnalyticsService', '$timeout'];
+DashboardFilterController.$inject = ['$rootScope', 'ngRouter', 'AnalyticsService', '$timeout', 'ngLanguageService'];
 
 export default DashboardFilterController;

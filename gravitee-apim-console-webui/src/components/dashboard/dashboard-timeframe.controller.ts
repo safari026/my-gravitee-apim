@@ -18,6 +18,8 @@ import moment, { duration, Moment, unix } from 'moment';
 import { ActivatedRoute, Router } from '@angular/router';
 import { find, findLast, forEach, last } from 'lodash';
 
+import { LanguageService } from '../../shared/i18n/language.service';
+
 // eslint:disable-next-line:interface-name
 interface Timeframe {
   id: string;
@@ -53,6 +55,7 @@ class DashboardTimeframeController {
     private ngRouter: Router,
     private $timeout: ng.ITimeoutService,
     private $interval: ng.IIntervalService,
+    private ngLanguageService: LanguageService,
   ) {
     this.displayModes = [
       {
@@ -375,7 +378,7 @@ class DashboardTimeframeController {
     if (this.displayMode.field) {
       this.$scope.$emit('filterItemChange', {
         field: this.displayMode.field,
-        fieldLabel: 'Display mode',
+        fieldLabel: this.translate('analytics.dashboard.displayModeAria'),
         key: this.displayMode.key,
         name: this.displayMode.label,
         mode: 'add',
@@ -387,7 +390,36 @@ class DashboardTimeframeController {
       });
     }
   }
+
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
+
+  translateDisplayMode(displayMode: { label: string }): string {
+    const keys: Record<string, string> = {
+      All: 'analytics.dashboard.all',
+      'Only hits to the backend endpoint': 'analytics.dashboard.onlyBackendHits',
+      'Without hits to the backend endpoint': 'analytics.dashboard.withoutBackendHits',
+    };
+    return this.translate(keys[displayMode.label] ?? displayMode.label);
+  }
+
+  translateInterval(interval: { interval: number; label: string }): string {
+    const keys: Record<number, string> = {
+      [-1]: 'applications.analytics.autoRefreshDisabled',
+      5000: 'applications.analytics.each5s',
+      10000: 'applications.analytics.each10s',
+      30000: 'applications.analytics.each30s',
+    };
+    return this.translate(keys[interval.interval] ?? interval.label);
+  }
+
+  translateTimeframeTitle(timeframe: { id: string; title: string }): string {
+    const key = `applications.analytics.timeframes.${timeframe.id.trim()}`;
+    const translated = this.translate(key);
+    return translated === key ? timeframe.title : translated;
+  }
 }
-DashboardTimeframeController.$inject = ['$scope', '$rootScope', 'ngRouter', '$timeout', '$interval'];
+DashboardTimeframeController.$inject = ['$scope', '$rootScope', 'ngRouter', '$timeout', '$interval', 'ngLanguageService'];
 
 export default DashboardTimeframeController;

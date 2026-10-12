@@ -33,7 +33,7 @@
       <div class="observability-dashboard-viewer__time-row">
         <gd-timeframe-selector
           [formControl]="filtersStore.periodControl"
-          [timeFrames]="timeFrames"
+          [timeFrames]="timeFrames()"
           [customPeriod]="'custom'"
           (apply)="filtersStore.applyCustomTimeframe()"
           (refresh)="filtersStore.refresh()"
