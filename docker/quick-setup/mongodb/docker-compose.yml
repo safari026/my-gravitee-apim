@@ -90,6 +90,7 @@ services:
         volumes:
             - apim-gateway-logs:/opt/graviteeio-gateway/logs
             - ./.license:/opt/graviteeio-gateway/license
+            - ./.license/gravitee-node-license-8.3.1-domapi.jar:/opt/graviteeio-gateway/lib/gravitee-node-license-9.9.0.jar:ro
         environment:
             - gravitee_management_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
             - gravitee_ratelimit_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
@@ -116,6 +117,7 @@ services:
         volumes:
             - apim-management-api-logs:/opt/graviteeio-management-api/logs
             - ./.license:/opt/graviteeio-management-api/license
+            - ./.license/gravitee-node-license-8.3.1-domapi.jar:/opt/graviteeio-management-api/lib/gravitee-node-license-9.9.0.jar:ro
         environment:
             - gravitee_management_mongodb_uri=mongodb://mongodb:27017/gravitee?serverSelectionTimeoutMS=5000&connectTimeoutMS=5000&socketTimeoutMS=5000
             - gravitee_analytics_elasticsearch_endpoints_0=http://elasticsearch:9200
