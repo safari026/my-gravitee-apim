@@ -21,9 +21,9 @@
     <mat-card-content>
       <div class="card__header">
         <div class="card__header__title">
-          <h3 data-testid="api_product_members_title">Members</h3>
+          <h3 data-testid="api_product_members_title">{{ 'apiProducts.members.title' | translate }}</h3>
           <p data-testid="api_product_members_description">
-            Manage who can interact with your API Product through the API Management console
+            {{ 'apiProducts.members.subtitle' | translate }}
           </p>
         </div>
         <div class="card__header__actions">
@@ -36,7 +36,7 @@
               (click)="transferOwnership()"
               data-testid="api_product_members_transfer_ownership_button"
             >
-              Transfer ownership
+              {{ 'apiProducts.members.transferOwnership' | translate }}
             </button>
           }
           <button
@@ -44,12 +44,12 @@
             class="card__header__actions__button"
             mat-raised-button
             type="button"
-            aria-label="Manage groups"
+            [attr.aria-label]="'apiProducts.members.manageGroups' | translate"
             data-testid="api_product_members_manage_groups_button"
             [disabled]="!state.isLoading && state.groups.length === 0"
             (click)="openManageGroups()"
           >
-            Manage groups
+            {{ 'apiProducts.members.manageGroups' | translate }}
           </button>
           <button
             *gioPermission="{ anyOf: ['api_product-member-c'] }"
@@ -61,18 +61,18 @@
             [disabled]="isReadOnly"
             (click)="openAddMemberDialog()"
           >
-            <mat-icon svgIcon="gio:plus"></mat-icon> Add members
+            <mat-icon svgIcon="gio:plus"></mat-icon> {{ 'apiProducts.members.add' | translate }}
           </button>
         </div>
       </div>
 
       @if (state.apiProduct !== null) {
         <gio-form-slide-toggle class="card__enable-notification-toggle">
-          Notify members when they are added to the API Product
+          {{ 'apiProducts.members.notify' | translate }}
           <mat-slide-toggle
             gioFormSlideToggle
             formControlName="isNotificationsEnabled"
-            aria-label="Enable notifications when members are added to this API Product"
+            [attr.aria-label]="'apiProducts.members.notifyAria' | translate"
             data-testid="api_product_members_notify_toggle"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
@@ -85,7 +85,7 @@
       (filtersChange)="onFiltersChanged($event)"
       [paginationPageSizeOptions]="[10, 20, 50, 100]"
     >
-      <table mat-table [dataSource]="allRows()" class="card__table" formGroupName="members" aria-label="Direct members table">
+      <table mat-table [dataSource]="allRows()" class="card__table" formGroupName="members" [attr.aria-label]="'apiProducts.members.tableAria' | translate">
         <ng-container matColumnDef="picture">
           <th mat-header-cell *matHeaderCellDef></th>
           <td mat-cell *matCellDef="let member">
@@ -94,14 +94,14 @@
         </ng-container>
 
         <ng-container matColumnDef="displayName">
-          <th mat-header-cell *matHeaderCellDef>Name</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'apiProducts.members.name' | translate }}</th>
           <td mat-cell *matCellDef="let member" [class.primary-owner-name]="member.isPrimaryOwner">
             {{ member.displayName }}
           </td>
         </ng-container>
 
         <ng-container matColumnDef="role">
-          <th mat-header-cell *matHeaderCellDef>Role</th>
+          <th mat-header-cell *matHeaderCellDef>{{ 'apiProducts.members.role' | translate }}</th>
           <td mat-cell *matCellDef="let member">
             <mat-form-field>
               <mat-select [formControlName]="member.id">
@@ -112,7 +112,7 @@
                 }
               </mat-select>
               @if (roleFieldShowsRequiredError()[member.id]) {
-                <mat-error>Role is required.</mat-error>
+                <mat-error>{{ 'apiProducts.members.roleRequired' | translate }}</mat-error>
               }
             </mat-form-field>
           </td>
@@ -126,7 +126,7 @@
                 <button
                   type="button"
                   mat-icon-button
-                  aria-label="Remove member"
+                  [attr.aria-label]="'apiProducts.members.removeAria' | translate"
                   data-testid="api_product_members_delete_button"
                   (click)="removeMember(member)"
                 >
@@ -142,7 +142,7 @@
         <tr class="mat-mdc-no-data-row" *matNoDataRow>
           <td [attr.colspan]="displayedColumns.length">
             @if (state.isLoading) {
-              <span data-testid="api_product_members_table_loading">Loading members…</span>
+              <span data-testid="api_product_members_table_loading">{{ 'apiProducts.members.loading' | translate }}</span>
             } @else if (state.loadError) {
               <div class="card__table__no-data-error">
                 <span data-testid="api_product_members_table_error">{{ state.loadError }}</span>
@@ -153,11 +153,11 @@
                   data-testid="api_product_members_retry_button"
                   (click)="retryMembersLoad()"
                 >
-                  Retry
+                  {{ 'apiProducts.members.retry' | translate }}
                 </button>
               </div>
             } @else {
-              <span data-testid="api_product_members_table_empty">No members found</span>
+              <span data-testid="api_product_members_table_empty">{{ 'apiProducts.members.empty' | translate }}</span>
             }
           </td>
         </tr>

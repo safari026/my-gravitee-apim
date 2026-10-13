@@ -19,14 +19,14 @@
   @if (dataSourceGroupVM(); as vm) {
     @if (!vm.canViewGroupMembers) {
       <mat-card-content>
-        <h3 class="title">Group {{ groupData().name }}</h3>
-        <p id="cannot-view-members">You do not have the appropriate permissions to view members of this group.</p>
+        <h3 class="title">{{ 'apiProducts.members.groupTitle' | translate: { name: groupData().name } }}</h3>
+        <p id="cannot-view-members">{{ 'apiProducts.members.cannotView' | translate }}</p>
       </mat-card-content>
     }
     @if (vm.canViewGroupMembers) {
       <mat-card-content>
         <div>
-          <h3>Group {{ groupData().name }} inherited members ({{ vm.memberTotalCount }})</h3>
+          <h3>{{ 'apiProducts.members.inheritedTitle' | translate: { name: groupData().name, count: vm.memberTotalCount } }}</h3>
         </div>
       </mat-card-content>
       <gio-table-wrapper
@@ -40,7 +40,7 @@
           mat-table
           [dataSource]="vm.membersPageResult"
           class="card__table"
-          [attr.aria-label]="'Group ' + groupData().name + ' members table'"
+          [attr.aria-label]="'apiProducts.members.groupTableAria' | translate: { name: groupData().name }"
         >
           <ng-container matColumnDef="picture">
             <th mat-header-cell *matHeaderCellDef></th>
@@ -49,13 +49,13 @@
             </td>
           </ng-container>
           <ng-container matColumnDef="displayName">
-            <th mat-header-cell *matHeaderCellDef>Name</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'apiProducts.members.name' | translate }}</th>
             <td mat-cell *matCellDef="let member" [class.primary-owner-name]="member.role === 'PRIMARY_OWNER'">
               {{ member.displayName }}
             </td>
           </ng-container>
           <ng-container matColumnDef="role">
-            <th mat-header-cell *matHeaderCellDef>Role</th>
+            <th mat-header-cell *matHeaderCellDef>{{ 'apiProducts.members.role' | translate }}</th>
             <td mat-cell *matCellDef="let member">
               {{ member.role }}
             </td>
@@ -68,7 +68,7 @@
               @if (vm.isLoading) {
                 <gio-loader></gio-loader>
               } @else {
-                <span data-testid="api_product_group_members_table_empty">No member</span>
+                <span data-testid="api_product_group_members_table_empty">{{ 'apiProducts.members.noMember' | translate }}</span>
               }
             </td>
           </tr>
