@@ -16,6 +16,7 @@ export const ruCommon = {
   noStatus: 'Без статуса',
   add: 'Добавить',
   create: 'Создать',
+  update: 'Обновить',
   edit: 'Изменить',
   import: 'Импортировать',
   view: 'Просмотр',

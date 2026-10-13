@@ -16,6 +16,7 @@ export const enCommon = {
   noStatus: 'No status',
   add: 'Add',
   create: 'Create',
+  update: 'Update',
   edit: 'Edit',
   import: 'Import',
   view: 'View',

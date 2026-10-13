@@ -55,7 +55,7 @@
             (click)="onSave()"
             [matTooltip]="'settings.sharedPolicyGroups.savePrerequisiteTooltip' | translate"
           >
-            Save
+            {{ 'common.save' | translate }}
           </button>
           <button
             [disabled]="sharedPolicyGroup.lifecycleState === 'DEPLOYED' || enableSaveButton"
@@ -63,7 +63,7 @@
             mat-flat-button
             (click)="onDeploy()"
           >
-            <mat-icon svgIcon="gio:rocket">deploy</mat-icon>Deploy
+            <mat-icon svgIcon="gio:rocket">deploy</mat-icon>{{ 'settings.sharedPolicyGroups.deploy' | translate }}
           </button>
         }
       </div>

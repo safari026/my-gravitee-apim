@@ -20,7 +20,7 @@
   @if (sharedPolicyGroup(); as sharedPolicyGroup) {
     <mat-card-header>
       <mat-card-title
-        >Versions of {{ sharedPolicyGroup.name }}
+        >{{ 'settings.sharedPolicyGroups.versionsOf' | translate: { name: sharedPolicyGroup.name } }}
         <span class="gio-badge-accent" [matTooltip]="'settings.sharedPolicyGroups.apiTypeTooltip' | translate">{{ sharedPolicyGroup.apiType | titlecase }}</span>
         <span class="gio-badge-accent" [matTooltip]="'settings.sharedPolicyGroups.phase' | translate">{{ toReadableFlowPhase(sharedPolicyGroup.phase) }}</span>
         <shared-policy-groups-state-badge [lifecycleState]="sharedPolicyGroup.lifecycleState"></shared-policy-groups-state-badge>
@@ -36,7 +36,11 @@
           <mat-icon svgIcon="gio:git-pull-request">comparePendingSPG</mat-icon>
           {{ comparePendingSPGLabel }}
         </button>
-        <span [matTooltip]="compareSPG ? 'Compare selected versions' : 'Select two versions to compare'">
+        <span
+          [matTooltip]="
+            (compareSPG ? 'settings.sharedPolicyGroups.compareSelectedTooltip' : 'settings.sharedPolicyGroups.compareSelectTwo') | translate
+          "
+        >
           <button mat-stroked-button [disabled]="disableCompareTwoSPG" (click)="openCompareTwoSPGDialog()">
             <mat-icon svgIcon="gio:git-pull-request">compareTwoSPG</mat-icon> {{ compareTwoSPGLabel }}
           </button>

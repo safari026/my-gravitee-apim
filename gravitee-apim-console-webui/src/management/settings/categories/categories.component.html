@@ -18,7 +18,7 @@
 <div class="title">
   <h1>{{ 'settings.navigation.items.categories' | translate }}</h1>
   @if (hasPortalNextEnabled) {
-    <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;Applies to both portals </span>
+    <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;{{ 'settings.portal.appliesToBoth' | translate }} </span>
   }
 </div>
 
@@ -27,7 +27,7 @@
     <div class="categories__actions">
       <gio-form-slide-toggle [formGroup]="portalSettingsForm">
         <gio-form-label>{{ 'settings.categories.enableMode' | translate }}</gio-form-label>
-        Replace the API gallery by a Category gallery in the Developer Portal
+        {{ 'settings.categories.enableModeHint' | translate }}
         <mat-slide-toggle formControlName="enabled" gioFormSlideToggle [attr.aria-label]="'settings.categories.enableModeAria' | translate"></mat-slide-toggle>
       </gio-form-slide-toggle>
       <button
@@ -37,7 +37,7 @@
         color="primary"
         *gioPermission="{ anyOf: ['environment-category-c'] }"
       >
-        <mat-icon>add</mat-icon> Add Category
+        <mat-icon>add</mat-icon> {{ 'settings.categories.add' | translate }}
       </button>
     </div>
 
@@ -128,7 +128,7 @@
               </button>
               <button
                 mat-button
-                aria-label="Button to edit category"
+                [attr.aria-label]="'settings.categories.editAria' | translate"
                 [routerLink]="['.', element.id]"
                 [matTooltip]="'common.edit' | translate"
                 *gioPermission="{ anyOf: ['environment-category-u'] }"
@@ -153,7 +153,7 @@
         <!-- Row shown when there is no data -->
         <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
           <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-            {{ 'There are no categories for this environment.' }}
+            {{ 'settings.categories.empty' | translate }}
           </td>
         </tr>
       </table>

@@ -19,8 +19,7 @@
   <form *ngIf="portalForm" [formGroup]="portalForm">
     <h1>{{ 'settings.navigation.root' | translate }}</h1>
     <gio-banner-info>
-      Depending on your architecture, this configuration may be overridden by a local configuration file. See documentation for more
-      information.
+      {{ 'settings.configOverridden' | translate }}
     </gio-banner-info>
     <mat-card class="portal__form__card">
       <mat-card-content>
@@ -192,10 +191,7 @@
           [matTooltipDisabled]="!isReadonly('console.kafka.portRouting.enabled')"
           class="portal__form__card__form-field"
         >
-          <gio-form-label
-            >Enable Kafka port-based routing configuration on native plans (exposes the bootstrap port and broker range
-            fields)</gio-form-label
-          >
+          <gio-form-label>{{ 'settings.portal.kafkaPortRoutingLabel' | translate }}</gio-form-label>
           <mat-slide-toggle formControlName="enabled" gioFormSlideToggle [attr.aria-label]="'settings.portal.kafkaPortRoutingAria' | translate"></mat-slide-toggle>
         </gio-form-slide-toggle>
       </mat-card-content>
@@ -211,15 +207,13 @@
             [matTooltipDisabled]="!isReadonly('portal.apikey.header')"
             class="portal__form__card__form-field api-key-header"
           >
-            <mat-label
-              >Api-key Header (Used by portal to display the CURL command, change the YAML configuration to impact the gateway)
-            </mat-label>
+            <mat-label>{{ 'settings.portal.apikeyHeader' | translate }}</mat-label>
             <input formControlName="apikeyHeader" matInput type="text" />
           </mat-form-field>
           @if (isPortalNextEnabled) {
             <span class="gio-badge-warning" data-testid="badge-warning">
               <mat-icon svgIcon="gio:chat-lines" data-testid="badge-icon" />
-              &nbsp;Applies to both portals
+              &nbsp;{{ 'settings.portal.appliesToBoth' | translate }}
             </span>
           }
         </div>
@@ -269,16 +263,11 @@
           </gio-form-slide-toggle>
           <gio-form-slide-toggle
             formGroupName="documentationOnlyMode"
-            [matTooltip]="
-              'Toggling documentation-only mode restricts access to applications, dashboards, and API subscriptions in the developer portal.'
-            "
+            [matTooltip]="'settings.portal.documentationOnlyTooltip' | translate"
             [matTooltipDisabled]="!isReadonly('portal.apis.documentationOnlyMode.enabled')"
             class="portal__form__card__form-field"
           >
-            <gio-form-label
-              >Use documentation-only mode to restrict access to applications, dashboards, and API subscriptions in the developer
-              portal</gio-form-label
-            >
+            <gio-form-label>{{ 'settings.portal.documentationOnly' | translate }}</gio-form-label>
             <mat-slide-toggle
               formControlName="enabled"
               gioFormSlideToggle
@@ -475,7 +464,7 @@
                   id="enable-portal-next"
                   formControlName="enabled"
                   gioFormSlideToggle
-                  aria-label="New Portal Enabled"
+                  [attr.aria-label]="'settings.portal.enableNewPortal' | translate"
                 ></mat-slide-toggle>
               </gio-form-slide-toggle>
               <mat-card class="portal-next-settings__group" [attr.aria-label]="'settings.portal.newPortalOptions' | translate">
@@ -486,7 +475,7 @@
                       id="enable-portal-next-mtls"
                       formControlName="enabled"
                       gioFormSlideToggle
-                      aria-label="mTLS Certificate Management Enabled"
+                      [attr.aria-label]="'settings.portal.enableMtls' | translate"
                     ></mat-slide-toggle>
                   </gio-form-slide-toggle>
                   <gio-form-slide-toggle formGroupName="analytics" class="portal__form__card__form-field">
@@ -495,7 +484,7 @@
                       id="enable-portal-next-analytics"
                       formControlName="enabled"
                       gioFormSlideToggle
-                      aria-label="Analytics Enabled"
+                      [attr.aria-label]="'settings.portal.enableAnalytics' | translate"
                     ></mat-slide-toggle>
                   </gio-form-slide-toggle>
                   <div formGroupName="applications">
@@ -506,7 +495,7 @@
                           id="enable-portal-next-member-mapping"
                           formControlName="enabled"
                           gioFormSlideToggle
-                          aria-label="Application Membership Settings Enabled"
+                          [attr.aria-label]="'settings.portal.enableMembership' | translate"
                         ></mat-slide-toggle>
                       </gio-form-slide-toggle>
                       <mat-card
@@ -520,7 +509,7 @@
                               id="enable-portal-next-transfer-ownership"
                               formControlName="enabled"
                               gioFormSlideToggle
-                              aria-label="Transfer of Application Ownership Enabled"
+                              [attr.aria-label]="'settings.portal.enableTransferOwnership' | translate"
                             ></mat-slide-toggle>
                           </gio-form-slide-toggle>
                           <gio-form-slide-toggle formGroupName="invitations" class="portal__form__card__form-field">
@@ -529,7 +518,7 @@
                               id="enable-portal-next-invitations"
                               formControlName="enabled"
                               gioFormSlideToggle
-                              aria-label="Application Membership Invitation Enabled"
+                              [attr.aria-label]="'settings.portal.enableInvitations' | translate"
                             ></mat-slide-toggle>
                           </gio-form-slide-toggle>
                         </mat-card-content>
@@ -546,7 +535,7 @@
                   id="portal-next-search-fuzzy"
                   formControlName="enabled"
                   gioFormSlideToggle
-                  aria-label="Approximate spelling for API search enabled"
+                  [attr.aria-label]="'settings.portal.fuzzySearch' | translate"
                 ></mat-slide-toggle>
               </gio-form-slide-toggle>
             </div>

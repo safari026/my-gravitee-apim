@@ -481,7 +481,7 @@
             <tr mat-row *matRowDef="let row; columns: groupAPIProductColumnDefs"></tr>
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
               <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="groupAPIProductColumnDefs.length">
-                No dependent API Products to display
+                {{ 'settings.groups.noDependentApiProducts' | translate }}
               </td>
             </tr>
           </table>
@@ -522,7 +522,7 @@
             <tr mat-row *matRowDef="let row; columns: groupApplicationsColumnDefs"></tr>
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
               <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="groupApplicationsColumnDefs.length">
-                No dependent applications to display
+                {{ 'settings.groups.noDependentApps' | translate }}
               </td>
             </tr>
           </table>

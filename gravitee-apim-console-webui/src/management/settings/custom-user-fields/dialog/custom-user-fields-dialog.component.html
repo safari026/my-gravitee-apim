@@ -15,7 +15,9 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>{{ customUserFieldsDialogData.action }} user field</span>
+<span mat-dialog-title>{{
+  (isUpdate ? 'settings.userFields.updateTitle' : 'settings.userFields.createTitle') | translate
+}}</span>
 
 <form [formGroup]="form" (ngSubmit)="save()">
   <mat-dialog-content class="form-fields">
@@ -41,7 +43,7 @@
       <mat-error *ngIf="form.get('key').hasError('pattern')">{{ 'settings.userFields.keyPattern' | translate }}</mat-error>
       <mat-error *ngIf="form.get('key').hasError('required')">{{ 'settings.userFields.keyRequired' | translate }}</mat-error>
       <mat-error *ngIf="form.get('key').hasError('maxlength')">{{ 'settings.userFields.keyMax' | translate }}</mat-error>
-      <mat-error *ngIf="form.get('key').hasError('minlength')">Key has to be at least 1 characters long. </mat-error>
+      <mat-error *ngIf="form.get('key').hasError('minlength')">{{ 'settings.userFields.keyMin' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field appearance="outline" class="form-field">
@@ -49,7 +51,7 @@
       <mat-label>{{ 'settings.analytics.editor.label' | translate }}</mat-label>
       <mat-error *ngIf="form.get('label').hasError('required')">{{ 'settings.userFields.labelRequired' | translate }}</mat-error>
       <mat-error *ngIf="form.get('label').hasError('maxlength')">{{ 'settings.userFields.labelMax' | translate }}</mat-error>
-      <mat-error *ngIf="form.get('label').hasError('minlength')">Label has to be at least 1 characters long. </mat-error>
+      <mat-error *ngIf="form.get('label').hasError('minlength')">{{ 'settings.userFields.labelMin' | translate }}</mat-error>
     </mat-form-field>
 
     <gio-form-slide-toggle>
@@ -64,9 +66,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-stroked-button type="button" [attr.aria-label]="'Cancel'" (click)="onClose()" data-testid="dialog-cancel">{{ 'common.cancel' | translate }}</button>
+    <button mat-stroked-button type="button" [attr.aria-label]="'common.cancel' | translate" (click)="onClose()" data-testid="dialog-cancel">{{ 'common.cancel' | translate }}</button>
     <button [disabled]="form.invalid || form.pristine" mat-raised-button type="submit" color="primary" data-testid="dialog-save">
-      Save
+      {{ 'common.save' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

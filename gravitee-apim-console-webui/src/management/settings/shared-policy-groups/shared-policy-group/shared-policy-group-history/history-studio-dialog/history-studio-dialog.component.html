@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>Version {{ sharedPolicyGroup.version }} details</span>
+<span mat-dialog-title>{{ 'settings.sharedPolicyGroups.versionDetails' | translate: { version: sharedPolicyGroup.version } }}</span>
 
 <mat-dialog-content>
   <div class="mat-h4">{{ 'settings.sharedPolicyGroups.readOnlyState' | translate }}</div>
@@ -53,7 +53,7 @@
 <mat-dialog-actions align="end">
   @if (startRestore) {
     <gio-banner-info class="restore-banner">
-      You are about to apply a previous version.
+      {{ 'settings.sharedPolicyGroups.restoreBanner' | translate }}
       <span gioBannerBody
         >{{ 'settings.sharedPolicyGroups.restoreBannerBody' | translate }}</span
       >

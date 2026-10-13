@@ -16,7 +16,9 @@
 
 -->
 
-<h4 mat-dialog-title>{{ isUpdate ? 'Update' : 'New' }} API Information</h4>
+<h4 mat-dialog-title>
+  {{ (isUpdate ? 'settings.apiPortalHeader.dialogUpdate' : 'settings.apiPortalHeader.dialogCreate') | translate }}
+</h4>
 <div mat-dialog-content class="controls">
   <mat-form-field class="control">
     <mat-label>{{ 'settings.analytics.name' | translate }}</mat-label>
@@ -30,6 +32,6 @@
 <div mat-dialog-actions class="action-buttons">
   <button mat-flat-button (click)="onCancelClick()" data-testid="cancel-button">{{ 'common.cancel' | translate }}</button>
   <button mat-raised-button [mat-dialog-close]="data" [disabled]="isDisabled()" color="primary" data-testid="submit-button">
-    {{ isUpdate ? 'Update' : 'Create' }}
+    {{ (isUpdate ? 'common.update' : 'common.create') | translate }}
   </button>
 </div>

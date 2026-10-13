@@ -18,7 +18,7 @@
 @if (category$ | async; as category) {
   <div class="title">
     <gio-go-back-button routerLink=".."></gio-go-back-button>
-    <h1>{{ mode === 'new' ? 'Create category' : 'Category details' }}</h1>
+    <h1>{{ (mode === 'new' ? 'settings.categories.createTitle' : 'settings.categories.detailsTitle') | translate }}</h1>
   </div>
   <form [formGroup]="categoryDetails" class="content">
     <mat-card>
@@ -26,7 +26,7 @@
         <div class="title-information">
           <h2>{{ 'settings.categories.general' | translate }}</h2>
           @if (hasPortalNextEnabled) {
-            <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;Applies to both portals </span>
+            <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;{{ 'settings.portal.appliesToBoth' | translate }} </span>
           }
         </div>
         <div class="general">
@@ -62,7 +62,7 @@
                 <gio-form-file-picker-label>{{ 'settings.categories.picture' | translate }}</gio-form-file-picker-label>
                 <gio-form-file-picker-add-button class="general__right__image-upload__picture__btn">
                   <div class="general__right__image-upload__picture">
-                    <span class="general__right__image-upload__picture__text"> Click here or drag an image <br />{{ 'settings.categories.uploadMax' | translate }}</span>
+                    <span class="general__right__image-upload__picture__text"> {{ 'settings.categories.uploadHint' | translate }} <br />{{ 'settings.categories.uploadMax' | translate }}</span>
                     <gio-avatar
                       class="general__right__image-upload__picture__default-avatar"
                       [size]="108"
@@ -85,7 +85,7 @@
               >
                 <gio-form-file-picker-label>{{ 'settings.categories.background' | translate }}</gio-form-file-picker-label>
                 <gio-form-file-picker-add-button>
-                  <span class="general__right__image-upload__background__text"> Click here or drag an image <br />{{ 'settings.categories.uploadMax' | translate }}</span>
+                  <span class="general__right__image-upload__background__text"> {{ 'settings.categories.uploadHint' | translate }} <br />{{ 'settings.categories.uploadMax' | translate }}</span>
                 </gio-form-file-picker-add-button>
                 <gio-form-file-picker-empty><span>{{ 'settings.categories.noBackground' | translate }}</span></gio-form-file-picker-empty>
               </gio-form-file-picker>
@@ -101,7 +101,7 @@
             <div class="title-information">
               <h2>{{ 'settings.categories.apis' | translate }}</h2>
               @if (hasPortalNextEnabled) {
-                <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;Applies to both portals </span>
+                <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;{{ 'settings.portal.appliesToBoth' | translate }} </span>
               }
             </div>
             <button
@@ -111,7 +111,7 @@
               color="primary"
               *gioPermission="{ anyOf: ['environment-api-u'] }"
             >
-              <mat-icon>add</mat-icon> Add API to Category
+              <mat-icon>add</mat-icon> {{ 'settings.categories.addApiToCategory' | translate }}
             </button>
           </div>
           @if (apis$ | async; as apis) {
@@ -206,7 +206,7 @@
               <!-- Row shown when there is no data -->
               <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
                 <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-                  {{ 'There are no APIs for this category.' }}
+                  {{ 'settings.categories.emptyApis' | translate }}
                 </td>
               </tr>
             </table>

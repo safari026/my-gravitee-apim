@@ -19,19 +19,12 @@
   @if (!isLoading) {
     <form class="api-logging__form" [formGroup]="apiLoggingForm" (ngSubmit)="onSubmit()" autocomplete="off" gioFormFocusInvalid>
       <h1>{{ 'settings.navigation.items.apiLogging' | translate }}</h1>
-      <gio-banner-info>
-        Depending on your architecture, this configuration may be overridden by a local configuration file. See documentation for more
-        information.
-      </gio-banner-info>
+      <gio-banner-info>{{ 'settings.configOverridden' | translate }}</gio-banner-info>
 
       <mat-card class="api-logging__form__card" formGroupName="duration">
         <mat-card-content>
           <h2 gioTableOfContents>{{ 'settings.apiLogging.duration' | translate }}</h2>
-          <p>
-            Limit the duration of API full logging (0 means no max duration). This avoids API publishers to log headers and / or body
-            payload during too much time and avoid to consume too much CPU/memory. By default, the calls are logged with the minimal
-            information.
-          </p>
+          <p>{{ 'settings.apiLogging.durationHint' | translate }}</p>
           <mat-form-field
             [matTooltip]="providedConfigurationMessage"
             [matTooltipDisabled]="!isReadonly('logging.default.max.duration')"
@@ -78,9 +71,7 @@
             @if (isReadonly('logging.audit.trail.enabled')) {
               <mat-icon gioFormPrefix>lock</mat-icon>
             }
-            <gio-form-label
-              >Generate API Logging audit events (API_LOGGING_ENABLED, API_LOGGING_DISABLED, API_LOGGING_UPDATED)
-            </gio-form-label>
+            <gio-form-label>{{ 'settings.apiLogging.generateAuditEvents' | translate }}</gio-form-label>
             <mat-slide-toggle
               gioFormSlideToggle
               formControlName="enabled"
@@ -136,16 +127,16 @@
                 <mat-error>{{ 'settings.apiLogging.defaultRequired' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.probabilistic.default').hasError('min')) {
-                <mat-error
-                  >Default value should be at least
-                  {{ apiLoggingForm.get('messageSampling.probabilistic.default')?.errors?.min.min }}
-                </mat-error>
+                <mat-error>{{
+                  'settings.apiLogging.defaultMin'
+                    | translate: { min: apiLoggingForm.get('messageSampling.probabilistic.default')?.errors?.min.min }
+                }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.probabilistic.default').hasError('max')) {
-                <mat-error
-                  >Default value should not be greater than
-                  {{ apiLoggingForm.get('messageSampling.probabilistic.default')?.errors?.max.max }}
-                </mat-error>
+                <mat-error>{{
+                  'settings.apiLogging.defaultMax'
+                    | translate: { max: apiLoggingForm.get('messageSampling.probabilistic.default')?.errors?.max.max }
+                }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.probabilistic.default')?.errors?.defaultGreaterThanLimit) {
                 <mat-error>{{ apiLoggingForm.get('messageSampling.probabilistic.default')?.errors?.defaultGreaterThanLimit }} </mat-error>
@@ -168,15 +159,16 @@
                 <mat-error>{{ 'settings.apiLogging.limitRequired' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.probabilistic.limit').hasError('min')) {
-                <mat-error
-                  >Limit value should be at least {{ apiLoggingForm.get('messageSampling.probabilistic.limit')?.errors?.min.min }}
-                </mat-error>
+                <mat-error>{{
+                  'settings.apiLogging.limitMin'
+                    | translate: { min: apiLoggingForm.get('messageSampling.probabilistic.limit')?.errors?.min.min }
+                }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.probabilistic.limit').hasError('max')) {
-                <mat-error
-                  >Limit value should not be greater than
-                  {{ apiLoggingForm.get('messageSampling.probabilistic.limit')?.errors?.max.max }}
-                </mat-error>
+                <mat-error>{{
+                  'settings.apiLogging.limitMax'
+                    | translate: { max: apiLoggingForm.get('messageSampling.probabilistic.limit')?.errors?.max.max }
+                }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.probabilistic.limit')?.errors?.defaultGreaterThanLimit) {
                 <mat-error>{{ apiLoggingForm.get('messageSampling.probabilistic.limit')?.errors?.defaultGreaterThanLimit }} </mat-error>
@@ -202,9 +194,10 @@
                 <mat-error>{{ 'settings.apiLogging.defaultRequired' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.count.default').hasError('min')) {
-                <mat-error
-                  >Default value should be at least {{ apiLoggingForm.get('messageSampling.count.default')?.errors?.min.min }}
-                </mat-error>
+                <mat-error>{{
+                  'settings.apiLogging.defaultMin'
+                    | translate: { min: apiLoggingForm.get('messageSampling.count.default')?.errors?.min.min }
+                }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.count.default').hasError('pattern')) {
                 <mat-error>{{ 'settings.apiLogging.defaultInteger' | translate }}</mat-error>
@@ -230,9 +223,10 @@
                 <mat-error>{{ 'settings.apiLogging.limitRequired' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.count.limit').hasError('min')) {
-                <mat-error
-                  >Limit value should be at least {{ apiLoggingForm.get('messageSampling.count.limit')?.errors?.min.min }}
-                </mat-error>
+                <mat-error>{{
+                  'settings.apiLogging.limitMin'
+                    | translate: { min: apiLoggingForm.get('messageSampling.count.limit')?.errors?.min.min }
+                }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.count.limit').hasError('pattern')) {
                 <mat-error>{{ 'settings.apiLogging.limitInteger' | translate }}</mat-error>
@@ -300,10 +294,7 @@
           <ng-container formGroupName="windowedCount">
             <h3>{{ 'settings.apiLogging.windowedCount' | translate }}</h3>
             <p>{{ 'settings.apiLogging.windowedCountHint' | translate }}</p>
-            <p>
-              Format is COUNT/DURATION (duration should conform to ISO-8601 duration format). Example: <strong>2/PT15S</strong> will sample,
-              at most, two messages during a 15-second sliding window.
-            </p>
+            <p>{{ 'settings.apiLogging.windowedCountFormat' | translate }}</p>
 
             <mat-form-field
               [matTooltip]="providedConfigurationMessage"
@@ -320,10 +311,7 @@
                 <mat-error>{{ 'settings.apiLogging.defaultRequired' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.windowedCount.default').hasError('invalidFormat')) {
-                <mat-error
-                  >The sampling value must follow this format: COUNT/DURATION, where COUNT > 0 and DURATION is in ISO-8601 format (e.g.,
-                  1/PT1S)
-                </mat-error>
+                <mat-error>{{ 'settings.apiLogging.windowedFormatError' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.windowedCount.default')?.errors?.defaultLowerThanLimit) {
                 <mat-error>{{ apiLoggingForm.get('messageSampling.windowedCount.default')?.errors?.defaultLowerThanLimit }} </mat-error>
@@ -346,10 +334,7 @@
                 <mat-error>{{ 'settings.apiLogging.limitRequired' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.windowedCount.limit').hasError('invalidFormat')) {
-                <mat-error
-                  >The sampling value must follow this format: COUNT/DURATION, where COUNT > 0 and DURATION is in ISO-8601 format (e.g.,
-                  1/PT1S)
-                </mat-error>
+                <mat-error>{{ 'settings.apiLogging.windowedFormatError' | translate }}</mat-error>
               }
               @if (apiLoggingForm.get('messageSampling.windowedCount.limit')?.errors?.defaultLowerThanLimit) {
                 <mat-error>{{ apiLoggingForm.get('messageSampling.windowedCount.limit')?.errors?.defaultLowerThanLimit }} </mat-error>
@@ -369,7 +354,7 @@
 
   <gio-table-of-contents
     class="api-logging__toc"
-    [sectionNames]="{ '': 'Settings' }"
+    [sectionNames]="{ '': ('settings.apiLogging.toc' | translate) }"
     scrollingContainer="#gio-toc-scrolling-container"
   ></gio-table-of-contents>
 </div>

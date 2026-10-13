@@ -31,12 +31,12 @@
           [matTooltipDisabled]="!applicationForm.get('types.simple.enabled').disabled"
         >
           <gio-form-label>{{ 'settings.clientRegistration.simple' | translate }}</gio-form-label>
-          A hands-free application. Using this type, you will be able to define the client_id by your own
+          {{ 'settings.clientRegistration.simpleHint' | translate }}
           <mat-slide-toggle
             data-testid="typesSimpleEnabled"
             gioFormSlideToggle
             formControlName="enabled"
-            aria-label="Simple (A hands-free application. Using this type, you will be able to define the client_id by your own)"
+            [attr.aria-label]="'settings.clientRegistration.simpleHint' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
       </div>
@@ -50,12 +50,12 @@
       <h3>{{ 'settings.clientRegistration.dcrTitle' | translate }}</h3>
       <span>
         Client registration providers allows to plug any authorization server compliant with the
+        {{ 'settings.clientRegistration.dcrIntroBefore' | translate }}
         <a href="https://openid.net/specs/openid-connect-registration-1_0.html" target="_blank" rel="noopener noreferrer"
           >{{ 'settings.clientRegistration.dcrSpec' | translate }}</a
         >.
         <br />
-        By defining this DCR (Dynamic Client Registration) provider it allows to associate auto-magically an OAuth client to an application
-        and apply security best practices according to the application type you choose.
+        {{ 'settings.clientRegistration.dcrIntroAfter' | translate }}
       </span>
     </div>
 
@@ -86,12 +86,12 @@
           [matTooltipDisabled]="!applicationForm.get('types.browser.enabled').disabled"
         >
           <gio-form-label>{{ 'settings.clientRegistration.browser' | translate }}</gio-form-label>
-          Angular, React, ...
+          {{ 'settings.clientRegistration.browserHint' | translate }}
           <mat-slide-toggle
             data-testid="typesBrowserEnabled"
             gioFormSlideToggle
             formControlName="enabled"
-            aria-label="Browser (Angular, React, ...)"
+            [attr.aria-label]="'settings.clientRegistration.browserHint' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
@@ -102,12 +102,12 @@
           [matTooltipDisabled]="!applicationForm.get('types.web.enabled').disabled"
         >
           <gio-form-label>{{ 'settings.clientRegistration.web' | translate }}</gio-form-label>
-          Java, .Net, ...
+          {{ 'settings.clientRegistration.webHint' | translate }}
           <mat-slide-toggle
             data-testid="typesWebEnabled"
             gioFormSlideToggle
             formControlName="enabled"
-            aria-label="Web (Java, .Net, ...)"
+            [attr.aria-label]="'settings.clientRegistration.webHint' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
@@ -118,12 +118,12 @@
           [matTooltipDisabled]="!applicationForm.get('types.native.enabled').disabled"
         >
           <gio-form-label>{{ 'settings.clientRegistration.native' | translate }}</gio-form-label>
-          iOS, Android, ...
+          {{ 'settings.clientRegistration.nativeHint' | translate }}
           <mat-slide-toggle
             data-testid="typesNativeEnabled"
             gioFormSlideToggle
             formControlName="enabled"
-            aria-label="Native (iOS, Android, ...)"
+            [attr.aria-label]="'settings.clientRegistration.nativeHint' | translate"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
 
@@ -232,10 +232,10 @@
           class="mat-mdc-cell mdc-data-table__cell"
           [attr.colspan]="displayedColumns.length"
         >
-          {{ 'No DCR provider configured.' }}
+          {{ 'settings.clientRegistration.empty' | translate }}
         </td>
         <td *ngIf="isLoadingData" class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-          {{ 'Loading...' }}
+          {{ 'common.loading' | translate }}
         </td>
       </tr>
     </table>
