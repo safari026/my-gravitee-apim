@@ -22,8 +22,11 @@ const AlertTriggerMissingDataComponent: ng.IComponentOptions = {
     parent: '^alertComponentAjs',
   },
   template: require('html-loader!./trigger-missing-data.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
       // New alert, initialize it with the condition model
       if (this.alert.id === undefined) {
         this.alert.conditions = [
@@ -39,7 +42,8 @@ const AlertTriggerMissingDataComponent: ng.IComponentOptions = {
         };
       }
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerMissingDataComponent;

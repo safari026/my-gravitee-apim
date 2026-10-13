@@ -24,19 +24,19 @@
 ></gv-alert-trigger-condition>
 
 <div layout-gt-sm="row">
-  <span flex="15" style="display: grid; align-items: center" align="center">If rate is</span>
+  <span flex="15" style="display: grid; align-items: center" align="center">{{$ctrl.translate('alerts.condition.ifRateIs')}}</span>
 
   <md-input-container class="md-block" flex-gt-sm flex="20">
-    <label>Operator</label>
+    <label>{{$ctrl.translate('alerts.condition.operator')}}</label>
     <md-select ng-model="$ctrl.alert.conditions[0].operator" required ng-disabled="$ctrl.parent.isReadonly()">
-      <md-option ng-value="type.key" ng-repeat="type in $ctrl.operators"> {{::type.name}} </md-option>
+      <md-option ng-value="type.key" ng-repeat="type in $ctrl.operators"> {{$ctrl.translate('alerts.operators.' + type.key)}} </md-option>
     </md-select>
   </md-input-container>
 
   <span flex="5">&nbsp;</span>
 
   <md-input-container class="md-block" flex-gt-sm flex="15">
-    <label>Threshold (%)</label>
+    <label>{{$ctrl.translate('alerts.condition.thresholdPercent')}}</label>
     <input
       ng-model="$ctrl.alert.conditions[0].threshold"
       required
@@ -44,13 +44,13 @@
       min="1"
       max="99"
       name="threshold"
-      aria-label="trigger threshold"
+      aria-label="{{$ctrl.translate('alerts.condition.thresholdAria')}}"
       ng-disabled="$ctrl.parent.isReadonly()"
     />
     <div ng-messages="$ctrl.parent.formAlert.threshold.$error">
-      <div ng-message="required">Threshold is required.</div>
-      <div ng-message="min">Threshold must be higher than 0.</div>
-      <div ng-message="max">Threshold must be lower than 100.</div>
+      <div ng-message="required">{{$ctrl.translate('alerts.condition.thresholdRequired')}}</div>
+      <div ng-message="min">{{$ctrl.translate('alerts.condition.thresholdMin')}}</div>
+      <div ng-message="max">{{$ctrl.translate('alerts.condition.thresholdMax')}}</div>
     </div>
   </md-input-container>
 </div>

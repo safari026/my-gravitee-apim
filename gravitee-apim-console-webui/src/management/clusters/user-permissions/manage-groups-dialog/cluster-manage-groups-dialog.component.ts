@@ -35,6 +35,8 @@ import { ClusterService } from '../../../../services-ngx/cluster.service';
 import { GroupV2Service } from '../../../../services-ngx/group-v2.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { GioPermissionModule } from '../../../../shared/components/gio-permission/gio-permission.module';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type ClusterManageGroupsDialogData = {
   clusterId: string;
@@ -62,6 +64,7 @@ type GroupsVm = {
     MatDialogTitle,
     GioPermissionModule,
     MatDialogClose,
+    TranslatePipe,
   ],
 })
 export class ClusterManageGroupsDialogComponent implements OnInit {
@@ -74,6 +77,7 @@ export class ClusterManageGroupsDialogComponent implements OnInit {
   groupService = inject(GroupV2Service);
   clusterService = inject(ClusterService);
   snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
 
   groups$: Observable<GroupsVm> = this.groupService.list(1, 9999).pipe(
     map(groups =>
@@ -84,20 +88,22 @@ export class ClusterManageGroupsDialogComponent implements OnInit {
     ),
   );
 
-  readonlyGroupList$: Observable<string> = this.groupService.list(1, 9999).pipe(
-    map(({ data }) => {
-      if (!this.groupsControl?.value || this.groupsControl.value.length === 0) {
-        return 'No groups associated';
-      }
-      return data
-        .filter(g => this.groupsControl?.value?.includes(g.id))
-        .map(g => g.name)
-        .join(', ');
-    }),
-    startWith('Loading...'),
-  );
+  readonlyGroupList$: Observable<string>;
 
   ngOnInit(): void {
+    this.readonlyGroupList$ = this.groupService.list(1, 9999).pipe(
+      map(({ data }) => {
+        if (!this.groupsControl?.value || this.groupsControl.value.length === 0) {
+          return this.languageService.translate('kafka.groups.noGroups');
+        }
+        return data
+          .filter(g => this.groupsControl?.value?.includes(g.id))
+          .map(g => g.name)
+          .join(', ');
+      }),
+      startWith(this.languageService.translate('common.loading')),
+    );
+
     this.clusterService
       .get(this.dialogData.clusterId)
       .pipe(takeUntilDestroyed(this.destroyRef))
@@ -112,11 +118,13 @@ export class ClusterManageGroupsDialogComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         next: () => {
-          this.snackBarService.success('Cluster groups updated');
+          this.snackBarService.success(this.languageService.translate('kafka.groups.updated'));
           this.dialogRef.close(undefined);
         },
         error: error => {
-          this.snackBarService.error(error.error?.message ?? 'An error occurred while updating cluster groups');
+          this.snackBarService.error(
+            error.error?.message ?? this.languageService.translate('kafka.groups.updateError'),
+          );
         },
       });
   }

@@ -29,7 +29,14 @@ const AlertTriggerConditionStringComponent: ng.IComponentOptions = {
   template: require('html-loader!./trigger-condition-string.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: [
     '$injector',
-    function ($injector) {
+    'ngLanguageService',
+    function ($injector, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.tupleLabel = tuple => {
+        const key = `alerts.tuples.${tuple.key}`;
+        const translated = ngLanguageService.translate(key);
+        return translated === key ? tuple.value : translated;
+      };
       this.$onInit = async () => {
         const metric = find(this.metrics as Metrics[], metric => metric.key === this.condition.property);
 
@@ -46,7 +53,10 @@ const AlertTriggerConditionStringComponent: ng.IComponentOptions = {
           this.filteredValues = this.values;
         } else {
           const term = this.searchTerm.toLowerCase();
-          this.filteredValues = this.values.filter(item => item.value.toLowerCase().includes(term));
+          this.filteredValues = this.values.filter(item => {
+            const label = this.tupleLabel(item).toLowerCase();
+            return item.value.toLowerCase().includes(term) || label.includes(term);
+          });
         }
       };
 

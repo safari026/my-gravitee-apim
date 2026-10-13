@@ -44,6 +44,8 @@ import { ApiProductV2Service } from '../../../services-ngx/api-product-v2.servic
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { apiProductNameUniqueAsyncValidator } from '../validators/api-product-name-unique-async.validator';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 interface ConfigForm {
   name: FormControl<string>;
@@ -67,6 +69,7 @@ interface ConfigForm {
     GioFormFocusInvalidModule,
     GioSaveBarModule,
     ApiProductDangerZoneComponent,
+    TranslatePipe,
   ],
 })
 export class ApiProductConfigurationComponent {
@@ -77,6 +80,7 @@ export class ApiProductConfigurationComponent {
   private readonly permissionService = inject(GioPermissionService);
   private readonly snackBarService = inject(SnackBarService);
   private readonly matDialog = inject(MatDialog);
+  private readonly languageService = inject(LanguageService);
 
   protected readonly isReadOnly = !this.permissionService.hasAnyMatching(['api_product-definition-u']);
   protected readonly canDeleteApiProduct = this.permissionService.hasAnyMatching(['api_product-definition-d']);
@@ -98,7 +102,7 @@ export class ApiProductConfigurationComponent {
       return id
         ? this.apiProductV2Service.get(id).pipe(
             catchError(error => {
-              this.snackBarService.error(error.error?.message || 'An error occurred while loading the API Product');
+              this.snackBarService.error(error.error?.message || this.languageService.translate('apiProducts.configuration.loadError'));
               return of(null);
             }),
           )
@@ -150,11 +154,11 @@ export class ApiProductConfigurationComponent {
         tap(() => {
           this.apiProductV2Service.notifyApiProductChanged();
           this.initialFormValue.set(this.form.getRawValue());
-          this.snackBarService.success('Configuration successfully saved!');
+          this.snackBarService.success(this.languageService.translate('apiProducts.configuration.saved'));
           this.onReloadDetails();
         }),
         catchError(error => {
-          this.snackBarService.error(error.error?.message || error.message || 'An error occurred while updating the API Product');
+          this.snackBarService.error(error.error?.message || error.message || this.languageService.translate('apiProducts.configuration.updateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -177,9 +181,9 @@ export class ApiProductConfigurationComponent {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Remove all APIs',
-          content: 'Are you sure you want to remove all the APIs from this API Product?',
-          confirmButton: 'Yes, remove them',
+          title: this.languageService.translate('apiProducts.danger.removeApisTitle'),
+          content: this.languageService.translate('apiProducts.danger.removeApisContent'),
+          confirmButton: this.languageService.translate('apiProducts.danger.removeApisConfirm'),
         },
         role: 'alertdialog',
         id: 'removeApisDialog',
@@ -190,11 +194,11 @@ export class ApiProductConfigurationComponent {
         switchMap(() => this.apiProductV2Service.updateApiProductApis(apiProductId, [])),
         tap(() => {
           this.apiProductV2Service.notifyApiProductChanged();
-          this.snackBarService.success('All APIs have been removed from the API Product.');
+          this.snackBarService.success(this.languageService.translate('apiProducts.danger.removeApisSuccess'));
           this.onReloadDetails();
         }),
         catchError(error => {
-          this.snackBarService.error(error?.error?.message || error?.message || 'An error occurred while removing APIs.');
+          this.snackBarService.error(error?.error?.message || error?.message || this.languageService.translate('apiProducts.danger.removeApisError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -211,12 +215,12 @@ export class ApiProductConfigurationComponent {
       .open<GioConfirmAndValidateDialogComponent, GioConfirmAndValidateDialogData, boolean>(GioConfirmAndValidateDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Delete API Product',
-          content: 'Are you sure you want to delete this API Product?',
-          confirmButton: 'Yes, delete it',
-          validationMessage: `Please, type in the name of the API Product <code>${product.name}</code> to confirm.`,
+          title: this.languageService.translate('apiProducts.danger.deleteTitle'),
+          content: this.languageService.translate('apiProducts.danger.deleteContent'),
+          confirmButton: this.languageService.translate('apiProducts.danger.deleteConfirm'),
+          validationMessage: this.languageService.translate('apiProducts.danger.deleteValidation', { name: product.name }),
           validationValue: product.name,
-          warning: 'This operation is irreversible.',
+          warning: this.languageService.translate('apiProducts.danger.deleteWarning'),
         },
         role: 'alertdialog',
         id: 'deleteApiProductDialog',
@@ -226,11 +230,11 @@ export class ApiProductConfigurationComponent {
         filter((confirm): confirm is true => confirm === true),
         switchMap(() => this.apiProductV2Service.delete(apiProductId)),
         tap(() => {
-          this.snackBarService.success('The API Product has been deleted.');
+          this.snackBarService.success(this.languageService.translate('apiProducts.danger.deleteSuccess'));
           this.router.navigate(['../../'], { relativeTo: this.activatedRoute });
         }),
         catchError(error => {
-          this.snackBarService.error(error?.error?.message || error?.message || 'An error occurred while deleting the API Product.');
+          this.snackBarService.error(error?.error?.message || error?.message || this.languageService.translate('apiProducts.danger.deleteError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -246,9 +250,9 @@ export class ApiProductConfigurationComponent {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Remove API',
-          content: 'Are you sure you want to remove this API from the API Product?',
-          confirmButton: 'Yes, remove it',
+          title: this.languageService.translate('apiProducts.danger.removeApiTitle'),
+          content: this.languageService.translate('apiProducts.danger.removeApiContent'),
+          confirmButton: this.languageService.translate('apiProducts.danger.removeApiConfirm'),
         },
         role: 'alertdialog',
       })
@@ -257,11 +261,11 @@ export class ApiProductConfigurationComponent {
         filter((confirm): confirm is true => confirm === true),
         switchMap(() => this.apiProductV2Service.deleteApiFromApiProduct(apiProductId, apiId)),
         tap(() => {
-          this.snackBarService.success('API removed from the product');
+          this.snackBarService.success(this.languageService.translate('apiProducts.danger.removeApiSuccess'));
           this.onReloadDetails();
         }),
         catchError(error => {
-          this.snackBarService.error(error.error?.message || 'An error occurred while removing the API');
+          this.snackBarService.error(error.error?.message || this.languageService.translate('apiProducts.danger.removeApiError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

@@ -25,6 +25,7 @@ import { AlertComponent } from '../../components/alerts/alert/alert.component';
 import { AlertsComponent } from '../../components/alerts/alerts.component';
 import { AlertsModule } from '../../components/alerts/alerts.module';
 import { PermissionGuard } from '../../shared/components/gio-permission/gio-permission.guard';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 const routes: Routes = [
   {
@@ -83,7 +84,7 @@ const routes: Routes = [
 
 @NgModule({
   declarations: [EnvAlertsLayoutComponent, AlertsActivityComponent],
-  imports: [RouterModule.forChild(routes), AlertsModule, MatTabsModule, GioIconsModule],
+  imports: [RouterModule.forChild(routes), AlertsModule, MatTabsModule, GioIconsModule, TranslatePipe],
   exports: [RouterModule],
 })
 export class EnvAlertModule {}

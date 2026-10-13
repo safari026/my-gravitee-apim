@@ -35,6 +35,7 @@ import {
 } from './components';
 import { MetricsSimpleConditionComponent } from './metrics-simple-condition';
 import { MissingDataConditionComponent } from './missing-data-condition/missing-data-condition.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [
@@ -72,6 +73,7 @@ import { MissingDataConditionComponent } from './missing-data-condition/missing-
     MatFormFieldModule,
     MatTooltipModule,
     ReactiveFormsModule,
+    TranslatePipe,
   ],
 })
 export class RuntimeAlertCreateConditionModule {}

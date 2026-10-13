@@ -37,6 +37,8 @@ import { GioPermissionService } from '../../../shared/components/gio-permission/
 import { ApiProductV2Service } from '../../../services-ngx/api-product-v2.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { ApiProduct, ApiProductsResponse, ApiProductSearchQuery } from '../../../entities/management-api-v2/api-product';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 const FILTERS_DEBOUNCE_MS = 100;
 const DEFAULT_FILTERS: ApiProductListTableWrapperFilters = {
@@ -103,6 +105,7 @@ const INITIAL_API_PRODUCTS_STATE: ApiProductsState = {
     GioAvatarModule,
     GioTableWrapperModule,
     RouterModule,
+    TranslatePipe,
   ],
 })
 export class ApiProductListComponent {
@@ -111,9 +114,12 @@ export class ApiProductListComponent {
   private readonly apiProductV2Service = inject(ApiProductV2Service);
   private readonly snackBarService = inject(SnackBarService);
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
 
   displayedColumns = ['picture', 'name', 'apis', 'version', 'tags', 'owner', 'actions'];
-  searchLabel = 'Search';
+  get searchLabel(): string {
+    return this.languageService.translate('common.search');
+  }
   canCreateApiProduct = this.permissionService.hasAnyMatching(['environment-api_product-c']);
 
   /** Filters derived from router query params (single source of truth) */
@@ -138,7 +144,7 @@ export class ApiProductListComponent {
         }
         return this.apiProductV2Service.search(searchQuery, sortBy, page, perPage).pipe(
           catchError(error => {
-            this.snackBarService.error(this.getErrorMessage(error, 'An error occurred while loading API Products'));
+            this.snackBarService.error(this.getErrorMessage(error, this.languageService.translate('apiProducts.list.loadError')));
             return of(EMPTY_API_PRODUCTS_RESPONSE);
           }),
           tap(() => {

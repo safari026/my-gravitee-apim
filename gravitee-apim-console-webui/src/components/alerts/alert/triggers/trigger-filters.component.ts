@@ -22,20 +22,24 @@ const AlertTriggerFiltersComponent: ng.IComponentOptions = {
     referenceId: '<',
   },
   template: require('html-loader!./trigger-filters.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.addFilter = () => {
-      if (this.alert.filters === undefined) {
-        this.alert.filters = [];
-      }
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.addFilter = () => {
+        if (this.alert.filters === undefined) {
+          this.alert.filters = [];
+        }
 
-      this.alert.filters.push({});
-    };
+        this.alert.filters.push({});
+      };
 
-    this.removeFilter = (idx: number) => {
-      this.alert.filters.splice(idx, 1);
-      this.form.$setDirty();
-    };
-  },
+      this.removeFilter = (idx: number) => {
+        this.alert.filters.splice(idx, 1);
+        this.form.$setDirty();
+      };
+    },
+  ],
 };
 
 export default AlertTriggerFiltersComponent;

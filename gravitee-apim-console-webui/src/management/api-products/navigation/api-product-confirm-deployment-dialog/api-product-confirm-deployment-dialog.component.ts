@@ -16,6 +16,7 @@
 import { Component, inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MatDialogModule, MatDialogRef } from '@angular/material/dialog';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export interface ApiProductConfirmDeploymentDialogData {
   apiProductId: string;
@@ -27,7 +28,7 @@ export type ApiProductConfirmDeploymentDialogResult = true;
   selector: 'api-product-confirm-deployment-dialog',
   templateUrl: './api-product-confirm-deployment-dialog.component.html',
   standalone: true,
-  imports: [MatDialogModule, MatButtonModule],
+  imports: [MatDialogModule, MatButtonModule, TranslatePipe],
 })
 export class ApiProductConfirmDeploymentDialogComponent {
   private readonly dialogRef =

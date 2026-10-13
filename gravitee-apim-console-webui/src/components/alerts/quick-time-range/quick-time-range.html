@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<label>Quick time range</label>
+<label>{{$ctrl.translate('alerts.timeRange.label')}}</label>
 <md-select
   class="gv-quick-time-range"
   md-container-class="gv-quick-time-range-menu"
@@ -24,5 +24,5 @@
   ng-model="$ctrl.timeframe"
   required
 >
-  <md-option ng-repeat="timeframe in $ctrl.timeframes" ng-value="timeframe"> {{timeframe.title}} </md-option>
+  <md-option ng-repeat="timeframe in $ctrl.timeframes" ng-value="timeframe"> {{$ctrl.translate('alerts.timeRange.' + timeframe.id)}} </md-option>
 </md-select>

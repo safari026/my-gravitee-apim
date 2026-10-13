@@ -24,8 +24,11 @@ const AlertTriggerApplicationQuotaComponent: ng.IComponentOptions = {
     parent: '^alertComponentAjs',
   },
   template: require('html-loader!./trigger-application-quota.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
       this.metrics = [ApiMetrics.QUOTA_COUNTER];
 
       // New alert, initialize it with the condition model
@@ -52,7 +55,8 @@ const AlertTriggerApplicationQuotaComponent: ng.IComponentOptions = {
     this.calculateMultiplier = () => {
       this.alert.conditions[0].multiplier = this.threshold / 100;
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerApplicationQuotaComponent;

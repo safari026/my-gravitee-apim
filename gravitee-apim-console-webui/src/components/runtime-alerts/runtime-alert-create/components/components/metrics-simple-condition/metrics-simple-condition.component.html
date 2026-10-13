@@ -18,23 +18,23 @@
 <form *ngIf="form" [formGroup]="form">
   <div class="condition-row">
     <div class="condition-row__label">
-      <span class="mat-body-2">When</span>
+      <span class="mat-body-2">{{ 'alerts.condition.when' | translate }}</span>
     </div>
 
     <mat-form-field class="condition-row__form-field">
-      <mat-label>Metric</mat-label>
+      <mat-label>{{ 'alerts.condition.metric' | translate }}</mat-label>
       <mat-select formControlName="metric" required>
         <mat-option *ngFor="let metric of metrics" [value]="metric">{{ metric.name }}</mat-option>
       </mat-select>
-      <mat-error *ngIf="form.controls.metric.hasError('required')">Metric is required.</mat-error>
+      <mat-error *ngIf="form.controls.metric.hasError('required')">{{ 'alerts.runtime.metricRequired' | translate }}</mat-error>
     </mat-form-field>
 
     <mat-form-field class="condition-row__form-field">
-      <mat-label>Type</mat-label>
+      <mat-label>{{ 'alerts.condition.type' | translate }}</mat-label>
       <mat-select formControlName="type" required>
         <mat-option *ngFor="let type of types" [value]="type">{{ type }}</mat-option>
       </mat-select>
-      <mat-error *ngIf="form.controls.type.hasError('required')">Type is required.</mat-error>
+      <mat-error *ngIf="form.controls.type.hasError('required')">{{ 'alerts.runtime.typeRequired' | translate }}</mat-error>
     </mat-form-field>
 
     <ng-container [ngSwitch]="form.controls.type.value">
@@ -54,7 +54,7 @@
 
   <div class="condition-row" *ngIf="form.controls.type.value === conditionType.COMPARE">
     <div class="condition-row__label">
-      <span class="mat-body-2">Is</span>
+      <span class="mat-body-2">{{ 'alerts.runtime.isLabel' | translate }}</span>
     </div>
     <compare-condition [form]="form" [metrics]="metrics" [updateData]="updateData"></compare-condition>
   </div>

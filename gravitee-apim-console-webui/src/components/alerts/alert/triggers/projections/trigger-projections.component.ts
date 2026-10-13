@@ -22,8 +22,11 @@ const AlertTriggerProjectionsComponent: ng.IComponentOptions = {
     formRef: '<',
   },
   template: require('html-loader!./trigger-projections.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.addProjection = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.addProjection = () => {
       if (this.condition.projections === undefined) {
         this.condition.projections = [];
       }
@@ -37,7 +40,8 @@ const AlertTriggerProjectionsComponent: ng.IComponentOptions = {
         this.formRef.$setDirty();
       }
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerProjectionsComponent;

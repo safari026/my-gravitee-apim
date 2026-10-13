@@ -23,29 +23,29 @@
 -->
 
 <div layout="row">
-  <span flex="15" style="display: grid; align-items: center" align="center">{{$ctrl.label ? $ctrl.label :'For'}}</span>
+  <span flex="15" style="display: grid; align-items: center" align="center">{{$ctrl.label ? $ctrl.label : $ctrl.translate('alerts.condition.for')}}</span>
 
   <md-input-container class="md-block" flex-gt-sm flex="10">
-    <label>Duration</label>
+    <label>{{$ctrl.translate('alerts.condition.duration')}}</label>
     <input
       ng-model="$ctrl.condition.duration"
       required
       type="number"
       min="1"
       name="window-duration"
-      aria-label="trigger time-window duration"
+      aria-label="{{$ctrl.translate('alerts.condition.durationAria')}}"
       ng-disabled="$ctrl.isReadonly"
     />
     <div ng-messages="$ctrl.formAlert['window-duration'].$error">
-      <div ng-message="required">Duration is required.</div>
-      <div ng-message="min">Duration must be higher than 0.</div>
+      <div ng-message="required">{{$ctrl.translate('alerts.condition.durationRequired')}}</div>
+      <div ng-message="min">{{$ctrl.translate('alerts.condition.durationMin')}}</div>
     </div>
   </md-input-container>
 
   <md-input-container class="md-block" flex-gt-sm flex="15">
-    <label>TimeUnit</label>
+    <label>{{$ctrl.translate('alerts.condition.timeUnit')}}</label>
     <md-select ng-model="$ctrl.condition.timeUnit" required ng-disabled="$ctrl.isReadonly">
-      <md-option ng-value="unit.key" ng-repeat="unit in $ctrl.timeUnits"> {{::unit.name}} </md-option>
+      <md-option ng-value="unit.key" ng-repeat="unit in $ctrl.timeUnits"> {{$ctrl.translate('alerts.timeUnits.' + unit.key)}} </md-option>
     </md-select>
   </md-input-container>
 </div>

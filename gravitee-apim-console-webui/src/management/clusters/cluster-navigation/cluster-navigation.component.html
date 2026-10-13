@@ -39,7 +39,7 @@
     <div class="cluster-navigation__content">
       <div class="cluster-navigation__content__view">
         <gio-breadcrumb *ngIf="hasBreadcrumb" class="cluster-navigation__breadcrumb">
-          <span *gioBreadcrumbItem class="cluster-navigation__breadcrumb__item">Clusters</span>
+          <span *gioBreadcrumbItem class="cluster-navigation__breadcrumb__item">{{ 'kafka.navigation.breadcrumb' | translate }}</span>
           <div *gioBreadcrumbItem gioSubmenuTitle class="cluster-navigation__menu__title">{{ cluster.name }}</div>
           <ng-template ngFor let-item [ngForOf]="computeBreadcrumbItems()">
             <span *gioBreadcrumbItem class="cluster-navigation__breadcrumb__item">{{ item }}</span>

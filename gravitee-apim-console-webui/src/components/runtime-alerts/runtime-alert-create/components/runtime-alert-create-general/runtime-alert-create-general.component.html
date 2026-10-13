@@ -18,7 +18,7 @@
 
 <mat-card class="form-card">
   <mat-card-header>
-    <mat-card-title>General</mat-card-title>
+    <mat-card-title>{{ 'alerts.form.general' | translate }}</mat-card-title>
   </mat-card-header>
 
   <div class="separator-hr"></div>
@@ -27,34 +27,38 @@
     <form [formGroup]="generalForm" class="form">
       <div class="form__row">
         <mat-form-field class="form__name-form-field">
-          <mat-label>Name</mat-label>
+          <mat-label>{{ 'alerts.form.name' | translate }}</mat-label>
           <input matInput formControlName="name" required />
-          <mat-error *ngIf="generalForm.controls.name.hasError('required')">Name is required.</mat-error>
-          <mat-error *ngIf="generalForm.controls.name.hasError('minlength')">Name has to be at least 3 characters long.</mat-error>
-          <mat-error *ngIf="generalForm.controls.name.hasError('maxlength')">Name length must not exceed 50 characters.</mat-error>
-          <mat-error *ngIf="generalForm.controls.name.hasError('pattern')">Characters not allowed</mat-error>
+          <mat-error *ngIf="generalForm.controls.name.hasError('required')">{{ 'alerts.form.nameRequired' | translate }}</mat-error>
+          <mat-error *ngIf="generalForm.controls.name.hasError('minlength')">{{ 'alerts.runtime.nameMinAtLeast' | translate }}</mat-error>
+          <mat-error *ngIf="generalForm.controls.name.hasError('maxlength')">{{ 'alerts.runtime.nameMaxExceeded' | translate }}</mat-error>
+          <mat-error *ngIf="generalForm.controls.name.hasError('pattern')">{{ 'alerts.runtime.charactersNotAllowed' | translate }}</mat-error>
         </mat-form-field>
         <gio-form-slide-toggle class="form__enabled-form-field">
-          <gio-form-label>Enable alert</gio-form-label>
+          <gio-form-label>{{ 'alerts.runtime.enableAlertLabel' | translate }}</gio-form-label>
           <mat-slide-toggle
             gioFormSlideToggle
             formControlName="enabled"
-            aria-label="Alert enable toggle"
+            [attr.aria-label]="'alerts.runtime.enableToggleAria' | translate"
             name="enableAlert"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
       </div>
       <div class="form__row">
         @if (this.alertToUpdate) {
-          <mat-form-field matTooltip="You can not edit rules" class="form__rules-form-field" *ngIf="rules">
-            <mat-label>Rule</mat-label>
+          <mat-form-field
+            [matTooltip]="'alerts.runtime.rulesReadonlyTooltip' | translate"
+            class="form__rules-form-field"
+            *ngIf="rules"
+          >
+            <mat-label>{{ 'alerts.form.rule' | translate }}</mat-label>
             <mat-select class="disabled-option" formControlName="rule">
               <mat-option disabled *ngFor="let rule of rules" [value]="rule">{{ rule.description }}</mat-option>
             </mat-select>
           </mat-form-field>
         } @else {
           <mat-form-field class="form__rules-form-field" *ngIf="rules">
-            <mat-label>Rule</mat-label>
+            <mat-label>{{ 'alerts.form.rule' | translate }}</mat-label>
             <mat-select formControlName="rule">
               <mat-option *ngFor="let rule of rules" [value]="rule">{{ rule.description }}</mat-option>
             </mat-select>
@@ -62,15 +66,17 @@
         }
 
         <mat-form-field class="form__severity-form-field">
-          <mat-label>Severity</mat-label>
+          <mat-label>{{ 'alerts.form.severity' | translate }}</mat-label>
           <mat-select formControlName="severity">
-            <mat-option *ngFor="let severity of alertSeverities" [value]="severity">{{ severity | lowercase }} </mat-option>
+            <mat-option *ngFor="let severity of alertSeverities" [value]="severity">{{
+              'alerts.severity.' + severity | translate
+            }}</mat-option>
           </mat-select>
         </mat-form-field>
       </div>
       <div class="form__row">
         <mat-form-field class="form__description-form-field">
-          <mat-label>Description</mat-label>
+          <mat-label>{{ 'alerts.form.description' | translate }}</mat-label>
           <textarea id="description" matInput #input maxlength="256" formControlName="description" rows="4"></textarea>
         </mat-form-field>
       </div>

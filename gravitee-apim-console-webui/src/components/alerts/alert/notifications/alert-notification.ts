@@ -29,7 +29,9 @@ const AlertNotificationComponent: ng.IComponentOptions = {
   controller: [
     'NotificationService',
     'NotifierService',
-    function (NotificationService: NotificationService, NotifierService: NotifierService) {
+    'ngLanguageService',
+    function (NotificationService: NotificationService, NotifierService: NotifierService, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.notifierJsonSchemaForm = ['*'];
 
       this.$onInit = () => {
@@ -57,7 +59,7 @@ const AlertNotificationComponent: ng.IComponentOptions = {
                 };
               } else {
                 // todo manage errors
-                NotificationService.showError('Unexpected error while loading notifier schema for ' + this.notifier.type);
+                NotificationService.showError(this.translate('alerts.notifications.schemaError', { type: this.notifier.type }));
               }
             },
           )

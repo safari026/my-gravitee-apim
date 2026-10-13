@@ -15,28 +15,49 @@
     limitations under the License.
 
 -->
-<table mat-table [dataSource]="events" class="events__table" id="eventsTable" aria-label="Events table">
+<table mat-table [dataSource]="events" class="events__table" id="eventsTable" [attr.aria-label]="'audit.apiEvents.tableAria' | translate">
   <!-- Display Event icon -->
   <ng-container matColumnDef="icon">
     <th mat-header-cell *matHeaderCellDef id="icon"></th>
     <td mat-cell *matCellDef="let element">
-      <mat-icon *ngIf="element.type === 'START_API'" matTooltip="Started" class="type__api-started" svgIcon="gio:play-circle"></mat-icon>
-      <mat-icon *ngIf="element.type === 'PUBLISH_API'" matTooltip="Deployed" class="type__api-deployed" svgIcon="gio:send"></mat-icon>
-      <mat-icon *ngIf="element.type === 'STOP_API'" matTooltip="Stopped" class="type__api-stopped" svgIcon="gio:stop-circle"></mat-icon>
+      <mat-icon
+        *ngIf="element.type === 'START_API'"
+        [matTooltip]="'audit.apiEvents.started' | translate"
+        class="type__api-started"
+        svgIcon="gio:play-circle"
+      ></mat-icon>
+      <mat-icon
+        *ngIf="element.type === 'PUBLISH_API'"
+        [matTooltip]="'audit.apiEvents.deployed' | translate"
+        class="type__api-deployed"
+        svgIcon="gio:send"
+      ></mat-icon>
+      <mat-icon
+        *ngIf="element.type === 'STOP_API'"
+        [matTooltip]="'audit.apiEvents.stopped' | translate"
+        class="type__api-stopped"
+        svgIcon="gio:stop-circle"
+      ></mat-icon>
     </td>
   </ng-container>
 
   <!-- Display Event type -->
   <ng-container matColumnDef="type">
-    <th mat-header-cell *matHeaderCellDef id="type">Type</th>
+    <th mat-header-cell *matHeaderCellDef id="type">{{ 'audit.columns.type' | translate }}</th>
     <td mat-cell *matCellDef="let element">
-      {{ element.type === 'PUBLISH_API' ? 'Deployed' : element.type === 'START_API' ? 'Started' : 'Stopped' }}
+      {{
+        element.type === 'PUBLISH_API'
+          ? ('audit.apiEvents.deployed' | translate)
+          : element.type === 'START_API'
+            ? ('audit.apiEvents.started' | translate)
+            : ('audit.apiEvents.stopped' | translate)
+      }}
     </td>
   </ng-container>
 
   <!-- Display Event date -->
   <ng-container matColumnDef="createdAt">
-    <th mat-header-cell *matHeaderCellDef id="createdAt">Created at</th>
+    <th mat-header-cell *matHeaderCellDef id="createdAt">{{ 'audit.columns.createdAt' | translate }}</th>
     <td mat-cell *matCellDef="let element">
       {{ element.createdAt | date: 'medium' }}
     </td>
@@ -44,9 +65,9 @@
 
   <!-- Display Event user -->
   <ng-container matColumnDef="user">
-    <th mat-header-cell *matHeaderCellDef id="user">User</th>
+    <th mat-header-cell *matHeaderCellDef id="user">{{ 'audit.columns.user' | translate }}</th>
     <td mat-cell *matCellDef="let element">
-      {{ element.initiator?.displayName ?? 'unknown' }}
+      {{ element.initiator?.displayName ?? ('audit.apiEvents.unknownUser' | translate) }}
     </td>
   </ng-container>
 

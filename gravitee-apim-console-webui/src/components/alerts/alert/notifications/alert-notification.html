@@ -17,7 +17,7 @@
 -->
 <div class="gv-form">
   <h2 layout="row">
-    Notification
+    {{$ctrl.translate('alerts.notifications.title')}}
     <ng-md-icon
       icon="cancel"
       style="top: 5px; margin-right: 10px; fill: grey"
@@ -28,10 +28,10 @@
   </h2>
   <div class="gv-form-content" layout="column">
     <md-input-container class="md-block" flex-gt-xs>
-      <label>Channel</label>
+      <label>{{$ctrl.translate('alerts.notifications.channel')}}</label>
       <md-select
         ng-model="$ctrl.notification.type"
-        placeholder="Channel"
+        placeholder="{{$ctrl.translate('alerts.notifications.channel')}}"
         required
         ng-change="$ctrl.onNotifierChange()"
         ng-disabled="$ctrl.isReadonly"

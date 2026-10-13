@@ -22,11 +22,15 @@ const AlertTriggerWindowComponent: ng.IComponentOptions = {
     isReadonly: '<',
   },
   template: require('html-loader!./trigger-window.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
-      this.timeUnits = DurationTimeUnit.TIME_UNITS;
-    };
-  },
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
+        this.timeUnits = DurationTimeUnit.TIME_UNITS;
+      };
+    },
+  ],
 };
 
 export default AlertTriggerWindowComponent;

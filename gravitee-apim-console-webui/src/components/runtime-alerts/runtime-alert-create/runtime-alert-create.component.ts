@@ -29,6 +29,7 @@ import { Scope } from '../../../entities/alert';
 import { Rule } from '../../../entities/alerts/rule.metrics';
 import { AlertService } from '../../../services-ngx/alert.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { AlertSeverity, AlertTriggerEntity } from '../../../entities/alerts/alertTriggerEntity';
 
 @Component({
@@ -57,6 +58,7 @@ export class RuntimeAlertCreateComponent implements OnInit {
     private readonly router: Router,
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly destroyRef: DestroyRef,
+    private readonly languageService: LanguageService,
   ) {
     switch (this.referenceType) {
       case Scope.API:
@@ -124,11 +126,11 @@ export class RuntimeAlertCreateComponent implements OnInit {
         .pipe()
         .subscribe({
           next: _ => {
-            this.snackBarService.success('Alert successfully updated!');
+            this.snackBarService.success(this.languageService.translate('alerts.runtime.updateSuccess'));
             this.router.navigate(['..'], { relativeTo: this.activatedRoute });
           },
           error: _ => {
-            this.snackBarService.success('Error during update!');
+            this.snackBarService.error(this.languageService.translate('alerts.runtime.updateError'));
           },
         });
     } else {
@@ -136,10 +138,10 @@ export class RuntimeAlertCreateComponent implements OnInit {
         .createAlert(this.referenceId, toNewAlertTriggerEntity(this.referenceId, Scope[this.referenceType], this.alertForm.getRawValue()))
         .pipe(
           tap(() => {
-            this.snackBarService.success('Alert successfully created!');
+            this.snackBarService.success(this.languageService.translate('alerts.runtime.createSuccess'));
           }),
           catchError(() => {
-            this.snackBarService.error('Alert creation failed!');
+            this.snackBarService.error(this.languageService.translate('alerts.runtime.createError'));
             return EMPTY;
           }),
           takeUntilDestroyed(this.destroyRef),

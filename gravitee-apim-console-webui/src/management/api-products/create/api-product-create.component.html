@@ -20,55 +20,55 @@
   <div class="api-product-create__header">
     <button type="button" mat-button class="back-link" (click)="onExit()">
       <mat-icon>arrow_back</mat-icon>
-      <span>Go back to API Products</span>
+      <span>{{ 'apiProducts.create.back' | translate }}</span>
     </button>
   </div>
 
   <mat-card class="api-product-create__form-card">
     <mat-card-content>
-      <h1 class="api-product-create__title">Create API Product</h1>
-      <p class="api-product-create__instructions">Fill in the details and select the APIs to include in this product.</p>
+      <h1 class="api-product-create__title">{{ 'apiProducts.create.title' | translate }}</h1>
+      <p class="api-product-create__instructions">{{ 'apiProducts.create.instructions' | translate }}</p>
 
       <div class="form-section">
-        <h2 class="form-section__title">Product Details</h2>
+        <h2 class="form-section__title">{{ 'apiProducts.create.details' | translate }}</h2>
 
         <form [formGroup]="form">
           <div class="form-row form-row--inline">
             <mat-form-field appearance="outline" class="form-field--name">
-              <mat-label>Name </mat-label>
+              <mat-label>{{ 'apiProducts.create.name' | translate }}</mat-label>
               <input matInput formControlName="name" required />
               @if (form.controls.name.hasError('required')) {
-                <mat-error>Name is required</mat-error>
+                <mat-error>{{ 'apiProducts.create.nameRequired' | translate }}</mat-error>
               }
               @if (form.controls.name.hasError('maxlength')) {
-                <mat-error>Name must be at most {{ nameMaxLength }} characters</mat-error>
+                <mat-error>{{ 'apiProducts.create.nameMax' | translate: { max: nameMaxLength } }}</mat-error>
               }
               @if (form.controls.name.hasError('minlength')) {
-                <mat-error>Name must be at least 1 character</mat-error>
+                <mat-error>{{ 'apiProducts.create.nameMin' | translate }}</mat-error>
               }
               @if (form.controls.name.hasError('unique')) {
-                <mat-error>API Product name must be unique</mat-error>
+                <mat-error>{{ 'apiProducts.create.nameUnique' | translate }}</mat-error>
               }
             </mat-form-field>
 
             <mat-form-field appearance="outline" class="form-field--version">
-              <mat-label>Version </mat-label>
+              <mat-label>{{ 'apiProducts.create.version' | translate }}</mat-label>
               <input matInput formControlName="version" required [maxlength]="versionMaxLength" />
               @if (form.controls.version.hasError('required')) {
-                <mat-error>Version is required</mat-error>
+                <mat-error>{{ 'apiProducts.create.versionRequired' | translate }}</mat-error>
               }
               @if (form.controls.version.hasError('maxlength')) {
-                <mat-error>Version must be at most {{ versionMaxLength }} characters</mat-error>
+                <mat-error>{{ 'apiProducts.create.versionMax' | translate: { max: versionMaxLength } }}</mat-error>
               }
               @if (form.controls.version.hasError('minlength')) {
-                <mat-error>Version must be at least 1 character</mat-error>
+                <mat-error>{{ 'apiProducts.create.versionMin' | translate }}</mat-error>
               }
             </mat-form-field>
           </div>
 
           <div class="form-row">
             <mat-form-field appearance="outline">
-              <mat-label>Description</mat-label>
+              <mat-label>{{ 'apiProducts.create.description' | translate }}</mat-label>
               <textarea matInput formControlName="description" rows="4"></textarea>
             </mat-form-field>
           </div>
@@ -77,12 +77,12 @@
     </mat-card-content>
     <mat-card-footer>
       <div class="api-product-create__footer">
-        <button mat-stroked-button (click)="onBack()" [disabled]="isCreating()">Cancel</button>
+        <button mat-stroked-button (click)="onBack()" [disabled]="isCreating()">{{ 'common.cancel' | translate }}</button>
         <button mat-raised-button color="primary" (click)="onCreate()" [disabled]="form.invalid || isCreating()">
           @if (!isCreating()) {
-            <span>Create API Product</span>
+            <span>{{ 'apiProducts.create.title' | translate }}</span>
           } @else {
-            <span>Creating...</span>
+            <span>{{ 'apiProducts.create.creating' | translate }}</span>
           }
         </button>
       </div>

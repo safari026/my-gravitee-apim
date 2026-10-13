@@ -21,10 +21,11 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 
 import { RuntimeAlertListEmptyStateComponent } from './runtime-alert-list-empty-state.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertListEmptyStateComponent],
   exports: [RuntimeAlertListEmptyStateComponent],
-  imports: [CommonModule, MatButtonModule, MatCardModule, MatIconModule, GioIconsModule, GioCardEmptyStateModule],
+  imports: [CommonModule, MatButtonModule, MatCardModule, MatIconModule, GioIconsModule, GioCardEmptyStateModule, TranslatePipe],
 })
 export class RuntimeAlertListEmptyStateModule {}

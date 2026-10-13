@@ -17,25 +17,27 @@
 -->
 <mat-card class="form-card">
   <mat-card-header class="card-header">
-    <mat-card-title class="card-title">History</mat-card-title>
-    <mat-card-subtitle>Events history for this alert </mat-card-subtitle>
+    <mat-card-title class="card-title">{{ 'alerts.history.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'alerts.runtime.historyEventsSubtitle' | translate }}</mat-card-subtitle>
 
-    <button (click)="refreshHistory()" mat-stroked-button [disabled]="isLoading" data-testid="refresh-history-button">Refresh</button>
+    <button (click)="refreshHistory()" mat-stroked-button [disabled]="isLoading" data-testid="refresh-history-button">
+      {{ 'common.refresh' | translate }}
+    </button>
   </mat-card-header>
 
   <gio-table-wrapper [disableSearchInput]="true" [length]="totalElements" [filters]="filters" (filtersChange)="onFiltersChanged($event)">
-    <table mat-table [dataSource]="historyEvents" aria-label="Alerts history table">
+    <table mat-table [dataSource]="historyEvents" [attr.aria-label]="'alerts.runtime.historyTableAria' | translate">
       <caption style="display: none">
-        Table with alerts history
+        {{ 'alerts.runtime.historyTableCaption' | translate }}
       </caption>
 
       <ng-container matColumnDef="date">
-        <th mat-header-cell *matHeaderCellDef id="date">Date</th>
+        <th mat-header-cell *matHeaderCellDef id="date">{{ 'alerts.history.date' | translate }}</th>
         <td mat-cell *matCellDef="let historyEvent">{{ historyEvent.created_at }}</td>
       </ng-container>
 
       <ng-container matColumnDef="message">
-        <th mat-header-cell *matHeaderCellDef id="message">Message</th>
+        <th mat-header-cell *matHeaderCellDef id="message">{{ 'alerts.history.message' | translate }}</th>
         <td mat-cell *matCellDef="let historyEvent">{{ historyEvent.message }}</td>
       </ng-container>
 
@@ -45,9 +47,9 @@
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
         <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
           @if (isLoading) {
-            Loading...
+            {{ 'common.loading' | translate }}
           } @else if (totalElements === 0) {
-            No data to display.
+            {{ 'common.noDataToDisplay' | translate }}
           }
         </td>
       </tr>

@@ -28,29 +28,31 @@ import { AlertCondition } from '../../../../../../../entities/alerts/conditions'
   template: `
     <form *ngIf="form" [formGroup]="form" class="condition-row">
       <mat-form-field *ngIf="operators" class="condition-row__form-field">
-        <mat-label>Operator</mat-label>
+        <mat-label>{{ 'alerts.condition.operator' | translate }}</mat-label>
         <mat-select formControlName="operator" required>
-          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator.name }}</mat-option>
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{
+            'alerts.operators.' + operator.key | translate
+          }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.operator.hasError('required')">Operator is required.</mat-error>
+        <mat-error *ngIf="form.controls.operator.hasError('required')">{{ 'alerts.runtime.operatorRequired' | translate }}</mat-error>
       </mat-form-field>
 
       <mat-form-field
         class="condition-row__form-field"
         *ngIf="['EQUALS', 'NOT_EQUALS'].includes(this.form.controls.operator.getRawValue()?.key); else templateBlock"
       >
-        <mat-label>Reference value</mat-label>
+        <mat-label>{{ 'alerts.runtime.referenceValue' | translate }}</mat-label>
         <mat-select formControlName="pattern" required panelClass="reference-form-field">
           <mat-option *ngFor="let reference of references" [value]="reference">{{ reference.value }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.pattern.hasError('required')">Reference value is required.</mat-error>
+        <mat-error *ngIf="form.controls.pattern.hasError('required')">{{ 'alerts.runtime.referenceValueRequired' | translate }}</mat-error>
       </mat-form-field>
 
       <ng-template #templateBlock>
         <mat-form-field class="condition-row__form-field">
-          <mat-label>Pattern</mat-label>
+          <mat-label>{{ 'alerts.condition.pattern' | translate }}</mat-label>
           <input matInput formControlName="pattern" required />
-          <mat-error *ngIf="form.controls.pattern.hasError('required')">Pattern value is required.</mat-error>
+          <mat-error *ngIf="form.controls.pattern.hasError('required')">{{ 'alerts.runtime.patternValueRequired' | translate }}</mat-error>
         </mat-form-field>
       </ng-template>
     </form>

@@ -24,10 +24,12 @@ import { MatSnackBarModule } from '@angular/material/snack-bar';
 import { MatTableModule } from '@angular/material/table';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { EnvAuditComponent } from './env-audit.component';
 
 import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -41,7 +43,9 @@ import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper
     MatButtonModule,
     MatCardModule,
     MatIconModule,
+    MatTooltipModule,
     GioTableWrapperModule,
+    TranslatePipe,
   ],
   declarations: [EnvAuditComponent],
   exports: [EnvAuditComponent],

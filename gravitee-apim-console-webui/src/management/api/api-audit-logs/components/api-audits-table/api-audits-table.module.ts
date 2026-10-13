@@ -23,10 +23,11 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { ApiAuditsTableComponent } from './api-audits-table.component';
 
 import { GioTableWrapperModule } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiAuditsTableComponent],
   exports: [ApiAuditsTableComponent],
-  imports: [CommonModule, MatIconModule, MatTableModule, MatTooltipModule, GioTableWrapperModule, MatButtonModule],
+  imports: [CommonModule, MatIconModule, MatTableModule, MatTooltipModule, GioTableWrapperModule, MatButtonModule, TranslatePipe],
 })
 export class ApiAuditsTableModule {}

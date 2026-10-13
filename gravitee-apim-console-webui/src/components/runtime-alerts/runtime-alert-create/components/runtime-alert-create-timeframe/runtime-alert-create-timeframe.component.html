@@ -17,9 +17,9 @@
 -->
 <mat-card class="form-card">
   <mat-card-header class="card-header">
-    <mat-card-title>Timeframes</mat-card-title>
-    <mat-card-subtitle>Choose timeframe when notifications should be sent.</mat-card-subtitle>
-    <button mat-stroked-button (click)="addTimeframe()">Add timeframe</button>
+    <mat-card-title>{{ 'alerts.runtime.timeframesTitle' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'alerts.runtime.timeframesSubtitle' | translate }}</mat-card-subtitle>
+    <button mat-stroked-button (click)="addTimeframe()">{{ 'alerts.timeframe.add' | translate }}</button>
   </mat-card-header>
 
   @if (timeframesControl.controls.length) {
@@ -33,31 +33,31 @@
           <mat-card class="timeframe">
             <div [formGroup]="getGroup(timeframe)">
               <div class="timeframe-header">
-                <h3>Configure timeframe</h3>
-                <button mat-raised-button color="primary" (click)="deleteTimeframe(i)">Remove</button>
+                <h3>{{ 'alerts.runtime.configureTimeframe' | translate }}</h3>
+                <button mat-raised-button color="primary" (click)="deleteTimeframe(i)">{{ 'common.remove' | translate }}</button>
               </div>
 
               <div class="form__row">
                 <mat-form-field class="days-form-field">
-                  <mat-label>Days</mat-label>
+                  <mat-label>{{ 'alerts.timeframe.days' | translate }}</mat-label>
                   <mat-select formControlName="days" [multiple]="true">
-                    <mat-option *ngFor="let day of days" [value]="day">{{ day }}</mat-option>
+                    <mat-option *ngFor="let day of days" [value]="day">{{ 'alerts.days.' + day | translate }}</mat-option>
                   </mat-select>
                 </mat-form-field>
                 <gio-form-slide-toggle class="business-days-form-field">
-                  <gio-form-label>Business day</gio-form-label>
-                  <span class="gio-form-slide-toggle__description">Set any day except weekend</span>
+                  <gio-form-label>{{ 'alerts.timeframe.businessDay' | translate }}</gio-form-label>
+                  <span class="gio-form-slide-toggle__description">{{ 'alerts.timeframe.businessDayHint' | translate }}</span>
                   <mat-slide-toggle
                     gioFormSlideToggle
                     formControlName="businessDays"
-                    aria-label="enable business days only"
+                    [attr.aria-label]="'alerts.runtime.enableBusinessDaysAria' | translate"
                     name="businessDays"
                   ></mat-slide-toggle>
                 </gio-form-slide-toggle>
               </div>
               <div class="form__row">
                 <mat-form-field class="time-range-form-field">
-                  <mat-label>Time range</mat-label>
+                  <mat-label>{{ 'alerts.timeframe.timeRange' | translate }}</mat-label>
                   <input
                     matInput
                     [owlDateTime]="timeRange"
@@ -70,12 +70,14 @@
                 </mat-form-field>
 
                 <gio-form-slide-toggle class="office-hours-form-field">
-                  <gio-form-label>Office hours</gio-form-label>
-                  <span class="gio-form-slide-toggle__description">Set time range from 9:00 AM to 6:00 PM</span>
+                  <gio-form-label>{{ 'alerts.timeframe.officeHours' | translate }}</gio-form-label>
+                  <span class="gio-form-slide-toggle__description">{{
+                    'alerts.timeframe.officeHoursHint' | translate: { from: '9:00 AM', to: '6:00 PM' }
+                  }}</span>
                   <mat-slide-toggle
                     gioFormSlideToggle
                     formControlName="officeHours"
-                    aria-label="enable office hours only"
+                    [attr.aria-label]="'alerts.runtime.enableOfficeHoursAria' | translate"
                     name="officeHours"
                   ></mat-slide-toggle>
                 </gio-form-slide-toggle>

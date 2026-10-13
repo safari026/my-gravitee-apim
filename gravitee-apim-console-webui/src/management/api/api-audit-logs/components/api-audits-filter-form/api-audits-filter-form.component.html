@@ -17,9 +17,9 @@
 -->
 <div class="api-audits__filters" [formGroup]="filtersForm">
   <mat-form-field class="api-audits__filters__field">
-    <mat-label>Events</mat-label>
+    <mat-label>{{ 'audit.filters.events' | translate }}</mat-label>
     <gio-form-tags-input
-      [placeholder]="'Search for an event'"
+      [placeholder]="'audit.filters.searchEvent' | translate"
       formControlName="events"
       [addOnBlur]="true"
       [autocompleteOptions]="events"
@@ -28,29 +28,33 @@
   </mat-form-field>
 
   <mat-form-field class="api-audits__filters__field">
-    <mat-label>Enter a date range</mat-label>
+    <mat-label>{{ 'audit.filters.dateRange' | translate }}</mat-label>
     <mat-date-range-input formGroupName="range" [rangePicker]="picker">
-      <input matStartDate formControlName="start" placeholder="Start date" />
-      <input matEndDate formControlName="end" placeholder="End date" />
+      <input matStartDate formControlName="start" [placeholder]="'audit.filters.startDate' | translate" />
+      <input matEndDate formControlName="end" [placeholder]="'audit.filters.endDate' | translate" />
     </mat-date-range-input>
-    <mat-hint>MM/DD/YYYY – MM/DD/YYYY</mat-hint>
+    <mat-hint>{{ 'audit.filters.dateHint' | translate }}</mat-hint>
     <mat-datepicker-toggle matSuffix [for]="picker"></mat-datepicker-toggle>
     <mat-date-range-picker #picker></mat-date-range-picker>
 
-    <mat-error *ngIf="filtersForm.controls.range.hasError('matStartDateInvalid')">Invalid start date</mat-error>
-    <mat-error *ngIf="filtersForm.controls.range.hasError('matEndDateInvalid')">Invalid end date</mat-error>
+    <mat-error *ngIf="filtersForm.controls.range.hasError('matStartDateInvalid')">{{
+      'audit.filters.invalidStart' | translate
+    }}</mat-error>
+    <mat-error *ngIf="filtersForm.controls.range.hasError('matEndDateInvalid')">{{
+      'audit.filters.invalidEnd' | translate
+    }}</mat-error>
   </mat-form-field>
 
   <div class="action">
     <button
       mat-stroked-button
       class="action__button"
-      [attr.aria-label]="'Reset'"
+      [attr.aria-label]="'common.reset' | translate"
       (click)="filtersForm.reset()"
       [disabled]="loading"
       data-testId="reset-button"
     >
-      <mat-icon svgIcon="gio:refresh-cw"></mat-icon>Reset
+      <mat-icon svgIcon="gio:refresh-cw"></mat-icon>{{ 'common.reset' | translate }}
     </button>
   </div>
 </div>

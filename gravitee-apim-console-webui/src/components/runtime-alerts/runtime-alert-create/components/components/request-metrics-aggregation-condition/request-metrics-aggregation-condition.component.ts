@@ -40,35 +40,35 @@ type RequestMetricsAggregationFormGroup = FormGroup<{
     <form *ngIf="form" [formGroup]="form">
       <div class="condition-row">
         <div class="condition-row__label">
-          <span class="mat-body-2">Calculate</span>
+          <span class="mat-body-2">{{ 'alerts.condition.calculate' | translate }}</span>
         </div>
 
         <mat-form-field class="condition-row__form-field">
-          <mat-label>Function</mat-label>
+          <mat-label>{{ 'alerts.condition.function' | translate }}</mat-label>
           <mat-select formControlName="function" required>
-            <mat-option *ngFor="let func of functions" [value]="func">{{ func.name }}</mat-option>
+            <mat-option *ngFor="let func of functions" [value]="func">{{ 'alerts.functions.' + func.key | translate }}</mat-option>
           </mat-select>
-          <mat-error *ngIf="form.controls.function.hasError('required')">Function is required.</mat-error>
+          <mat-error *ngIf="form.controls.function.hasError('required')">{{ 'alerts.runtime.functionRequired' | translate }}</mat-error>
         </mat-form-field>
 
         <mat-form-field class="condition-row__form-field">
-          <mat-label>Metric</mat-label>
+          <mat-label>{{ 'alerts.condition.metric' | translate }}</mat-label>
           <mat-select formControlName="metric" required>
             <mat-option *ngFor="let metric of metrics" [value]="metric">{{ metric.name }}</mat-option>
           </mat-select>
-          <mat-error *ngIf="form.controls.metric.hasError('required')">Metric is required.</mat-error>
+          <mat-error *ngIf="form.controls.metric.hasError('required')">{{ 'alerts.runtime.metricRequired' | translate }}</mat-error>
         </mat-form-field>
       </div>
 
       <div class="condition-row">
         <div class="condition-row__label">
-          <span class="mat-body-2">If result is</span>
+          <span class="mat-body-2">{{ 'alerts.condition.ifResultIs' | translate }}</span>
         </div>
         <threshold-condition [form]="form"></threshold-condition>
       </div>
 
       <div class="condition-row">
-        <missing-data-condition [form]="form" [label]="'For'"></missing-data-condition>
+        <missing-data-condition [form]="form" labelKey="alerts.condition.for"></missing-data-condition>
       </div>
 
       <aggregation-condition [form]="form.controls.projections" [properties]="properties" [alertToUpdate]="alertToUpdate">

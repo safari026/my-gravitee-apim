@@ -27,6 +27,7 @@ import { RuntimeAlertListComponent } from './runtime-alert-list.component';
 
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertListComponent],
@@ -41,6 +42,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     MatButtonModule,
     MatIconModule,
     RouterLink,
+    TranslatePipe,
   ],
 })
 export class RuntimeAlertListModule {}

@@ -16,6 +16,7 @@
 import { forEach, map, mapValues } from 'lodash';
 
 import { AuditQuery, default as AuditService } from '../../services/audit.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 const AuditComponent: ng.IComponentOptions = {
   template: require('html-loader!./audit.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
@@ -27,7 +28,10 @@ const AuditComponent: ng.IComponentOptions = {
   },
   controller: [
     'AuditService',
-    function (AuditService: AuditService) {
+    'ngLanguageService',
+    function (AuditService: AuditService, ngLanguageService: LanguageService) {
+      this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
+
       this.$onInit = () => {
         this.events = map(this.events, (ev: string) => {
           return ev.toUpperCase();

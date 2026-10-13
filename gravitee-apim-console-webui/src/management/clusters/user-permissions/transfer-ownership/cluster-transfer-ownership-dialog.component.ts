@@ -30,6 +30,7 @@ import { SearchableUser } from '../../../../entities/user/searchableUser';
 import { Role } from '../../../../entities/role/role';
 import { Member, TransferOwnership } from '../../../../entities/management-api-v2';
 import { GioFormUserAutocompleteModule } from '../../../../shared/components/gio-user-autocomplete/gio-form-user-autocomplete.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export interface TransferOwnershipDialogData {
   roles: Role[];
@@ -61,6 +62,7 @@ type TransferOwnershipMode = 'ENTITY_MEMBER' | 'OTHER_USER';
     MatDialogTitle,
     MatDialogContent,
     MatDialogActions,
+    TranslatePipe,
   ],
 })
 export class ClusterTransferOwnershipDialogComponent implements OnInit {

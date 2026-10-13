@@ -22,15 +22,15 @@
         <div class="details-card__header__info-inputs">
           <div class="details-card__header__info-inputs__first-row">
             <mat-form-field class="details-card__header__info-inputs__first-row__name-field">
-              <mat-label>Cluster name</mat-label>
+              <mat-label>{{ 'kafka.general.name' | translate }}</mat-label>
               <input #nameInput formControlName="name" matInput type="text" [maxLength]="512" required />
               <mat-hint align="end">{{ nameInput.value.length }}/512</mat-hint>
-              <mat-error *ngIf="clusterForm.get('name').hasError('required')">Cluster name is required.</mat-error>
+              <mat-error *ngIf="clusterForm.get('name').hasError('required')">{{ 'kafka.general.nameRequired' | translate }}</mat-error>
             </mat-form-field>
           </div>
           <div class="details-card__header__info-inputs__second-row">
             <mat-form-field class="details-card__header__info-inputs__second-row__description-field">
-              <mat-label>Description</mat-label>
+              <mat-label>{{ 'kafka.general.description' | translate }}</mat-label>
               <textarea formControlName="description" matInput type="text" maxlength="1024"></textarea>
               <mat-hint align="end">{{ clusterForm.get('description').value?.length || 0 }}/1024</mat-hint>
             </mat-form-field>
@@ -39,11 +39,11 @@
         <div class="details-card__header__right-coll">
           <div class="details-card__header__right-coll__info">
             <dl class="gio-description-list">
-              <dt>Cross ID</dt>
+              <dt>{{ 'kafka.general.crossId' | translate }}</dt>
               <dd>{{ initialCluster.crossId }}</dd>
-              <dt>Created</dt>
+              <dt>{{ 'kafka.general.created' | translate }}</dt>
               <dd>{{ initialCluster.createdAt | date: 'medium' }}</dd>
-              <dt>Updated</dt>
+              <dt>{{ 'kafka.general.updated' | translate }}</dt>
               <dd>{{ initialCluster.updatedAt | date: 'medium' }}</dd>
             </dl>
           </div>
@@ -55,11 +55,11 @@
   <ng-container *gioPermission="{ anyOf: ['cluster-definition-d'] }">
     <mat-card class="danger-card" *ngIf="!isReadOnly">
       <mat-card-content>
-        <h3 class="danger-card__title">Danger Zone</h3>
+        <h3 class="danger-card__title">{{ 'kafka.general.dangerTitle' | translate }}</h3>
         <div class="danger-card__actions">
           <div class="danger-card__actions__action">
-            <span class="gv-form-danger-text"> Delete this Cluster. </span>
-            <button type="button" mat-button color="warn" (click)="deleteCluster()">Delete</button>
+            <span class="gv-form-danger-text">{{ 'kafka.general.delete' | translate }}</span>
+            <button type="button" mat-button color="warn" (click)="deleteCluster()">{{ 'common.delete' | translate }}</button>
           </div>
         </div>
       </mat-card-content>

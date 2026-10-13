@@ -32,6 +32,8 @@ import { CreateApiProduct } from '../../../entities/management-api-v2/api-produc
 import { ApiProductV2Service } from '../../../services-ngx/api-product-v2.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { apiProductNameUniqueAsyncValidator } from '../validators/api-product-name-unique-async.validator';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 interface CreateApiProductForm {
   name: FormControl<string>;
@@ -54,6 +56,7 @@ interface CreateApiProductForm {
     MatFormFieldModule,
     MatIconModule,
     MatInputModule,
+    TranslatePipe,
   ],
 })
 export class ApiProductCreateComponent {
@@ -63,6 +66,7 @@ export class ApiProductCreateComponent {
   private readonly apiProductV2Service = inject(ApiProductV2Service);
   private readonly snackBarService = inject(SnackBarService);
   private readonly destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   readonly nameMaxLength = 512;
   readonly versionMaxLength = 64;
@@ -85,10 +89,10 @@ export class ApiProductCreateComponent {
       this.matDialog
         .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
           data: {
-            title: 'Exit without saving?',
-            content: 'You have unsaved changes. Are you sure you want to exit without saving?',
-            confirmButton: 'Exit without saving',
-            cancelButton: 'Cancel',
+            title: this.languageService.translate('apiProducts.create.exitTitle'),
+            content: this.languageService.translate('apiProducts.create.exitContent'),
+            confirmButton: this.languageService.translate('apiProducts.create.exitConfirm'),
+            cancelButton: this.languageService.translate('common.cancel'),
           },
         })
         .afterClosed()
@@ -123,7 +127,7 @@ export class ApiProductCreateComponent {
 
       // Validate that name and version are not empty (both required for creation)
       if (!trimmedName || !trimmedVersion) {
-        this.snackBarService.error('Name and version are required and cannot be empty');
+        this.snackBarService.error(this.languageService.translate('apiProducts.create.nameVersionRequired'));
         this.isCreating.set(false);
         this.form.markAllAsTouched();
         return;
@@ -142,13 +146,13 @@ export class ApiProductCreateComponent {
         .subscribe({
           next: apiProduct => {
             this.isCreating.set(false);
-            this.snackBarService.success(`${apiProduct.name} - Successfully created`);
+            this.snackBarService.success(this.languageService.translate('apiProducts.create.success', { name: apiProduct.name }));
             this.goToConfiguration(apiProduct.id);
           },
           error: err => {
             this.isCreating.set(false);
             const errorMessage =
-              err.error?.message || err.error?.errors?.[0]?.message || 'An error occurred while creating the API Product';
+              err.error?.message || err.error?.errors?.[0]?.message || this.languageService.translate('apiProducts.create.error');
             this.snackBarService.error(errorMessage);
           },
         });

@@ -22,8 +22,11 @@ const AlertNotificationsComponent: ng.IComponentOptions = {
     parent: '^alertComponentAjs',
   },
   template: require('html-loader!./alert-notifications.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.addNotification = () => {
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.addNotification = () => {
       if (this.alert.notifications === undefined) {
         this.alert.notifications = [];
       }
@@ -35,7 +38,8 @@ const AlertNotificationsComponent: ng.IComponentOptions = {
       this.alert.notifications.splice(idx, 1);
       this.parent.formAlert.$setDirty();
     };
-  },
+    },
+  ],
 };
 
 export default AlertNotificationsComponent;

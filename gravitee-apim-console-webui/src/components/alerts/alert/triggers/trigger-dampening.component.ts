@@ -23,19 +23,23 @@ const AlertTriggerDampeningComponent: ng.IComponentOptions = {
     parent: '^alertComponentAjs',
   },
   template: require('html-loader!./trigger-dampening.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
-      this.modes = DampeningMode.MODES;
-      this.timeUnits = DurationTimeUnit.TIME_UNITS;
-    };
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
+        this.modes = DampeningMode.MODES;
+        this.timeUnits = DurationTimeUnit.TIME_UNITS;
+      };
 
-    this.onModeChange = () => {
-      delete this.dampening.duration;
-      delete this.dampening.timeUnit;
-      delete this.dampening.trueEvaluations;
-      delete this.dampening.totalEvaluations;
-    };
-  },
+      this.onModeChange = () => {
+        delete this.dampening.duration;
+        delete this.dampening.timeUnit;
+        delete this.dampening.trueEvaluations;
+        delete this.dampening.totalEvaluations;
+      };
+    },
+  ],
 };
 
 export default AlertTriggerDampeningComponent;

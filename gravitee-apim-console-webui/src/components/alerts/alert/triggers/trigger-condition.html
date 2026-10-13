@@ -17,22 +17,22 @@
 -->
 <div layout-gt-sm="row">
   <span ng-if="$ctrl.label === undefined || $ctrl.label === true" flex="15" style="display: grid; align-items: center" align="center"
-    >When</span
+    >{{$ctrl.translate('alerts.condition.when')}}</span
   >
 
   <md-input-container class="md-block" flex-gt-sm flex="15">
-    <label>Metrics</label>
+    <label>{{$ctrl.translate('alerts.condition.metrics')}}</label>
     <md-select ng-model="$ctrl.condition.property" required ng-change="$ctrl.onMetricsChange(true)" ng-disabled="$ctrl.isReadonly">
-      <md-option ng-value="type.key" ng-repeat="type in $ctrl.metrics"> {{::type.name}} </md-option>
+      <md-option ng-value="type.key" ng-repeat="type in $ctrl.metrics"> {{$ctrl.translate('alerts.metrics.' + type.key)}} </md-option>
     </md-select>
   </md-input-container>
 
   <span flex="5">&nbsp;</span>
 
   <md-input-container class="md-block" flex-gt-sm flex="15">
-    <label>Type</label>
+    <label>{{$ctrl.translate('alerts.condition.type')}}</label>
     <md-select ng-model="$ctrl.condition.type" required ng-change="$ctrl.onConditionChange()" ng-disabled="$ctrl.isReadonly">
-      <md-option ng-value="type" ng-repeat="type in $ctrl.conditions"> {{::type | lowercase}} </md-option>
+      <md-option ng-value="type" ng-repeat="type in $ctrl.conditions"> {{$ctrl.translate('alerts.conditionTypes.' + type)}} </md-option>
     </md-select>
   </md-input-container>
 
@@ -40,9 +40,9 @@
     <span flex="5">&nbsp;</span>
 
     <md-input-container class="md-block" flex-gt-sm>
-      <label>Operator</label>
+      <label>{{$ctrl.translate('alerts.condition.operator')}}</label>
       <md-select ng-model="$ctrl.condition.operator" required ng-disabled="$ctrl.isReadonly">
-        <md-option ng-value="operator.key" ng-repeat="operator in $ctrl.operators"> {{::operator.name}} </md-option>
+        <md-option ng-value="operator.key" ng-repeat="operator in $ctrl.operators"> {{$ctrl.translate('alerts.operators.' + operator.key)}} </md-option>
       </md-select>
     </md-input-container>
   </div>

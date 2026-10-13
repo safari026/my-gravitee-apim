@@ -26,27 +26,27 @@ import { MissingDataCondition } from '../../../../../../entities/alerts/conditio
   template: `
     <form *ngIf="form" [formGroup]="form" class="condition-row">
       <div class="condition-row__label">
-        <span class="mat-body-2">{{ label }}</span>
+        <span class="mat-body-2">{{ labelKey | translate }}</span>
       </div>
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Duration</mat-label>
+        <mat-label>{{ 'alerts.condition.duration' | translate }}</mat-label>
         <input matInput formControlName="duration" type="number" min="1" required />
-        <mat-error *ngIf="form.controls.duration.hasError('required')">Duration is required</mat-error>
-        <mat-error *ngIf="form.controls.duration.hasError('min')">Duration must be greater than 0.</mat-error>
+        <mat-error *ngIf="form.controls.duration.hasError('required')">{{ 'alerts.condition.durationRequired' | translate }}</mat-error>
+        <mat-error *ngIf="form.controls.duration.hasError('min')">{{ 'alerts.condition.durationMin' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Time unit</mat-label>
+        <mat-label>{{ 'alerts.condition.timeUnit' | translate }}</mat-label>
         <mat-select formControlName="timeUnit" required>
           <mat-option *ngFor="let unit of timeUnits" [value]="unit">{{ unit }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.timeUnit.hasError('required')">Time unit is required</mat-error>
+        <mat-error *ngIf="form.controls.timeUnit.hasError('required')">{{ 'alerts.runtime.timeUnitRequired' | translate }}</mat-error>
       </mat-form-field>
     </form>
   `,
 })
 export class MissingDataConditionComponent implements OnInit {
   @Input({ required: true }) form: FormGroup;
-  @Input() label = 'No event for';
+  @Input() labelKey = 'alerts.condition.noEventFor';
   @Input() public alertToUpdate: AlertTriggerEntity;
   protected timeUnits = ['Seconds', 'Minutes', 'Hours'];
 

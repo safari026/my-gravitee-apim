@@ -27,7 +27,9 @@ const AlertTriggerMetricsAggregationComponent: ng.IComponentOptions = {
   template: require('html-loader!./trigger-metrics-aggregation.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
   controller: [
     'Constants',
-    function (Constants: any) {
+    'ngLanguageService',
+    function (Constants: any, ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
       this.$onInit = () => {
         this.metrics = Rule.findByScopeAndType(
           this.alert.reference_type,

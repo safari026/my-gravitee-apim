@@ -32,6 +32,7 @@ import { ApiAuditListComponent } from './api-audit-list.component';
 
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiAuditListComponent],
@@ -54,6 +55,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     MatSnackBarModule,
     MatTableModule,
     MatTooltipModule,
+    TranslatePipe,
   ],
 })
 export class ApiAuditListModule {}

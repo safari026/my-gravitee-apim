@@ -20,7 +20,7 @@ class QuickTimeRangeController {
   private timeframes: ITimeframe[];
   private onTimeframeChange: any;
 
-  constructor() {
+  constructor(private ngLanguageService) {
     this.timeframes = [
       TimeframeRanges.LAST_MINUTE,
       TimeframeRanges.LAST_HOUR,
@@ -34,9 +34,15 @@ class QuickTimeRangeController {
     }
   }
 
+  translate(key: string, params?: Record<string, string | number>) {
+    return this.ngLanguageService.translate(key, params);
+  }
+
   updateTimeframe() {
     this.onTimeframeChange({ timeframe: this.timeframe });
   }
 }
+
+QuickTimeRangeController.$inject = ['ngLanguageService'];
 
 export default QuickTimeRangeController;

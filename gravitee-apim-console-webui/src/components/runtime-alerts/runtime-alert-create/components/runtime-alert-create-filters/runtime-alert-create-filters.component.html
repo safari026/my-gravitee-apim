@@ -17,9 +17,11 @@
 -->
 <mat-card class="form-card">
   <mat-card-header class="card-header">
-    <mat-card-title>Filters</mat-card-title>
-    <mat-card-subtitle>Filters to apply condition only on a subset of events</mat-card-subtitle>
-    <button *ngIf="selectedRule != null" aria-label="Add filter" mat-stroked-button (click)="addControl()">Add filter</button>
+    <mat-card-title>{{ 'alerts.filters.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'alerts.filters.hint' | translate }}</mat-card-subtitle>
+    <button *ngIf="selectedRule != null" [attr.aria-label]="'alerts.runtime.addFilterAria' | translate" mat-stroked-button (click)="addControl()">
+      {{ 'alerts.filters.add' | translate }}
+    </button>
   </mat-card-header>
 
   @if (form.controls.length) {
@@ -33,8 +35,8 @@
           <div *ngFor="let control of form.controls; index as controlIndex">
             <mat-card class="filter">
               <div class="filter-header">
-                <h3>Configure filter</h3>
-                <button mat-raised-button color="primary" (click)="removeControl(controlIndex)">Remove</button>
+                <h3>{{ 'alerts.runtime.configureFilter' | translate }}</h3>
+                <button mat-raised-button color="primary" (click)="removeControl(controlIndex)">{{ 'common.remove' | translate }}</button>
               </div>
 
               <metrics-simple-condition
@@ -50,7 +52,7 @@
       }
     </ng-container>
     <ng-template #bannerBlock>
-      <gio-banner-info>Select a rule before setting the filters.</gio-banner-info>
+      <gio-banner-info>{{ 'alerts.runtime.selectRuleFilters' | translate }}</gio-banner-info>
     </ng-template>
   </mat-card-content>
 </mat-card>

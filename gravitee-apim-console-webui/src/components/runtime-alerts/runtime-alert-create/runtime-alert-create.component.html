@@ -17,31 +17,30 @@
 -->
 
 <div class="page-header">
-  <h1 class="title">{{ isUpdate ? 'Update alert' : 'Create new alert' }}</h1>
+  <h1 class="title">{{ (isUpdate ? 'alerts.runtime.updateTitle' : 'alerts.runtime.createTitle') | translate }}</h1>
   <p class="paragraph">
-    Configure your own alerts. Be alerted by email when the HC status changed or when the quota reached a percent rate. You can find
-    examples in the Gravitee documentation to configure
+    {{ 'alerts.runtime.intro' | translate }}
     <a
       href="https://documentation.gravitee.io/apim/getting-started/configuration/configure-alerts-and-notifications#configure-notifications-for-your-apis"
-      aria-label="learn more"
+      [attr.aria-label]="'alerts.runtime.learnMoreAria' | translate"
       rel="noopener"
       target="_blank"
-      >notifications</a
+      >{{ 'alerts.runtime.notificationsLink' | translate }}</a
     >
-    or
+    {{ 'alerts.runtime.introOr' | translate }}
     <a
       href="https://documentation.gravitee.io/apim/getting-started/configuration/configure-alerts-and-notifications#configure-alerts"
-      aria-label="learn more"
+      [attr.aria-label]="'alerts.runtime.learnMoreAria' | translate"
       rel="noopener"
       target="_blank"
-      >alerts.</a
+      >{{ 'alerts.runtime.alertsLink' | translate }}</a
     >
   </p>
 </div>
 
 <form [formGroup]="alertForm">
   <mat-tab-group animationDuration="0">
-    <mat-tab label="Alerts">
+    <mat-tab [label]="'alerts.form.tabAlert' | translate">
       @if (!isLoading) {
         <runtime-alert-create-general
           *ngIf="referenceType != null"
@@ -77,12 +76,12 @@
       }
     </mat-tab>
 
-    <mat-tab label="Notifications">
+    <mat-tab [label]="'alerts.form.tabNotifications' | translate">
       <runtime-alert-create-notifications formGroupName="notificationsForm"></runtime-alert-create-notifications>
     </mat-tab>
 
     @if (isUpdate) {
-      <mat-tab label="History">
+      <mat-tab [label]="'alerts.form.tabHistory' | translate">
         <runtime-alert-history></runtime-alert-history>
       </mat-tab>
     }

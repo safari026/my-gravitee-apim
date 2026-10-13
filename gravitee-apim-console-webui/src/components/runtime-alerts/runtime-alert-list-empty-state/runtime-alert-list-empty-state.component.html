@@ -19,12 +19,18 @@
   <mat-card-header>
     <div class="runtime-alerts__header">
       <div class="runtime-alerts__header__titles">
-        <mat-card-title>Custom alerts</mat-card-title>
-        <mat-card-subtitle>Set up alerting conditions for the Gateway</mat-card-subtitle>
+        <mat-card-title>{{ 'alerts.runtime.title' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'alerts.runtime.subtitle' | translate }}</mat-card-subtitle>
       </div>
       <div>
-        <button [disabled]="!canCreateAlert" color="primary" aria-label="Add alert" mat-raised-button (click)="createAlert.emit()">
-          <mat-icon svgIcon="gio:plus"></mat-icon>Add alert
+        <button
+          [disabled]="!canCreateAlert"
+          color="primary"
+          [attr.aria-label]="'alerts.runtime.addAlert' | translate"
+          mat-raised-button
+          (click)="createAlert.emit()"
+        >
+          <mat-icon svgIcon="gio:plus"></mat-icon>{{ 'alerts.runtime.addAlert' | translate }}
         </button>
       </div>
     </div>
@@ -32,8 +38,8 @@
   <mat-card-content>
     <gio-card-empty-state
       icon="search"
-      title="No alerts found"
-      subtitle="No runtime alerts found. Please try again or create a custom alert."
+      [title]="'alerts.runtime.emptyTitle' | translate"
+      [subtitle]="'alerts.runtime.emptySubtitle' | translate"
     ></gio-card-empty-state>
   </mat-card-content>
 </mat-card>

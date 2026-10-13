@@ -24,6 +24,7 @@ import { AlertTriggerEntity } from '../../../entities/alerts/alertTriggerEntity'
 import { AlertService } from '../../../services-ngx/alert.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'api-runtime-alerts',
@@ -42,6 +43,7 @@ export class ApiRuntimeAlertsComponent implements OnDestroy {
     private readonly router: Router,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {
     this.loadData();
   }
@@ -72,9 +74,9 @@ export class ApiRuntimeAlertsComponent implements OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Delete alert',
-          content: `Are you sure you want to delete your <strong>${alert.name}</strong> alert?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('alerts.runtime.deleteDialogTitle'),
+          content: this.languageService.translate('alerts.runtime.deleteDialogContent', { name: alert.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteAlertConfirmDialog',
@@ -84,10 +86,10 @@ export class ApiRuntimeAlertsComponent implements OnDestroy {
         filter(confirm => confirm === true),
         switchMap(() => this.alertService.deleteAlert(this.activatedRoute.snapshot.params.apiId, alert.id)),
         catchError(() => {
-          this.snackBarService.error('An error occurred while deleting your alert.');
+          this.snackBarService.error(this.languageService.translate('alerts.runtime.deleteError'));
           return EMPTY;
         }),
-        tap(() => this.snackBarService.success(`${alert.name} alert successfully deleted!`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('alerts.runtime.deleteSuccess', { name: alert.name }))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.loadData());

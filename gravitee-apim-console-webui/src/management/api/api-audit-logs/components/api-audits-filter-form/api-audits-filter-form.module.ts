@@ -24,6 +24,7 @@ import { MatSelectModule } from '@angular/material/select';
 import { GioFormTagsInputModule } from '@gravitee/ui-particles-angular';
 
 import { ApiAuditsFilterFormComponent } from './api-audits-filter-form.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiAuditsFilterFormComponent],
@@ -37,6 +38,7 @@ import { ApiAuditsFilterFormComponent } from './api-audits-filter-form.component
     MatIconModule,
     MatSelectModule,
     GioFormTagsInputModule,
+    TranslatePipe,
   ],
 })
 export class ApiAuditsFilterFormModule {}
