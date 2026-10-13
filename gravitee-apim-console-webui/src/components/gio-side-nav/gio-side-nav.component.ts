@@ -236,13 +236,6 @@ export class GioSideNavComponent implements OnInit, AfterViewInit, AfterViewChec
         iconRight$: apiProductsIconRight$,
       },
       {
-        icon: 'gio:box',
-        routerLink: './integrations',
-        displayName: this.languageService.translate('navigation.integrations'),
-        permissions: ['environment-integration-r'],
-        category: this.languageService.translate('navigation.integrations'),
-      },
-      {
         icon: 'gio:multi-window',
         routerLink: './applications',
         displayName: this.languageService.translate('navigation.applications'),
