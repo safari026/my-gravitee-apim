@@ -25,6 +25,7 @@ import { ApplicationService } from '../../../services-ngx/application.service';
 import { AuditService } from '../../../services-ngx/audit.service';
 import { EnvironmentService } from '../../../services-ngx/environment.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { GioTableWrapperFilters } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { endOfDay } from '../../../util/date.util';
 
@@ -137,6 +138,7 @@ export class OrgSettingsAuditComponent implements OnInit, OnDestroy {
     private applicationService: ApplicationService,
     private environmentService: EnvironmentService,
     private snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -173,7 +175,7 @@ export class OrgSettingsAuditComponent implements OnInit, OnDestroy {
         switchMap(({ auditFilters, tableWrapper }) =>
           this.auditService.listByOrganization(auditFilters, tableWrapper.pagination.index, tableWrapper.pagination.size).pipe(
             catchError(() => {
-              this.snackBarService.error('Unable to run the request, please try again');
+              this.snackBarService.error(this.languageService.translate('settings.organization.audit.requestFailed'));
               return EMPTY;
             }),
           ),

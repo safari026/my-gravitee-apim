@@ -27,6 +27,7 @@ import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { SocialIdentityProvider } from '../../entities/organization/socialIdentityProvider';
 import { AuthService } from '../auth.service';
 import { Constants } from '../../entities/Constants';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 export type SocialIdentityProviderVM = SocialIdentityProvider & { textColor?: string };
 
@@ -56,6 +57,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     private readonly authService: AuthService,
     private readonly iconRegistry: MatIconRegistry,
     private readonly sanitizer: DomSanitizer,
+    private readonly languageService: LanguageService,
   ) {
     this.userCreationEnabled = constants.org.settings.management?.userCreation?.enabled ?? false;
     this.localLoginDisabled = !(constants.org.settings.authentication?.localLogin?.enabled ?? true);
@@ -76,7 +78,7 @@ export class LoginComponent implements OnInit, OnDestroy {
     this.reCaptchaService.displayBadge();
 
     if (this.localLoginDisabled === true && this.identityProviders.length === 0) {
-      this.snackBarService.error('No login method available. Please contact your administrator.');
+      this.snackBarService.error(this.languageService.translate('auth.login.errors.noMethod'));
     }
   }
 
@@ -108,7 +110,7 @@ export class LoginComponent implements OnInit, OnDestroy {
         },
         error: () => {
           this.loginInProgress = false;
-          this.snackBarService.error('Login failed! Check username and password.');
+          this.snackBarService.error(this.languageService.translate('auth.login.errors.failed'));
         },
       });
   }

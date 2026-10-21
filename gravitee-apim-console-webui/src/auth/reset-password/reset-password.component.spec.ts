@@ -27,6 +27,7 @@ import { ResetPasswordComponent } from './reset-password.component';
 import { ResetPasswordModule } from './reset-password.module';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 describe('ResetPasswordComponent', () => {
   let fixture: ComponentFixture<ResetPasswordComponent>;
@@ -35,9 +36,11 @@ describe('ResetPasswordComponent', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    localStorage.removeItem('gio-console-lang');
   });
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, MatIconTestingModule, ResetPasswordModule],
       providers: [
@@ -90,5 +93,36 @@ describe('ResetPasswordComponent', () => {
       token: expect.any(String),
       password: 'password',
     });
+  });
+
+  it('should switch Reset Password copy EN → RU → EN without reload', () => {
+    expect(fixture.nativeElement.textContent).toContain('Reset password');
+    expect(fixture.nativeElement.textContent).toContain('First name');
+    expect(fixture.nativeElement.textContent).toContain('Confirm password');
+
+    const languageService = TestBed.inject(LanguageService);
+    languageService.setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Сброс пароля');
+    expect(fixture.nativeElement.textContent).toContain('Имя');
+    expect(fixture.nativeElement.textContent).toContain('Подтверждение пароля');
+    expect(fixture.nativeElement.textContent).toContain('Сбросить пароль');
+
+    languageService.setLanguage('en');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Reset password');
+  });
+
+  it('should translate password validation without reload', async () => {
+    const passwordInput = await loader.getHarness(MatInputHarness.with({ selector: '[formControlName="password"]' }));
+    await passwordInput.focus();
+    await passwordInput.blur();
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Password is required.');
+
+    TestBed.inject(LanguageService).setLanguage('ru');
+    fixture.detectChanges();
+    expect(fixture.nativeElement.textContent).toContain('Введите пароль.');
+    expect(fixture.nativeElement.textContent).not.toContain('Password is required.');
   });
 });

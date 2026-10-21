@@ -1,6 +1,7 @@
 import { ActivatedRoute, Router } from '@angular/router';
 
 import NotificationService from '../../../../services/notification.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 /*
  * Copyright (C) 2015 The Gravitee team (http://gravitee.io)
@@ -21,11 +22,13 @@ const ApplicationLogComponentAjs: ng.IComponentOptions = {
   bindings: {
     log: '<',
     activatedRoute: '<',
+    language: '<',
   },
   controller: [
     'NotificationService',
     'Constants',
     'ngRouter',
+    'ngLanguageService',
     class {
       private activatedRoute: ActivatedRoute;
 
@@ -33,7 +36,12 @@ const ApplicationLogComponentAjs: ng.IComponentOptions = {
         private NotificationService: NotificationService,
         private Constants: any,
         private ngRouter: Router,
+        private ngLanguageService: LanguageService,
       ) {}
+
+      translate(key: string, params?: Record<string, string | number>): string {
+        return this.ngLanguageService.translate(key, params);
+      }
 
       getMimeType(log: any) {
         if (log.headers['Content-Type'] !== undefined) {
@@ -44,7 +52,7 @@ const ApplicationLogComponentAjs: ng.IComponentOptions = {
       }
 
       onCopyBodySuccess(evt: any) {
-        this.NotificationService.show('Body has been copied to clipboard');
+        this.NotificationService.show(this.translate('applications.logs.bodyCopied'));
         evt.clearSelection();
       }
 

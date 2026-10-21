@@ -16,25 +16,25 @@
 
 -->
 
-<h2 mat-dialog-title>Edit {{ notification.name }}</h2>
+<h2 mat-dialog-title>{{ 'applications.notifications.editDialog.title' | translate: { name: notification.name } }}</h2>
 
 <form [formGroup]="staticForm" (ngSubmit)="submit()">
   <mat-dialog-content>
     <ng-container *ngIf="notifier" formGroupName="notifier">
       <mat-form-field>
-        <mat-label *ngIf="notifier.type === 'EMAIL'">Email list</mat-label>
-        <mat-label *ngIf="notifier.type === 'WEBHOOK'">Webhook</mat-label>
+        <mat-label *ngIf="notifier.type === 'EMAIL'">{{ 'applications.notifications.editDialog.emailList' | translate }}</mat-label>
+        <mat-label *ngIf="notifier.type === 'WEBHOOK'">{{ 'applications.notifications.editDialog.webhook' | translate }}</mat-label>
         <input matInput formControlName="config" />
-        <mat-hint *ngIf="notifier.type === 'EMAIL'">Use space, ',' or ';' to separate emails. EL supported.</mat-hint>
-        <mat-hint *ngIf="notifier.type === 'WEBHOOK'">URL (Gravitee will POST datas to this url)</mat-hint>
+        <mat-hint *ngIf="notifier.type === 'EMAIL'">{{ 'applications.notifications.editDialog.emailHint' | translate }}</mat-hint>
+        <mat-hint *ngIf="notifier.type === 'WEBHOOK'">{{ 'applications.notifications.editDialog.webhookHint' | translate }}</mat-hint>
       </mat-form-field>
       <div *ngIf="notifier.type === 'WEBHOOK'">
         <gio-form-slide-toggle>
-          Use system proxy
+          {{ 'applications.notifications.editDialog.useSystemProxy' | translate }}
           <mat-slide-toggle
             gioFormSlideToggle
             formControlName="useSystemProxy"
-            aria-label="Use system proxy"
+            [attr.aria-label]="'applications.notifications.editDialog.useSystemProxy' | translate"
             name="useSystemProxy"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>
@@ -43,7 +43,7 @@
     @if (isPortalNotification && isPrimaryOwner) {
       <ng-container>
         <mat-form-field>
-          <mat-label>Groups</mat-label>
+          <mat-label>{{ 'applications.notifications.editDialog.groups' | translate }}</mat-label>
           <mat-select multiple [formControl]="staticForm.controls.groups">
             @for (group of groupData; track group) {
               <mat-option [value]="group.id" [disabled]="isReadonly || primaryOwner == group.id">{{ group.name }}</mat-option>
@@ -53,7 +53,7 @@
       </ng-container>
     }
     <div formGroupName="hooks">
-      <h3>Event subscribed</h3>
+      <h3>{{ 'applications.notifications.editDialog.eventsTitle' | translate }}</h3>
 
       <div *ngFor="let category of categories" class="category">
         <h6>{{ category.name }}</h6>
@@ -69,9 +69,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions class="actions">
-    <button mat-flat-button [mat-dialog-close]="" data-testid="cancel-button">Cancel</button>
+    <button mat-flat-button [mat-dialog-close]="" data-testid="cancel-button">{{ 'common.cancel' | translate }}</button>
     <button mat-raised-button [disabled]="isReadonly || staticForm.invalid" color="primary" type="submit" data-testid="save-button">
-      Save
+      {{ 'common.save' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

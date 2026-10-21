@@ -17,9 +17,10 @@ import { CommonModule } from '@angular/common';
 import { CUSTOM_ELEMENTS_SCHEMA, NgModule } from '@angular/core';
 
 import { OrgSettingsPlatformPoliciesStudioComponent } from './org-settings-platform-policies-studio.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
-  imports: [CommonModule],
+  imports: [CommonModule, TranslatePipe],
   declarations: [OrgSettingsPlatformPoliciesStudioComponent],
   exports: [OrgSettingsPlatformPoliciesStudioComponent],
   schemas: [CUSTOM_ELEMENTS_SCHEMA],

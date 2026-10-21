@@ -25,6 +25,7 @@ import { RouterModule } from '@angular/router';
 import { ApiCreationGetStartedComponent } from './api-creation-get-started.component';
 
 import { GioApiImportDialogModule } from '../component/gio-api-import-dialog/gio-api-import-dialog.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -38,6 +39,7 @@ import { GioApiImportDialogModule } from '../component/gio-api-import-dialog/gio
 
     GioIconsModule,
     GioApiImportDialogModule,
+    TranslatePipe,
   ],
   declarations: [ApiCreationGetStartedComponent],
   exports: [ApiCreationGetStartedComponent],

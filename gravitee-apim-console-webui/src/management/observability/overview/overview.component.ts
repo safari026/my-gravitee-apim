@@ -20,10 +20,11 @@ import { Component, inject } from '@angular/core';
 import { DashboardService } from '../data-access/dashboard.service';
 import { DashboardViewerComponent } from '../dashboards/ui/dashboard-viewer/dashboard-viewer.component';
 import { GioHeaderComponent } from '../../../shared/components/gio-header/gio-header.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'overview',
-  imports: [DashboardViewerComponent, GioHeaderComponent],
+  imports: [DashboardViewerComponent, GioHeaderComponent, TranslatePipe],
   templateUrl: './overview.component.html',
   styleUrl: './overview.component.scss',
 })

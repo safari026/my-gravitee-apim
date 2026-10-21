@@ -33,6 +33,7 @@ import { EntrypointService } from '../../../services-ngx/entrypoint.service';
 import { GroupService } from '../../../services-ngx/group.service';
 import { PortalSettingsService } from '../../../services-ngx/portal-settings.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { TagService } from '../../../services-ngx/tag.service';
 import { GioTableWrapperFilters } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
@@ -75,13 +76,12 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
   private readonly environmentService = inject(EnvironmentService);
   private readonly entrypointService = inject(EntrypointService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly matDialog = inject(MatDialog);
   private readonly gioLicenseService = inject(GioLicenseService);
   private readonly destroyRef = inject(DestroyRef);
 
   isLoading = true;
-
-  providedConfigurationMessage = 'Configuration provided by the system';
 
   tags: Tag[];
   tagsTableDS: TagTableDS;
@@ -237,7 +237,7 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
     combineLatest(environmentsPortalSettingsToSave$)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Configuration saved!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.entrypoints.configSaved'));
           this.ngOnInit();
         }),
         catchError(({ error }) => {
@@ -262,7 +262,7 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
         filter(result => !!result),
         switchMap(newTag => this.tagService.create(newTag)),
         tap(() => {
-          this.snackBarService.success('Tag successfully created!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.entrypoints.tagCreated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -294,7 +294,7 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
           }),
         ),
         tap(() => {
-          this.snackBarService.success('Tag successfully updated!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.entrypoints.tagUpdated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -335,11 +335,11 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Delete a tag',
-          content: `Are you sure you want to delete the tag <strong>${tag.name}</strong>?
-          ${entrypointsInfoMessage}
-          `,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.entrypoints.deleteTagTitle'),
+          content:
+            this.languageService.translate('settings.organization.entrypoints.deleteTagContent', { name: tag.name }) +
+            entrypointsInfoMessage,
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'removeTagConfirmDialog',
@@ -365,7 +365,11 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
           ]);
         }),
         switchMap(() => this.tagService.delete(tag.key)),
-        tap(() => this.snackBarService.success(`Tag "${tag.name}" has been deleted.`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.entrypoints.tagDeleted', { name: tag.name }),
+          ),
+        ),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -396,7 +400,7 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
         filter(result => !!result),
         switchMap(newEntrypoint => this.entrypointService.create(newEntrypoint)),
         tap(() => {
-          this.snackBarService.success('Mapping successfully created!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.entrypoints.mappingCreated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -425,7 +429,7 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
         filter(result => !!result),
         switchMap(newEntrypoint => this.entrypointService.update(newEntrypoint)),
         tap(() => {
-          this.snackBarService.success('Mapping successfully updated!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.entrypoints.mappingUpdated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -441,9 +445,11 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.MEDIUM,
         data: {
-          title: 'Delete a entrypoint',
-          content: `Are you sure you want to delete the entrypoint <strong>${entrypoint.url}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.entrypoints.deleteEntrypointTitle'),
+          content: this.languageService.translate('settings.organization.entrypoints.deleteEntrypointContent', {
+            url: entrypoint.url,
+          }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteEntrypointConfirmDialog',
@@ -452,7 +458,11 @@ export class OrgSettingsEntrypointsAndShardingTagsComponent implements OnInit {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.entrypointService.delete(entrypoint.id)),
-        tap(() => this.snackBarService.success(`Entrypoint "${entrypoint.url}" has been delete`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.entrypoints.entrypointDeleted', { url: entrypoint.url }),
+          ),
+        ),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;

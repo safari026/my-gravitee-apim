@@ -37,6 +37,7 @@ import { UsersV2Service } from '../../../../../services-ngx/users-v2.service';
 import { Constants } from '../../../../../entities/Constants';
 import { GioTableWrapperFilters } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 export interface EnvironmentTab {
   id: string;
@@ -99,6 +100,7 @@ export class OrgSettingsUserDetailMembershipsComponent {
   private readonly groupService = inject(GroupService);
   private readonly roleService = inject(RoleService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly matDialog = inject(MatDialog);
   private readonly constants = inject(Constants);
   private readonly destroyRef = inject(DestroyRef);
@@ -207,9 +209,11 @@ export class OrgSettingsUserDetailMembershipsComponent {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete user form the group',
-          content: `Are you sure you want to delete the user from the group <strong>${group.name}</strong> ?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.userMemberships.deleteFromGroupTitle'),
+          content: this.languageService.translate('settings.organization.userMemberships.deleteFromGroupContent', {
+            group: group.name,
+          }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'removeGroupMemberConfirmDialog',
@@ -218,7 +222,14 @@ export class OrgSettingsUserDetailMembershipsComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.groupService.deleteMember(group.id, this.userId(), group.environmentId)),
-        tap(() => this.snackBarService.success(`"${this.userDisplayName()}" has been deleted from the group "${group.name}"`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.userMemberships.deletedFromGroup', {
+              user: this.userDisplayName(),
+              group: group.name,
+            }),
+          ),
+        ),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -265,7 +276,7 @@ export class OrgSettingsUserDetailMembershipsComponent {
           ),
         ),
         tap(() => {
-          this.snackBarService.success('Roles successfully updated');
+          this.snackBarService.success(this.languageService.translate('settings.organization.userMemberships.rolesUpdated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

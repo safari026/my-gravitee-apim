@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { Component, DestroyRef, OnInit, inject, Inject } from '@angular/core';
 import { FormControl, FormGroup } from '@angular/forms';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
@@ -176,6 +177,7 @@ interface PortalForm {
   standalone: false,
 })
 export class PortalSettingsComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   settings: PortalSettings;
   portalForm: FormGroup<PortalForm>;
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
@@ -799,7 +801,7 @@ export class PortalSettingsComponent implements OnInit {
     this.portalSettingsService
       .save(updatedSettingsPayload)
       .pipe(
-        tap(() => this.snackBarService.success('Settings successfully updated!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.portal.updated'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.ngOnInit());

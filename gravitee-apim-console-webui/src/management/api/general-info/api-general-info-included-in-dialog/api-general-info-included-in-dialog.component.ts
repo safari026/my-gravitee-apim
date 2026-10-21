@@ -23,6 +23,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 
 import { ApiProductInfo } from '../../../../entities/management-api-v2/api-product/apiProductInfo';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type ApiGeneralInfoIncludedInDialogData = {
   apiProducts: ApiProductInfo[];
@@ -33,7 +34,7 @@ export type ApiGeneralInfoIncludedInDialogData = {
   templateUrl: './api-general-info-included-in-dialog.component.html',
   styleUrls: ['./api-general-info-included-in-dialog.component.scss'],
   standalone: true,
-  imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule],
+  imports: [FormsModule, MatButtonModule, MatDialogModule, MatFormFieldModule, MatIconModule, MatInputModule, TranslatePipe],
 })
 export class ApiGeneralInfoIncludedInDialogComponent {
   readonly data: ApiGeneralInfoIncludedInDialogData = inject(MAT_DIALOG_DATA);

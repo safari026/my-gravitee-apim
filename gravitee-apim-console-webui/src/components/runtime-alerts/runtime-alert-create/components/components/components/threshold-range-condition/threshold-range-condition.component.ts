@@ -22,15 +22,15 @@ import { FormGroup } from '@angular/forms';
   template: `
     <form *ngIf="form" [formGroup]="form" class="condition-row">
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Low threshold</mat-label>
+        <mat-label>{{ 'alerts.condition.lowThreshold' | translate }}</mat-label>
         <input matInput formControlName="lowThreshold" type="number" min="1" required />
-        <mat-error *ngIf="form.controls.lowThreshold.hasError('required')">Low threshold is required.</mat-error>
+        <mat-error *ngIf="form.controls.lowThreshold.hasError('required')">{{ 'alerts.condition.thresholdRequired' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field class="condition-row__form-field">
-        <mat-label>High threshold</mat-label>
+        <mat-label>{{ 'alerts.condition.highThreshold' | translate }}</mat-label>
         <input matInput formControlName="highThreshold" type="number" [min]="form.controls.lowThreshold.getRawValue()" required />
-        <mat-error *ngIf="form.controls.highThreshold.hasError('required')">High threshold is required.</mat-error>
-        <mat-error *ngIf="form.controls.highThreshold.hasError('min')">High threshold must be higher than low threshold.</mat-error>
+        <mat-error *ngIf="form.controls.highThreshold.hasError('required')">{{ 'alerts.condition.thresholdRequired' | translate }}</mat-error>
+        <mat-error *ngIf="form.controls.highThreshold.hasError('min')">{{ 'alerts.runtime.highThresholdMinHigher' | translate }}</mat-error>
       </mat-form-field>
     </form>
   `,

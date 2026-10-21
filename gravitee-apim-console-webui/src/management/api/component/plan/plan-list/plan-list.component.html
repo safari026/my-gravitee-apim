@@ -18,24 +18,24 @@
 <div class="plans__header">
   @if (!effectiveContext().isReadOnly && effectiveContext().canAddPlan && plans() && !isLoadingData()) {
     <div
-      [matTooltip]="'No compatible plan type enabled for entrypoints. This is configured under Settings > Portal > Settings > Console.'"
+      [matTooltip]="'apis.plans.addDisabledTooltip' | translate"
       [matTooltipDisabled]="planMenuItems()?.length > 0"
     >
       <button
         mat-raised-button
         type="button"
         color="primary"
-        aria-label="Add new plan"
+        [attr.aria-label]="'apis.plans.addAria' | translate"
         data-testid="plans_add_plan_button"
         [matMenuTriggerFor]="menu"
         [disabled]="planMenuItems()?.length === 0"
       >
-        <mat-icon svgIcon="gio:plus"></mat-icon>Add new plan
+        <mat-icon svgIcon="gio:plus"></mat-icon>{{ 'apis.plans.add' | translate }}
       </button>
       <mat-menu #menu="matMenu">
         @for (planMenuItem of planMenuItems() ?? []; track planMenuItem.planFormType) {
           <button mat-menu-item (click)="typeSelected.emit(planMenuItem.planFormType)">
-            {{ planMenuItem.name }}
+            {{ ('apis.plans.planTypes.' + planMenuItem.planFormType) | translate }}
           </button>
         }
       </mat-menu>
@@ -43,15 +43,15 @@
   }
 </div>
 
-<mat-button-toggle-group class="plans__filters" aria-label="Plan status filters" [value]="effectiveFilterState().selectedStatus">
+<mat-button-toggle-group class="plans__filters" [attr.aria-label]="'apis.plans.filtersAria' | translate" [value]="effectiveFilterState().selectedStatus">
   @for (planStatus of effectiveFilterState().statuses; track planStatus.name) {
     <mat-button-toggle
-      [attr.aria-label]="'Filter on ' + planStatus.name + ' plans'"
-      [matTooltip]="'Filter on ' + planStatus.name + ' plans'"
+      [attr.aria-label]="'apis.plans.filterAria' | translate: { status: (('apis.plans.status.' + planStatus.name) | translate) }"
+      [matTooltip]="'apis.plans.filterTooltip' | translate: { status: (('apis.plans.status.' + planStatus.name) | translate) }"
       [value]="planStatus.name"
       (click)="statusFilterChanged.emit(planStatus.name)"
     >
-      {{ planStatus.name }}{{ planStatus.number != null ? ' (' + planStatus.number + ')' : '' }}
+      {{ ('apis.plans.status.' + planStatus.name) | translate }}{{ planStatus.number != null ? ' (' + planStatus.number + ')' : '' }}
     </mat-button-toggle>
   }
 </mat-button-toggle-group>
@@ -60,7 +60,7 @@
   mat-table
   class="plans__table"
   id="plansTable"
-  aria-label="Plans table"
+  [attr.aria-label]="'apis.plans.tableAria' | translate"
   cdkDropList
   (cdkDropListDropped)="reordered.emit($event)"
   [dataSource]="plans()"
@@ -77,7 +77,7 @@
 
   <!-- Name Column -->
   <ng-container matColumnDef="name">
-    <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+    <th mat-header-cell *matHeaderCellDef id="name">{{ 'apis.plans.columns.name' | translate }}</th>
     <td
       mat-cell
       *matCellDef="let element"
@@ -91,28 +91,32 @@
 
   <!-- Type Column -->
   <ng-container matColumnDef="type">
-    <th mat-header-cell *matHeaderCellDef id="type">Type</th>
+    <th mat-header-cell *matHeaderCellDef id="type">{{ 'apis.plans.columns.type' | translate }}</th>
     <td mat-cell *matCellDef="let element">
-      {{ element.securityTypeLabel || element.mode }}
+      @if (element.security?.type) {
+        {{ ('apis.plans.securityTypes.' + element.security.type) | translate }}
+      } @else {
+        {{ element.mode }}
+      }
     </td>
   </ng-container>
 
   <!-- Status Column -->
   <ng-container matColumnDef="status">
-    <th mat-header-cell *matHeaderCellDef id="status">Status</th>
+    <th mat-header-cell *matHeaderCellDef id="status">{{ 'apis.plans.columns.status' | translate }}</th>
     <td mat-cell *matCellDef="let element">
       @switch (element.status) {
         @case ('PUBLISHED') {
-          <span class="gio-badge-neutral">{{ element.status }}</span>
+          <span class="gio-badge-neutral">{{ 'apis.plans.status.PUBLISHED' | translate }}</span>
         }
         @case ('DEPRECATED') {
-          <span class="gio-badge-error">{{ element.status }}</span>
+          <span class="gio-badge-error">{{ 'apis.plans.status.DEPRECATED' | translate }}</span>
         }
         @case ('CLOSED') {
-          <span class="gio-badge-error">{{ element.status }}</span>
+          <span class="gio-badge-error">{{ 'apis.plans.status.CLOSED' | translate }}</span>
         }
         @case ('STAGING') {
-          <span class="gio-badge-warning">{{ element.status }}</span>
+          <span class="gio-badge-warning">{{ 'apis.plans.status.STAGING' | translate }}</span>
         }
       }
     </td>
@@ -121,7 +125,7 @@
   <!-- Deploy on Column (optional) -->
   @if (effectiveContext().showDeployOnColumn) {
     <ng-container matColumnDef="deploy-on">
-      <th mat-header-cell *matHeaderCellDef id="deploy-on">Deploy on</th>
+      <th mat-header-cell *matHeaderCellDef id="deploy-on">{{ 'apis.plans.columns.deployOn' | translate }}</th>
       <td mat-cell *matCellDef="let element">
         <a>{{ element.tags?.join(', ') }}</a>
       </td>
@@ -137,8 +141,8 @@
           @if (element.status !== 'CLOSED') {
             <button
               mat-icon-button
-              aria-label="Edit the plan"
-              matTooltip="Edit the plan"
+              [attr.aria-label]="'apis.plans.actions.edit' | translate"
+              [matTooltip]="'apis.plans.actions.edit' | translate"
               data-testid="plans_edit_plan_button"
               (click)="planSelected.emit(element)"
             >
@@ -148,8 +152,8 @@
           @if (effectiveContext().isV2Api && element.status !== 'CLOSED') {
             <button
               mat-icon-button
-              aria-label="Design the plan"
-              matTooltip="Design the plan"
+              [attr.aria-label]="'apis.plans.actions.design' | translate"
+              [matTooltip]="'apis.plans.actions.design' | translate"
               data-testid="plans_design_plan_button"
               (click)="actionSelected.emit({ action: 'DESIGN', plan: element })"
             >
@@ -159,8 +163,8 @@
           @if (element.status === 'STAGING') {
             <button
               mat-icon-button
-              aria-label="Publish the plan"
-              matTooltip="Publish the plan"
+              [attr.aria-label]="'apis.plans.actions.publish' | translate"
+              [matTooltip]="'apis.plans.actions.publish' | translate"
               data-testid="plans_publish_plan_button"
               (click)="actionSelected.emit({ action: 'PUBLISH', plan: element })"
             >
@@ -170,8 +174,8 @@
           @if (element.status === 'PUBLISHED') {
             <button
               mat-icon-button
-              aria-label="Deprecate the plan"
-              matTooltip="Deprecate the plan"
+              [attr.aria-label]="'apis.plans.actions.deprecate' | translate"
+              [matTooltip]="'apis.plans.actions.deprecate' | translate"
               data-testid="plans_deprecate_plan_button"
               (click)="actionSelected.emit({ action: 'DEPRECATE', plan: element })"
             >
@@ -181,8 +185,8 @@
           @if (element.status !== 'CLOSED') {
             <button
               mat-icon-button
-              aria-label="Close the plan"
-              matTooltip="Close the plan"
+              [attr.aria-label]="'apis.plans.actions.close' | translate"
+              [matTooltip]="'apis.plans.actions.close' | translate"
               data-testid="plans_close_plan_button"
               (click)="actionSelected.emit({ action: 'CLOSE', plan: element })"
             >
@@ -193,8 +197,8 @@
           @if (element.status !== 'CLOSED') {
             <button
               mat-icon-button
-              aria-label="View the plan details"
-              matTooltip="View the plan details"
+              [attr.aria-label]="'apis.plans.actions.view' | translate"
+              [matTooltip]="'apis.plans.actions.view' | translate"
               (click)="planSelected.emit(element)"
             >
               <mat-icon svgIcon="gio:eye-empty"></mat-icon>
@@ -216,10 +220,10 @@
   <!-- Row shown when there is no data -->
   <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
     @if (!isLoadingData() && plans().length === 0) {
-      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns().length">There is no plan (yet).</td>
+      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns().length">{{ 'apis.plans.empty' | translate }}</td>
     }
     @if (isLoadingData()) {
-      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns().length">Loading...</td>
+      <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns().length">{{ 'common.loading' | translate }}</td>
     }
   </tr>
 </table>

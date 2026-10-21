@@ -30,6 +30,7 @@ import { MatIconModule } from '@angular/material/icon';
 import { GioSideNavComponent } from './gio-side-nav.component';
 
 import { GioPermissionModule } from '../../shared/components/gio-permission/gio-permission.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -44,6 +45,7 @@ import { GioPermissionModule } from '../../shared/components/gio-permission/gio-
     MatButtonModule,
     MatIconModule,
     GioIconsModule,
+    TranslatePipe,
   ],
   declarations: [GioSideNavComponent],
   exports: [GioSideNavComponent],

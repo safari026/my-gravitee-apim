@@ -22,6 +22,7 @@ import { map, switchMap, takeUntil } from 'rxjs/operators';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { FlowService } from '../../../../services-ngx/flow.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export interface ApiConfirmDeploymentDialogData {
   apiId: string;
@@ -46,6 +47,7 @@ export class ApiConfirmDeploymentDialogComponent implements OnDestroy {
     private readonly snackBarService: SnackBarService,
     private readonly apiV2Service: ApiV2Service,
     private readonly flowService: FlowService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnDestroy() {
@@ -63,10 +65,11 @@ export class ApiConfirmDeploymentDialogComponent implements OnDestroy {
       .subscribe(
         () => {
           this.dialogRef.close();
-          this.snackBarService.success('API successfully deployed.');
+          this.snackBarService.success(this.languageService.translate('apis.navigation.deploy.success'));
         },
         err => {
-          this.snackBarService.error(`An error occurred while deploying the API.\n${err.error?.message}.`);
+          const backendMessage = err.error?.message ? `\n${err.error.message}.` : '';
+          this.snackBarService.error(`${this.languageService.translate('apis.navigation.deploy.error')}${backendMessage}`);
         },
       );
   }

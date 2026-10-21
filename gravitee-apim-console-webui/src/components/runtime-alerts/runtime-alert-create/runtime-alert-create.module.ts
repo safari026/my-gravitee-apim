@@ -34,6 +34,7 @@ import { RuntimeAlertCreateNotificationsComponent } from './notifications/runtim
 import { RuntimeAlertHistoryComponent } from './history/runtime-alert-history.component';
 
 import { GioGoBackButtonModule } from '../../../shared/components/gio-go-back-button/gio-go-back-button.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertCreateComponent],
@@ -60,6 +61,7 @@ import { GioGoBackButtonModule } from '../../../shared/components/gio-go-back-bu
     MatSelect,
     RuntimeAlertCreateNotificationsComponent,
     RuntimeAlertHistoryComponent,
+    TranslatePipe,
   ],
 })
 export class RuntimeAlertCreateModule {}

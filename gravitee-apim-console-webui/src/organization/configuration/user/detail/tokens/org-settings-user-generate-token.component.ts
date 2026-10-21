@@ -26,6 +26,7 @@ import { UsersTokenService } from '../../../../../services-ngx/users-token.servi
 import { Constants } from '../../../../../entities/Constants';
 import { SnackBarService } from '../../../../../services-ngx/snack-bar.service';
 import { EnvironmentService } from '../../../../../services-ngx/environment.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 export type OrgSettingsUserGenerateTokenDialogData = {
   token?: Token;
@@ -52,6 +53,7 @@ export class OrgSettingsUserGenerateTokenComponent implements OnDestroy {
     private locationStrategy: LocationStrategy,
     private readonly snackBarService: SnackBarService,
     private readonly environmentService: EnvironmentService,
+    private readonly languageService: LanguageService,
     @Inject(MAT_DIALOG_DATA) confirmDialogData: OrgSettingsUserGenerateTokenDialogData,
     @Inject(Constants) private readonly constants: Constants,
   ) {
@@ -77,7 +79,7 @@ export class OrgSettingsUserGenerateTokenComponent implements OnDestroy {
       .createToken(this.userId, newToken)
       .pipe(
         tap(response => {
-          this.snackBarService.success('Token successfully created!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.userToken.created'));
           this.token = response;
         }),
         catchError(({ error }) => {

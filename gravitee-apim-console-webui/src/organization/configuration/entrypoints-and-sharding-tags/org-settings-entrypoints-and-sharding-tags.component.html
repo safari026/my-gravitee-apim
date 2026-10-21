@@ -19,92 +19,92 @@
 @if (!isLoading) {
   <form class="org-settings-tags" autocomplete="off" [formGroup]="defaultConfigForm">
     <div>
-      <h1>Entrypoints & Sharding Tags</h1>
+      <h1>{{ 'settings.organization.entrypoints.title' | translate }}</h1>
 
-      <h4>Manage sharding tags, entrypoints and mappings between them both for Console and the Developer Portal.</h4>
+      <h4>{{ 'settings.organization.entrypoints.intro' | translate }}</h4>
     </div>
 
     <gio-banner type="info"
-      >Include entrypoint and sharding tag configuration according to the values already used by the deployed API Gateway(s).</gio-banner
+      >{{ 'settings.organization.entrypoints.banner' | translate }}</gio-banner
     >
 
     <mat-card>
       <mat-card-header>
-        <mat-card-title>Entrypoint Configuration</mat-card-title>
-        <mat-card-subtitle>Default entrypoint values to be shown in the Developer Portal</mat-card-subtitle>
+        <mat-card-title>{{ 'settings.organization.entrypoints.entrypointConfigTitle' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'settings.organization.entrypoints.entrypointConfigSubtitle' | translate }}</mat-card-subtitle>
       </mat-card-header>
       <mat-card-content>
         @for (configForm of defaultConfigForm.controls | keyvalue; track configForm.key) {
           <div [formGroupName]="configForm.key" class="org-settings-tags__configuration">
             <h4>
-              Default values for environment:
+              {{ 'settings.organization.entrypoints.defaultForEnvironment' | translate }}
               <div class="gio-badge-primary">{{ configForm.value.get('_environmentName').value }}</div>
             </h4>
             <div class="org-settings-tags__configuration__container">
               <mat-form-field
-                [matTooltip]="providedConfigurationMessage"
+                [matTooltip]="'settings.systemConfig' | translate"
                 [matTooltipDisabled]="!isReadonlySetting(configForm.key, 'entrypoint')"
                 class="org-settings-tags__configuration__entrypoint"
               >
                 @if (isReadonlySetting(configForm.key, 'entrypoint')) {
                   <mat-icon class="org-settings-tags__configuration__icon" matPrefix>lock</mat-icon>
                 }
-                <mat-label>Default HTTP entrypoint</mat-label>
+                <mat-label>{{ 'settings.organization.entrypoints.defaultHttpEntrypoint' | translate }}</mat-label>
                 <input #entrypointInput matInput formControlName="entrypoint" />
                 <gio-clipboard-copy-icon matSuffix [contentToCopy]="entrypointInput.value"></gio-clipboard-copy-icon>
               </mat-form-field>
 
               <mat-form-field
-                [matTooltip]="providedConfigurationMessage"
+                [matTooltip]="'settings.systemConfig' | translate"
                 [matTooltipDisabled]="!isReadonlySetting(configForm.key, 'tcpPort')"
                 class="org-settings-tags__configuration__tcp"
               >
                 @if (isReadonlySetting(configForm.key, 'tcpPort')) {
                   <mat-icon class="org-settings-tags__configuration__icon" matPrefix>lock</mat-icon>
                 }
-                <mat-label>Default TCP port</mat-label>
+                <mat-label>{{ 'settings.organization.entrypoints.defaultTcpPort' | translate }}</mat-label>
                 <input #tcpPortInput matInput formControlName="tcpPort" type="number" />
                 @if (configForm.value.get('tcpPort').hasError('invalidPort')) {
-                  <mat-error>TCP port should be in range between 1025 and 65535</mat-error>
+                  <mat-error>{{ 'settings.organization.entrypoints.tcpPortRange' | translate }}</mat-error>
                 }
                 <gio-clipboard-copy-icon matSuffix [contentToCopy]="tcpPortInput.value"></gio-clipboard-copy-icon>
               </mat-form-field>
 
               <div class="org-settings-tags__configuration__kafka">
                 <mat-form-field
-                  [matTooltip]="providedConfigurationMessage"
+                  [matTooltip]="'settings.systemConfig' | translate"
                   [matTooltipDisabled]="!isReadonlySetting(configForm.key, 'kafkaDomain')"
                   class="org-settings-tags__configuration__kafka__domain"
                 >
                   @if (isReadonlySetting(configForm.key, 'kafkaDomain')) {
                     <mat-icon class="org-settings-tags__configuration__icon" matPrefix>lock</mat-icon>
                   }
-                  <mat-label>Default Kafka Bootstrap Domain Pattern</mat-label>
+                  <mat-label>{{ 'settings.organization.entrypoints.kafkaDomain' | translate }}</mat-label>
                   <input #kafkaDomainInput matInput formControlName="kafkaDomain" />
                   <gio-clipboard-copy-icon matSuffix [contentToCopy]="kafkaDomainInput.value"></gio-clipboard-copy-icon>
                   @if (configForm.value.get('kafkaDomain').hasError('maxLength')) {
-                    <mat-error>Kafka Domain must be less than 201 characters.</mat-error>
+                    <mat-error>{{ 'settings.organization.entrypoints.kafkaDomainMax' | translate }}</mat-error>
                   }
                   @if (configForm.value.get('kafkaDomain').hasError('required')) {
-                    <mat-error>Kafka Bootstrap Domain Pattern is required.</mat-error>
+                    <mat-error>{{ 'settings.organization.entrypoints.kafkaDomainRequired' | translate }}</mat-error>
                   }
                   @if (configForm.value.get('kafkaDomain').hasError('apiHostMissing')) {
-                    <mat-error>Kafka Bootstrap Domain Pattern must contain {{ '{apiHost}' }}.</mat-error>
+                    <mat-error>{{ 'settings.organization.entrypoints.kafkaDomainApiHost' | translate }}</mat-error>
                   }
-                  <mat-hint> To be configured according to the gateway configuration. e.g: {{ '{apiHost}.mycompany.org' }} </mat-hint>
+                  <mat-hint>{{ 'settings.organization.entrypoints.kafkaDomainHint' | translate: { example: '{apiHost}.mycompany.org' } }}</mat-hint>
                 </mat-form-field>
                 <mat-form-field
-                  [matTooltip]="providedConfigurationMessage"
+                  [matTooltip]="'settings.systemConfig' | translate"
                   [matTooltipDisabled]="!isReadonlySetting(configForm.key, 'kafkaPort')"
                   class="org-settings-tags__configuration__kafka__port"
                 >
                   @if (isReadonlySetting(configForm.key, 'kafkaPort')) {
                     <mat-icon class="org-settings-tags__configuration__icon" matPrefix>lock</mat-icon>
                   }
-                  <mat-label>Default Kafka port</mat-label>
+                  <mat-label>{{ 'settings.organization.entrypoints.defaultKafkaPort' | translate }}</mat-label>
                   <input #kafkaPortInput matInput formControlName="kafkaPort" type="number" />
                   @if (configForm.value.get('kafkaPort').hasError('invalidPort')) {
-                    <mat-error>Port should be in range between 1025 and 65535</mat-error>
+                    <mat-error>{{ 'settings.organization.entrypoints.portRange' | translate }}</mat-error>
                   }
                   <gio-clipboard-copy-icon matSuffix [contentToCopy]="kafkaPortInput.value"></gio-clipboard-copy-icon>
                 </mat-form-field>
@@ -116,17 +116,17 @@
     </mat-card>
     <mat-card class="org-settings-tags__tags-card">
       <mat-card-header>
-        <mat-card-title>Sharding Tags</mat-card-title>
+        <mat-card-title>{{ 'settings.organization.entrypoints.shardingTags' | translate }}</mat-card-title>
         <div class="org-settings-tags__tags-card__headerRightBtn" *gioPermission="{ anyOf: ['organization-tag-c'] }">
           <button
             [gioLicense]="shardingTagsLicenseOptions"
             (click)="onAddTagClicked()"
             mat-raised-button
             color="primary"
-            aria-label="Button to add a tag"
+            [attr.aria-label]="'settings.organization.entrypoints.addTagAria' | translate"
             type="button"
           >
-            <mat-icon>add</mat-icon>Add a tag
+            <mat-icon>add</mat-icon>{{ 'settings.organization.entrypoints.addTag' | translate }}
             @if (hasShardingTagsLock$ | async) {
               <mat-icon iconPositionEnd svgIcon="gio:lock"></mat-icon>
             }
@@ -135,7 +135,7 @@
       </mat-card-header>
       <mat-card-content>
         <gio-banner type="info"
-          >Add the sharding tag's key to the API Gateway configuration file in order to manage API deployments.</gio-banner
+          >{{ 'settings.organization.entrypoints.tagsBanner' | translate }}</gio-banner
         >
       </mat-card-content>
       <gio-table-wrapper [length]="tagsTableUnpaginatedLength" (filtersChange)="onTagsFiltersChanged($event)">
@@ -147,11 +147,11 @@
           matSortDirection="asc"
           class="tags-table"
           id="tagsTable"
-          aria-label="Tags table"
+          [attr.aria-label]="'settings.organization.entrypoints.tagsTableAria' | translate"
         >
           <!-- key Column -->
           <ng-container matColumnDef="key">
-            <th mat-header-cell *matHeaderCellDef id="key" mat-sort-header>Key</th>
+            <th mat-header-cell *matHeaderCellDef id="key" mat-sort-header>{{ 'settings.organization.shared.key' | translate }}</th>
             <td mat-cell *matCellDef="let tag">
               <span gioClipboardCopyWrapper [contentToCopy]="tag.key">{{ tag.key }}</span>
             </td>
@@ -159,19 +159,19 @@
 
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef id="name" mat-sort-header>Name</th>
+            <th mat-header-cell *matHeaderCellDef id="name" mat-sort-header>{{ 'settings.organization.shared.name' | translate }}</th>
             <td mat-cell *matCellDef="let tag">{{ tag.name }}</td>
           </ng-container>
 
           <!-- Description Column -->
           <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef id="description" mat-sort-header>Description</th>
+            <th mat-header-cell *matHeaderCellDef id="description" mat-sort-header>{{ 'settings.organization.shared.description' | translate }}</th>
             <td mat-cell *matCellDef="let tag">{{ tag.description }}</td>
           </ng-container>
 
           <!-- Restricted groups Column -->
           <ng-container matColumnDef="restrictedGroupsName">
-            <th mat-header-cell *matHeaderCellDef id="restrictedGroupsName" mat-sort-header>Restricted groups</th>
+            <th mat-header-cell *matHeaderCellDef id="restrictedGroupsName" mat-sort-header>{{ 'settings.organization.entrypoints.restrictedGroups' | translate }}</th>
             <td mat-cell *matCellDef="let tag">{{ tag.restrictedGroupsName.join(', ') }}</td>
           </ng-container>
 
@@ -185,8 +185,8 @@
                     (click)="onEditTagClicked(tag)"
                     mat-icon-button
                     type="button"
-                    aria-label="Button to edit a tag"
-                    matTooltip="Edit tag"
+                    [attr.aria-label]="'settings.organization.entrypoints.editTagAria' | translate"
+                    [matTooltip]="'settings.organization.entrypoints.editTagTooltip' | translate"
                   >
                     <mat-icon>edit</mat-icon>
                   </button>
@@ -196,8 +196,8 @@
                     (click)="onDeleteTagClicked(tag)"
                     mat-icon-button
                     type="button"
-                    aria-label="Button to delete a tag"
-                    matTooltip="Delete tag"
+                    [attr.aria-label]="'settings.organization.entrypoints.deleteTagAria' | translate"
+                    [matTooltip]="'settings.organization.entrypoints.deleteTagTooltip' | translate"
                   >
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -210,7 +210,7 @@
           <tr mat-row *matRowDef="let row; columns: tagsTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="tagsTableDisplayedColumns.length">No tag</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="tagsTableDisplayedColumns.length">{{ 'settings.organization.entrypoints.noTag' | translate }}</td>
           </tr>
         </table>
       </gio-table-wrapper>
@@ -218,8 +218,8 @@
 
     <mat-card class="org-settings-tags__entrypoints-card">
       <mat-card-header>
-        <mat-card-title>Entrypoint Mappings</mat-card-title>
-        <mat-card-subtitle>Entrypoint to be displayed in the Developer Portal if an API has a given tag</mat-card-subtitle>
+        <mat-card-title>{{ 'settings.organization.entrypoints.entrypointMappings' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'settings.organization.entrypoints.entrypointMappingsSubtitle' | translate }}</mat-card-subtitle>
         <div class="org-settings-tags__entrypoints-card__headerRightBtn">
           <button
             *gioPermission="{ anyOf: ['organization-entrypoint-c'] }"
@@ -227,9 +227,9 @@
             mat-raised-button
             color="primary"
             type="button"
-            aria-label="Button to add a mapping"
+            [attr.aria-label]="'settings.organization.entrypoints.addMappingAria' | translate"
           >
-            <mat-icon>add</mat-icon>Add a mapping
+            <mat-icon>add</mat-icon>{{ 'settings.organization.entrypoints.addMapping' | translate }}
           </button>
           <mat-menu #addMappingMenu="matMenu">
             <button mat-menu-item (click)="onAddEntrypointClicked('HTTP')">HTTP</button>
@@ -245,11 +245,11 @@
           matSort
           class="entrypoints-table"
           id="entrypointsTable"
-          aria-label="Entrypoints table"
+          [attr.aria-label]="'settings.organization.entrypoints.entrypointsTableAria' | translate"
         >
           <!-- Entrypoint Column -->
           <ng-container matColumnDef="entrypoint">
-            <th mat-header-cell *matHeaderCellDef id="entrypoint" mat-sort-header="url">Entrypoint</th>
+            <th mat-header-cell *matHeaderCellDef id="entrypoint" mat-sort-header="url">{{ 'settings.organization.entrypoints.entrypoint' | translate }}</th>
             <td mat-cell *matCellDef="let entrypoint">
               <span gioClipboardCopyWrapper [contentToCopy]="entrypoint.url">{{ entrypoint.url }}</span>
             </td>
@@ -257,21 +257,21 @@
 
           <!-- Target Column -->
           <ng-container matColumnDef="target">
-            <th mat-header-cell *matHeaderCellDef id="target" mat-sort-header="target">Target</th>
+            <th mat-header-cell *matHeaderCellDef id="target" mat-sort-header="target">{{ 'settings.organization.shared.target' | translate }}</th>
             <td mat-cell *matCellDef="let entrypoint">{{ entrypoint.target }}</td>
           </ng-container>
 
           <!-- Tags Column -->
           <ng-container matColumnDef="tags">
-            <th mat-header-cell *matHeaderCellDef id="tags" mat-sort-header="tags">Sharding Tags</th>
+            <th mat-header-cell *matHeaderCellDef id="tags" mat-sort-header="tags">{{ 'settings.organization.entrypoints.shardingTagsColumn' | translate }}</th>
             <td mat-cell *matCellDef="let entrypoint">{{ entrypoint.tagsName.join(', ') }}</td>
           </ng-container>
 
           <!-- Environments Column -->
           <ng-container matColumnDef="environments">
-            <th mat-header-cell *matHeaderCellDef id="environments">Environments</th>
+            <th mat-header-cell *matHeaderCellDef id="environments">{{ 'settings.organization.entrypoints.environments' | translate }}</th>
             <td mat-cell *matCellDef="let entrypoint">
-              {{ entrypoint.environmentNames.length > 0 ? entrypoint.environmentNames.join(', ') : 'All' }}
+              {{ entrypoint.environmentNames.length > 0 ? entrypoint.environmentNames.join(', ') : ('settings.organization.shared.all' | translate) }}
             </td>
           </ng-container>
 
@@ -285,8 +285,8 @@
                     (click)="onEditEntrypointClicked(entrypoint)"
                     mat-icon-button
                     type="button"
-                    aria-label="Button to edit a mapping"
-                    matTooltip="Edit mapping"
+                    [attr.aria-label]="'settings.organization.entrypoints.editMappingAria' | translate"
+                    [matTooltip]="'settings.organization.entrypoints.editMappingTooltip' | translate"
                   >
                     <mat-icon>edit</mat-icon>
                   </button>
@@ -296,8 +296,8 @@
                     (click)="onDeleteEntrypointClicked(entrypoint)"
                     mat-icon-button
                     type="button"
-                    aria-label="Button to delete a mapping"
-                    matTooltip="Delete mapping"
+                    [attr.aria-label]="'settings.organization.entrypoints.deleteMappingAria' | translate"
+                    [matTooltip]="'settings.organization.entrypoints.deleteMappingTooltip' | translate"
                   >
                     <mat-icon>delete</mat-icon>
                   </button>
@@ -310,7 +310,7 @@
           <tr mat-row *matRowDef="let row; columns: entrypointsTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="entrypointsTableDisplayedColumns.length">No entrypoint</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="entrypointsTableDisplayedColumns.length">{{ 'settings.organization.entrypoints.noEntrypoint' | translate }}</td>
           </tr>
         </table>
       </gio-table-wrapper>

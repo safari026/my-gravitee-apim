@@ -34,7 +34,7 @@
   <div class="settings-navigation__content">
     <div class="settings-navigation__content__view">
       <gio-breadcrumb *ngIf="hasBreadcrumb" class="settings-navigation__breadcrumb">
-        <span *gioBreadcrumbItem class="settings-navigation__breadcrumb__item">Settings</span>
+        <span *gioBreadcrumbItem class="settings-navigation__breadcrumb__item">{{ 'settings.navigation.root' | translate }}</span>
         <ng-template ngFor let-item [ngForOf]="computeBreadcrumbItems()">
           <span *gioBreadcrumbItem class="settings-navigation__breadcrumb__item">{{ item }}</span>
         </ng-template>

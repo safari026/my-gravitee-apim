@@ -24,6 +24,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 
 import { GioQuickTimeRangeComponent } from './gio-quick-time-range.component';
 
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -34,6 +36,7 @@ import { GioQuickTimeRangeComponent } from './gio-quick-time-range.component';
     FormsModule,
     ReactiveFormsModule,
     GioIconsModule,
+    TranslatePipe,
   ],
   declarations: [GioQuickTimeRangeComponent],
   exports: [GioQuickTimeRangeComponent],

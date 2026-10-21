@@ -23,6 +23,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { ReCaptchaService } from '../../services-ngx/re-captcha.service';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { AuthService } from '../../auth/auth.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'reset-password',
@@ -34,7 +35,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   public resetPasswordForm: UntypedFormGroup;
-  public resetPasswordError?: string;
+  public resetPasswordErrorKey?: string;
   public resetPasswordSuccess = false;
   public resetPasswordInProgress = false;
 
@@ -50,6 +51,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
     private readonly reCaptchaService: ReCaptchaService,
     private readonly snackBarService: SnackBarService,
     private readonly authService: AuthService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -66,15 +68,15 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
         }
       >(token);
     } catch (error) {
-      this.resetPasswordError = 'Invalid registration token!';
+      this.resetPasswordErrorKey = 'auth.token.invalid';
       throw error;
     }
     if (!this.userTokenDecoded) {
-      this.resetPasswordError = 'Invalid registration token!';
+      this.resetPasswordErrorKey = 'auth.token.invalid';
       return;
     }
     if (this.userTokenDecoded.exp && this.userTokenDecoded.exp * 1000 < Date.now()) {
-      this.resetPasswordError = 'Your registration token has expired!';
+      this.resetPasswordErrorKey = 'auth.token.expired';
       return;
     }
 
@@ -123,7 +125,9 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
             tap(() => {
               this.resetPasswordSuccess = true;
             }),
-            switchMap(() => this.snackBarService.success('Your password has been reset.').afterDismissed()),
+            switchMap(() =>
+              this.snackBarService.success(this.languageService.translate('auth.resetPassword.passwordReset')).afterDismissed(),
+            ),
             takeUntil(this.unsubscribe$),
           )
           .subscribe({
@@ -131,7 +135,7 @@ export class ResetPasswordComponent implements OnInit, OnDestroy {
               this.resetPasswordInProgress = false;
             },
             error: e => {
-              this.snackBarService.error(e.error?.message ?? 'An error occurred while resetting your password.');
+              this.snackBarService.error(e.error?.message ?? this.languageService.translate('auth.resetPassword.resetError'));
               this.resetPasswordInProgress = false;
             },
           });

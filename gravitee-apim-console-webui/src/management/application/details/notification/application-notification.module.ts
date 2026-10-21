@@ -25,6 +25,7 @@ import { ApplicationNotificationComponent } from './application-notification.com
 
 import { NotificationModule } from '../../../../components/notification';
 import { ApplicationMetadataModule } from '../metadata/application-metadata.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApplicationNotificationComponent],
@@ -38,6 +39,7 @@ import { ApplicationMetadataModule } from '../metadata/application-metadata.modu
     MatDialogModule,
     NotificationModule,
     MatSnackBarModule,
+    TranslatePipe,
   ],
 })
 export class ApplicationNotificationModule {}

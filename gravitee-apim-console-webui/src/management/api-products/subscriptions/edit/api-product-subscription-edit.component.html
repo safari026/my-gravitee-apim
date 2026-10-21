@@ -17,105 +17,105 @@
 -->
 <div id="subscription-edit" class="subscription">
   <div class="subscription__nav">
-    <button mat-button aria-label="Go back to your subscriptions" [routerLink]="'../'">
-      <mat-icon svgIcon="gio:nav-arrow-left"></mat-icon> Go back to your subscriptions
+    <button mat-button [attr.aria-label]="'apiProducts.subscriptions.back' | translate" [routerLink]="'../'">
+      <mat-icon svgIcon="gio:nav-arrow-left"></mat-icon> {{ 'apiProducts.subscriptions.back' | translate }}
     </button>
   </div>
 
   <mat-card>
     <mat-card-header>
-      <mat-card-title>Subscription details</mat-card-title>
+      <mat-card-title>{{ 'apiProducts.subscriptions.details' | translate }}</mat-card-title>
     </mat-card-header>
 
     @if (subscription(); as sub) {
       <mat-card-content>
         <dl class="gio-description-list">
-          <dt>ID</dt>
+          <dt>{{ 'apiProducts.subscriptions.id' | translate }}</dt>
           <dd gioClipboardCopyWrapper [contentToCopy]="sub.id" data-testid="subscription-id">
             {{ sub.id || '-' }}
           </dd>
 
-          <dt>Plan</dt>
+          <dt>{{ 'apiProducts.subscriptions.plan' | translate }}</dt>
           <dd gioClipboardCopyWrapper [contentToCopy]="sub.plan.label" data-testid="subscription-plan">
             {{ sub.plan.label || '-' }}
           </dd>
 
-          <dt>Status</dt>
+          <dt>{{ 'apiProducts.subscriptions.status' | translate }}</dt>
           <dd gioClipboardCopyWrapper [contentToCopy]="sub.status" data-testid="subscription-status">
             {{ sub.status || '-' }}
           </dd>
 
           @if (sub.consumerStatus) {
-            <dt>Consumer status</dt>
+            <dt>{{ 'apiProducts.subscriptions.consumerStatus' | translate }}</dt>
             <dd gioClipboardCopyWrapper [contentToCopy]="sub.consumerStatus" data-testid="subscription-consumer-status">
               {{ sub.consumerStatus }}
             </dd>
           }
 
           @if (sub.failureCause) {
-            <dt>Failure Cause</dt>
+            <dt>{{ 'apiProducts.subscriptions.failureCause' | translate }}</dt>
             <dd gioClipboardCopyWrapper [contentToCopy]="sub.failureCause" data-testid="subscription-failure-cause">
               {{ sub.failureCause }}
             </dd>
           }
 
-          <dt>Subscribed by</dt>
+          <dt>{{ 'apiProducts.subscriptions.subscribedBy' | translate }}</dt>
           <dd gioClipboardCopyWrapper [contentToCopy]="sub.subscribedBy" data-testid="subscription-subscribed-by">
             {{ sub.subscribedBy || '-' }}
           </dd>
 
-          <dt>Application</dt>
+          <dt>{{ 'apiProducts.subscriptions.application' | translate }}</dt>
           <dd data-testid="subscription-application">
             <div class="subtitle-2">{{ sub.application?.label || '-' }}</div>
             <div class="mat-body-2">{{ sub.application?.description }}</div>
           </dd>
 
-          <dt>Publisher message to subscriber</dt>
+          <dt>{{ 'apiProducts.subscriptions.publisherMessage' | translate }}</dt>
           <dd data-testid="subscription-publisher-message">
             {{ sub.publisherMessage || '-' }}
           </dd>
 
-          <dt>Subscriber message to publisher</dt>
+          <dt>{{ 'apiProducts.subscriptions.subscriberMessage' | translate }}</dt>
           <dd data-testid="subscription-subscriber-message">
             {{ sub.subscriberMessage || '-' }}
           </dd>
 
-          <dt>Created at</dt>
+          <dt>{{ 'apiProducts.subscriptions.createdAt' | translate }}</dt>
           <dd data-testid="subscription-created-at">
             {{ (sub.createdAt | date: 'medium') || '-' }}
           </dd>
 
-          <dt>Updated at</dt>
+          <dt>{{ 'apiProducts.subscriptions.updatedAt' | translate }}</dt>
           <dd data-testid="subscription-updated-at">
             {{ (sub.updatedAt | date: 'medium') || '-' }}
           </dd>
 
-          <dt>Processed at</dt>
+          <dt>{{ 'apiProducts.subscriptions.processedAt' | translate }}</dt>
           <dd data-testid="subscription-processed-at">
             {{ (sub.processedAt | date: 'medium') || '-' }}
           </dd>
 
           @if (sub.status !== 'REJECTED') {
-            <dt>Starting at</dt>
+            <dt>{{ 'apiProducts.subscriptions.startingAt' | translate }}</dt>
             <dd data-testid="subscription-starting-at">
               {{ (sub.startingAt | date: 'medium') || '-' }}
             </dd>
-            <dt>Paused at</dt>
+            <dt>{{ 'apiProducts.subscriptions.pausedAt' | translate }}</dt>
             <dd data-testid="subscription-paused-at">
               {{ (sub.pausedAt | date: 'medium') || '-' }}
             </dd>
-            <dt>Ending at</dt>
+            <dt>{{ 'apiProducts.subscriptions.endingAt' | translate }}</dt>
             <dd data-testid="subscription-ending-at">
               {{ (sub.endingAt | date: 'medium') || '-' }}
             </dd>
           }
 
-          <dt>Closed at</dt>
+          <dt>{{ 'apiProducts.subscriptions.closedAt' | translate }}</dt>
           <dd data-testid="subscription-closed-at">
             {{ (sub.closedAt | date: 'medium') || '-' }}
           </dd>
 
-          <dt>Domain</dt>
+          <dt>{{ 'apiProducts.subscriptions.domain' | translate }}</dt>
           <dd data-testid="subscription-domain">
             {{ sub.domain || '-' }}
           </dd>
@@ -128,37 +128,37 @@
             @if (sub.status === 'PAUSED' || sub.status === 'ACCEPTED') {
               <button mat-stroked-button (click)="transferSubscription()">
                 <mat-icon svgIcon="gio:data-transfer-both"></mat-icon>
-                Transfer
+                {{ 'apiProducts.subscriptions.transfer' | translate }}
               </button>
               @if (sub.status === 'ACCEPTED') {
                 <button mat-stroked-button (click)="pauseSubscription()">
                   <mat-icon svgIcon="gio:pause-circle"></mat-icon>
-                  Pause
+                  {{ 'apiProducts.subscriptions.pause' | translate }}
                 </button>
               }
               @if (sub.status === 'PAUSED') {
                 <button mat-stroked-button (click)="resumeSubscription()">
                   <mat-icon svgIcon="gio:play-circle"></mat-icon>
-                  Resume
+                  {{ 'apiProducts.subscriptions.resume' | translate }}
                 </button>
               }
               <button mat-stroked-button (click)="changeEndDate()">
                 <mat-icon svgIcon="gio:calendar"></mat-icon>
-                Change end date
+                {{ 'apiProducts.subscriptions.changeEndDate' | translate }}
               </button>
               @if (sub.consumerStatus === 'FAILURE') {
                 <button mat-stroked-button (click)="resumeFailureSubscription()">
                   <mat-icon svgIcon="gio:play-circle"></mat-icon>
-                  Resume from failure
+                  {{ 'apiProducts.subscriptions.resumeFromFailure' | translate }}
                 </button>
               }
               <button mat-raised-button color="warn" (click)="closeSubscription()">
                 <mat-icon svgIcon="gio:x-circle"></mat-icon>
-                Close subscription
+                {{ 'apiProducts.subscriptions.closeSubscription' | translate }}
               </button>
             } @else {
-              <button mat-raised-button color="primary" (click)="validateSubscription()">Validate subscription</button>
-              <button mat-stroked-button (click)="rejectSubscription()">Reject subscription</button>
+              <button mat-raised-button color="primary" (click)="validateSubscription()">{{ 'apiProducts.subscriptions.validate' | translate }}</button>
+              <button mat-stroked-button (click)="rejectSubscription()">{{ 'apiProducts.subscriptions.reject' | translate }}</button>
             }
           </div>
         }
@@ -172,10 +172,10 @@
   ) {
     <mat-card>
       <mat-card-header>
-        <mat-card-title>{{ hasSharedApiKeyMode() ? 'Shared API Keys' : 'API Keys' }}</mat-card-title>
+        <mat-card-title>{{ hasSharedApiKeyMode() ? ('apiProducts.subscriptions.sharedKeys' | translate) : ('apiProducts.subscriptions.apiKeys' | translate) }}</mat-card-title>
         @if (hasSharedApiKeyMode()) {
           <mat-card-subtitle>
-            This subscription uses a shared API Key. You can renew or revoke the shared API Key at the application level.
+            {{ 'apiProducts.subscriptions.sharedKeysSubtitle' | translate }}
           </mat-card-subtitle>
         }
       </mat-card-header>
@@ -195,13 +195,13 @@
             [matSortActive]="filters().sort?.active ?? ''"
             [matSortDirection]="filters().sort?.direction ?? ''"
             class="card__table"
-            aria-label="API Keys Table"
+            [attr.aria-label]="'apiProducts.subscriptions.keysTableAria' | translate"
           >
             <ng-container matColumnDef="active-icon">
               <th mat-header-cell *matHeaderCellDef mat-sort-header="isValid"></th>
               <td mat-cell *matCellDef="let apiKey">
                 <mat-icon
-                  [matTooltip]="apiKey.isValid ? 'Valid' : 'Revoked or Expired'"
+                  [matTooltip]="apiKey.isValid ? ('apiProducts.subscriptions.valid' | translate) : ('apiProducts.subscriptions.revokedOrExpired' | translate)"
                   [ngClass]="{
                     activeIcon: apiKey.isValid,
                     revokedIcon: !apiKey.isValid,
@@ -212,7 +212,7 @@
             </ng-container>
 
             <ng-container matColumnDef="key">
-              <th mat-header-cell *matHeaderCellDef>Key</th>
+              <th mat-header-cell *matHeaderCellDef>{{ 'apiProducts.subscriptions.key' | translate }}</th>
               <td mat-cell *matCellDef="let apiKey">
                 <mat-form-field class="apiKeyCell">
                   <input matInput [value]="apiKey.key" readonly />
@@ -222,12 +222,12 @@
             </ng-container>
 
             <ng-container matColumnDef="createdAt">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt">Created at</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="createdAt">{{ 'apiProducts.subscriptions.createdAt' | translate }}</th>
               <td mat-cell *matCellDef="let apiKey">{{ apiKey.createdAt | date: 'medium' }}</td>
             </ng-container>
 
             <ng-container matColumnDef="endDate">
-              <th mat-header-cell *matHeaderCellDef mat-sort-header="endDate">Revoked/Expired at</th>
+              <th mat-header-cell *matHeaderCellDef mat-sort-header="endDate">{{ 'apiProducts.subscriptions.revokedExpiredAt' | translate }}</th>
               <td mat-cell *matCellDef="let apiKey">{{ (apiKey.endDate | date: 'medium') || '-' }}</td>
             </ng-container>
 
@@ -237,10 +237,10 @@
                 @if (!hasSharedApiKeyMode() && (subscription()?.status === 'ACCEPTED' || subscription()?.status === 'PENDING')) {
                   <div *gioPermission="{ anyOf: ['api_product-subscription-u'] }" class="subscription__api-keys__actions">
                     @if (apiKey.isValid && subscription()?.status === 'ACCEPTED') {
-                      <button (click)="revokeApiKey(apiKey)" mat-button aria-label="Button to revoke an API Key" matTooltip="Revoke">
+                      <button (click)="revokeApiKey(apiKey)" mat-button [attr.aria-label]="'apiProducts.subscriptions.revokeAria' | translate" [matTooltip]="'common.revoke' | translate">
                         <mat-icon svgIcon="gio:x-circle"></mat-icon>
                       </button>
-                      <button (click)="expireApiKey(apiKey)" mat-button aria-label="Button to expire an API Key" matTooltip="Expire">
+                      <button (click)="expireApiKey(apiKey)" mat-button [attr.aria-label]="'apiProducts.subscriptions.expireAria' | translate" [matTooltip]="'apiProducts.subscriptions.expire' | translate">
                         <mat-icon svgIcon="gio:clock-outline"></mat-icon>
                       </button>
                     }
@@ -248,8 +248,8 @@
                       <button
                         (click)="reactivateApiKey(apiKey)"
                         mat-button
-                        aria-label="Button to reactivate an API Key"
-                        matTooltip="Reactivate"
+                        [attr.aria-label]="'apiProducts.subscriptions.reactivateAria' | translate"
+                        [matTooltip]="'apiProducts.subscriptions.reactivate' | translate"
                       >
                         <mat-icon svgIcon="gio:rotate-cw"></mat-icon>
                       </button>
@@ -263,7 +263,7 @@
             <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
 
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-              <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No API keys!</td>
+              <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">{{ 'apiProducts.subscriptions.noKeys' | translate }}</td>
             </tr>
           </table>
         </gio-table-wrapper>
@@ -274,7 +274,7 @@
           <div class="subscription__api-keys__footer" *gioPermission="{ anyOf: ['api_product-subscription-u'] }">
             <button mat-stroked-button (click)="renewApiKey()">
               <mat-icon svgIcon="gio:refresh-cw"></mat-icon>
-              Renew
+              {{ 'common.renew' | translate }}
             </button>
           </div>
         </mat-card-actions>

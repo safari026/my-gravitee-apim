@@ -20,6 +20,7 @@ import { Subject } from 'rxjs';
 import { CockpitService, UtmCampaign } from '../../../services-ngx/cockpit.service';
 import { InstallationService } from '../../../services-ngx/installation.service';
 import { Installation } from '../../../entities/installation/installation';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'org-settings-cockpit',
@@ -39,6 +40,7 @@ export class OrgSettingsCockpitComponent implements OnInit, OnDestroy {
   constructor(
     private readonly installationService: InstallationService,
     private readonly cockpitService: CockpitService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -66,37 +68,37 @@ export class OrgSettingsCockpitComponent implements OnInit, OnDestroy {
       UtmCampaign.DISCOVER_COCKPIT,
       cockpitInstallationStatus,
     );
-    const cockpitLink = `<a href="${enhancedCockpitURL}" target="_blank">Gravitee Cloud</a>`;
+    const cockpitLink = `<a href="${enhancedCockpitURL}" target="_blank">${this.languageService.translate('settings.organization.cockpit.graviteeCloudLink')}</a>`;
 
     switch (cockpitInstallationStatus) {
       case 'PENDING':
         this.icon = 'schedule';
-        this.title = 'Almost there!';
-        this.message = `Your installation is connected but it still has to be accepted on ${cockpitLink}!`;
+        this.title = this.languageService.translate('settings.organization.cockpit.pendingTitle');
+        this.message = this.languageService.translate('settings.organization.cockpit.pendingMessage', { link: cockpitLink });
         return;
 
       case 'ACCEPTED':
         this.icon = 'check_circle';
-        this.title = 'Congratulations!';
-        this.message = `Your installation is now connected to ${cockpitLink}, you can now explore all the possibilities offered by Gravitee Cloud!`;
+        this.title = this.languageService.translate('settings.organization.cockpit.acceptedTitle');
+        this.message = this.languageService.translate('settings.organization.cockpit.acceptedMessage', { link: cockpitLink });
         return;
 
       case 'REJECTED':
         this.icon = 'warning';
-        this.title = 'No luck!';
-        this.message = `Seems that your installation is connected to ${cockpitLink}, but has been rejected...`;
+        this.title = this.languageService.translate('settings.organization.cockpit.rejectedTitle');
+        this.message = this.languageService.translate('settings.organization.cockpit.rejectedMessage', { link: cockpitLink });
         return;
 
       case 'DELETED':
         this.icon = 'gps_off';
-        this.title = 'Installation unlinked!';
-        this.message = `Seems that your installation is connected to ${cockpitLink}, but is not linked anymore...`;
+        this.title = this.languageService.translate('settings.organization.cockpit.deletedTitle');
+        this.message = this.languageService.translate('settings.organization.cockpit.deletedMessage', { link: cockpitLink });
         return;
 
       default:
         this.icon = 'explore';
-        this.title = 'Meet Gravitee Cloud...';
-        this.message = `Create an account on ${cockpitLink}, register your current installation and start creating new organizations and environments!`;
+        this.title = this.languageService.translate('settings.organization.cockpit.defaultTitle');
+        this.message = this.languageService.translate('settings.organization.cockpit.defaultMessage', { link: cockpitLink });
         return;
     }
   }

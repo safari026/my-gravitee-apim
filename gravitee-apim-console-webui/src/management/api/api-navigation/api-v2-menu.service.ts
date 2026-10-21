@@ -26,6 +26,7 @@ import { ApiV2, DefinitionVersion } from '../../../entities/management-api-v2';
 import { ApimFeature, UTMTags } from '../../../shared/components/gio-license/gio-license-data';
 import { GioRoleService } from '../../../shared/components/gio-role/gio-role.service';
 import { EnvironmentSettingsService } from '../../../services-ngx/environment-settings.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Injectable()
 export class ApiV2MenuService implements ApiMenuService {
@@ -35,7 +36,12 @@ export class ApiV2MenuService implements ApiMenuService {
     private readonly environmentSettingsService: EnvironmentSettingsService,
     @Inject(Constants) private readonly constants: Constants,
     private readonly gioLicenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
+
+  private t(key: string): string {
+    return this.languageService.translate(`apis.navigation.${key}`);
+  }
 
   public getMenu(api: ApiV2): {
     subMenuItems: MenuItem[];
@@ -43,11 +49,11 @@ export class ApiV2MenuService implements ApiMenuService {
   } {
     const subMenuItems: MenuItem[] = [
       {
-        displayName: 'Policy Studio',
+        displayName: this.t('items.policyStudio'),
         routerLink: 'v2/policy-studio',
       },
       {
-        displayName: 'Messages',
+        displayName: this.t('items.messages'),
         routerLink: 'messages',
       },
     ];
@@ -66,10 +72,10 @@ export class ApiV2MenuService implements ApiMenuService {
 
   private getPortalGroup(definitionVersion: DefinitionVersion): MenuGroupItem {
     const portalGroup: MenuGroupItem = {
-      title: 'General',
+      title: this.t('items.general'),
       items: [
         {
-          displayName: 'Info',
+          displayName: this.t('items.info'),
           routerLink: '.',
           routerLinkActiveOptions: { exact: true },
         },
@@ -78,18 +84,18 @@ export class ApiV2MenuService implements ApiMenuService {
 
     // Plans
     const plansMenuItem: MenuItem = {
-      displayName: 'Plans',
+      displayName: this.t('items.plans'),
       tabs: [],
     };
     if (this.permissionService.hasAnyMatching(['api-plan-r'])) {
       plansMenuItem.tabs.push({
-        displayName: 'Plans',
+        displayName: this.t('items.plans'),
         routerLink: 'plans',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-subscription-r'])) {
       plansMenuItem.tabs.push({
-        displayName: 'Subscriptions',
+        displayName: this.t('items.subscriptions'),
         routerLink: 'subscriptions',
       });
     }
@@ -99,18 +105,18 @@ export class ApiV2MenuService implements ApiMenuService {
 
     // Documentation
     const documentationMenuItem: MenuItem = {
-      displayName: 'Documentation',
+      displayName: this.t('items.documentation'),
       tabs: [],
     };
     if (this.permissionService.hasAnyMatching(['api-documentation-r'])) {
       documentationMenuItem.tabs.push({
-        displayName: 'Pages',
+        displayName: this.t('items.pages'),
         routerLink: 'documentation',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-metadata-r'])) {
       documentationMenuItem.tabs.push({
-        displayName: 'Metadata',
+        displayName: this.t('items.metadata'),
         routerLink: 'metadata',
       });
     }
@@ -121,7 +127,7 @@ export class ApiV2MenuService implements ApiMenuService {
     // Users
     if (this.permissionService.hasAnyMatching(['api-member-r'])) {
       const userAndGroupAccessMenuItems: MenuItem = {
-        displayName: 'User and group access',
+        displayName: this.t('items.userAndGroupAccess'),
         routerLink: 'members',
         tabs: [],
       };
@@ -132,7 +138,7 @@ export class ApiV2MenuService implements ApiMenuService {
     // Api Score
     if (this.environmentSettingsService.getSnapshot().apiScore.enabled && definitionVersion === 'V2') {
       portalGroup.items.push({
-        displayName: 'API Score',
+        displayName: this.t('items.apiScore'),
         routerLink: 'api-score',
       });
     }
@@ -142,43 +148,43 @@ export class ApiV2MenuService implements ApiMenuService {
 
   private getProxyGroup(): MenuGroupItem {
     const proxyGroup: MenuGroupItem = {
-      title: 'Proxy',
+      title: this.t('items.proxy'),
       items: [],
     };
 
     if (this.permissionService.hasAnyMatching(['api-definition-r', 'api-health-r'])) {
       proxyGroup.items.push({
-        displayName: 'Entrypoints',
+        displayName: this.t('items.entrypoints'),
         routerLink: 'v2/entrypoints',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       proxyGroup.items.push(
         {
-          displayName: 'CORS',
+          displayName: this.t('items.cors'),
           routerLink: 'cors',
         },
         {
-          displayName: 'Deployments',
+          displayName: this.t('items.deployments'),
           routerLink: 'deployments',
         },
       );
     }
     if (this.permissionService.hasAnyMatching(['api-response_templates-r'])) {
       proxyGroup.items.push({
-        displayName: 'Response Templates',
+        displayName: this.t('items.responseTemplates'),
         routerLink: 'response-templates',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       proxyGroup.items.push(
         {
-          displayName: 'Properties',
+          displayName: this.t('items.properties'),
           routerLink: 'properties',
           tabs: [],
         },
         {
-          displayName: 'Resources',
+          displayName: this.t('items.resources'),
           routerLink: 'resources',
         },
       );
@@ -192,25 +198,25 @@ export class ApiV2MenuService implements ApiMenuService {
   private getBackendServicesGroup(): MenuGroupItem {
     // Backend services
     const backendServicesGroup: MenuGroupItem = {
-      title: 'Backend services',
+      title: this.t('items.backendServices'),
       items: [],
     };
 
     if (this.permissionService.hasAnyMatching(['api-definition-r'])) {
       backendServicesGroup.items.push(
         {
-          displayName: 'Endpoints',
+          displayName: this.t('items.endpoints'),
           routerLink: 'v2/endpoints',
         },
         {
-          displayName: 'Failover',
+          displayName: this.t('items.failover'),
           routerLink: 'v2/failover',
         },
       );
     }
     if (this.permissionService.hasAnyMatching(['api-health-r'])) {
       backendServicesGroup.items.push({
-        displayName: 'Health-check',
+        displayName: this.t('items.healthCheck'),
         routerLink: 'v2/healthcheck',
       });
     }
@@ -218,7 +224,7 @@ export class ApiV2MenuService implements ApiMenuService {
     // Health-check dashboard
     if (this.permissionService.hasAnyMatching(['api-health-r'])) {
       backendServicesGroup.items.push({
-        displayName: 'Health-check dashboard',
+        displayName: this.t('items.healthCheckDashboardV2'),
         routerLink: 'v2/healthcheck-dashboard',
       });
     }
@@ -231,25 +237,25 @@ export class ApiV2MenuService implements ApiMenuService {
 
   private getAnalyticsGroup(): MenuGroupItem {
     const analyticsGroup: MenuGroupItem = {
-      title: 'Analytics',
+      title: this.t('items.analytics'),
       items: [],
     };
 
     if (this.permissionService.hasAnyMatching(['api-analytics-r'])) {
       analyticsGroup.items.push({
-        displayName: 'Overview',
+        displayName: this.t('items.overview'),
         routerLink: 'v2/analytics-overview',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-log-r'])) {
       analyticsGroup.items.push({
-        displayName: 'Logs',
+        displayName: this.t('items.logs'),
         routerLink: 'v2/analytics-logs',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-definition-u'])) {
       analyticsGroup.items.push({
-        displayName: 'Path mappings',
+        displayName: this.t('items.pathMappings'),
         routerLink: 'v2/path-mappings',
       });
     }
@@ -263,7 +269,7 @@ export class ApiV2MenuService implements ApiMenuService {
         .pipe(map(notAllowed => (notAllowed ? 'gio:lock' : null)));
 
       analyticsGroup.items.push({
-        displayName: 'Alerts',
+        displayName: this.t('items.alerts'),
         routerLink: 'analytics-alerts',
         license: alertEngineLicenseOptions,
         iconRight$: alertEngineIconRight$,
@@ -280,13 +286,13 @@ export class ApiV2MenuService implements ApiMenuService {
     const iconRight$ = this.gioLicenseService.isMissingFeature$(license.feature).pipe(map(notAllowed => (notAllowed ? 'gio:lock' : null)));
 
     const auditGroup: MenuGroupItem = {
-      title: 'Audit',
+      title: this.t('items.audit'),
       items: [],
     };
 
     if (this.permissionService.hasAnyMatching(['api-audit-r'])) {
       auditGroup.items.push({
-        displayName: 'Audit',
+        displayName: this.t('items.audit'),
         routerLink: 'audit',
         license,
         iconRight$,
@@ -294,13 +300,13 @@ export class ApiV2MenuService implements ApiMenuService {
     }
     if (this.permissionService.hasAnyMatching(['api-event-r'])) {
       auditGroup.items.push({
-        displayName: 'History',
+        displayName: this.t('items.history'),
         routerLink: 'history',
       });
     }
     if (this.permissionService.hasAnyMatching(['api-event-u'])) {
       auditGroup.items.push({
-        displayName: 'Events',
+        displayName: this.t('items.events'),
         routerLink: 'events',
       });
     }
@@ -312,13 +318,13 @@ export class ApiV2MenuService implements ApiMenuService {
   }
   private getNotificationsGroup(): MenuGroupItem {
     const notificationsGroup: MenuGroupItem = {
-      title: 'Notifications',
+      title: this.t('items.notifications'),
       items: [],
     };
 
     if (this.permissionService.hasAnyMatching(['api-notification-r'])) {
       notificationsGroup.items.push({
-        displayName: 'Notification settings',
+        displayName: this.t('items.notificationSettings'),
         routerLink: 'notifications',
       });
     }
@@ -333,7 +339,7 @@ export class ApiV2MenuService implements ApiMenuService {
         .pipe(map(notAllowed => (notAllowed ? 'gio:lock' : null)));
 
       notificationsGroup.items.push({
-        displayName: 'Alerts',
+        displayName: this.t('items.alerts'),
         routerLink: 'alerts',
         license: alertEngineLicenseOptions,
         iconRight$: alertEngineIconRight$,

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 import { Component, Inject, OnInit, signal } from '@angular/core';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -47,6 +48,7 @@ import { Group } from '../../../../../entities/group/group';
     ReactiveFormsModule,
     MatCardModule,
     MatIconModule,
+    TranslatePipe,
   ],
   templateUrl: './invite-member-dialog.component.html',
   styleUrl: './invite-member-dialog.component.scss',

@@ -29,6 +29,7 @@ import { Role } from '../../../../../entities/role/role';
 import { Member } from '../../../../../entities/members/members';
 import { ApplicationTransferOwnership } from '../../../../../entities/application/Application';
 import { ApplicationService } from '../../../../../services-ngx/application.service';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'application-general-transfer-ownership',
@@ -52,6 +53,7 @@ export class ApplicationGeneralTransferOwnershipComponent implements OnInit {
     private readonly applicationMembersService: ApplicationMembersService,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -84,9 +86,9 @@ export class ApplicationGeneralTransferOwnershipComponent implements OnInit {
 
     const confirmDialog = this.matDialog.open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
       data: {
-        title: 'Transfer Application ownership',
-        content: `This action cannot be undone. If you are the primary owner of this Application, your role will be set to <code>${newRole}</code>.`,
-        confirmButton: 'Transfer',
+        title: this.languageService.translate('applications.transferOwnership.confirmTitle'),
+        content: this.languageService.translate('applications.transferOwnership.confirmContent', { role: newRole }),
+        confirmButton: this.languageService.translate('applications.transferOwnership.transfer'),
       },
       role: 'alertdialog',
       id: 'confirmTransferDialog',
@@ -116,7 +118,7 @@ export class ApplicationGeneralTransferOwnershipComponent implements OnInit {
       )
       .subscribe({
         next: () => {
-          this.snackBarService.success('Transfer ownership done.');
+          this.snackBarService.success(this.languageService.translate('applications.transferOwnership.success'));
           this.router.navigate(['../members'], { relativeTo: this.activatedRoute });
         },
         error: ({ error }) => this.snackBarService.error(error.message),

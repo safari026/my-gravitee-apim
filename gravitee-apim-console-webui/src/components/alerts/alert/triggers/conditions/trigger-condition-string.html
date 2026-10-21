@@ -17,22 +17,22 @@
 -->
 
 <md-input-container class="md-block" ng-if="!$ctrl.displaySelect()">
-  <label>Pattern</label>
+  <label>{{$ctrl.translate('alerts.condition.pattern')}}</label>
   <input
     ng-model="$ctrl.condition.pattern"
     required
     type="text"
     name="condition-string-value"
-    aria-label="string value condition"
+    aria-label="{{$ctrl.translate('alerts.condition.patternAria')}}"
     ng-disabled="$ctrl.isReadonly"
   />
   <div ng-messages="$ctrl.formAlert['condition-string-value'].$error">
-    <div ng-message="required">Pattern is required.</div>
+    <div ng-message="required">{{$ctrl.translate('alerts.condition.patternRequired')}}</div>
   </div>
 </md-input-container>
 
 <md-input-container class="md-block" ng-if="$ctrl.displaySelect()">
-  <label>Value</label>
+  <label>{{$ctrl.translate('alerts.condition.value')}}</label>
   <md-select
     ng-model="$ctrl.condition.pattern"
     required
@@ -47,11 +47,11 @@
         ng-change="$ctrl.onSearch()"
         ng-keydown="$event.stopPropagation()"
         type="search"
-        placeholder="Search values"
+        placeholder="{{$ctrl.translate('alerts.condition.searchValues')}}"
         class="demo-header-searchbox md-text"
       />
     </md-select-header>
 
-    <md-option ng-value="type.key" ng-repeat="type in $ctrl.filteredValues track by type.key"> {{ type.value }} </md-option>
+    <md-option ng-value="type.key" ng-repeat="type in $ctrl.filteredValues track by type.key"> {{ $ctrl.tupleLabel(type) }} </md-option>
   </md-select>
 </md-input-container>

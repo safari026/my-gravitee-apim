@@ -19,7 +19,6 @@ import { catchError, debounceTime, distinctUntilChanged, map, switchMap, takeUnt
 import { BehaviorSubject, Observable, of, Subject } from 'rxjs';
 import { castArray, isEqual } from 'lodash';
 import { ActivatedRoute, Router } from '@angular/router';
-import { TitleCasePipe } from '@angular/common';
 
 import { TagService } from '../../../services-ngx/tag.service';
 import { GioTableWrapperFilters } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
@@ -81,11 +80,11 @@ export type ApisTableDS = {
   workflowBadge?: { text: string; class: string };
   isNotSynced$?: Observable<boolean>;
   qualityScore$?: Observable<{ score: number; class: string }>;
-  visibility: { label: string; icon: string };
+  visibility: { labelKey: string; icon: string };
   origin: Origin;
   provider?: string;
   readonly: boolean;
-  definitionVersion: { label: string; icon?: string };
+  definitionVersion: { labelKey: string; icon?: string };
   categories: string[];
 }[];
 
@@ -102,7 +101,6 @@ interface ApiListTableWrapperFilters extends GioTableWrapperFilters {
   selector: 'api-list',
   templateUrl: './api-list.component.html',
   styleUrls: ['./api-list.component.scss'],
-  providers: [TitleCasePipe],
   standalone: false,
 })
 export class ApiListComponent implements OnInit, OnDestroy {
@@ -115,7 +113,6 @@ export class ApiListComponent implements OnInit, OnDestroy {
     searchTerm: '',
   };
   isQualityDisplayed: boolean;
-  searchLabel = 'Search';
   isLoadingData = true;
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
   private filters$ = new BehaviorSubject<ApiListTableWrapperFilters>(this.filters);
@@ -151,7 +148,6 @@ export class ApiListComponent implements OnInit, OnDestroy {
     private readonly apiService: ApiService,
     private readonly apiServiceV2: ApiV2Service,
     private readonly tagService: TagService,
-    private readonly titleCasePipe: TitleCasePipe,
     private readonly categoryService: CategoryService,
   ) {}
 
@@ -363,7 +359,10 @@ export class ApiListComponent implements OnInit, OnDestroy {
             state: api.state,
             lifecycleState: api.lifecycleState,
             workflowBadge: this.getWorkflowBadge(api),
-            visibility: { label: api.visibility, icon: this.visibilitiesIcons[api.visibility] },
+            visibility: {
+              labelKey: api.visibility === 'PUBLIC' ? 'apis.list.visibility.public' : 'apis.list.visibility.private',
+              icon: this.visibilitiesIcons[api.visibility],
+            },
             origin: api.originContext?.origin,
             readonly: api.originContext?.origin === 'KUBERNETES',
             definitionVersion: this.getDefinitionVersion(api),
@@ -407,36 +406,40 @@ export class ApiListComponent implements OnInit, OnDestroy {
   private getDefinitionVersion(api: Api) {
     switch (api.definitionVersion) {
       case 'V2':
-        return { label: 'V2 HTTP Proxy' };
+        return { labelKey: 'apis.list.types.v2HttpProxy' };
       case 'V4':
-        return { label: this.getLabelType(api) };
+        return { labelKey: this.getLabelType(api) };
       case 'FEDERATED':
-        return { label: 'Federated API' };
+        return { labelKey: 'apis.list.types.federated' };
       case 'FEDERATED_AGENT':
-        return { label: 'Federated A2A Agent' };
+        return { labelKey: 'apis.list.types.federatedAgent' };
       default:
-        return { icon: 'gio:alert-circle', label: 'Unknown' };
+        return { icon: 'gio:alert-circle', labelKey: 'apis.list.types.unknown' };
     }
   }
 
   private getLabelType(api: ApiV4): string {
     if (api.type === 'MESSAGE') {
-      return 'Message';
+      return 'apis.list.types.message';
     }
     if (api.type === 'NATIVE') {
-      return api.listeners.map((listener: Listener): ListenerType => listener.type).includes('KAFKA') ? 'Kafka Native' : 'Native';
+      return api.listeners.map((listener: Listener): ListenerType => listener.type).includes('KAFKA')
+        ? 'apis.list.types.kafkaNative'
+        : 'apis.list.types.native';
     }
     if (api.type === 'MCP_PROXY') {
-      return 'MCP Proxy';
+      return 'apis.list.types.mcpProxy';
     }
     if (api.type === 'LLM_PROXY') {
-      return 'LLM Proxy';
+      return 'apis.list.types.llmProxy';
     }
     if (api.type === 'A2A_PROXY') {
-      return 'A2A Proxy';
+      return 'apis.list.types.a2aProxy';
     }
 
-    return api.listeners.map((listener: Listener): ListenerType => listener.type).includes('TCP') ? 'TCP Proxy' : 'HTTP Proxy';
+    return api.listeners.map((listener: Listener): ListenerType => listener.type).includes('TCP')
+      ? 'apis.list.types.tcpProxy'
+      : 'apis.list.types.httpProxy';
   }
 
   displayFirstTag(element) {
@@ -456,10 +459,10 @@ export class ApiListComponent implements OnInit, OnDestroy {
   private getWorkflowBadge(api: Api) {
     const state = api.lifecycleState === 'DEPRECATED' ? api.lifecycleState : api.workflowState;
     const toReadableState = {
-      DEPRECATED: { text: 'Deprecated', class: 'gio-badge-error' },
-      DRAFT: { text: 'Draft', class: 'gio-badge-primary' },
-      IN_REVIEW: { text: 'In Review', class: 'gio-badge-error' },
-      REQUEST_FOR_CHANGES: { text: 'Need changes', class: 'gio-badge-error' },
+      DEPRECATED: { text: 'apis.list.workflow.deprecated', class: 'gio-badge-error' },
+      DRAFT: { text: 'apis.list.workflow.draft', class: 'gio-badge-primary' },
+      IN_REVIEW: { text: 'apis.list.workflow.inReview', class: 'gio-badge-error' },
+      REQUEST_FOR_CHANGES: { text: 'apis.list.workflow.needChanges', class: 'gio-badge-error' },
     };
     return toReadableState[state];
   }

@@ -21,12 +21,13 @@ import { ActivatedRoute } from '@angular/router';
 import { SubscriptionApiKeysComponent } from '../components/subscription-api-keys/subscription-api-keys.component';
 import { Application } from '../../../../../entities/application/Application';
 import { ApplicationService } from '../../../../../services-ngx/application.service';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'application-shared-api-keys',
   templateUrl: './application-shared-api-keys.component.html',
   styleUrls: ['./application-shared-api-keys.component.scss'],
-  imports: [CommonModule, SubscriptionApiKeysComponent],
+  imports: [CommonModule, SubscriptionApiKeysComponent, TranslatePipe],
   standalone: true,
 })
 export class ApplicationSharedApiKeysComponent {

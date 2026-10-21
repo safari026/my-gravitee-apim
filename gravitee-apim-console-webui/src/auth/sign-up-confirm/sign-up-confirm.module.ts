@@ -28,6 +28,9 @@ import { A11yModule } from '@angular/cdk/a11y';
 
 import { SignUpConfirmComponent } from './sign-up-confirm.component';
 
+import { AuthLanguageToggleComponent } from '../auth-language-toggle.component';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [SignUpConfirmComponent],
   exports: [SignUpConfirmComponent],
@@ -45,6 +48,8 @@ import { SignUpConfirmComponent } from './sign-up-confirm.component';
 
     GioIconsModule,
     GioBannerModule,
+    TranslatePipe,
+    AuthLanguageToggleComponent,
   ],
 })
 export class SignUpConfirmModule {}

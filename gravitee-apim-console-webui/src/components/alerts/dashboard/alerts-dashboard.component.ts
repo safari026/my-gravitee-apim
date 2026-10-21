@@ -20,9 +20,10 @@ import '@gravitee/ui-components/wc/gv-chart-bar';
 
 import { ITimeframe, TimeframeRanges } from '../quick-time-range/quick-time-range.component';
 import { Alert, Scope } from '../../../entities/alert';
+import { Constants } from '../../../entities/Constants';
 import AlertService, { IAlertTriggerAnalytics } from '../../../services/alert.service';
 import UserService from '../../../services/user.service';
-import { Constants } from '../../../entities/Constants';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class AlertsDashboardComponent implements ng.IComponentController {
   private static INFO_COLOR = '#54a3ff';
@@ -49,11 +50,20 @@ class AlertsDashboardComponent implements ng.IComponentController {
     private UserService: UserService,
     private ngRouter: Router,
     private Constants: Constants,
+    private ngLanguageService: LanguageService,
   ) {}
+
+  translate(key: string, params?: Record<string, string | number>) {
+    return this.ngLanguageService.translate(key, params);
+  }
+
+  timeframeTitle() {
+    return this.translate(`alerts.timeRange.${this.timeframe.id}`);
+  }
 
   $onInit() {
     this.options = {
-      name: 'Severity',
+      name: this.translate('alerts.activity.severity'),
       data: [
         {
           name: 'INFO',
@@ -100,6 +110,10 @@ class AlertsDashboardComponent implements ng.IComponentController {
 
   refresh(timeframe: ITimeframe) {
     this.timeframe = timeframe;
+    this.options = {
+      ...this.options,
+      name: this.translate('alerts.activity.severity'),
+    };
     const now = Date.now();
 
     this.customTimeframe = {
@@ -193,5 +207,5 @@ const AlertDashBoardComponent: ng.IComponentOptions = {
   },
   controller: AlertsDashboardComponent,
 };
-AlertsDashboardComponent.$inject = ['$scope', 'AlertService', 'UserService', 'ngRouter', 'Constants'];
+AlertsDashboardComponent.$inject = ['$scope', 'AlertService', 'UserService', 'ngRouter', 'Constants', 'ngLanguageService'];
 export default AlertDashBoardComponent;

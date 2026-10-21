@@ -53,6 +53,7 @@ import { CertificateDetailDialogComponent } from './certificate-detail-dialog/ce
 import { GioPermissionModule } from '../../../../shared/components/gio-permission/gio-permission.module';
 import { DaysLeftPipe } from '../../../../shared/pipes/days-left.pipe';
 import { DATE_TIME_FORMATS } from '../../../../shared/utils/timeFrameRanges';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApplicationGeneralComponent, AddCertificateDialogComponent, CertificateDetailDialogComponent, DaysLeftPipe],
@@ -93,6 +94,7 @@ import { DATE_TIME_FORMATS } from '../../../../shared/utils/timeFrameRanges';
     RouterModule,
     GioBannerModule,
     GioFormHeadersModule,
+    TranslatePipe,
   ],
   providers: [{ provide: OWL_DATE_TIME_FORMATS, useValue: DATE_TIME_FORMATS }],
 })

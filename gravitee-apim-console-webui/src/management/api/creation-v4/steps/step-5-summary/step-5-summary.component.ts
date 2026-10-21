@@ -47,7 +47,7 @@ export class Step5SummaryComponent implements OnInit {
   public isOEM$: Observable<boolean>;
   public hasReviewEnabled = this.constants.env?.settings?.apiReview?.enabled ?? false;
   public hasInvalidNativeKafkaPlans: boolean;
-  public deployTooltipMessage: string;
+  public deployTooltipKey: string;
   public kafkaDomainAndPort$: Observable<string>;
 
   constructor(
@@ -89,11 +89,11 @@ export class Step5SummaryComponent implements OnInit {
     this.shouldUpgrade = !this.connectorsDeployable;
 
     if (!this.connectorsDeployable) {
-      this.deployTooltipMessage = 'You cannot deploy an API with endpoints or entrypoints not deployed.';
+      this.deployTooltipKey = 'apis.creation.v4.summary.cannotDeployConnectors';
     } else if (this.hasInvalidNativeKafkaPlans) {
-      this.deployTooltipMessage = 'You cannot deploy a Kafka API with conflicting plan authentication.';
+      this.deployTooltipKey = 'apis.creation.v4.summary.cannotDeployKafka';
     } else {
-      this.deployTooltipMessage = 'Your API will be deployed to the gateway.';
+      this.deployTooltipKey = 'apis.creation.v4.summary.willDeploy';
     }
 
     this.license$ = this.licenseService.getLicense$();

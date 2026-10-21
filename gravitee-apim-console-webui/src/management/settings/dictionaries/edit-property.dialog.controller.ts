@@ -13,7 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-function DialogDictionaryEditPropertyController($scope, $mdDialog, locals) {
+function DialogDictionaryEditPropertyController($scope, $mdDialog, locals, ngLanguageService) {
+  this.translate = (key, params) => ngLanguageService.translate(key, params);
+
   $scope.property = {
     name: locals.key,
     value: locals.value,
@@ -29,6 +31,6 @@ function DialogDictionaryEditPropertyController($scope, $mdDialog, locals) {
     });
   };
 }
-DialogDictionaryEditPropertyController.$inject = ['$scope', '$mdDialog', 'locals'];
+DialogDictionaryEditPropertyController.$inject = ['$scope', '$mdDialog', 'locals', 'ngLanguageService'];
 
 export default DialogDictionaryEditPropertyController;

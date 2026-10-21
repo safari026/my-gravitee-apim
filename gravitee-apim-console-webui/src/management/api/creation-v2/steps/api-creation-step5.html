@@ -15,108 +15,130 @@
     limitations under the License.
 
 -->
-<md-step label="Deployment" md-complete="$ctrl.parent.vm.stepData[4].data.completed" ng-disabled="$ctrl.parent.vm.stepProgress < 5">
+<md-step
+  label="{{ $ctrl.parent.translate('apis.creation.v2.steps.deployment') }}"
+  md-complete="$ctrl.parent.vm.stepData[4].data.completed"
+  ng-disabled="$ctrl.parent.vm.stepProgress < 5"
+>
   <md-step-body>
     <md-content flex layout-padding class="gv-abstract-content gv-creation-content">
       <h5>
-        API
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.api') }}
         <a ng-click="$ctrl.parent.selectStep(0)">
-          <md-tooltip>Jump to general edition</md-tooltip>
+          <md-tooltip>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.jumpToGeneral') }}</md-tooltip>
           <ng-md-icon icon="mode_edit" size="20"></ng-md-icon>
         </a>
       </h5>
       <p>
-        You are about to create the API <code>{{$ctrl.parent.api.name}}</code> in version <code>{{$ctrl.parent.api.version}}</code>. The API
-        will be map to the following context path <code>{{$ctrl.parent.api.proxy.context_path}}</code>.
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.aboutToCreateBeforeName') }}
+        <code>{{$ctrl.parent.api.name}}</code>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.aboutToCreateBeforeVersion') }}
+        <code>{{$ctrl.parent.api.version}}</code>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.aboutToCreateBeforePath') }}
+        <code>{{$ctrl.parent.api.proxy.context_path}}</code>.
         <span ng-if="$ctrl.parent.api.groups && $ctrl.parent.api.groups.length > 0">
-          The groups <code ng-repeat="group in $ctrl.parent.api.groups" style="margin: 0 0.2rem">{{group.name}}</code> will be able to
-          access the API.
+          {{ $ctrl.parent.translate('apis.creation.v2.confirmation.groupsPrefix') }}
+          <code ng-repeat="group in $ctrl.parent.api.groups" style="margin: 0 0.2rem">{{group.name}}</code>
+          {{ $ctrl.parent.translate('apis.creation.v2.confirmation.groupsSuffix') }}
         </span>
       </p>
       <h5>
-        Gateway
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.gateway') }}
         <a ng-click="$ctrl.parent.selectStep(1)">
-          <md-tooltip>Jump to gateway edition</md-tooltip>
+          <md-tooltip>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.jumpToGateway') }}</md-tooltip>
           <ng-md-icon icon="mode_edit" size="20"></ng-md-icon>
         </a>
       </h5>
-      <p>The upstream endpoint will be <code ng-repeat="endpoint in $ctrl.parent.api.proxy.endpoints">{{endpoint.target}}</code>.</p>
+      <p>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.upstreamEndpoint') }}
+        <code ng-repeat="endpoint in $ctrl.parent.api.proxy.endpoints">{{endpoint.target}}</code>.
+      </p>
       <h5>
-        Plan
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.plan') }}
         <a ng-click="$ctrl.parent.selectStep(2)">
-          <md-tooltip>Jump to plan edition</md-tooltip>
+          <md-tooltip>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.jumpToPlan') }}</md-tooltip>
           <ng-md-icon icon="mode_edit" size="20"></ng-md-icon>
         </a>
       </h5>
       <p ng-if="$ctrl.parent.api.plans.length > 0">
-        The <code>{{$ctrl.parent.api.plans[0].name}}</code> plan will allow users to subscribe to the API. The
-        <code>{{$ctrl.parent.api.plans[0].security}}</code> plan security scheme means that the API
-        <span ng-if="$ctrl.parent.api.plans[0].security === 'KEY_LESS'"
-          >will be open access and causes API Gateway to bypass any access control mechanisms.</span
-        >
-        <span ng-if="$ctrl.parent.api.plans[0].security === 'API_KEY'"
-          >will enforce verification of API Keys during request processing, letting only apps with approved API Keys access the API.</span
-        >
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.planIntroBeforeName') }}
+        <code>{{$ctrl.parent.api.plans[0].name}}</code>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.planIntroAfterName') }}
+        <code>{{$ctrl.parent.api.plans[0].security}}</code>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.planIntroAfterSecurity') }}
+        <span ng-if="$ctrl.parent.api.plans[0].security === 'KEY_LESS'">{{
+          $ctrl.parent.translate('apis.creation.v2.confirmation.keylessAccess')
+        }}</span>
+        <span ng-if="$ctrl.parent.api.plans[0].security === 'API_KEY'">{{
+          $ctrl.parent.translate('apis.creation.v2.confirmation.apiKeyAccess')
+        }}</span>
 
-        The plan has validation mode set to <code>{{$ctrl.parent.api.plans[0].validation}}</code> meaning that application developers
-        <span ng-if="$ctrl.parent.api.plans[0].validation === 'AUTO'">can subscribe to this Plan immediately.</span>
-        <span ng-if="$ctrl.parent.api.plans[0].validation === 'MANUAL'"
-          >have to request approval for access to subscribe to this Plan.</span
-        >
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.validationPrefix') }}
+        <code>{{$ctrl.parent.api.plans[0].validation}}</code>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.validationMiddle') }}
+        <span ng-if="$ctrl.parent.api.plans[0].validation === 'AUTO'">{{
+          $ctrl.parent.translate('apis.creation.v2.confirmation.validationAuto')
+        }}</span>
+        <span ng-if="$ctrl.parent.api.plans[0].validation === 'MANUAL'">{{
+          $ctrl.parent.translate('apis.creation.v2.confirmation.validationManual')
+        }}</span>
       </p>
       <p ng-if="$ctrl.parent.api.plans.length == 0" class="gv-abstract-warning">
-        <ng-md-icon icon="warning" style="fill: orange"></ng-md-icon> No plan means that nobody can subscribe and consume your API.
+        <ng-md-icon icon="warning" style="fill: orange"></ng-md-icon>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.noPlan') }}
       </p>
       <h5>
-        Documentation
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.documentation') }}
         <a ng-click="$ctrl.parent.selectStep(3)">
-          <md-tooltip>Jump to documentation edition</md-tooltip>
+          <md-tooltip>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.jumpToDocumentation') }}</md-tooltip>
           <ng-md-icon icon="mode_edit" size="20"></ng-md-icon>
         </a>
       </h5>
       <p ng-if="$ctrl.parent.api.pages.length > 0">
-        The API will have the <code ng-repeat-start="page in $ctrl.parent.api.pages" ng-bind="page.name"></code>
-        <span ng-repeat-end></span>documentation to helping users understand and use the API.
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.docsPrefix') }}
+        <code ng-repeat-start="page in $ctrl.parent.api.pages" ng-bind="page.name"></code>
+        <span ng-repeat-end></span>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.docsSuffix') }}
       </p>
       <p ng-if="$ctrl.parent.api.pages.length == 0" class="gv-abstract-warning">
-        <ng-md-icon icon="warning" style="fill: orange"></ng-md-icon> No documentation provided, remember to provide consumers
-        understandable and accurate information about your API.
+        <ng-md-icon icon="warning" style="fill: orange"></ng-md-icon>
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.noDocumentation') }}
       </p>
-      <h5>Confirmation</h5>
+      <h5>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.confirmation') }}</h5>
       <p style="padding-top: 0px" ng-if="!$ctrl.parent.Constants.env.settings.apiReview.enabled">
-        You can now either
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.youCanNowEither') }}
         <strong
-          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(false)" ng-disabled="$ctrl.parent.isCreating"
-            >create the API without deploying it</md-button
-          ></strong
+          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(false)" ng-disabled="$ctrl.parent.isCreating">{{
+            $ctrl.parent.translate('apis.creation.v2.confirmation.createWithoutDeploying')
+          }}</md-button></strong
         >
-        letting you continue configure the API or
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.lettingYouContinue') }}
         <strong
-          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(true)" ng-disabled="$ctrl.parent.isCreating"
-            >create and start the API</md-button
-          ></strong
+          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(true)" ng-disabled="$ctrl.parent.isCreating">{{
+            $ctrl.parent.translate('apis.creation.v2.confirmation.createAndStart')
+          }}</md-button></strong
         >
-        to make it immediately available for the application developers.
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.toMakeAvailable') }}
       </p>
       <p style="padding-top: 0px" ng-if="$ctrl.parent.Constants.env.settings.apiReview.enabled">
-        You can now either
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.youCanNowEither') }}
         <strong
-          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(false, false)" ng-disabled="$ctrl.parent.isCreating"
-            >create the API in draft</md-button
-          ></strong
+          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(false, false)" ng-disabled="$ctrl.parent.isCreating">{{
+            $ctrl.parent.translate('apis.creation.v2.confirmation.createInDraft')
+          }}</md-button></strong
         >
-        letting you continue configure the API or
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.lettingYouContinue') }}
         <strong
-          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(false, true)" ng-disabled="$ctrl.parent.isCreating"
-            >create the API and ask for review</md-button
-          ></strong
+          ><md-button class="md-raised" ng-click="$ctrl.parent.createAPI(false, true)" ng-disabled="$ctrl.parent.isCreating">{{
+            $ctrl.parent.translate('apis.creation.v2.confirmation.createAndAskReview')
+          }}</md-button></strong
         >
-        before publishing/starting it.
+        {{ $ctrl.parent.translate('apis.creation.v2.confirmation.beforePublishing') }}
       </p>
 
       <div layout="row">
         <a ng-href="{{$ctrl.url}}" target="_blank" class="gv-abstract-documentation-link" flex
-          >To go further on API configuration, please consult <strong>API Management documentation</strong></a
+          >{{ $ctrl.parent.translate('apis.creation.v2.confirmation.goFurther') }}
+          <strong>{{ $ctrl.parent.translate('apis.creation.v2.confirmation.apiManagementDocumentation') }}</strong></a
         >
       </div>
     </md-content>

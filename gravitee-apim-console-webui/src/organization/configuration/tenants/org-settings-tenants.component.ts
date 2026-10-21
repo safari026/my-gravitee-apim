@@ -29,6 +29,7 @@ import { GioTableWrapperFilters } from '../../../shared/components/gio-table-wra
 import { Tenant, UpdateTenantEntity } from '../../../entities/tenant/tenant';
 import { gioTableFilterCollection } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'org-settings-tenants',
@@ -40,6 +41,7 @@ export class OrgSettingsTenantsComponent {
   private readonly tenantService = inject(TenantService);
   private readonly matDialog = inject(MatDialog);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
   private tenants: Tenant[] = [];
 
@@ -75,7 +77,7 @@ export class OrgSettingsTenantsComponent {
         filter(result => !!result),
         switchMap(newTenant => this.tenantService.create([newTenant])),
         tap(() => {
-          this.snackBarService.success('Tenant successfully created!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.tenants.created'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -91,9 +93,9 @@ export class OrgSettingsTenantsComponent {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: '450px',
         data: {
-          title: 'Delete a tenant',
-          content: `Are you sure you want to delete the tenant <strong>${tenant.name}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.tenants.deleteTitle'),
+          content: this.languageService.translate('settings.organization.tenants.deleteContent', { name: tenant.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteIdentityProviderConfirmDialog',
@@ -102,7 +104,7 @@ export class OrgSettingsTenantsComponent {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.tenantService.delete(tenant.key)),
-        tap(() => this.snackBarService.success(`Tenant successfully deleted!`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.organization.tenants.deleted'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(() => this.loadTenants());
@@ -123,7 +125,7 @@ export class OrgSettingsTenantsComponent {
         filter(result => !!result),
         switchMap(tenant => this.tenantService.update([this.toUpdateTenantEntity(tenant)])),
         tap(() => {
-          this.snackBarService.success('Tenant successfully updated!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.tenants.updated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

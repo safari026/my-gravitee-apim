@@ -19,13 +19,14 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 
 import { ApiProduct } from '../../../../entities/management-api-v2/api-product';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'api-product-danger-zone',
   templateUrl: './api-product-danger-zone.component.html',
   styleUrls: ['./api-product-danger-zone.component.scss'],
   standalone: true,
-  imports: [MatCardModule, MatButtonModule],
+  imports: [MatCardModule, MatButtonModule, TranslatePipe],
 })
 export class ApiProductDangerZoneComponent {
   apiProduct = input.required<ApiProduct>();

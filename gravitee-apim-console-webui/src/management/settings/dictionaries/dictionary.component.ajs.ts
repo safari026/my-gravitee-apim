@@ -16,6 +16,7 @@
 const DictionaryComponentAjs: ng.IComponentOptions = {
   bindings: {
     activatedRoute: '<',
+    language: '<',
   },
   controller: 'DictionaryController',
   template: require('html-loader!./dictionary.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

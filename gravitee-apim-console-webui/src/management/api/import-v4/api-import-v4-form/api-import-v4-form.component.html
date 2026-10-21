@@ -19,7 +19,7 @@
 <div class="import-api-v4-form" data-testid="api-import-v4-form-root">
   @if (!embeddedInDialog()) {
     <div class="page-header">
-      <h1 class="page-header__page-title">Import API</h1>
+      <h1 class="page-header__page-title">{{ 'apis.creation.importV4.title' | translate }}</h1>
     </div>
   }
 
@@ -32,9 +32,9 @@
     let-cancelAsDismiss="cancelAsDismiss"
   >
     @if (cancelAsDismiss) {
-      <button mat-raised-button type="button" (click)="onDismiss()">Cancel</button>
+      <button mat-raised-button type="button" (click)="onDismiss()">{{ 'common.cancel' | translate }}</button>
     } @else {
-      <a mat-raised-button routerLink="../.." aria-label="Cancel">Cancel</a>
+      <a mat-raised-button routerLink="../.." [attr.aria-label]="'common.cancel' | translate">{{ 'common.cancel' | translate }}</a>
     }
     <div class="stepper-actions-right">
       @if (btnBack) {
@@ -55,7 +55,7 @@
     <div class="import-api-v4-form__dialog-surface">
       @if (embeddedDialogApiName(); as dialogApiName) {
         <div class="import-api-v4-form__dialog-heading">
-          <h1 class="page-header__page-title">Update the API</h1>
+          <h1 class="page-header__page-title">{{ 'apis.creation.importV4.updateTitle' | translate }}</h1>
           <span class="import-api-v4-form__dialog-heading-api-name">{{ dialogApiName }}</span>
         </div>
       }
@@ -75,13 +75,13 @@
       <mat-step [stepControl]="selectApiFormatForm">
         <form [formGroup]="selectApiFormatForm" class="select-api-format">
           <div class="select-api-format__body">
-            <ng-template matStepLabel>Select API format</ng-template>
-            <h3>API format</h3>
+            <ng-template matStepLabel>{{ 'apis.creation.importV4.selectFormat' | translate }}</ng-template>
+            <h3>{{ 'apis.creation.importV4.format' | translate }}</h3>
             <gio-form-selection-inline formControlName="format">
               @for (format of formats; track format.value) {
                 <gio-form-selection-inline-card [value]="format.value">
                   <gio-form-selection-inline-card-content [icon]="format.icon">
-                    <gio-card-content-title>{{ format.label }}</gio-card-content-title>
+                    <gio-card-content-title>{{ format.labelKey | translate }}</gio-card-content-title>
                   </gio-form-selection-inline-card-content>
                 </gio-form-selection-inline-card>
               }
@@ -92,7 +92,7 @@
               [ngTemplateOutlet]="stepperFooter"
               [ngTemplateOutletContext]="{
                 btnBack: null,
-                btnPrimary: 'Next',
+                btnPrimary: ('apis.creation.v4.next' | translate),
                 useMatNext: true,
                 btnDisabled: isFormatStepNextDisabled(),
                 cancelAsDismiss: embeddedInDialog(),
@@ -105,12 +105,12 @@
       <!-- step 2 -->
       <mat-step [stepControl]="configureFileSourceForm">
         <form [formGroup]="configureFileSourceForm" class="configure-file-source">
-          <ng-template matStepLabel>Configure file source</ng-template>
+          <ng-template matStepLabel>{{ 'apis.creation.importV4.configureSource' | translate }}</ng-template>
           <div class="configure-file-source__body">
-            <h3>File source</h3>
+            <h3>{{ 'apis.creation.importV4.fileSource' | translate }}</h3>
             <div class="configure-file-source__main">
               <div class="configure-file-source__col configure-file-source__col--sources">
-                <span class="configure-file-source__col-heading">Source</span>
+                <span class="configure-file-source__col-heading">{{ 'apis.creation.importV4.source' | translate }}</span>
                 <gio-form-selection-inline formControlName="source" class="configure-file-source__source-selection">
                   @for (source of sources; track source.value) {
                     <gio-form-selection-inline-card
@@ -119,7 +119,7 @@
                       [matTooltip]="source.disabledReason"
                     >
                       <gio-form-selection-inline-card-content [icon]="source.icon">
-                        <gio-card-content-title>{{ source.label }}</gio-card-content-title>
+                        <gio-card-content-title>{{ source.labelKey | translate }}</gio-card-content-title>
                       </gio-form-selection-inline-card-content>
                     </gio-form-selection-inline-card>
                   }
@@ -128,7 +128,7 @@
 
               <div class="configure-file-source__col configure-file-source__col--detail">
                 @if (configureFileSourceForm.controls.source.value === 'local') {
-                  <span class="configure-file-source__col-heading">File</span>
+                  <span class="configure-file-source__col-heading">{{ 'apis.creation.importV4.file' | translate }}</span>
                   <div class="configure-file-source__detail-panel configure-file-source__detail-panel--file">
                     @for (fmt of [importFormat() ?? 'gravitee']; track fmt) {
                       <api-import-file-picker
@@ -138,34 +138,37 @@
                       >
                         <div class="configure-file-source__file-picker">
                           <mat-icon svgIcon="gio:upload"></mat-icon>
-                          <p class="mat-body-strong">Drag and drop a file</p>
+                          <p class="mat-body-strong">{{ 'apis.creation.importV4.dragDrop' | translate }}</p>
                           <p class="mat-body" data-testid="supported-file-formats">
-                            Supported file formats: {{ allowedImportFileExtensionsLabel() }}
+                            {{
+                              'apis.creation.importV4.supportedFormats'
+                                | translate: { formats: allowedImportFileExtensionsLabel() }
+                            }}
                           </p>
                         </div>
                       </api-import-file-picker>
                     }
                     @if (configureFileSourceForm.hasError('mismatchFileFormat')) {
-                      <gio-banner-error>The file does not match the selected API format</gio-banner-error>
+                      <gio-banner-error>{{ 'apis.creation.importV4.mismatchFormat' | translate }}</gio-banner-error>
                     }
                   </div>
                 } @else {
-                  <span class="configure-file-source__col-heading">Remote source</span>
+                  <span class="configure-file-source__col-heading">{{ 'apis.creation.importV4.remoteSource' | translate }}</span>
                   <div class="configure-file-source__detail-panel configure-file-source__detail-panel--remote">
                     <mat-form-field appearance="outline" class="configure-file-source__field" subscriptSizing="dynamic">
-                      <mat-label>URL</mat-label>
+                      <mat-label>{{ 'apis.creation.importV4.url' | translate }}</mat-label>
                       <input matInput formControlName="remoteUrl" type="url" autocomplete="off" />
                       @if (
                         configureFileSourceForm.controls.remoteUrl.hasError('required') &&
                         configureFileSourceForm.controls.remoteUrl.touched
                       ) {
-                        <mat-error>URL is required</mat-error>
+                        <mat-error>{{ 'apis.creation.importV4.urlRequired' | translate }}</mat-error>
                       }
                       @if (
                         configureFileSourceForm.controls.remoteUrl.hasError('invalidHttpUrl') &&
                         configureFileSourceForm.controls.remoteUrl.touched
                       ) {
-                        <mat-error>Use a valid http(s) URL</mat-error>
+                        <mat-error>{{ 'apis.creation.importV4.invalidUrl' | translate }}</mat-error>
                       }
                     </mat-form-field>
                   </div>
@@ -177,8 +180,8 @@
             <ng-container
               [ngTemplateOutlet]="stepperFooter"
               [ngTemplateOutletContext]="{
-                btnBack: 'Back',
-                btnPrimary: 'Next',
+                btnBack: ('apis.creation.importV4.back' | translate),
+                btnPrimary: ('apis.creation.v4.next' | translate),
                 useMatNext: true,
                 btnDisabled: isFileSourceStepNextDisabled(),
                 cancelAsDismiss: embeddedInDialog(),
@@ -192,42 +195,41 @@
       @if (showImportOptionsStep()) {
         <mat-step [stepControl]="optionsForm">
           <form [formGroup]="optionsForm" class="options-step">
-            <ng-template matStepLabel>Options</ng-template>
+            <ng-template matStepLabel>{{ 'apis.creation.importV4.options' | translate }}</ng-template>
             <div class="options-step__body">
-              <h3>Options</h3>
+              <h3>{{ 'apis.creation.importV4.options' | translate }}</h3>
               @if (importFormat() === 'wsdl' && hasRestToSoapPolicy()) {
                 <gio-form-slide-toggle>
-                  <gio-form-label>Apply REST to SOAP Transformer policy</gio-form-label>
-                  This will overwrite all the existing policy.
+                  <gio-form-label>{{ 'apis.creation.importV4.restToSoap' | translate }}</gio-form-label>
+                  {{ 'apis.creation.importV2.applyPolicyWarn' | translate }}
                   <mat-slide-toggle
                     gioFormSlideToggle
                     formControlName="withRestToSoap"
-                    aria-label="Toggle REST to SOAP Transformer policy"
+                    [attr.aria-label]="'apis.creation.importV4.restToSoapAria' | translate"
                     name="withRestToSoap"
                   ></mat-slide-toggle>
                 </gio-form-slide-toggle>
               }
               <gio-form-slide-toggle>
-                <gio-form-label>Create documentation page from spec</gio-form-label>
-                This will add a documentation page for this API using the OpenAPI spec used during the import. This page will be published
-                automatically (you can change this later).
+                <gio-form-label>{{ 'apis.creation.importV4.createDocs' | translate }}</gio-form-label>
+                {{ 'apis.creation.importV4.createDocsBody' | translate }}
                 <mat-slide-toggle
                   gioFormSlideToggle
                   formControlName="withDocumentation"
-                  aria-label="Toggle to create documentation page"
+                  [attr.aria-label]="'apis.creation.importV4.createDocsAria' | translate"
                   name="withDocumentation"
                 ></mat-slide-toggle>
               </gio-form-slide-toggle>
 
               @if (hasOasValidationPolicy()) {
                 <gio-form-slide-toggle>
-                  <gio-form-label>Add OpenAPI Specification Validation</gio-form-label>
-                  This will add an OpenAPI Specification validation policy with all options enabled (you can change this later).
+                  <gio-form-label>{{ 'apis.creation.importV4.oasValidation' | translate }}</gio-form-label>
+                  {{ 'apis.creation.importV4.oasValidationBody' | translate }}
                   <mat-slide-toggle
                     gioFormSlideToggle
                     formControlName="withOASValidationPolicy"
                     name="withOASValidationPolicy"
-                    aria-label="Toggle to add OpenAPI Specification Validation"
+                    [attr.aria-label]="'apis.creation.importV4.oasValidationAria' | translate"
                   ></mat-slide-toggle>
                 </gio-form-slide-toggle>
               }
@@ -236,8 +238,8 @@
               <ng-container
                 [ngTemplateOutlet]="stepperFooter"
                 [ngTemplateOutletContext]="{
-                  btnBack: 'Previous',
-                  btnPrimary: 'Next',
+                  btnBack: ('apis.creation.v4.previous' | translate),
+                  btnPrimary: ('apis.creation.v4.next' | translate),
                   useMatNext: true,
                   btnDisabled: isOptionsStepNextDisabled(),
                   cancelAsDismiss: embeddedInDialog(),
@@ -251,22 +253,24 @@
       <!-- step 4 -->
       <mat-step>
         <div class="review-import-step">
-          <ng-template matStepLabel>Review and import</ng-template>
+          <ng-template matStepLabel>{{ 'apis.creation.importV4.review' | translate }}</ng-template>
           <h2>{{ reviewStepTitle() }}</h2>
           <p>{{ reviewStepDescription() }}</p>
 
           <mat-card class="review-import-step__section">
             <mat-card-content>
-              <h3>Configuration</h3>
+              <h3>{{ 'apis.creation.importV4.configuration' | translate }}</h3>
               <div class="review-import-step__row">
-                <span>Format:</span><strong class="review-import-step__value">{{ selectedFormatLabel() }}</strong>
+                <span>{{ 'apis.creation.importV4.formatLabel' | translate }}</span
+                ><strong class="review-import-step__value">{{ selectedFormatLabel() }}</strong>
               </div>
               <div class="review-import-step__row">
-                <span>Source:</span><strong class="review-import-step__value">{{ selectedSourceLabel() }}</strong>
+                <span>{{ 'apis.creation.importV4.sourceLabel' | translate }}</span
+                ><strong class="review-import-step__value">{{ selectedSourceLabel() }}</strong>
               </div>
               @if (configureFileSourceForm.controls.source.value === 'remote') {
                 <div class="review-import-step__row">
-                  <span>URL:</span
+                  <span>{{ 'apis.creation.importV4.urlLabel' | translate }}</span>
                   ><strong class="review-import-step__value">{{ configureFileSourceForm.controls.remoteUrl.value || '—' }}</strong>
                 </div>
               }
@@ -276,32 +280,32 @@
           @if (showImportOptionsStep()) {
             <mat-card class="review-import-step__section">
               <mat-card-content>
-                <h3>Options</h3>
+                <h3>{{ 'apis.creation.importV4.options' | translate }}</h3>
                 @if (importFormat() === 'wsdl' && hasRestToSoapPolicy()) {
                   <div class="review-import-step__row">
-                    <span>REST to SOAP Transformer:</span>
+                    <span>{{ 'apis.creation.importV4.restToSoapLabel' | translate }}</span>
                     @if (optionsForm.controls.withRestToSoap.value) {
-                      <span class="gio-badge-success">Enabled</span>
+                      <span class="gio-badge-success">{{ 'apis.creation.importV4.enabled' | translate }}</span>
                     } @else {
-                      <span class="gio-badge-neutral">Disabled</span>
+                      <span class="gio-badge-neutral">{{ 'apis.creation.importV4.disabled' | translate }}</span>
                     }
                   </div>
                 }
                 <div class="review-import-step__row">
-                  <span>Documentation page:</span>
+                  <span>{{ 'apis.creation.importV4.docsPageLabel' | translate }}</span>
                   @if (optionsForm.controls.withDocumentation.value) {
-                    <span class="gio-badge-success">Enabled</span>
+                    <span class="gio-badge-success">{{ 'apis.creation.importV4.enabled' | translate }}</span>
                   } @else {
-                    <span class="gio-badge-neutral">Disabled</span>
+                    <span class="gio-badge-neutral">{{ 'apis.creation.importV4.disabled' | translate }}</span>
                   }
                 </div>
                 @if (hasOasValidationPolicy()) {
                   <div class="review-import-step__row">
-                    <span>OpenAPI validation:</span>
+                    <span>{{ 'apis.creation.importV4.oasLabel' | translate }}</span>
                     @if (optionsForm.controls.withOASValidationPolicy.value) {
-                      <span class="gio-badge-success">Enabled</span>
+                      <span class="gio-badge-success">{{ 'apis.creation.importV4.enabled' | translate }}</span>
                     } @else {
-                      <span class="gio-badge-neutral">Disabled</span>
+                      <span class="gio-badge-neutral">{{ 'apis.creation.importV4.disabled' | translate }}</span>
                     }
                   </div>
                 }
@@ -313,7 +317,7 @@
             <ng-container
               [ngTemplateOutlet]="stepperFooter"
               [ngTemplateOutletContext]="{
-                btnBack: 'Previous',
+                btnBack: ('apis.creation.v4.previous' | translate),
                 btnPrimary: primaryImportActionLabel(),
                 useMatNext: false,
                 btnDisabled: isReviewImportPrimaryDisabled(),

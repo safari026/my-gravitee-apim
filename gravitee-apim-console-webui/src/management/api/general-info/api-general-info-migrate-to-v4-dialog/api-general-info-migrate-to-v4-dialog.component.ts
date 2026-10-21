@@ -30,11 +30,22 @@ import { AsyncPipe } from '@angular/common';
 
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { MigrateToV4Issue, MigrateToV4Response } from '../../../../entities/management-api-v2/api/v2/migrateToV4Response';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { MigrateDialogResult } from '../api-general-info.component';
 
 @Component({
   selector: 'api-general-info-migrate-to-v4-dialog',
-  imports: [GioLoaderModule, MatDialogTitle, MatDialogContent, MatButton, MatDialogActions, MatDialogClose, AsyncPipe, MatIcon],
+  imports: [
+    GioLoaderModule,
+    MatDialogTitle,
+    MatDialogContent,
+    MatButton,
+    MatDialogActions,
+    MatDialogClose,
+    AsyncPipe,
+    MatIcon,
+    TranslatePipe,
+  ],
   templateUrl: './api-general-info-migrate-to-v4-dialog.component.html',
   styleUrl: './api-general-info-migrate-to-v4-dialog.component.scss',
 })

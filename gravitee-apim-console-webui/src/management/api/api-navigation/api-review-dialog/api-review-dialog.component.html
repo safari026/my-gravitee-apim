@@ -15,25 +15,29 @@
     limitations under the License.
 
 -->
-<h2 matDialogTitle>API Review</h2>
+<h2 matDialogTitle>{{ 'apis.navigation.review.title' | translate }}</h2>
 <ng-container *ngIf="!isLoading; else loader">
   <mat-dialog-content class="content">
-    <div *ngIf="qualityRules.length" class="mat-body-strong">Quality rules</div>
+    <div *ngIf="qualityRules.length" class="mat-body-strong">{{ 'apis.navigation.review.qualityRules' | translate }}</div>
     <gio-form-slide-toggle *ngFor="let qualityRule of qualityRules">
       <gio-form-label>{{ qualityRule.name }}</gio-form-label>
       {{ qualityRule.description }}
       <mat-slide-toggle gioFormSlideToggle [name]="qualityRule.name" [(ngModel)]="qualityRule.checked"></mat-slide-toggle>
     </gio-form-slide-toggle>
     <mat-form-field appearance="outline" class="content__comments">
-      <mat-label>Review comments</mat-label>
-      <textarea #input matInput aria-label="Review comments" [formControl]="reviewComments" maxlength="500" rows="2"></textarea>
+      <mat-label>{{ 'apis.navigation.review.comments' | translate }}</mat-label>
+      <textarea #input matInput [attr.aria-label]="'apis.navigation.review.commentsAria' | translate" [formControl]="reviewComments" maxlength="500" rows="2"></textarea>
       <mat-hint align="end">{{ input.value.length }}/500</mat-hint>
     </mat-form-field>
   </mat-dialog-content>
   <mat-dialog-actions class="actions" align="end">
-    <button mat-flat-button [mat-dialog-close]="undefined">Cancel</button>
-    <button color="primary" mat-raised-button aria-label="Accept the review" (click)="onConfirm(true)">Accept</button>
-    <button color="warn" mat-raised-button aria-label="Reject the review" (click)="onConfirm(false)">Reject</button>
+    <button mat-flat-button [mat-dialog-close]="undefined">{{ 'common.cancel' | translate }}</button>
+    <button color="primary" mat-raised-button [attr.aria-label]="'apis.navigation.review.acceptAria' | translate" (click)="onConfirm(true)">
+      {{ 'apis.navigation.review.accept' | translate }}
+    </button>
+    <button color="warn" mat-raised-button [attr.aria-label]="'apis.navigation.review.rejectAria' | translate" (click)="onConfirm(false)">
+      {{ 'apis.navigation.review.reject' | translate }}
+    </button>
   </mat-dialog-actions>
 </ng-container>
 

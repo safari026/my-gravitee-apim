@@ -59,7 +59,7 @@
           md-cell
           colspan="{{($ctrl.widget.chart.percent ? 3 : 2) + (($ctrl.widget.chart.selectable) ? ($ctrl.widget.chart.percent ? 2 : 1) : ($ctrl.widget.chart.percent ? 1 : 0))}}"
         >
-          No result
+          {{$ctrl.translate('applications.analytics.noResult')}}
         </td>
       </tr>
     </tbody>
@@ -74,5 +74,5 @@
 ></md-table-pagination>
 
 <div ng-if="$ctrl.results.length === 0" class="events-no-result" layout="column" layout-align="center center" flex>
-  No Data to display here
+  {{$ctrl.translate('applications.analytics.noDataToDisplay')}}
 </div>

@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { GioBannerModule, GioFormSlideToggleModule, GioSaveBarModule } from '@gravitee/ui-particles-angular';
@@ -57,6 +58,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     MatTooltipModule,
     MatSnackBarModule,
     GioBannerModule,
+    TranslatePipe,
   ],
   declarations: [ApiQualityRulesComponent, ApiQualityRulesAddDialogComponent],
   exports: [ApiQualityRulesComponent, ApiQualityRulesAddDialogComponent],

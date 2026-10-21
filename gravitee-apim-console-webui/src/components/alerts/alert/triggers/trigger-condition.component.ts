@@ -27,10 +27,13 @@ const AlertTriggerConditionComponent: ng.IComponentOptions = {
     referenceId: '<',
   },
   template: require('html-loader!./trigger-condition.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
-  controller: function () {
-    this.$onInit = () => {
-      this.onMetricsChange(false);
-    };
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+      this.$onInit = () => {
+        this.onMetricsChange(false);
+      };
 
     this.onMetricsChange = (reset: boolean) => {
       if (this.metrics) {
@@ -65,7 +68,8 @@ const AlertTriggerConditionComponent: ng.IComponentOptions = {
         delete this.condition.operator;
       }
     };
-  },
+    },
+  ],
 };
 
 export default AlertTriggerConditionComponent;

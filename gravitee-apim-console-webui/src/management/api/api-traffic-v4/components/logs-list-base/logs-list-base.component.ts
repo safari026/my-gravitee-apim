@@ -31,6 +31,7 @@ import {
   GioTableWrapperPagination,
 } from '../../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { Constants } from '../../../../../entities/Constants';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 export interface LogsListColumnDef {
   id: string;
@@ -53,6 +54,7 @@ export interface LogsListColumnDef {
     MatButtonModule,
     MatIcon,
     GioLoaderModule,
+    TranslatePipe,
   ],
 })
 export class LogsListBaseComponent<T = unknown> {

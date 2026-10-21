@@ -14,12 +14,15 @@
  * limitations under the License.
  */
 import { UpgradeComponent } from '@angular/upgrade/static';
-import { Component, ElementRef, Injector, SimpleChange } from '@angular/core';
+import { Component, ElementRef, Injector, Input, SimpleChange } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { Subject } from 'rxjs';
 import { ActivatedRoute } from '@angular/router';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 
 import { ApplicationService } from '../../../../services-ngx/application.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { Language } from '../../../../shared/i18n/translations';
 
 @Component({
   template: '',
@@ -30,18 +33,30 @@ import { ApplicationService } from '../../../../services-ngx/application.service
   },
 })
 export class ApplicationAnalyticsComponent extends UpgradeComponent {
+  @Input() language: Language;
   private unsubscribe$ = new Subject<void>();
 
   constructor(
     elementRef: ElementRef,
-    injector: Injector,
+    private readonly injector: Injector,
     private readonly activatedRoute: ActivatedRoute,
     private readonly applicationService: ApplicationService,
+    private readonly languageService: LanguageService,
   ) {
     super('applicationAnalytics', elementRef, injector);
   }
 
   override ngOnInit() {
+    this.language = this.languageService.currentLanguage();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.language = language;
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
+
     this.applicationService
       .getLastApplicationFetch(this.activatedRoute.snapshot.params.applicationId)
       .pipe(takeUntil(this.unsubscribe$))
@@ -50,6 +65,7 @@ export class ApplicationAnalyticsComponent extends UpgradeComponent {
           this.ngOnChanges({
             application: new SimpleChange(null, application, true),
             activatedRoute: new SimpleChange(null, this.activatedRoute, true),
+            language: new SimpleChange(null, this.language, true),
           });
 
           super.ngOnInit();

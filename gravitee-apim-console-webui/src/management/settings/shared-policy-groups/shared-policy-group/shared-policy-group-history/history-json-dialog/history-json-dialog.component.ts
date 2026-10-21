@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -32,7 +33,7 @@ export type HistoryJsonDialogResult = boolean;
   templateUrl: './history-json-dialog.component.html',
   styleUrls: ['./history-json-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogModule, MatButtonModule, GioMonacoEditorModule, FormsModule],
+  imports: [MatDialogModule, MatButtonModule, GioMonacoEditorModule, FormsModule, TranslatePipe],
 })
 export class HistoryJsonDialogComponent {
   protected languageConfig: MonacoEditorLanguageConfig = {

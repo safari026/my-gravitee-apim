@@ -13,11 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { Observable, of } from 'rxjs';
-import { catchError, map, shareReplay, startWith } from 'rxjs/operators';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, Injector, OnDestroy } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { combineLatest, Observable, of, Subject } from 'rxjs';
+import { catchError, map, shareReplay, skip, startWith, takeUntil } from 'rxjs/operators';
 
 import { TaskService } from '../../../services-ngx/task.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'home-layout',
@@ -26,37 +28,64 @@ import { TaskService } from '../../../services-ngx/task.service';
   changeDetection: ChangeDetectionStrategy.OnPush,
   standalone: false,
 })
-export class HomeLayoutComponent {
-  public taskLabel = this.taskService.getTasks().pipe(
-    map(tasks => `My Tasks <span class="gio-badge-accent">${tasks.page.total_elements}</span>`),
-    startWith('Tasks'),
-    // If thrown, keep the label as is
-    catchError(() => of('Tasks')),
-    shareReplay(1),
-  );
+export class HomeLayoutComponent implements OnDestroy {
+  private readonly unsubscribe$ = new Subject<void>();
 
-  public tabs: { label: Observable<string>; routerLink: string; dataTestId: string }[] = [
+  public taskLabel: Observable<string>;
+
+  public tabs: { labelKey: string; useTaskLabel?: boolean; routerLink: string; dataTestId: string }[] = [
     {
-      label: of('Overview'),
+      labelKey: 'dashboard.tabs.overview',
       routerLink: './overview',
       dataTestId: 'home-tab-overview',
     },
     {
-      label: of('API Health Check'),
+      labelKey: 'dashboard.tabs.apiHealthCheck',
       routerLink: './apiHealthCheck',
       dataTestId: 'home-tab-api-health-check',
     },
     {
-      label: this.taskLabel,
+      labelKey: 'dashboard.tabs.tasks',
+      useTaskLabel: true,
       routerLink: './tasks',
       dataTestId: 'home-tab-tasks',
     },
     {
-      label: of('Broadcasts'),
+      labelKey: 'dashboard.tabs.broadcasts',
       routerLink: './broadcasts',
       dataTestId: 'home-tab-broadcasts',
     },
   ];
 
-  constructor(private readonly taskService: TaskService) {}
+  constructor(
+    private readonly taskService: TaskService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly changeDetectorRef: ChangeDetectorRef,
+  ) {
+    this.taskLabel = combineLatest([
+      this.taskService.getTasks().pipe(
+        map(tasks => tasks.page.total_elements as number | null),
+        startWith(null),
+        catchError(() => of(null)),
+      ),
+      toObservable(this.languageService.currentLanguage, { injector: this.injector }),
+    ]).pipe(
+      map(([count]) =>
+        count === null
+          ? this.languageService.translate('dashboard.tabs.tasks')
+          : this.languageService.translate('dashboard.tabs.myTasks', { count }),
+      ),
+      shareReplay(1),
+    );
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.changeDetectorRef.markForCheck());
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+  }
 }

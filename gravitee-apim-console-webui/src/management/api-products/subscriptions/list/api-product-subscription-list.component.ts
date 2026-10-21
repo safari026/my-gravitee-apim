@@ -52,6 +52,8 @@ import {
   ApiPortalSubscriptionCreationDialogResult,
 } from '../../../api/subscriptions/components/dialogs/creation/api-portal-subscription-creation-dialog.component';
 import { ApiSubscriptionsModule } from '../../../api/subscriptions/api-subscriptions.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type SubscriptionsFiltersValue = {
   planIds: string[] | null;
@@ -90,6 +92,7 @@ type SubscriptionsFiltersForm = {
     GioPermissionModule,
     GioTableWrapperModule,
     ApiSubscriptionsModule,
+    TranslatePipe,
   ],
 })
 export class ApiProductSubscriptionListComponent {
@@ -99,6 +102,7 @@ export class ApiProductSubscriptionListComponent {
   private readonly planService = inject(ApiProductPlanV2Service);
   private readonly applicationService = inject(ApplicationService);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly permissionService = inject(GioPermissionService);
   private readonly matDialog = inject(MatDialog);
   private readonly destroyRef = inject(DestroyRef);
@@ -133,7 +137,7 @@ export class ApiProductSubscriptionListComponent {
     this.planService.list(this.apiProductId, undefined, ['PUBLISHED'], undefined, undefined, 1, 9999).pipe(
       map(response => response.data.filter(plan => plan.security?.type !== 'KEY_LESS')),
       catchError(() => {
-        this.handleError('Unable to load plans. Please try again.');
+        this.handleError(this.languageService.translate('apiProducts.subscriptions.loadPlansError'));
         return of([] as Plan[]);
       }),
     ),
@@ -160,7 +164,7 @@ export class ApiProductSubscriptionListComponent {
           })
           .pipe(
             catchError(() => {
-              this.handleError('Unable to load subscriptions, please try again');
+              this.handleError(this.languageService.translate('apiProducts.subscriptions.loadListError'));
               return of({ data: [], pagination: { totalCount: 0 } });
             }),
           ),
@@ -266,7 +270,7 @@ export class ApiProductSubscriptionListComponent {
           anchor.click();
         }),
         catchError(() => {
-          this.handleError('An error occurred while exporting the subscriptions.');
+          this.handleError(this.languageService.translate('apiProducts.subscriptions.exportError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -301,13 +305,13 @@ export class ApiProductSubscriptionListComponent {
           return this.subscriptionService.create(this.apiProductId, toCreate);
         }),
         catchError(err => {
-          this.handleError(err?.error?.message ?? err?.message ?? 'Failed to create subscription');
+          this.handleError(err?.error?.message ?? err?.message ?? this.languageService.translate('apiProducts.subscriptions.createError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe(subscription => {
-        this.snackBarService.success('Subscription successfully created');
+        this.snackBarService.success(this.languageService.translate('apiProducts.subscriptions.created'));
         this.router.navigate(['.', subscription.id], { relativeTo: this.activatedRoute });
       });
   }

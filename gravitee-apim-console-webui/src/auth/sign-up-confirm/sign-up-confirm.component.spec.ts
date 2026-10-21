@@ -27,6 +27,7 @@ import { SignUpConfirmComponent } from './sign-up-confirm.component';
 import { SignUpConfirmModule } from './sign-up-confirm.module';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 describe('SignUpConfirmComponent', () => {
   let fixture: ComponentFixture<SignUpConfirmComponent>;
@@ -35,10 +36,12 @@ describe('SignUpConfirmComponent', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('token with firstName / lastName', () => {
     beforeEach(() => {
+      localStorage.removeItem('gio-console-lang');
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, GioTestingModule, MatIconTestingModule, SignUpConfirmModule],
         providers: [
@@ -92,10 +95,41 @@ describe('SignUpConfirmComponent', () => {
         password: 'password',
       });
     });
+
+    it('should switch Confirm Account copy EN → RU → EN without reload', () => {
+      expect(fixture.nativeElement.textContent).toContain('Confirm your account');
+      expect(fixture.nativeElement.textContent).toContain('First name');
+      expect(fixture.nativeElement.textContent).toContain('Confirm password');
+
+      const languageService = TestBed.inject(LanguageService);
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Подтверждение аккаунта');
+      expect(fixture.nativeElement.textContent).toContain('Имя');
+      expect(fixture.nativeElement.textContent).toContain('Подтверждение пароля');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Confirm your account');
+    });
+
+    it('should translate password validation without reload', async () => {
+      const passwordInput = await loader.getHarness(MatInputHarness.with({ selector: '[formControlName="password"]' }));
+      await passwordInput.focus();
+      await passwordInput.blur();
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Password is required.');
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+      expect(fixture.nativeElement.textContent).toContain('Введите пароль.');
+      expect(fixture.nativeElement.textContent).not.toContain('Password is required.');
+    });
   });
 
   describe('token without firstName / lastName', () => {
     beforeEach(() => {
+      localStorage.removeItem('gio-console-lang');
       TestBed.configureTestingModule({
         imports: [NoopAnimationsModule, GioTestingModule, MatIconTestingModule, SignUpConfirmModule],
         providers: [

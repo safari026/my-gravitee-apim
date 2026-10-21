@@ -26,6 +26,7 @@ import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatTooltip } from '@angular/material/tooltip';
 
 import { RuntimeAlertCreateGeneralComponent } from './runtime-alert-create-general.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertCreateGeneralComponent],
@@ -42,6 +43,7 @@ import { RuntimeAlertCreateGeneralComponent } from './runtime-alert-create-gener
     MatCardModule,
     MatToolbarModule,
     MatTooltip,
+    TranslatePipe,
   ],
 })
 export class RuntimeAlertCreateGeneralModule {}

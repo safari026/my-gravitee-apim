@@ -19,6 +19,7 @@ import angular from 'angular';
 import { Theme } from '../../../entities/theme';
 import NotificationService from '../../../services/notification.service';
 import PortalThemeService from '../../../services/portalTheme.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class PortalThemeController {
   detachedWindow: Window;
@@ -39,6 +40,7 @@ class PortalThemeController {
     private PortalThemeService: PortalThemeService,
     private NotificationService: NotificationService,
     private $sce,
+    private ngLanguageService: LanguageService,
   ) {
     $scope.themeForm = {};
 
@@ -180,6 +182,14 @@ class PortalThemeController {
     };
   }
 
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
+
+  $onChanges() {
+    this.$scope.$applyAsync();
+  }
+
   $onInit = () => {
     if (this.$scope.hasPreview()) {
       this.handleEventHandlers = this.handleEvent.bind(this);
@@ -241,7 +251,7 @@ class PortalThemeController {
       const parentProperty = property.default.split(',')[0].replace('var(', '');
       const parentCss = this.$scope.themeComponent.css.find(p => p.name === parentProperty);
       if (parentCss) {
-        value = `(inherited from ${parentCss.description})`;
+        value = this.translate('settings.theme.inheritedFrom', { description: parentCss.description });
       }
     }
     return `${property.description}: ${value}`;
@@ -255,7 +265,7 @@ class PortalThemeController {
     if (property.value === '' && property.default.startsWith('var(')) {
       const parentProperty = property.default.split(',')[0].replace('var(', '');
       const parentCss = this.$scope.themeComponent.css.find(p => p.name === parentProperty);
-      return `Use ${parentCss.description}: ${parentCss.value}`;
+      return this.translate('settings.theme.useParent', { description: parentCss.description, value: parentCss.value });
     }
     return property.description;
   }
@@ -380,17 +390,17 @@ class PortalThemeController {
 
   reset = () => {
     this.loadTheme().then(() => {
-      this.NotificationService.show('The theme has been reset.');
+      this.NotificationService.show(this.translate('settings.theme.resetDone'));
       this.postMessage(this.getData(), this.$scope.targetURL);
     });
   };
 
   restoreDefaultTheme = () => {
     const confirm = this.$mdDialog.confirm({
-      title: 'Restore default theme?',
-      textContent: 'Are you sure you want to restore the default theme? All your changes will be deleted.',
-      ok: 'RESTORE',
-      cancel: 'CANCEL',
+      title: this.translate('settings.theme.restoreDefault'),
+      textContent: this.translate('settings.theme.restoreDefaultContent'),
+      ok: this.translate('settings.theme.restore'),
+      cancel: this.translate('settings.theme.cancel'),
     });
     this.$mdDialog.show(confirm).then(() => {
       this.PortalThemeService.restoreDefaultTheme(this.$scope.theme).then(response => {
@@ -400,7 +410,7 @@ class PortalThemeController {
         this.$scope.themeForm.$commitViewValue();
         this.$scope.themeForm.$setSubmitted();
         this.$scope.themeForm.$setPristine();
-        this.NotificationService.show('The default theme has been restored.');
+        this.NotificationService.show(this.translate('settings.theme.restoreDone'));
       });
     });
   };
@@ -440,7 +450,7 @@ class PortalThemeController {
   update = () => {
     this.PortalThemeService.update(this.$scope.theme).then(() => {
       this.$scope.themeForm.$setPristine();
-      this.NotificationService.show('The theme has been saved.');
+      this.NotificationService.show(this.translate('settings.theme.saved'));
     });
   };
 
@@ -488,19 +498,30 @@ class PortalThemeController {
         this.onDataChanged();
         this.$scope.themeForm.$commitViewValue();
         this.$scope.themeForm.$setDirty();
-        this.NotificationService.show('The theme has been loaded successfully, save it to validate the import.');
+        this.NotificationService.show(this.translate('settings.theme.imported'));
       };
     }
     if (invalidFiles && invalidFiles.length > 0) {
       const fileError = invalidFiles[0];
       if (fileError.$error === 'maxSize') {
-        this.NotificationService.showError(`Theme "${fileError.name}" exceeds the maximum authorized size (${this.$scope.maxSize}B)`);
+        this.NotificationService.showError(
+          this.translate('settings.theme.exceedsMaxSize', { name: fileError.name, maxSize: this.$scope.maxSize }),
+        );
       } else {
-        this.NotificationService.showError(`File is not valid (error: ${fileError.$error})`);
+        this.NotificationService.showError(this.translate('settings.theme.fileInvalid', { error: fileError.$error }));
       }
     }
   }
 }
-PortalThemeController.$inject = ['$http', '$scope', '$mdDialog', 'Constants', 'PortalThemeService', 'NotificationService', '$sce'];
+PortalThemeController.$inject = [
+  '$http',
+  '$scope',
+  '$mdDialog',
+  'Constants',
+  'PortalThemeService',
+  'NotificationService',
+  '$sce',
+  'ngLanguageService',
+];
 
 export default PortalThemeController;

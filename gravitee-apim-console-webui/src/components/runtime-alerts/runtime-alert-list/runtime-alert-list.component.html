@@ -19,22 +19,34 @@
   <mat-card-header>
     <div class="runtime-alerts__header">
       <div class="runtime-alerts__header__titles">
-        <mat-card-title>Custom alerts</mat-card-title>
-        <mat-card-subtitle>Set up alerting conditions for the Gateway</mat-card-subtitle>
+        <mat-card-title>{{ 'alerts.runtime.title' | translate }}</mat-card-title>
+        <mat-card-subtitle>{{ 'alerts.runtime.subtitle' | translate }}</mat-card-subtitle>
       </div>
       <div>
-        <button [disabled]="!canCreateAlert" color="primary" aria-label="Add alert" mat-raised-button (click)="createAlert.emit()">
-          <mat-icon svgIcon="gio:plus"></mat-icon>Add alert
+        <button
+          [disabled]="!canCreateAlert"
+          color="primary"
+          [attr.aria-label]="'alerts.runtime.addAlert' | translate"
+          mat-raised-button
+          (click)="createAlert.emit()"
+        >
+          <mat-icon svgIcon="gio:plus"></mat-icon>{{ 'alerts.runtime.addAlert' | translate }}
         </button>
       </div>
     </div>
   </mat-card-header>
 
   <gio-table-wrapper [disableSearchInput]="true" [disablePageSize]="true" [length]="alerts.length">
-    <table mat-table [dataSource]="alerts" class="runtime-alerts__table" id="apiAlertsTable" aria-label="API Alerts table">
+    <table
+      mat-table
+      [dataSource]="alerts"
+      class="runtime-alerts__table"
+      id="apiAlertsTable"
+      [attr.aria-label]="'alerts.runtime.tableAria' | translate"
+    >
       <!-- Name column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+        <th mat-header-cell *matHeaderCellDef id="name">{{ 'alerts.list.name' | translate }}</th>
         <td mat-cell *matCellDef="let alert">{{ alert.name }}</td>
       </ng-container>
 
@@ -42,30 +54,30 @@
       <ng-container matColumnDef="severity">
         <th mat-header-cell *matHeaderCellDef id="severity"></th>
         <td mat-cell *matCellDef="let alert">
-          <span *ngIf="alert.severity === 'INFO'" class="gio-badge-primary">{{ alert.severity }}</span>
-          <span *ngIf="alert.severity === 'WARNING'" class="gio-badge-warning">{{ alert.severity }}</span>
-          <span *ngIf="alert.severity === 'CRITICAL'" class="gio-badge-error">{{ alert.severity }}</span>
+          <span *ngIf="alert.severity === 'INFO'" class="gio-badge-primary">{{ 'alerts.severity.INFO' | translate }}</span>
+          <span *ngIf="alert.severity === 'WARNING'" class="gio-badge-warning">{{ 'alerts.severity.WARNING' | translate }}</span>
+          <span *ngIf="alert.severity === 'CRITICAL'" class="gio-badge-error">{{ 'alerts.severity.CRITICAL' | translate }}</span>
         </td>
       </ng-container>
 
       <!-- Description Column -->
       <ng-container matColumnDef="description">
-        <th mat-header-cell *matHeaderCellDef id="description">description</th>
+        <th mat-header-cell *matHeaderCellDef id="description">{{ 'alerts.list.description' | translate }}</th>
         <td mat-cell *matCellDef="let alert">{{ alert.description }}</td>
       </ng-container>
 
       <!-- Counters column -->
       <ng-container matColumnDef="counters">
-        <th mat-header-cell *matHeaderCellDef id="counters">Last 5m / 1h / 1d / 1M</th>
+        <th mat-header-cell *matHeaderCellDef id="counters">{{ 'alerts.list.counters' | translate }}</th>
         <td mat-cell *matCellDef="let alert">
           <ng-container *ngIf="!!alert.counters; else countersEmptyBlock">
-            <span [matTooltip]="alert.counters['5m'] + ' during the last 5 minutes'">{{ alert.counters['5m'] }}</span>
+            <span [matTooltip]="'alerts.runtime.counterFiveM' | translate: { value: alert.counters['5m'] }">{{ alert.counters['5m'] }}</span>
             /
-            <span [matTooltip]="alert.counters['1h'] + ' during the last 1 hour'">{{ alert.counters['1h'] }}</span>
+            <span [matTooltip]="'alerts.runtime.counterOneH' | translate: { value: alert.counters['1h'] }">{{ alert.counters['1h'] }}</span>
             /
-            <span [matTooltip]="alert.counters['1d'] + ' during the last 1 day'">{{ alert.counters['1d'] }}</span>
+            <span [matTooltip]="'alerts.runtime.counterOneD' | translate: { value: alert.counters['1d'] }">{{ alert.counters['1d'] }}</span>
             /
-            <span [matTooltip]="alert.counters['1M'] + ' during the last 1 month'">{{ alert.counters['1M'] }}</span>
+            <span [matTooltip]="'alerts.runtime.counterOneM' | translate: { value: alert.counters['1M'] }">{{ alert.counters['1M'] }}</span>
           </ng-container>
           <ng-template #countersEmptyBlock> - </ng-template>
         </td>
@@ -73,7 +85,7 @@
 
       <!-- Last alert column -->
       <ng-container matColumnDef="lastAlert">
-        <th mat-header-cell *matHeaderCellDef id="lastAlert">Last alert</th>
+        <th mat-header-cell *matHeaderCellDef id="lastAlert">{{ 'alerts.list.lastAlert' | translate }}</th>
         <td mat-cell *matCellDef="let alert">
           <ng-container *ngIf="!!alert.last_alert_at; else lastAlertEmptyBlock">
             {{ alert.last_alert_at | date: 'short' }}
@@ -84,7 +96,7 @@
 
       <!-- Last message column -->
       <ng-container matColumnDef="lastMessage">
-        <th mat-header-cell *matHeaderCellDef id="lastMessage">Last message</th>
+        <th mat-header-cell *matHeaderCellDef id="lastMessage">{{ 'alerts.list.lastMessage' | translate }}</th>
         <td mat-cell *matCellDef="let alert">
           <ng-container *ngIf="!!alert.last_alert_at; else lastAlertMessageEmptyBlock">
             {{ alert.last_alert_message }}
@@ -100,8 +112,8 @@
             @if (alert.enabled) {
               <button
                 mat-icon-button
-                aria-label="Button to disable alert"
-                matTooltip="Disable this alert"
+                [attr.aria-label]="'alerts.runtime.disableAria' | translate"
+                [matTooltip]="'alerts.list.disable' | translate"
                 *gioPermission="{ anyOf: ['api-alert-u'] }"
                 (click)="disableAlert.emit(alert)"
               >
@@ -110,8 +122,8 @@
             } @else {
               <button
                 mat-icon-button
-                aria-label="Button to enable alert"
-                matTooltip="Enable this alert"
+                [attr.aria-label]="'alerts.runtime.enableAria' | translate"
+                [matTooltip]="'alerts.list.enable' | translate"
                 *gioPermission="{ anyOf: ['api-alert-u'] }"
                 (click)="enableAlert.emit(alert)"
               >
@@ -121,8 +133,8 @@
 
             <button
               mat-icon-button
-              aria-label="Button to edit an alert"
-              matTooltip="Edit an alert"
+              [attr.aria-label]="'alerts.runtime.editAria' | translate"
+              [matTooltip]="'alerts.runtime.editAlert' | translate"
               [routerLink]="alert.id"
               *gioPermission="{ anyOf: ['api-alert-u'] }"
             >
@@ -131,8 +143,8 @@
             <button
               *gioPermission="{ anyOf: ['api-alert-d'] }"
               mat-icon-button
-              aria-label="Button to delete an alert"
-              matTooltip="Delete an alert"
+              [attr.aria-label]="'alerts.runtime.deleteAria' | translate"
+              [matTooltip]="'alerts.runtime.deleteAlertTooltip' | translate"
               (click)="deleteAlert.emit(alert)"
             >
               <mat-icon svgIcon="gio:trash"></mat-icon>
@@ -144,7 +156,9 @@
       <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
       <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-        <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No Alerts</td>
+        <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+          {{ 'alerts.runtime.noAlerts' | translate }}
+        </td>
       </tr>
     </table>
   </gio-table-wrapper>

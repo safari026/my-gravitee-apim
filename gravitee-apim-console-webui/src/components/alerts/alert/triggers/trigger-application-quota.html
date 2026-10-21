@@ -17,7 +17,7 @@
 -->
 <div layout-gt-sm="row">
   <span ng-if="$ctrl.label === undefined || $ctrl.label === true" flex="15" style="display: grid; align-items: center" align="center"
-    >When quota reaches
+    >{{$ctrl.translate('alerts.condition.whenQuota')}}
   </span>
 
   <md-input-container class="md-block" flex="5">
@@ -28,14 +28,14 @@
       min="1"
       max="100"
       name="threshold"
-      aria-label="trigger threshold"
+      aria-label="{{$ctrl.translate('alerts.condition.thresholdAria')}}"
       ng-change="$ctrl.calculateMultiplier()"
       ng-disabled="$ctrl.parent.isReadonly()"
     />
     <div ng-messages="$ctrl.parent.formAlert.threshold.$error">
-      <div ng-message="required">Threshold is required.</div>
-      <div ng-message="min">Threshold must be higher than 0.</div>
-      <div ng-message="max">Threshold must be lower than 100.</div>
+      <div ng-message="required">{{$ctrl.translate('alerts.condition.thresholdRequired')}}</div>
+      <div ng-message="min">{{$ctrl.translate('alerts.condition.thresholdMin')}}</div>
+      <div ng-message="max">{{$ctrl.translate('alerts.condition.thresholdMax')}}</div>
     </div>
   </md-input-container>
 
@@ -45,6 +45,6 @@
     style="margin-left: 10px; display: grid; align-items: center; text-align: left"
     align="center"
   >
-    % of the limit fixed by the API's plan.</span
+    {{$ctrl.translate('alerts.condition.quotaLimit')}}</span
   >
 </div>

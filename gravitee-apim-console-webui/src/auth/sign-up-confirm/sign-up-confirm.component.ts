@@ -23,6 +23,7 @@ import { switchMap, takeUntil, tap } from 'rxjs/operators';
 import { ReCaptchaService } from '../../services-ngx/re-captcha.service';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { AuthService } from '../../auth/auth.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'sign-up-confirm',
@@ -34,7 +35,7 @@ export class SignUpConfirmComponent implements OnInit, OnDestroy {
   private unsubscribe$: Subject<void> = new Subject<void>();
 
   public signUpConfirmForm: UntypedFormGroup;
-  public signUpConfirmError?: string;
+  public signUpConfirmErrorKey?: string;
   public signUpConfirmSuccess = false;
   public signUpConfirmInProgress = false;
 
@@ -44,6 +45,7 @@ export class SignUpConfirmComponent implements OnInit, OnDestroy {
     private readonly reCaptchaService: ReCaptchaService,
     private readonly snackBarService: SnackBarService,
     private readonly authService: AuthService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -65,15 +67,15 @@ export class SignUpConfirmComponent implements OnInit, OnDestroy {
         }
       >(token);
     } catch (error) {
-      this.signUpConfirmError = 'Invalid registration token!';
+      this.signUpConfirmErrorKey = 'auth.token.invalid';
       throw error;
     }
     if (!userTokenDecoded) {
-      this.signUpConfirmError = 'Invalid registration token!';
+      this.signUpConfirmErrorKey = 'auth.token.invalid';
       return;
     }
     if (userTokenDecoded.exp && userTokenDecoded.exp * 1000 < Date.now()) {
-      this.signUpConfirmError = 'Your registration token has expired!';
+      this.signUpConfirmErrorKey = 'auth.token.expired';
       return;
     }
 
@@ -127,7 +129,9 @@ export class SignUpConfirmComponent implements OnInit, OnDestroy {
             tap(() => {
               this.signUpConfirmSuccess = true;
             }),
-            switchMap(() => this.snackBarService.success('Your account has been confirmed.').afterDismissed()),
+            switchMap(() =>
+              this.snackBarService.success(this.languageService.translate('auth.signUpConfirm.accountConfirmed')).afterDismissed(),
+            ),
             takeUntil(this.unsubscribe$),
           )
           .subscribe({
@@ -137,7 +141,7 @@ export class SignUpConfirmComponent implements OnInit, OnDestroy {
             },
             error: e => {
               this.signUpConfirmInProgress = false;
-              this.snackBarService.error(e.error?.message ?? 'An error occurred while confirming your account.');
+              this.snackBarService.error(e.error?.message ?? this.languageService.translate('auth.signUpConfirm.confirmError'));
             },
           });
       })

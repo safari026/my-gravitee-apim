@@ -58,6 +58,7 @@ import { GioCircularPercentageModule } from '../../../shared/components/gio-circ
 import { GioApiImportDialogModule } from '../component/gio-api-import-dialog/gio-api-import-dialog.module';
 import { GioLicenseBannerModule } from '../../../shared/components/gio-license-banner/gio-license-banner.module';
 import { ClassicPortalOnlyBannerComponent } from '../../../shared/components/classic-portal-only-banner/classic-portal-only-banner.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [
@@ -105,6 +106,7 @@ import { ClassicPortalOnlyBannerComponent } from '../../../shared/components/cla
     ApiGeneralInfoAgentCardComponent,
     ApiImportV4FormDialogComponent,
     ClassicPortalOnlyBannerComponent,
+    TranslatePipe,
   ],
 })
 export class ApiGeneralInfoModule {}

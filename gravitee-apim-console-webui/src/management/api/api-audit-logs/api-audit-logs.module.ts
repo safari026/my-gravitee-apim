@@ -20,9 +20,18 @@ import { GioLoaderModule } from '@gravitee/ui-particles-angular';
 
 import { ApiAuditLogsComponent } from './api-audit-logs.component';
 import { ApiAuditsFilterFormModule, ApiAuditsTableModule, ApiEventsTableModule } from './components';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiAuditLogsComponent],
-  imports: [CommonModule, MatCardModule, GioLoaderModule, ApiAuditsFilterFormModule, ApiAuditsTableModule, ApiEventsTableModule],
+  imports: [
+    CommonModule,
+    MatCardModule,
+    GioLoaderModule,
+    ApiAuditsFilterFormModule,
+    ApiAuditsTableModule,
+    ApiEventsTableModule,
+    TranslatePipe,
+  ],
 })
 export class ApiAuditLogsModule {}

@@ -29,9 +29,9 @@
 
   <div layout-gt-sm="row" flex="30">
     <md-input-container class="md-block" flex-gt-sm flex="50">
-      <label>Property</label>
+      <label>{{$ctrl.translate('alerts.condition.property')}}</label>
       <md-select ng-model="$ctrl.projection.property" required ng-disabled="$ctrl.isReadonly">
-        <md-option ng-value="type.key" ng-repeat="type in $ctrl.metrics"> {{::type.name}} </md-option>
+        <md-option ng-value="type.key" ng-repeat="type in $ctrl.metrics"> {{$ctrl.translate('alerts.metrics.' + type.key)}} </md-option>
       </md-select>
     </md-input-container>
   </div>

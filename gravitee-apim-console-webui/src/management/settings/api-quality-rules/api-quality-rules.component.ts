@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnInit } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Component, OnInit, inject } from '@angular/core';
 import { EMPTY, Subject } from 'rxjs';
 import { FormControl, FormGroup } from '@angular/forms';
 import { catchError, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
@@ -62,6 +63,7 @@ interface ApiQualityRulesForm {
   standalone: false,
 })
 export class ApiQualityRulesComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
   settings?: PortalSettings;
   apiQualityRulesForm: FormGroup<ApiQualityRulesForm>;
@@ -201,7 +203,7 @@ export class ApiQualityRulesComponent implements OnInit {
         },
       })
       .pipe(
-        tap(() => this.snackBarService.success('API Quality details successfully updated!')),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.apiQuality.saved'))),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -216,9 +218,9 @@ export class ApiQualityRulesComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete manual rule',
-          content: `Are you sure you want to delete manual rule <strong>${name}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.apiQuality.deleteRule'),
+          content: this.languageService.translate('settings.apiQuality.deleteContent', { name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteManualRule',
@@ -228,7 +230,7 @@ export class ApiQualityRulesComponent implements OnInit {
         filter(confirm => confirm === true),
         switchMap(() => this.qualityRuleService.delete(id)),
         tap(() => {
-          this.snackBarService.success(`“${name}” has been deleted”`);
+          this.snackBarService.success(this.languageService.translate('settings.apiQuality.deleted', { name }));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -251,7 +253,7 @@ export class ApiQualityRulesComponent implements OnInit {
         filter(result => !!result),
         switchMap(newQualityRule => this.qualityRuleService.add(newQualityRule)),
         tap(() => {
-          this.snackBarService.success('New quality rule created successfully');
+          this.snackBarService.success(this.languageService.translate('settings.apiQuality.created'));
         }),
         takeUntil(this.unsubscribe$),
       )
@@ -273,7 +275,7 @@ export class ApiQualityRulesComponent implements OnInit {
         filter(result => !!result),
         switchMap(editedQualityRule => this.qualityRuleService.update(element.id, editedQualityRule)),
         tap(() => {
-          this.snackBarService.success('Quality rule updated successfully');
+          this.snackBarService.success(this.languageService.translate('settings.apiQuality.updated'));
         }),
         takeUntil(this.unsubscribe$),
       )

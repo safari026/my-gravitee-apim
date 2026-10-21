@@ -22,6 +22,7 @@ import { Rule } from '../../../entities/alerts/rule.metrics';
 import AlertService from '../../../services/alert.service';
 import NotificationService from '../../../services/notification.service';
 import UserService from '../../../services/user.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 const AlertComponentAjs: ng.IComponentOptions = {
   bindings: {
@@ -42,6 +43,7 @@ const AlertComponentAjs: ng.IComponentOptions = {
     'UserService',
     'ngRouter',
     '$mdDialog',
+    'ngLanguageService',
     function (
       Constants: any,
       $scope: IScope,
@@ -50,7 +52,9 @@ const AlertComponentAjs: ng.IComponentOptions = {
       UserService: UserService,
       router: Router,
       $mdDialog,
+      ngLanguageService: LanguageService,
     ) {
+      this.translate = (key: string, params?: Record<string, string | number>) => ngLanguageService.translate(key, params);
       this.tabs = ['_', 'general', 'notifications', 'history'];
       this.selectedTab = 0;
       this.currentTab = this.tabs[this.selectedTab];
@@ -64,13 +68,16 @@ const AlertComponentAjs: ng.IComponentOptions = {
           this.referenceType = Scope.API;
           this.referenceId = this.activatedRoute.snapshot.params.apiId;
           this.titlePrefix = this.resolvedApi.name;
+          this.isPlatform = false;
         } else if (this.activatedRoute.snapshot.params.applicationId) {
           this.referenceType = Scope.APPLICATION;
           this.referenceId = this.activatedRoute.snapshot.params.applicationId;
           this.titlePrefix = ($scope.$parent as any).$resolve.resolvedApplication.data.name;
+          this.isPlatform = false;
         } else {
           this.referenceType = Scope.ENVIRONMENT;
-          this.titlePrefix = 'Platform';
+          this.titlePrefix = null;
+          this.isPlatform = true;
         }
         this.groups = Rule.findCategoriesByScope(this.referenceType, Constants?.org?.settings?.cloudHosted?.enabled);
         this.rules = Rule.findByScope(this.referenceType, Constants?.org?.settings?.cloudHosted?.enabled);
@@ -107,6 +114,8 @@ const AlertComponentAjs: ng.IComponentOptions = {
         return tempAlert;
       }
 
+      this.displayTitlePrefix = () => (this.isPlatform ? this.translate('alerts.form.platform') : this.titlePrefix);
+
       this.selectTab = (idx: number) => {
         this.selectedTab = idx;
         this.currentTab = this.tabs[this.selectedTab];
@@ -122,13 +131,10 @@ const AlertComponentAjs: ng.IComponentOptions = {
         $mdDialog
           .show(
             $mdDialog.confirm({
-              title: 'Update scheduled alert',
-              htmlContent: `
-                This alert has a scheduled duration.<br>
-                Saving your changes will reset the evaluation schedule. The next cycle will start from the moment you confirm this update.<br>
-                Are you sure you want to continue?`,
-              ok: 'Update',
-              cancel: 'Cancel',
+              title: this.translate('alerts.form.scheduledTitle'),
+              htmlContent: this.translate('alerts.form.scheduledBody'),
+              ok: this.translate('alerts.form.update'),
+              cancel: this.translate('common.cancel'),
             }),
           )
           .then(() => {
@@ -160,7 +166,7 @@ const AlertComponentAjs: ng.IComponentOptions = {
         }
         return service.then(response => {
           this.formAlert.$setPristine();
-          NotificationService.show('Alert has been saved successfully');
+          NotificationService.show(this.translate('alerts.form.saved'));
           const alert = response.data;
           router.navigate(['../', alert.id], { relativeTo: this.activatedRoute });
           this.reload();
@@ -174,15 +180,15 @@ const AlertComponentAjs: ng.IComponentOptions = {
           $mdDialog
             .show(
               $mdDialog.confirm({
-                title: 'Warning',
-                textContent: 'Are you sure you want to remove this alert?',
-                ok: 'OK',
-                cancel: 'Cancel',
+                title: this.translate('alerts.form.deleteTitle'),
+                textContent: this.translate('alerts.form.deleteConfirm'),
+                ok: this.translate('alerts.form.deleteOk'),
+                cancel: this.translate('common.cancel'),
               }),
             )
             .then(() => {
               AlertService.delete(this.alert).then(() => {
-                NotificationService.show('Alert deleted with success');
+                NotificationService.show(this.translate('alerts.form.deleted'));
                 this.backToAlerts();
               });
             });
@@ -200,7 +206,7 @@ const AlertComponentAjs: ng.IComponentOptions = {
         AlertService.associate(this.alert, 'api').then(() => {
           this.reload();
           this.$onInit();
-          NotificationService.show("Alert '" + this.alert.name + "' has been associated to all APIs");
+          NotificationService.show(this.translate('alerts.form.associatedToApis', { name: this.alert.name }));
         });
       };
 

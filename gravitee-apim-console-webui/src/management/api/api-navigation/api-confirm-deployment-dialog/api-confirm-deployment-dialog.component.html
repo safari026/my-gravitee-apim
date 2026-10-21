@@ -15,22 +15,30 @@
     limitations under the License.
 
 -->
-<span matDialogTitle>Deploy your API</span>
+<span matDialogTitle>{{ 'apis.navigation.deploy.title' | translate }}</span>
 
 <mat-dialog-content class="content">
-  <div class="mat-body-2">Provide a label to identify your deployment.</div>
+  <div class="mat-body-2">{{ 'apis.navigation.deploy.hint' | translate }}</div>
   <mat-form-field appearance="outline" class="content__deploymentLabel">
-    <mat-label>Deployment label</mat-label>
+    <mat-label>{{ 'apis.navigation.deploy.label' | translate }}</mat-label>
     <input #input matInput [formControl]="deploymentLabel" maxlength="32" />
     <mat-hint align="end">{{ input.value.length }}/32</mat-hint>
   </mat-form-field>
 
   <gio-banner-warning *ngIf="hasPlatformPolicies$ | async">
-    Some policies are defined on the platform and may conflict with your API policies on flows.
-    <div gioBannerBody>Contact your administrator for further information.</div>
+    {{ 'apis.navigation.deploy.platformPolicies' | translate }}
+    <div gioBannerBody>{{ 'apis.navigation.deploy.contactAdmin' | translate }}</div>
   </gio-banner-warning>
 </mat-dialog-content>
 <mat-dialog-actions class="actions" align="end">
-  <button mat-flat-button [mat-dialog-close]="undefined">Cancel</button>
-  <button color="primary" mat-raised-button aria-label="Deploy the API" data-testid="deploy_button" (click)="onDeploy()">Deploy</button>
+  <button mat-flat-button [mat-dialog-close]="undefined">{{ 'common.cancel' | translate }}</button>
+  <button
+    color="primary"
+    mat-raised-button
+    [attr.aria-label]="'apis.navigation.deploy.deployAria' | translate"
+    data-testid="deploy_button"
+    (click)="onDeploy()"
+  >
+    {{ 'apis.navigation.deploy.deploy' | translate }}
+  </button>
 </mat-dialog-actions>

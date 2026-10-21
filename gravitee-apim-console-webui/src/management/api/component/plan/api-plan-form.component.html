@@ -20,7 +20,7 @@
     <ng-template matStepperIcon="general">
       <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
     </ng-template>
-    <ng-template matStepLabel>General</ng-template>
+    <ng-template matStepLabel>{{ 'apis.plans.form.general' | translate }}</ng-template>
     <plan-edit-general-step
       matStepContent
       [api]="api"
@@ -40,7 +40,10 @@
     <ng-template matStepperIcon="secure">
       <mat-icon svgIcon="gio:lock"></mat-icon>
     </ng-template>
-    <ng-template matStepLabel>{{ planMenuItem.name }} authentication configuration</ng-template>
+    <ng-template matStepLabel>{{
+      'apis.plans.form.authenticationConfig'
+        | translate: { name: (('apis.plans.planTypes.' + planMenuItem.planFormType) | translate) }
+    }}</ng-template>
     <plan-edit-secure-step matStepContent [api]="api" [securityType]="planMenuItem" [mode]="mode"></plan-edit-secure-step>
   </mat-step>
 
@@ -48,7 +51,7 @@
     <ng-template matStepperIcon="restriction">
       <mat-icon svgIcon="gio:shield-cross"></mat-icon>
     </ng-template>
-    <ng-template matStepLabel>Restriction</ng-template>
+    <ng-template matStepLabel>{{ 'apis.plans.form.restriction' | translate }}</ng-template>
     <plan-edit-restriction-step
       matStepContent
       [api]="api"

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
@@ -61,6 +62,7 @@ import { GioApiSelectDialogComponent } from '../../../shared/components/gio-api-
     MatInputModule,
     GioAvatarModule,
     GioApiSelectDialogComponent,
+    TranslatePipe,
   ],
   exports: [TopApisComponent],
 })

@@ -14,16 +14,22 @@
  * limitations under the License.
  */
 
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { toRenderableAsyncApi } from '../../../util/renderable-async-api';
 
 class PageAsyncApiComponentController implements ng.IComponentController {
   pageContent: any;
   schema: string;
 
+  constructor(private readonly ngLanguageService: LanguageService) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
+
   $onChanges() {
     this.schema = toRenderableAsyncApi(this.pageContent);
   }
 }
+PageAsyncApiComponentController.$inject = ['ngLanguageService'];
 
 export const PageAsyncApiComponent: ng.IComponentOptions = {
   template: require('html-loader!./page-asyncapi.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

@@ -17,7 +17,7 @@
 -->
 <div class="org-settings-roles">
   <div class="org-settings-roles__content">
-    <h1>Roles</h1>
+    <h1>{{ 'settings.organization.roles.title' | translate }}</h1>
 
     <mat-card *ngFor="let item of rolesByScope" class="org-settings-roles__content__card">
       <mat-card-content>
@@ -30,7 +30,7 @@
             mat-raised-button
             color="primary"
           >
-            <mat-icon>add</mat-icon>Add a role
+            <mat-icon>add</mat-icon>{{ 'settings.organization.roles.addRole' | translate }}
             <mat-icon *ngIf="hasCustomRolesLock$ | async" iconPositionEnd svgIcon="gio:lock"></mat-icon>
           </button>
         </div>
@@ -43,8 +43,8 @@
               [routerLink]="'../role/' + item.scopeId + '/' + role.name"
             >
               <span>{{ role.name }}</span>
-              <span *ngIf="role.isSystem" class="gio-badge">System</span>
-              <span *ngIf="role.isDefault" class="gio-badge gio-badge-accent">Default</span>
+              <span *ngIf="role.isSystem" class="gio-badge">{{ 'settings.organization.shared.system' | translate }}</span>
+              <span *ngIf="role.isDefault" class="gio-badge gio-badge-accent">{{ 'settings.organization.shared.default' | translate }}</span>
             </div>
             <div
               matListItemLine
@@ -59,8 +59,8 @@
                   *ngIf="role.canBeDeleted"
                   (click)="onDeleteRoleClicked(item.scopeId, role)"
                   mat-icon-button
-                  aria-label="Button to delete a role"
-                  matTooltip="Delete role"
+                  [attr.aria-label]="'settings.organization.roles.deleteRoleAria' | translate"
+                  [matTooltip]="'settings.organization.roles.deleteRoleTooltip' | translate"
                 >
                   <mat-icon>delete</mat-icon>
                 </button>
@@ -71,8 +71,8 @@
                   *ngIf="role.hasUserRoleManagement"
                   [routerLink]="'../role/' + item.scopeId + '/' + role.name + '/members'"
                   mat-icon-button
-                  aria-label="Button to see members with this role"
-                  matTooltip="See members"
+                  [attr.aria-label]="'settings.organization.roles.seeMembersAria' | translate"
+                  [matTooltip]="'settings.organization.roles.seeMembersTooltip' | translate"
                 >
                   <mat-icon>people</mat-icon>
                 </button>
@@ -86,7 +86,7 @@
 
   <gio-table-of-contents
     class="org-settings-roles__toc"
-    [sectionNames]="{ '': 'Roles' }"
+    [sectionNames]="{ '': ('settings.organization.roles.title' | translate) }"
     scrollingContainer="#gio-toc-scrolling-container"
   ></gio-table-of-contents>
 </div>

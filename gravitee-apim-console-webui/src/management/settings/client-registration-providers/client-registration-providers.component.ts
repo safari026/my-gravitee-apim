@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { UntypedFormControl, UntypedFormGroup } from '@angular/forms';
 import { combineLatest, EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
@@ -43,11 +44,14 @@ export type ProvidersTableDS = {
   standalone: false,
 })
 export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
+  private readonly languageService = inject(LanguageService);
   applicationForm: UntypedFormGroup;
   providersTableDS: ProvidersTableDS[] = [];
   displayedColumns = ['name', 'description', 'updatedAt', 'actions'];
   isLoadingData = true;
-  disabledMessage = 'Configuration provided by the system';
+  get disabledMessage(): string | undefined {
+    return this.canUpdateSettings ? this.languageService.translate('settings.systemConfig') : undefined;
+  }
   dcrRegistrationLicenseOptions: LicenseOptions = { feature: ApimFeature.APIM_DCR_REGISTRATION };
   hasDcrRegistrationLock$: Observable<boolean>;
   canUpdateSettings: boolean;
@@ -77,9 +81,6 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
       'environment-settings-u',
       'environment-settings-d',
     ]);
-    if (!this.canUpdateSettings) {
-      this.disabledMessage = undefined;
-    }
     combineLatest([this.portalSettingsService.get(), this.clientRegistrationProvidersService.list()])
       .pipe(
         tap(([settings, providers]) => {
@@ -108,9 +109,9 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete client registration provider',
-          content: `Are you sure you want to delete the client registration provider <strong>${provider.name}</strong> ?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.clientRegistration.deleteTitle'),
+          content: this.languageService.translate('settings.clientRegistration.deleteContent', { name: provider.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'removeClientRegistrationProviderConfirmDialog',
@@ -119,7 +120,7 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.clientRegistrationProvidersService.delete(provider.id)),
-        tap(() => this.snackBarService.success(`"${provider.name}" has been deleted.`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.clientRegistration.deleted', { name: provider.name }))),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -177,7 +178,7 @@ export class ClientRegistrationProvidersComponent implements OnInit, OnDestroy {
           this.settings.application = portalSettingsApplication;
           return this.portalSettingsService.save(this.settings);
         }),
-        tap(() => this.snackBarService.success(`Configuration has been saved.`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.clientRegistration.saved'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe();

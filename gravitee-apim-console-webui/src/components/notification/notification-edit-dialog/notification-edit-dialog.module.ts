@@ -27,6 +27,8 @@ import { GioFormSlideToggleModule } from '@gravitee/ui-particles-angular';
 
 import { NotificationEditDialogComponent } from './notification-edit-dialog.component';
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [NotificationEditDialogComponent],
   exports: [NotificationEditDialogComponent],
@@ -42,6 +44,7 @@ import { NotificationEditDialogComponent } from './notification-edit-dialog.comp
     MatFormFieldModule,
     MatSlideToggleModule,
     MatCheckboxModule,
+    TranslatePipe,
   ],
 })
 export class NotificationEditDialogModule {}

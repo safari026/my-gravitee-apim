@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { Component, DestroyRef, Injector, Input, OnChanges, SimpleChanges } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { isEmpty } from 'lodash';
+import { skip } from 'rxjs/operators';
 
 import { GioChartPieInput } from '../../../../shared/components/gio-chart-pie/gio-chart-pie.component';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export type ApiStateData = {
   values?: { [key: string]: number };
@@ -24,11 +27,11 @@ export type ApiStateData = {
 
 const STATE_DISPLAYABLE = {
   STOPPED: {
-    label: 'Stopped',
+    labelKey: 'dashboard.state.stopped',
     color: '#bf3f0e',
   },
   STARTED: {
-    label: 'Started',
+    labelKey: 'dashboard.state.started',
     color: '#02c37f',
   },
 };
@@ -44,6 +47,16 @@ export class GioApiStateComponent implements OnChanges {
 
   chartPieInput: GioChartPieInput[];
   isEmpty = true;
+
+  constructor(
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly destroyRef: DestroyRef,
+  ) {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.buildDataSource());
+  }
 
   ngOnChanges(changes: SimpleChanges): void {
     if (changes.data) {
@@ -61,7 +74,7 @@ export class GioApiStateComponent implements OnChanges {
         }
 
         return {
-          label: `${status.label}`,
+          label: this.languageService.translate(status.labelKey),
           color: `${status.color}`,
           value,
         };

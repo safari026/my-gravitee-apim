@@ -25,6 +25,7 @@ import { Role, RoleScope } from '../../../entities/role/role';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { Constants } from '../../../entities/Constants';
 import { ApimFeature } from '../../../shared/components/gio-license/gio-license-data';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 interface RoleVM {
   name: string;
@@ -55,6 +56,7 @@ export class OrgSettingsRolesComponent implements OnInit, OnDestroy {
     private readonly snackBarService: SnackBarService,
     @Inject(Constants) private readonly constants: Constants,
     private readonly licenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
 
   private readonly unsubscribe$ = new Subject<boolean>();
@@ -73,13 +75,13 @@ export class OrgSettingsRolesComponent implements OnInit, OnDestroy {
       .pipe(
         tap(([orgRoles, envRoles, apiRoles, appRoles, integrationRoles, clusterRoles, apiProductRoles]) => {
           this.rolesByScope = [
-            { scope: 'Organization', scopeId: 'ORGANIZATION', roles: this.convertToRoleVMs(orgRoles) },
-            { scope: 'Environment', scopeId: 'ENVIRONMENT', roles: this.convertToRoleVMs(envRoles) },
-            { scope: 'API', scopeId: 'API', roles: this.convertToRoleVMs(apiRoles) },
-            { scope: 'Application', scopeId: 'APPLICATION', roles: this.convertToRoleVMs(appRoles) },
-            { scope: 'Integration', scopeId: 'INTEGRATION', roles: this.convertToRoleVMs(integrationRoles) },
-            { scope: 'Cluster', scopeId: 'CLUSTER', roles: this.convertToRoleVMs(clusterRoles) },
-            { scope: 'API Product', scopeId: 'API_PRODUCT', roles: this.convertToRoleVMs(apiProductRoles) },
+            { scope: this.scopeLabel('ORGANIZATION'), scopeId: 'ORGANIZATION', roles: this.convertToRoleVMs(orgRoles) },
+            { scope: this.scopeLabel('ENVIRONMENT'), scopeId: 'ENVIRONMENT', roles: this.convertToRoleVMs(envRoles) },
+            { scope: this.scopeLabel('API'), scopeId: 'API', roles: this.convertToRoleVMs(apiRoles) },
+            { scope: this.scopeLabel('APPLICATION'), scopeId: 'APPLICATION', roles: this.convertToRoleVMs(appRoles) },
+            { scope: this.scopeLabel('INTEGRATION'), scopeId: 'INTEGRATION', roles: this.convertToRoleVMs(integrationRoles) },
+            { scope: this.scopeLabel('CLUSTER'), scopeId: 'CLUSTER', roles: this.convertToRoleVMs(clusterRoles) },
+            { scope: this.scopeLabel('API_PRODUCT'), scopeId: 'API_PRODUCT', roles: this.convertToRoleVMs(apiProductRoles) },
           ];
           this.loading = false;
         }),
@@ -98,9 +100,9 @@ export class OrgSettingsRolesComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Delete a Role',
-          content: `Are you sure you want to delete the role <strong>${role.name}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.roles.deleteTitle'),
+          content: this.languageService.translate('settings.organization.roles.deleteContent', { name: role.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteRoleConfirmDialog',
@@ -109,14 +111,24 @@ export class OrgSettingsRolesComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.roleService.delete(scope, role.name)),
-        tap(() => this.snackBarService.success(`Role ${role.name} successfully deleted!`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.roles.deleted', { name: role.name }),
+          ),
+        ),
         catchError(() => {
-          this.snackBarService.error(`Failed to delete Role ${role.name}`);
+          this.snackBarService.error(
+            this.languageService.translate('settings.organization.roles.deleteFailed', { name: role.name }),
+          );
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.ngOnInit());
+  }
+
+  private scopeLabel(scopeId: string): string {
+    return this.languageService.translate(`settings.organization.roles.scopes.${scopeId}`);
   }
 
   private convertToRoleVMs(roles: Role[]): RoleVM[] {

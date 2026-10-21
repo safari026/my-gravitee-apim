@@ -23,6 +23,7 @@ import { UsersService } from '../../../../services-ngx/users.service';
 import { NewPreRegisterUser } from '../../../../entities/user/newPreRegisterUser';
 import { IdentityProviderService } from '../../../../services-ngx/identity-provider.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export enum UserType {
   EXTERNAL_USER = 'EXTERNAL_USER',
@@ -58,6 +59,7 @@ export class OrgSettingsNewUserComponent implements OnInit, OnDestroy {
     private readonly usersService: UsersService,
     private readonly identityProviderService: IdentityProviderService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -148,7 +150,7 @@ export class OrgSettingsNewUserComponent implements OnInit, OnDestroy {
       .create(userToCreate)
       .pipe(
         tap(() => {
-          this.snackBarService.success('New user successfully registered!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.userNew.registered'));
           this.router.navigate(['..'], { relativeTo: this.activatedRoute });
         }),
         catchError(({ error }) => {

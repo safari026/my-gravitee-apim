@@ -18,6 +18,7 @@ const ApplicationAnalyticsComponentAjs: ng.IComponentOptions = {
     application: '<',
     dashboards: '<',
     activatedRoute: '<',
+    language: '<',
   },
   controller: 'ApplicationAnalyticsController',
   template: require('html-loader!./application-analytics.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

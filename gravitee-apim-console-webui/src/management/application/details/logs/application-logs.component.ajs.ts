@@ -18,6 +18,7 @@ const ApplicationLogsComponentAjs: ng.IComponentOptions = {
     application: '<',
     apis: '<',
     activatedRoute: '<',
+    language: '<',
   },
   controller: 'ApplicationLogsController',
   template: require('html-loader!./application-logs.html').default, // eslint-disable-line @typescript-eslint/no-var-requires

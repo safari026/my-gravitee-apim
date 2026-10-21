@@ -15,6 +15,8 @@
  */
 import ApiCreationV2ControllerAjs from './api-creation-v2.controller.ajs';
 
+import { LanguageService } from '../../../../shared/i18n/language.service';
+
 describe('ApiCreationV2ControllerAjs', () => {
   let ctrl;
   let GroupService;
@@ -30,8 +32,11 @@ describe('ApiCreationV2ControllerAjs', () => {
   let $rootScope;
   let ngIfMatchEtagInterceptor;
   let ngRouter;
+  let ngLanguageService: LanguageService;
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
+
     $scope = { $watch: jest.fn() };
     $timeout = jest.fn().mockImplementation(fn => fn());
     $mdDialog = { show: jest.fn() };
@@ -81,6 +86,7 @@ describe('ApiCreationV2ControllerAjs', () => {
     $rootScope = {};
     ngIfMatchEtagInterceptor = {};
     ngRouter = { navigate: jest.fn() };
+    ngLanguageService = new LanguageService();
 
     GroupService = {
       listPaginated: jest.fn().mockResolvedValue({
@@ -105,7 +111,12 @@ describe('ApiCreationV2ControllerAjs', () => {
       ngIfMatchEtagInterceptor,
       ngRouter,
       GroupService,
+      ngLanguageService,
     );
+  });
+
+  afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
   });
 
   describe('loadMoreGroups', () => {
@@ -193,6 +204,30 @@ describe('ApiCreationV2ControllerAjs', () => {
 
       expect(ctrl.groups.length).toBe(1);
       expect(ctrl.attachableGroups.length).toBe(1);
+    });
+  });
+
+  describe('localization', () => {
+    it('should keep security type ids and switch display names without recreating the controller', () => {
+      expect(ctrl.securityTypes.map(type => type.id)).toEqual(['API_KEY', 'KEY_LESS']);
+      expect(ctrl.securityTypes.map(type => type.name)).toEqual(['API Key', 'Keyless (public)']);
+      expect(ctrl.translate('apis.creation.v2.actions.next')).toBe('NEXT');
+      expect(ctrl.translate('apis.creation.v2.general.nameRequired')).toBe('API Name is required.');
+
+      ngLanguageService.setLanguage('ru');
+      ctrl.$onChanges({ language: { currentValue: 'ru' } });
+
+      expect(ctrl.securityTypes.map(type => type.id)).toEqual(['API_KEY', 'KEY_LESS']);
+      expect(ctrl.securityTypes.map(type => type.name)).toEqual(['API Key', 'Keyless (публичный)']);
+      expect(ctrl.translate('apis.creation.v2.actions.next')).toBe('ДАЛЕЕ');
+      expect(ctrl.translate('apis.creation.v2.general.nameRequired')).toBe('Укажите имя API.');
+      expect(ctrl.translate('apis.creation.v2.actions.next')).not.toBe('NEXT');
+
+      ngLanguageService.setLanguage('en');
+      ctrl.$onChanges({ language: { currentValue: 'en' } });
+
+      expect(ctrl.securityTypes.map(type => type.name)).toEqual(['API Key', 'Keyless (public)']);
+      expect(ctrl.translate('apis.creation.v2.actions.next')).toBe('NEXT');
     });
   });
 });

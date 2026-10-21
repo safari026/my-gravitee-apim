@@ -19,16 +19,16 @@
   <table md-table class="gv-table-dense">
     <thead md-head>
       <tr md-row>
-        <th md-column width="48px">Language</th>
-        <th md-column>Name</th>
-        <th md-column ng-if="$ctrl.page.type === 'LINK' && $ctrl.page.configuration.resourceType === 'external'">URL</th>
-        <th md-column width="1%" nowrap>Last Update</th>
+        <th md-column width="48px">{{$ctrl.translate('settings.documentation.language')}}</th>
+        <th md-column>{{$ctrl.translate('settings.documentation.name')}}</th>
+        <th md-column ng-if="$ctrl.page.type === 'LINK' && $ctrl.page.configuration.resourceType === 'external'">{{$ctrl.translate('settings.documentation.url')}}</th>
+        <th md-column width="1%" nowrap>{{$ctrl.translate('settings.documentation.lastUpdate')}}</th>
         <th md-column width="48px"></th>
       </tr>
     </thead>
     <tbody md-body>
       <tr md-row ng-if="!$ctrl.page.translations.length || $ctrl.page.translations.length <= 0">
-        <td md-cell colspan="5"><span>No translation available</span></td>
+        <td md-cell colspan="5"><span>{{$ctrl.translate('settings.documentation.noTranslation')}}</span></td>
       </tr>
       <tr md-row ng-repeat="translation in $ctrl.page.translations">
         <td md-cell width="48px">
@@ -47,7 +47,7 @@
             permission
             permission-only="['environment-documentation-u', 'api-documentation-u']"
           >
-            <md-tooltip md-direction="top" md-visible="false">Remove</md-tooltip>
+            <md-tooltip md-direction="top" md-visible="false">{{$ctrl.translate('common.remove')}}</md-tooltip>
           </ng-md-icon>
         </td>
       </tr>
@@ -61,24 +61,24 @@
     permission
     permission-only="['environment-documentation-u', 'api-documentation-u']"
     type="button"
-    aria-label="Add translation"
+    aria-label="{{$ctrl.translate('settings.documentation.addTranslation')}}"
     class="md-raised md-primary"
     ng-click="$ctrl.addTranslation()"
   >
-    Add a translation
+    {{$ctrl.translate('settings.documentation.addTranslation')}}
   </md-button>
 </div>
 <div class="gv-form-content" ng-if="$ctrl.currentTranslation">
   <md-input-container class="md-block">
-    <label>Language (max. 2 characters)</label>
+    <label>{{$ctrl.translate('settings.documentation.languageMax')}}</label>
     <input ng-model="$ctrl.currentTranslation.configuration.lang" maxlength="2" required />
   </md-input-container>
   <md-input-container class="md-block">
-    <label>Translated title</label>
+    <label>{{$ctrl.translate('settings.documentation.translatedTitle')}}</label>
     <input type="text" ng-model="$ctrl.currentTranslation.name" required />
   </md-input-container>
   <md-input-container class="md-block" ng-if="$ctrl.page.type === 'LINK' && $ctrl.page.configuration.resourceType === 'external'">
-    <label>URL</label>
+    <label>{{$ctrl.translate('settings.documentation.url')}}</label>
     <input type="text" ng-model="$ctrl.currentTranslation.content" required />
   </md-input-container>
 
@@ -87,15 +87,15 @@
       ng-model="$ctrl.currentTranslation.configuration.inheritContent"
       ng-true-value="'true'"
       ng-false-value="'false'"
-      aria-label="Inherit content"
+      aria-label="{{$ctrl.translate('settings.documentation.inheritContent')}}"
       ng-change="$ctrl.updateTranslationContent()"
     >
-      Inherit content
+      {{$ctrl.translate('settings.documentation.inheritContent')}}
     </md-switch>
     <div class="hint">
-      <div ng-if="$ctrl.currentTranslation.configuration.inheritContent === 'false'">Switch on to inherit content.</div>
+      <div ng-if="$ctrl.currentTranslation.configuration.inheritContent === 'false'">{{$ctrl.translate('settings.documentation.inheritContentOn')}}</div>
       <div ng-if="$ctrl.currentTranslation.configuration.inheritContent === 'true'">
-        Switch off to be able to modify the content of the page for this language.
+        {{$ctrl.translate('settings.documentation.inheritContentOff')}}
       </div>
     </div>
   </md-input-container>

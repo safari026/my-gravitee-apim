@@ -21,7 +21,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatIcon } from '@angular/material/icon';
 
 import { GioShortNumberPipeModule } from '../../../../shared/utils/shortNumber.pipe.module';
-import { SUB_MILLISECOND_LABEL } from '../../../../shared/components/analytics-stats/analytics-stats.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type v4ApisRequestStats = {
   requestsPerSecond: number;
@@ -33,11 +33,10 @@ export type v4ApisRequestStats = {
 
 @Component({
   selector: 'dashboard-api-request-stats',
-  imports: [CommonModule, MatTooltip, MatCardModule, MatIcon, DecimalPipe, GioShortNumberPipeModule, GioLoaderModule],
+  imports: [CommonModule, MatTooltip, MatCardModule, MatIcon, DecimalPipe, GioShortNumberPipeModule, GioLoaderModule, TranslatePipe],
   templateUrl: './dashboard-api-request-stats.component.html',
   styleUrls: ['./dashboard-api-request-stats.component.scss'],
 })
 export class DashboardApiRequestStats {
   @Input() public data?: v4ApisRequestStats;
-  protected readonly subMillisecondLabel = SUB_MILLISECOND_LABEL;
 }

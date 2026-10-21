@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Inject, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
-import { filter, switchMap, takeUntil, tap, finalize } from 'rxjs/operators';
+import { Component, Inject, Injector, OnDestroy, OnInit, ChangeDetectorRef } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { filter, skip, switchMap, takeUntil, tap, finalize } from 'rxjs/operators';
 import { Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
 import { GioConfirmDialogComponent, GioConfirmDialogData } from '@gravitee/ui-particles-angular';
@@ -33,6 +34,7 @@ import { PromotionService } from '../../services-ngx/promotion.service';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { Workflow } from '../../entities/workflow/workflow';
 import { Constants } from '../../entities/Constants';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 class TaskData {
   icon: string;
@@ -64,6 +66,8 @@ export class TasksComponent implements OnInit, OnDestroy {
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
     private readonly cdr: ChangeDetectorRef,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
     @Inject(Constants) private readonly constants: Constants,
   ) {}
 
@@ -74,21 +78,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       .pipe(
         tap(result => {
           this.tasks = result;
-          this.data = result.data
-            .map(task => {
-              const data: TaskData = {
-                icon: this.getIcon(task),
-                title: this.getTitle(task),
-                message: this.getMessage(task),
-                action: this.getActionLabel(task),
-                details: this.getDetails(task),
-                createdAt: task.created_at,
-                type: task.type,
-                data: task.data,
-              };
-              return data;
-            })
-            .sort((task1, task2) => task2.createdAt - task1.createdAt);
+          this.data = this.mapTasks(result);
         }),
         finalize(() => {
           this.loading = false;
@@ -97,7 +87,16 @@ export class TasksComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
       )
       .subscribe({
-        error: e => this.snackBarService.error(e.error?.message ?? 'Failed to load tasks'),
+        error: e => this.snackBarService.error(e.error?.message ?? this.languageService.translate('tasks.loadError')),
+      });
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        if (this.tasks) {
+          this.data = this.mapTasks(this.tasks);
+          this.cdr.detectChanges();
+        }
       });
   }
 
@@ -145,9 +144,9 @@ export class TasksComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Reject Promotion Request',
-          content: `After having rejected this promotion you will not be able to accept it without asking the author to create a new promotion`,
-          confirmButton: 'Reject',
+          title: this.languageService.translate('tasks.rejectDialog.title'),
+          content: this.languageService.translate('tasks.rejectDialog.content'),
+          confirmButton: this.languageService.translate('tasks.reject'),
         },
         role: 'alertdialog',
         id: 'rejectPromotionConfirmDialog',
@@ -156,7 +155,7 @@ export class TasksComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.promotionService.processPromotion(promotionId, false)),
-        tap(() => this.snackBarService.success(`API promotion rejected`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('tasks.rejected'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe({ next: () => this.removeTask(task), error: ({ error }) => this.snackBarService.error(error.message) });
@@ -181,10 +180,28 @@ export class TasksComponent implements OnInit, OnDestroy {
       .pipe(
         filter(result => result?.accepted === true),
         switchMap(() => this.promotionService.processPromotion(promotionTaskData.promotionId, true)),
-        tap(() => this.snackBarService.success(`API promotion accepted`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('tasks.accepted'))),
         takeUntil(this.unsubscribe$),
       )
       .subscribe({ next: () => this.removeTask(task), error: ({ error }) => this.snackBarService.error(error.message) });
+  }
+
+  private mapTasks(result: PagedResult<Task>): TaskData[] {
+    return result.data
+      .map(task => {
+        const data: TaskData = {
+          icon: this.getIcon(task),
+          title: this.getTitle(task),
+          message: this.getMessage(task),
+          action: this.getActionLabel(task),
+          details: this.getDetails(task),
+          createdAt: task.created_at,
+          type: task.type,
+          data: task.data,
+        };
+        return data;
+      })
+      .sort((task1, task2) => task2.createdAt - task1.createdAt);
   }
 
   private getMessage(task: Task): string {
@@ -194,26 +211,34 @@ export class TasksComponent implements OnInit, OnDestroy {
         const planName = this.tasks.metadata[task.data.plan].name;
         const refId = this.tasks.metadata[task.data.plan].api;
         const refName = this.tasks.metadata[refId]?.name ?? refId;
-        const refLabel = task.data.referenceType === 'API_PRODUCT' ? 'API Product' : 'API';
-        return `The application <code>${appName}</code> requested a subscription for ${refLabel} <code>${refName}</code> (plan: ${planName})`;
+        const refLabel = this.languageService.translate(
+          task.data.referenceType === 'API_PRODUCT' ? 'tasks.ref.apiProduct' : 'tasks.ref.api',
+        );
+        return this.languageService.translate('tasks.messages.subscription', { appName, refLabel, refName, planName });
       }
       case 'IN_REVIEW':
-        return `The API <code>${this.tasks.metadata[task.data.referenceId].name}</code> is ready to be reviewed`;
+        return this.languageService.translate('tasks.messages.inReview', {
+          apiName: this.tasks.metadata[task.data.referenceId].name,
+        });
       case 'REQUEST_FOR_CHANGES': {
-        let message = `The API <code>${
-          this.tasks.metadata[task.data.referenceId].name
-        }</code> has been reviewed and some changes are requested by the reviewer`;
+        const apiName = this.tasks.metadata[task.data.referenceId].name;
         if (task.data.comment) {
-          message += ': ' + task.data.comment;
+          return this.languageService.translate('tasks.messages.requestForChangesWithComment', {
+            apiName,
+            comment: task.data.comment,
+          });
         }
-        return message;
+        return this.languageService.translate('tasks.messages.requestForChanges', { apiName });
       }
       case 'USER_REGISTRATION_APPROVAL':
-        return `The registration of the user <strong>${task.data.displayName}</strong> has to be validated`;
+        return this.languageService.translate('tasks.messages.userRegistration', { displayName: task.data.displayName });
       case 'PROMOTION_APPROVAL':
-        return `<strong>${task.data.authorDisplayName}</strong> requested the promotion of API
-      <code>${task.data.apiName}</code> from environment <strong>${task.data.sourceEnvironmentName}</strong> to
-      environment <strong>${task.data.targetEnvironmentName}</strong>`;
+        return this.languageService.translate('tasks.messages.promotion', {
+          author: task.data.authorDisplayName,
+          apiName: task.data.apiName,
+          sourceEnvironment: task.data.sourceEnvironmentName,
+          targetEnvironment: task.data.targetEnvironmentName,
+        });
       default:
         return '';
     }
@@ -221,9 +246,7 @@ export class TasksComponent implements OnInit, OnDestroy {
 
   private getDetails(task: Task): string {
     if (task.type === 'PROMOTION_APPROVAL') {
-      return task.data.isApiUpdate
-        ? 'Since the API has already been promoted to this environment, accepting this promotion will update the existing API.'
-        : 'Accepting this promotion will create a new API in the specified environment.';
+      return this.languageService.translate(task.data.isApiUpdate ? 'tasks.promotionDetails.update' : 'tasks.promotionDetails.create');
     }
     return '';
   }
@@ -231,29 +254,29 @@ export class TasksComponent implements OnInit, OnDestroy {
   private getTitle(task: Task): string {
     switch (task.type) {
       case 'SUBSCRIPTION_APPROVAL':
-        return 'Subscription';
+        return this.languageService.translate('tasks.types.subscription');
       case 'IN_REVIEW':
       case 'REQUEST_FOR_CHANGES':
-        return 'API review';
+        return this.languageService.translate('tasks.types.apiReview');
       case 'USER_REGISTRATION_APPROVAL':
-        return 'User registration';
+        return this.languageService.translate('tasks.types.userRegistration');
       case 'PROMOTION_APPROVAL':
-        return 'API promotion request';
+        return this.languageService.translate('tasks.types.promotion');
     }
   }
 
   private getActionLabel(task: Task): string {
     switch (task.type) {
       case 'SUBSCRIPTION_APPROVAL':
-        return 'Validate';
+        return this.languageService.translate('tasks.validate');
       case 'IN_REVIEW':
-        return 'Review';
+        return this.languageService.translate('tasks.review');
       case 'REQUEST_FOR_CHANGES':
-        return 'Make changes';
+        return this.languageService.translate('tasks.makeChanges');
       case 'USER_REGISTRATION_APPROVAL':
-        return 'Validate';
+        return this.languageService.translate('tasks.validate');
       default:
-        return 'Details';
+        return this.languageService.translate('tasks.details');
     }
   }
 

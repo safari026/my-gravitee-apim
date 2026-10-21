@@ -20,18 +20,15 @@
   <form [formGroup]="form" class="deployment">
     <mat-card class="deployment__card">
       <mat-card-content>
-        <h3 class="deployment__card__title">Deployment configuration</h3>
-        <p class="deployment__card__subtitle">Control where this API Product is deployed</p>
+        <h3 class="deployment__card__title">{{ 'apiProducts.deployment.title' | translate }}</h3>
+        <p class="deployment__card__subtitle">{{ 'apiProducts.deployment.subtitle' | translate }}</p>
 
-        <div class="deployment__card__field-title">Sharding tags</div>
-        <p class="deployment__card__field-description">
-          Choose the sharding tags that you want to assign to the API Product. This dictates where it is deployed. Sharding tags are
-          configured at the Organization level.
-        </p>
+        <div class="deployment__card__field-title">{{ 'apiProducts.deployment.tagsTitle' | translate }}</div>
+        <p class="deployment__card__field-description">{{ 'apiProducts.deployment.tagsBody' | translate }}</p>
 
         <mat-form-field appearance="outline" class="deployment__card__field">
-          <mat-label>Sharding tags</mat-label>
-          <mat-select formControlName="tags" aria-label="Sharding tags selection" data-testid="api_product_sharding_tags" multiple>
+          <mat-label>{{ 'apiProducts.deployment.tags' | translate }}</mat-label>
+          <mat-select formControlName="tags" [attr.aria-label]="'apiProducts.deployment.tagsAria' | translate" data-testid="api_product_sharding_tags" multiple>
             @for (tag of shardingTags(); track tag.id) {
               <mat-option [value]="tag.key">
                 {{ tag.name }}

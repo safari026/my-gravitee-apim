@@ -38,6 +38,8 @@ import { ImportWsdlDescriptor } from '../../../../entities/management-api-v2/api
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { PolicyV2Service } from '../../../../services-ngx/policy-v2.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 function formValidSignal(form: AbstractControl, initialValue = form.valid): Signal<boolean> {
   return toSignal(
@@ -71,6 +73,7 @@ function formValidSignal(form: AbstractControl, initialValue = form.valid): Sign
     MatTooltipModule,
     ReactiveFormsModule,
     RouterModule,
+    TranslatePipe,
   ],
   templateUrl: './api-import-v4-form.component.html',
   styleUrl: './api-import-v4-form.component.scss',
@@ -83,6 +86,7 @@ export class ApiImportV4FormComponent {
   private readonly activatedRoute = inject(ActivatedRoute);
   private readonly formBuilder = inject(FormBuilder);
   private readonly policyV2Service = inject(PolicyV2Service);
+  private readonly languageService = inject(LanguageService);
 
   readonly updateTargetApiId = input<string | undefined>(undefined);
   readonly embeddedInDialog = input(false);
@@ -93,25 +97,36 @@ export class ApiImportV4FormComponent {
 
   protected readonly importStepper = viewChild(MatStepper);
 
-  protected readonly primaryImportActionLabel = computed(() => (this.updateTargetApiId() ? 'Update API' : 'Import API'));
+  protected readonly primaryImportActionLabel = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(
+      this.updateTargetApiId() ? 'apis.creation.importV4.updateApi' : 'apis.creation.importV4.importApi',
+    );
+  });
 
-  protected readonly reviewStepTitle = computed(() => (this.updateTargetApiId() ? 'Review before updating' : 'Review your import'));
+  protected readonly reviewStepTitle = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(
+      this.updateTargetApiId() ? 'apis.creation.importV4.reviewTitleUpdate' : 'apis.creation.importV4.reviewTitle',
+    );
+  });
 
-  protected readonly reviewStepDescription = computed(() =>
-    this.updateTargetApiId()
-      ? 'Verify all settings before updating this API from the selected definition.'
-      : 'Verify all settings before importing your API definition.',
-  );
+  protected readonly reviewStepDescription = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(
+      this.updateTargetApiId() ? 'apis.creation.importV4.reviewBodyUpdate' : 'apis.creation.importV4.reviewBody',
+    );
+  });
 
   protected readonly formats = [
-    { value: 'gravitee', label: 'Gravitee definition', icon: 'gio:gravitee' },
-    { value: 'openapi', label: 'OpenAPI specification', icon: 'gio:open-api' },
-    { value: 'wsdl', label: 'WSDL', icon: 'gio:language' },
+    { value: 'gravitee', labelKey: 'apis.creation.importV4.gravitee', icon: 'gio:gravitee' },
+    { value: 'openapi', labelKey: 'apis.creation.importV4.openapi', icon: 'gio:open-api' },
+    { value: 'wsdl', labelKey: 'apis.creation.importV4.wsdl', icon: 'gio:language' },
   ];
 
   protected readonly sources = [
-    { value: 'local', label: 'Local file', icon: 'gio:laptop', disabledReason: null as string | null },
-    { value: 'remote', label: 'Remote source', icon: 'gio:language', disabledReason: null as string | null },
+    { value: 'local', labelKey: 'apis.creation.importV4.localFile', icon: 'gio:laptop', disabledReason: null as string | null },
+    { value: 'remote', labelKey: 'apis.creation.importV4.remoteSource', icon: 'gio:language', disabledReason: null as string | null },
   ];
 
   private readonly importFileContent = signal<string | undefined>(undefined);
@@ -185,13 +200,17 @@ export class ApiImportV4FormComponent {
   protected readonly allowedImportFileExtensionsLabel = computed(() => this.allowedImportFileExtensions().join(', '));
 
   protected readonly selectedFormatLabel = computed(() => {
+    this.languageService.currentLanguage();
     const value = this.importFormat();
-    return this.formats.find(f => f.value === value)?.label ?? '-';
+    const format = this.formats.find(f => f.value === value);
+    return format ? this.languageService.translate(format.labelKey) : '-';
   });
 
   protected readonly selectedSourceLabel = computed(() => {
+    this.languageService.currentLanguage();
     const value = this.importSourceMode();
-    return this.sources.find(s => s.value === value)?.label ?? '-';
+    const source = this.sources.find(s => s.value === value);
+    return source ? this.languageService.translate(source.labelKey) : '-';
   });
 
   protected readonly showImportOptionsStep = computed(() => {
@@ -284,7 +303,7 @@ export class ApiImportV4FormComponent {
     }
     const request$ = this.resolveImportRequest$();
     if (!request$) {
-      this.snackBarService.error('Unsupported type for V4 API import');
+      this.snackBarService.error(this.languageService.translate('apis.creation.importV4.unsupportedType'));
       return;
     }
 
@@ -293,11 +312,11 @@ export class ApiImportV4FormComponent {
       .pipe(
         tap(api => {
           if (this.updateTargetApiId()) {
-            this.snackBarService.success('API definition updated successfully');
+            this.snackBarService.success(this.languageService.translate('apis.creation.importV4.updated'));
             this.importCompleted.emit(api.id);
             return;
           }
-          this.snackBarService.success('API imported successfully');
+          this.snackBarService.success(this.languageService.translate('apis.creation.importV2.success'));
           this.router.navigate([`../../${api.id}`], { relativeTo: this.activatedRoute });
         }),
         catchError((err: unknown) => this.mapImportErrorToEmpty(err)),
@@ -548,12 +567,12 @@ export class ApiImportV4FormComponent {
   private parseGraviteeDefinitionJson(content: string): unknown {
     const trimmed = content.trim();
     if (!trimmed) {
-      throw new Error('The API definition content is empty');
+      throw new Error(this.languageService.translate('apis.creation.importV4.emptyDefinition'));
     }
     try {
       return JSON.parse(trimmed);
     } catch {
-      throw new Error('Invalid JSON in Gravitee API definition');
+      throw new Error(this.languageService.translate('apis.creation.importV4.invalidJson'));
     }
   }
 
@@ -567,18 +586,18 @@ export class ApiImportV4FormComponent {
       // status 0 = browser could not reach the Management API (network down, mAPI offline, DNS failure).
       // The body is a ProgressEvent, not a JSON error, so we surface a deliberate UX message instead.
       if (err.status === 0) {
-        return 'Unable to reach the Management API. Please check your network connection and try again.';
+        return this.languageService.translate('apis.creation.importV4.networkError');
       }
       if (typeof err.error === 'string') {
         return err.error;
       }
       const fromBody = (err.error as { message?: string } | null | undefined)?.message;
-      return fromBody ?? err.message ?? 'An error occurred while importing the API';
+      return fromBody ?? err.message ?? this.languageService.translate('apis.creation.importV2.error');
     }
     if (err instanceof Error) {
       return err.message;
     }
-    return 'An error occurred while importing the API';
+    return this.languageService.translate('apis.creation.importV2.error');
   }
 
   private readPolicyListErrorMessage(err: unknown): string {
@@ -587,8 +606,8 @@ export class ApiImportV4FormComponent {
         return err.error;
       }
       const fromBody = (err.error as { message?: string } | null | undefined)?.message;
-      return fromBody ?? err.message ?? 'Could not load policies.';
+      return fromBody ?? err.message ?? this.languageService.translate('apis.creation.importV4.policiesLoadError');
     }
-    return 'Could not load policies.';
+    return this.languageService.translate('apis.creation.importV4.policiesLoadError');
   }
 }

@@ -17,7 +17,7 @@
 -->
 <div class="org-settings-notification-templates">
   <div class="org-settings-notification-templates__content">
-    <h1>Templates</h1>
+    <h1>{{ 'settings.organization.notificationTemplates.title' | translate }}</h1>
 
     <mat-card *ngFor="let item of notificationTemplatesByScope | keyvalue" class="org-settings-notification-templates__content__card">
       <mat-card-content>
@@ -31,7 +31,7 @@
             <mat-icon matListItemIcon>{{ notificationTemplate.icon }}</mat-icon>
             <div matListItemTitle>
               <span>{{ notificationTemplate.name }}</span>
-              <span *ngIf="notificationTemplate.overridden" class="gio-badge">Custom</span>
+              <span *ngIf="notificationTemplate.overridden" class="gio-badge">{{ 'settings.organization.notificationTemplates.customBadge' | translate }}</span>
             </div>
             <div matListItemLine>{{ notificationTemplate.description }}</div>
           </mat-list-item>
@@ -42,7 +42,7 @@
 
   <gio-table-of-contents
     class="org-settings-notification-templates__toc"
-    [sectionNames]="{ '': 'Templates' }"
+    [sectionNames]="{ '': ('settings.organization.notificationTemplates.title' | translate) }"
     scrollingContainer="#gio-toc-scrolling-container"
   ></gio-table-of-contents>
 </div>

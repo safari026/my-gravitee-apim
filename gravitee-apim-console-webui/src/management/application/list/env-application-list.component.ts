@@ -27,6 +27,15 @@ import { ApplicationService } from '../../../services-ngx/application.service';
 import { Application } from '../../../entities/application/Application';
 import { GioRoleService } from '../../../shared/components/gio-role/gio-role.service';
 import { toOrder, toSort } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
+import { LanguageService } from '../../../shared/i18n/language.service';
+
+const APPLICATION_TYPE_KEYS: Record<string, string> = {
+  SIMPLE: 'applications.types.simple',
+  BROWSER: 'applications.types.spa',
+  WEB: 'applications.types.web',
+  NATIVE: 'applications.types.native',
+  BACKEND_TO_BACKEND: 'applications.types.backendToBackend',
+};
 
 interface ApplicationTableFilters extends GioTableWrapperFilters {
   status?: 'ACTIVE' | 'ARCHIVED';
@@ -37,6 +46,7 @@ type TableData = {
   applicationPicture: string;
   name: string;
   type: string;
+  typeKey?: string;
   owner: unknown;
   updated_at: number;
   status: string;
@@ -81,6 +91,7 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
     private readonly applicationService: ApplicationService,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnDestroy(): void {
@@ -148,6 +159,7 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
       name: a.name,
       applicationPicture: a.picture_url,
       type: a.type,
+      typeKey: APPLICATION_TYPE_KEYS[a.type?.toUpperCase()],
       owner: a.owner,
       updated_at: a.updated_at,
       status: a.status,
@@ -168,11 +180,9 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '620px',
         data: {
-          title: `Would you like to restore the application "${application.name}"?`,
-          content: `Every subscription belonging to this application will be restored in PENDING status.
-                        Subscriptions can be reactivated as per requirements.
-                        `,
-          confirmButton: 'Restore',
+          title: this.languageService.translate('applications.list.restoreTitle', { name: application.name }),
+          content: this.languageService.translate('applications.list.restoreContent'),
+          confirmButton: this.languageService.translate('applications.list.restoreConfirm'),
         },
         role: 'alertdialog',
         id: 'restoreApplicationConfirmDialog',
@@ -181,7 +191,7 @@ export class EnvApplicationListComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.applicationService.restore(application.applicationId)),
-        tap(() => this.snackBarService.success(`Application ${application.name} has been restored`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('applications.list.restored', { name: application.name }))),
         switchMap(() =>
           this.applicationService
             .list(

@@ -47,12 +47,12 @@ type MetricsRateFormGroup = FormGroup<{
       </div>
       <div class="condition-row">
         <div class="condition-row__label">
-          <span class="mat-body-2">If rate is</span>
+          <span class="mat-body-2">{{ 'alerts.condition.ifRateIs' | translate }}</span>
         </div>
         <threshold-condition [form]="form" thresholdType="percentage" [updateData]="alertToUpdate?.conditions[0]"></threshold-condition>
       </div>
       <div class="condition-row">
-        <missing-data-condition [form]="form" [label]="'For'" [alertToUpdate]="alertToUpdate"></missing-data-condition>
+        <missing-data-condition [form]="form" labelKey="alerts.condition.for" [alertToUpdate]="alertToUpdate"></missing-data-condition>
       </div>
 
       <aggregation-condition

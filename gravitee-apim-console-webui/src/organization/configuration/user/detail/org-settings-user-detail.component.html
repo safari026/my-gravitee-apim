@@ -16,7 +16,7 @@
 
 -->
 <div *ngIf="user" class="org-settings-user-detail">
-  <h1><gio-go-back-button routerLink=".."></gio-go-back-button>User details</h1>
+  <h1><gio-go-back-button routerLink=".."></gio-go-back-button>{{ 'settings.organization.userDetail.title' | translate }}</h1>
 
   <mat-card class="org-settings-user-detail__card">
     <mat-card-content>
@@ -32,7 +32,11 @@
         </div>
 
         <div class="org-settings-user-detail__card__head__middle">
-          <h2 gioTableOfContents gioTableOfContentsName="Profile" class="org-settings-user-detail__card__head__middle__name">
+          <h2
+            gioTableOfContents
+            [gioTableOfContentsName]="'settings.organization.userDetail.profile' | translate"
+            class="org-settings-user-detail__card__head__middle__name"
+          >
             {{ user.displayName }}
           </h2>
 
@@ -51,12 +55,22 @@
         <div class="org-settings-user-detail__card__head__right">
           <ng-container *gioPermission="{ anyOf: ['organization-user-u'] }">
             @if (canConvertToServiceAccount()) {
-              <button (click)="onConvertToServiceAccount()" mat-stroked-button aria-label="Convert to service account">
-                Convert to service account
+              <button
+                (click)="onConvertToServiceAccount()"
+                mat-stroked-button
+                [attr.aria-label]="'settings.organization.userDetail.convertToServiceAccountAria' | translate"
+              >
+                {{ 'settings.organization.userDetail.convertToServiceAccount' | translate }}
               </button>
             }
             @if (canResetPassword()) {
-              <button (click)="onResetPassword()" mat-stroked-button aria-label="User reset password">Reset password</button>
+              <button
+                (click)="onResetPassword()"
+                mat-stroked-button
+                [attr.aria-label]="'settings.organization.userDetail.resetPasswordAria' | translate"
+              >
+                {{ 'settings.organization.userDetail.resetPassword' | translate }}
+              </button>
             }
           </ng-container>
         </div>
@@ -64,10 +78,10 @@
 
       <div>
         <dl class="gio-description-list">
-          <dt>Source</dt>
+          <dt>{{ 'settings.organization.shared.source' | translate }}</dt>
           <dd gioClipboardCopyWrapper [contentToCopy]="user.source">{{ user.source }}</dd>
 
-          <dt>Organization Role</dt>
+          <dt>{{ 'settings.organization.userDetail.organizationRole' | translate }}</dt>
           <dd>{{ user.organizationRoles }}</dd>
 
           <ng-container *ngFor="let customField of user.customFields | keyvalue">
@@ -76,10 +90,10 @@
             <dd gioClipboardCopyWrapper [contentToCopy]="customField.value">{{ customField.value | slice: 0 : 94 }}</dd>
           </ng-container>
 
-          <dt>Last connection at</dt>
+          <dt>{{ 'settings.organization.userDetail.lastConnectionAt' | translate }}</dt>
           <dd>{{ user.lastConnectionAt | date: 'medium' }}</dd>
 
-          <dt>Created at</dt>
+          <dt>{{ 'settings.organization.userDetail.createdAt' | translate }}</dt>
           <dd>{{ user.created_at | date: 'medium' }}</dd>
         </dl>
       </div>
@@ -89,17 +103,23 @@
           <mat-divider></mat-divider>
 
           <div class="org-settings-user-detail__card__registration-banner">
-            <div>Validation of the pending registration request</div>
+            <div>{{ 'settings.organization.userDetail.pendingRegistration' | translate }}</div>
             <div>
-              <button (click)="onProcessRegistration('reject')" mat-stroked-button aria-label="Reject user registration">Reject</button>
+              <button
+                (click)="onProcessRegistration('reject')"
+                mat-stroked-button
+                [attr.aria-label]="'settings.organization.userDetail.rejectRegistrationAria' | translate"
+              >
+                {{ 'settings.organization.shared.reject' | translate }}
+              </button>
               &nbsp;&nbsp;
               <button
                 (click)="onProcessRegistration('accept')"
                 class="org-settings-user-detail__card__registration-banner__accept-btn"
                 mat-flat-button
-                aria-label="Accept user registration"
+                [attr.aria-label]="'settings.organization.userDetail.acceptRegistrationAria' | translate"
               >
-                <mat-icon>done</mat-icon> Accept
+                <mat-icon>done</mat-icon> {{ 'settings.organization.shared.accept' | translate }}
               </button>
             </div>
           </div>
@@ -110,14 +130,14 @@
 
   <mat-card class="org-settings-user-detail__org-role-card">
     <mat-card-content>
-      <h2 gioTableOfContents>Organization</h2>
+      <h2 gioTableOfContents>{{ 'settings.organization.userDetail.organization' | translate }}</h2>
 
       <mat-form-field *ngIf="organizationRolesControl">
-        <mat-label>Roles</mat-label>
+        <mat-label>{{ 'settings.organization.shared.roles' | translate }}</mat-label>
         <mat-select
           #organizationRoleSelect="matSelect"
           [formControl]="organizationRolesControl"
-          aria-label="Organization role"
+          [attr.aria-label]="'settings.organization.userDetail.organizationRoleAria' | translate"
           multiple
           panelClass="org-settings-user-detail__role-select-panel"
         >
@@ -144,8 +164,8 @@
 
   <mat-card class="org-settings-user-detail__environments-card">
     <mat-card-content>
-      <h2 gioTableOfContents>Environments</h2>
-      <p>Here is the list of all environment this user can access.</p>
+      <h2 gioTableOfContents>{{ 'settings.organization.userDetail.environments' | translate }}</h2>
+      <p>{{ 'settings.organization.userDetail.environmentsIntro' | translate }}</p>
 
       <gio-table-wrapper
         *ngIf="environmentsTableDS && environmentsRolesFormGroup"
@@ -157,31 +177,33 @@
           mat-table
           [dataSource]="environmentsTableDS"
           [formGroup]="environmentsRolesFormGroup"
-          aria-label="Environments table"
+          [attr.aria-label]="'settings.organization.userDetail.environmentsTableAria' | translate"
         >
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef id="name" width="33%">Name</th>
+            <th mat-header-cell *matHeaderCellDef id="name" width="33%">{{ 'settings.organization.shared.name' | translate }}</th>
             <td mat-cell *matCellDef="let environment">{{ environment.name }}</td>
           </ng-container>
 
           <!-- Description Column -->
           <ng-container matColumnDef="description">
-            <th mat-header-cell *matHeaderCellDef id="description" width="33%">Description</th>
+            <th mat-header-cell *matHeaderCellDef id="description" width="33%">{{ 'settings.organization.shared.description' | translate }}</th>
             <td mat-cell *matCellDef="let environment">{{ environment.description }}</td>
           </ng-container>
 
           <!-- Roles Column -->
           <ng-container matColumnDef="roles">
-            <th mat-header-cell *matHeaderCellDef id="roles" width="33%">Roles</th>
+            <th mat-header-cell *matHeaderCellDef id="roles" width="33%">{{ 'settings.organization.shared.roles' | translate }}</th>
             <td mat-cell *matCellDef="let environment">
               <mat-form-field>
-                <mat-label>Environment roles</mat-label>
+                <mat-label>{{ 'settings.organization.userDetail.environmentRoles' | translate }}</mat-label>
                 <mat-select
                   #environmentRoleSelect="matSelect"
                   [id]="environment.id"
                   [formControlName]="environment.id"
-                  [aria-label]="'Environment roles for ' + environment.id"
+                  [attr.aria-label]="
+                    ('settings.organization.userDetail.environmentRolesFor' | translate: { id: environment.id })
+                  "
                   multiple
                   panelClass="org-settings-user-detail__role-select-panel"
                 >
@@ -210,7 +232,9 @@
           <tr mat-row *matRowDef="let row; columns: environmentsTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="environmentsTableDisplayedColumns.length">No environment</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="environmentsTableDisplayedColumns.length">
+              {{ 'settings.organization.userDetail.noEnvironment' | translate }}
+            </td>
           </tr>
         </table>
       </gio-table-wrapper>
@@ -222,7 +246,7 @@
 
   <mat-card class="org-settings-user-detail__memberships-card" *ngIf="membershipEnvironments?.length > 0">
     <mat-card-content>
-      <h2 gioTableOfContents>Memberships</h2>
+      <h2 gioTableOfContents>{{ 'settings.organization.userDetail.memberships' | translate }}</h2>
 
       <org-settings-user-detail-memberships
         [environments]="membershipEnvironments"
@@ -239,9 +263,9 @@
   <mat-card class="org-settings-user-detail__tokens__card">
     <mat-card-content>
       <div class="org-settings-user-detail__tokens__card__headline">
-        <h2 gioTableOfContents>Tokens</h2>
+        <h2 gioTableOfContents>{{ 'settings.organization.userDetail.tokens' | translate }}</h2>
         <button *gioPermission="{ anyOf: ['organization-user-u'] }" (click)="onGenerateTokenClicked()" mat-raised-button color="primary">
-          <mat-icon>add</mat-icon>Generate a personal token
+          <mat-icon>add</mat-icon>{{ 'settings.organization.userDetail.generatePersonalToken' | translate }}
         </button>
       </div>
 
@@ -250,10 +274,15 @@
         [length]="tablesUnpaginatedLength['tokensTableDS']"
         (filtersChange)="onFiltersChanged('tokensTableDS', $event)"
       >
-        <table class="org-settings-user-detail__tokens__card__table" mat-table [dataSource]="tokensTableDS" aria-label="Tokens table">
+        <table
+          class="org-settings-user-detail__tokens__card__table"
+          mat-table
+          [dataSource]="tokensTableDS"
+          [attr.aria-label]="'settings.organization.userDetail.tokensTableAria' | translate"
+        >
           <!-- Name Column -->
           <ng-container matColumnDef="name">
-            <th mat-header-cell *matHeaderCellDef id="token-name">Name</th>
+            <th mat-header-cell *matHeaderCellDef id="token-name">{{ 'settings.organization.shared.name' | translate }}</th>
             <td mat-cell *matCellDef="let token">
               {{ token.name }}
             </td>
@@ -261,7 +290,7 @@
 
           <!-- CreatedAt Column -->
           <ng-container matColumnDef="createdAt">
-            <th mat-header-cell *matHeaderCellDef id="createdAt">Created at</th>
+            <th mat-header-cell *matHeaderCellDef id="createdAt">{{ 'settings.organization.shared.createdAt' | translate }}</th>
             <td mat-cell *matCellDef="let token">
               {{ token.createdAt | date: 'medium' }}
             </td>
@@ -269,9 +298,9 @@
 
           <!-- LastUseAt Column -->
           <ng-container matColumnDef="lastUseAt">
-            <th mat-header-cell *matHeaderCellDef id="lastUseAt">Last use</th>
+            <th mat-header-cell *matHeaderCellDef id="lastUseAt">{{ 'settings.organization.shared.lastUse' | translate }}</th>
             <td mat-cell *matCellDef="let token">
-              {{ token.lastUseAt ? (token.lastUseAt | date: 'medium') : 'never' }}
+              {{ token.lastUseAt ? (token.lastUseAt | date: 'medium') : ('settings.organization.shared.never' | translate) }}
             </td>
           </ng-container>
 
@@ -283,8 +312,8 @@
                 *gioPermission="{ anyOf: ['organization-user-d'] }"
                 (click)="onDeleteTokenClicked(token)"
                 mat-icon-button
-                aria-label="Button to delete a token"
-                matTooltip="Delete token"
+                [attr.aria-label]="'settings.organization.userDetail.deleteTokenAria' | translate"
+                [matTooltip]="'settings.organization.userDetail.deleteTokenTooltip' | translate"
               >
                 <mat-icon>delete</mat-icon>
               </button>
@@ -295,7 +324,9 @@
           <tr mat-row *matRowDef="let row; columns: tokensTableDisplayedColumns"></tr>
 
           <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="tokensTableDisplayedColumns.length">No tokens</td>
+            <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="tokensTableDisplayedColumns.length">
+              {{ 'settings.organization.userDetail.noTokens' | translate }}
+            </td>
           </tr>
         </table>
       </gio-table-wrapper>
@@ -314,6 +345,6 @@
 
 <gio-table-of-contents
   class="toc"
-  [sectionNames]="{ '': 'User details' }"
+  [sectionNames]="{ '': ('settings.organization.userDetail.title' | translate) }"
   scrollingContainer="#gio-toc-scrolling-container"
 ></gio-table-of-contents>

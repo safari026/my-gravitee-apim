@@ -32,6 +32,7 @@ import { GioAvatarModule, GioBannerModule, GioIconsModule } from '@gravitee/ui-p
 import { Api } from '../../../../entities/management-api-v2';
 import { ApiV2Service } from '../../../../services-ngx/api-v2.service';
 import { getApiContextPath } from '../../../../shared/utils/api-access.util';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type ApiWithContextPath = Api & { contextPath: string | null };
 
@@ -60,6 +61,7 @@ export type ApiProductAddApiDialogResult = Api[] | undefined;
     GioAvatarModule,
     GioBannerModule,
     GioIconsModule,
+    TranslatePipe,
   ],
   standalone: true,
 })

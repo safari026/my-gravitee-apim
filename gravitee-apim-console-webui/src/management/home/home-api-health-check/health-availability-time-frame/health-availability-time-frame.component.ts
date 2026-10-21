@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-import { AfterViewInit, Component, ElementRef, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { AfterViewInit, Component, ElementRef, Injector, Input, OnChanges, SimpleChanges, ViewChild } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import * as Highcharts from 'highcharts';
 import { asyncScheduler, combineLatest, Observable, ReplaySubject } from 'rxjs';
 import { map, observeOn } from 'rxjs/operators';
+
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export interface HealthAvailabilityTimeFrameOption {
   timestamp: {
@@ -51,10 +54,23 @@ export class HealthAvailabilityTimeFrameComponent implements AfterViewInit, OnCh
   private colors$ = new ReplaySubject<HealthAvailabilityTimeFrameColors>(1);
 
   Highcharts: typeof Highcharts = Highcharts;
-  chartOptions$: Observable<Highcharts.Options> = combineLatest([this.optionChange$, this.colors$]).pipe(
-    observeOn(asyncScheduler),
-    map(([option, colors]) => getChartOption(option, colors)),
-  );
+  chartOptions$: Observable<Highcharts.Options>;
+
+  constructor(
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+  ) {
+    this.chartOptions$ = combineLatest([
+      this.optionChange$,
+      this.colors$,
+      toObservable(this.languageService.currentLanguage, { injector: this.injector }),
+    ]).pipe(
+      observeOn(asyncScheduler),
+      map(([option, colors]) =>
+        getChartOption(option, colors, this.languageService.translate('dashboard.healthCheck.availabilitySeries')),
+      ),
+    );
+  }
 
   ngAfterViewInit() {
     this.colors$.next({
@@ -71,7 +87,11 @@ export class HealthAvailabilityTimeFrameComponent implements AfterViewInit, OnCh
   }
 }
 
-const getChartOption = (option: HealthAvailabilityTimeFrameOption, colors: HealthAvailabilityTimeFrameColors): Highcharts.Options => {
+const getChartOption = (
+  option: HealthAvailabilityTimeFrameOption,
+  colors: HealthAvailabilityTimeFrameColors,
+  seriesName: string,
+): Highcharts.Options => {
   return {
     chart: {
       type: 'column',
@@ -90,7 +110,7 @@ const getChartOption = (option: HealthAvailabilityTimeFrameOption, colors: Healt
     },
     series: [
       {
-        name: 'Availability',
+        name: seriesName,
         data: [...option.data],
         color: colors.colorGood,
         type: 'column',

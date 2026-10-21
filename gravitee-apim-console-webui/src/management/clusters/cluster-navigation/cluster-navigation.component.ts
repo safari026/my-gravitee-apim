@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import {
   GioBreadcrumbModule,
   GioIconsModule,
@@ -25,8 +26,8 @@ import {
   LicenseOptions,
   MenuSearchItem,
 } from '@gravitee/ui-particles-angular';
-import { Observable, Subject } from 'rxjs';
-import { filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { combineLatest, Observable, Subject } from 'rxjs';
+import { filter, map, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { flatMap } from 'lodash';
 import { ActivatedRoute, NavigationEnd, Router, RouterModule } from '@angular/router';
 import { CommonModule } from '@angular/common';
@@ -38,6 +39,8 @@ import { cleanRouterLink, getPathFromRoot } from '../../../util/router-link.util
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { ClusterService } from '../../../services-ngx/cluster.service';
 import { Cluster } from '../../../entities/management-api-v2';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 export interface MenuItem {
   displayName: string;
@@ -59,7 +62,7 @@ export interface MenuItemHeader {
   selector: 'cluster-navigation',
   templateUrl: './cluster-navigation.component.html',
   styleUrls: ['./cluster-navigation.component.scss'],
-  imports: [CommonModule, GioSubmenuModule, GioBreadcrumbModule, RouterModule, GioIconsModule, ClusterNavigationTabsComponent],
+  imports: [CommonModule, GioSubmenuModule, GioBreadcrumbModule, RouterModule, GioIconsModule, ClusterNavigationTabsComponent, TranslatePipe],
 })
 export class ClusterNavigationComponent implements OnInit, OnDestroy {
   public cluster: Cluster;
@@ -75,67 +78,25 @@ export class ClusterNavigationComponent implements OnInit, OnDestroy {
   private readonly clusterService = inject(ClusterService);
   private readonly gioMenuSearchService = inject(GioMenuSearchService);
   private readonly gioLicenseService = inject(GioLicenseService);
+  private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
 
   ngOnInit() {
     this.gioMenuService.reduced$.pipe(takeUntil(this.unsubscribe$)).subscribe(reduced => {
       this.hasBreadcrumb = reduced;
     });
 
-    this.clusterService
-      .get(this.activatedRoute.snapshot.params.clusterId)
+    combineLatest([
+      this.clusterService.get(this.activatedRoute.snapshot.params.clusterId),
+      toObservable(this.languageService.currentLanguage, { injector: this.injector }).pipe(
+        startWith(this.languageService.currentLanguage()),
+      ),
+    ])
       .pipe(
-        tap(cluster => {
+        tap(([cluster]) => {
           this.cluster = cluster;
-
-          const explorerLicense: LicenseOptions = {
-            feature: ApimFeature.APIM_NATIVE_KAFKA_EXPLORER,
-            context: UTMTags.CONTEXT_ENVIRONMENT,
-          };
-          const explorerIconRight$ = this.gioLicenseService
-            .isMissingFeature$(explorerLicense.feature)
-            .pipe(map(notAllowed => (notAllowed ? 'gio:lock' : null)));
-
-          const tabs: MenuItem[] = [
-            {
-              displayName: 'General',
-              routerLink: 'general',
-              permissions: ['cluster-definition-r'],
-            },
-          ];
-
-          if (cluster.type === 'KAFKA_CLUSTER_STANDALONE') {
-            tabs.push({
-              displayName: 'Explorer',
-              routerLink: 'explorer',
-              permissions: ['cluster-definition-r'],
-              license: explorerLicense,
-              iconRight$: explorerIconRight$,
-            });
-          }
-
-          tabs.push({
-            displayName: 'Configuration',
-            routerLink: 'configuration',
-            permissions: ['cluster-configuration-r'],
-          });
-
-          tabs.push({
-            displayName: 'User Permissions',
-            routerLink: 'user-permissions',
-            permissions: ['cluster-member-r'],
-          });
-
-          this.subMenuItems = this.filterMenuByPermission([
-            {
-              displayName: 'General',
-              routerLink: '',
-              permissions: ['cluster-definition-r'],
-              tabs: this.filterMenuByPermission(tabs),
-            },
-          ]);
-
+          this.subMenuItems = this.buildSubMenuItems(cluster);
           this.selectedItemWithTabs = this.subMenuItems.find(item => item.tabs && this.isTabActive(item.tabs));
-
           this.gioMenuSearchService.addMenuSearchItems(this.getClusterNavigationSearchItems());
         }),
         switchMap(() => this.router.events),
@@ -182,6 +143,59 @@ export class ClusterNavigationComponent implements OnInit, OnDestroy {
     return flatMap(tabs, tab => tab).some(tab => this.isActive(tab));
   }
 
+  private t(key: string): string {
+    return this.languageService.translate(`kafka.navigation.${key}`);
+  }
+
+  private buildSubMenuItems(cluster: Cluster): MenuItem[] {
+    const explorerLicense: LicenseOptions = {
+      feature: ApimFeature.APIM_NATIVE_KAFKA_EXPLORER,
+      context: UTMTags.CONTEXT_ENVIRONMENT,
+    };
+    const explorerIconRight$ = this.gioLicenseService
+      .isMissingFeature$(explorerLicense.feature)
+      .pipe(map(notAllowed => (notAllowed ? 'gio:lock' : null)));
+
+    const tabs: MenuItem[] = [
+      {
+        displayName: this.t('general'),
+        routerLink: 'general',
+        permissions: ['cluster-definition-r'],
+      },
+    ];
+
+    if (cluster.type === 'KAFKA_CLUSTER_STANDALONE') {
+      tabs.push({
+        displayName: this.t('explorer'),
+        routerLink: 'explorer',
+        permissions: ['cluster-definition-r'],
+        license: explorerLicense,
+        iconRight$: explorerIconRight$,
+      });
+    }
+
+    tabs.push({
+      displayName: this.t('configuration'),
+      routerLink: 'configuration',
+      permissions: ['cluster-configuration-r'],
+    });
+
+    tabs.push({
+      displayName: this.t('userPermissions'),
+      routerLink: 'user-permissions',
+      permissions: ['cluster-member-r'],
+    });
+
+    return this.filterMenuByPermission([
+      {
+        displayName: this.t('general'),
+        routerLink: '',
+        permissions: ['cluster-definition-r'],
+        tabs: this.filterMenuByPermission(tabs),
+      },
+    ]);
+  }
+
   private filterMenuByPermission(menuItems: MenuItem[]): MenuItem[] {
     if (menuItems) {
       return menuItems.filter(item => !item.permissions || this.permissionService.hasAnyMatching(item.permissions));
@@ -193,12 +207,13 @@ export class ClusterNavigationComponent implements OnInit, OnDestroy {
     const environmentId = this.activatedRoute.snapshot.params.envHrid;
     const clusterId = this.activatedRoute.snapshot.params.clusterId;
     const parentRouterLink = getPathFromRoot(this.activatedRoute);
+    const clustersCategory = this.t('searchCategory');
 
     return this.subMenuItems.reduce((acc: MenuSearchItem[], item: MenuItem) => {
       acc.push({
         name: item.displayName,
         routerLink: `${parentRouterLink}/${cleanRouterLink(item.routerLink)}`,
-        category: `Clusters`,
+        category: clustersCategory,
         groupIds: [environmentId, clusterId],
       });
 
@@ -206,7 +221,7 @@ export class ClusterNavigationComponent implements OnInit, OnDestroy {
         acc.push({
           name: tab.displayName,
           routerLink: `${parentRouterLink}/${cleanRouterLink(tab.routerLink)}`,
-          category: `Clusters / ${item.displayName}`,
+          category: `${clustersCategory} / ${item.displayName}`,
           groupIds: [environmentId, clusterId],
         });
       });

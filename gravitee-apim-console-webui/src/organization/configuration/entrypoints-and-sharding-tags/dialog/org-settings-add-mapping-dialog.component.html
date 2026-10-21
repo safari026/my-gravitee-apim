@@ -15,80 +15,88 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title>{{ isUpdate ? 'Edit an entrypoint mapping' : 'Create an entrypoint mapping' }}</span>
+<span mat-dialog-title>{{
+  (isUpdate ? 'settings.organization.entrypoints.mappingDialogEdit' : 'settings.organization.entrypoints.mappingDialogCreate') | translate
+}}</span>
 
 <form autocomplete="off" [formGroup]="mappingForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
-    <gio-banner-info>
-      Establish a mapping between an entrypoint URL/host and a list of Sharding Tags. This mapping will be used on the portal to display
-      different entrypoints based on API tags.
-    </gio-banner-info>
+    <gio-banner-info>{{ 'settings.organization.entrypoints.mappingBanner' | translate }}</gio-banner-info>
 
     <div class="form">
       <mat-form-field>
-        <mat-label>Sharding tags</mat-label>
-        <mat-select formControlName="tags" aria-label="Sharding tags selection" multiple required>
+        <mat-label>{{ 'settings.organization.entrypoints.mappingShardingTags' | translate }}</mat-label>
+        <mat-select
+          formControlName="tags"
+          [attr.aria-label]="'settings.organization.entrypoints.mappingShardingTagsSelectionAria' | translate"
+          multiple
+          required
+        >
           @for (tag of tags$ | async; track tag.id) {
             <mat-option [value]="tag.key">{{ tag.name }}{{ tag.description ? ' - ' + tag.description : '' }}</mat-option>
           }
         </mat-select>
         @if (mappingForm.controls.tags.hasError('required')) {
-          <mat-error>At least one tag must be selected.</mat-error>
+          <mat-error>{{ 'settings.organization.entrypoints.mappingTagsRequired' | translate }}</mat-error>
         }
       </mat-form-field>
 
       <mat-form-field>
-        <mat-label>Environments</mat-label>
-        <mat-select formControlName="environmentIds" aria-label="Environments selection" multiple>
+        <mat-label>{{ 'settings.organization.audit.environments' | translate }}</mat-label>
+        <mat-select
+          formControlName="environmentIds"
+          [attr.aria-label]="'settings.organization.entrypoints.environmentsSelectionAria' | translate"
+          multiple
+        >
           <mat-option *ngFor="let env of environments$ | async" [value]="env.id">
             {{ env.name || env.id }}
           </mat-option>
         </mat-select>
-        <mat-hint>Leave empty to apply to all environments</mat-hint>
+        <mat-hint>{{ 'settings.organization.entrypoints.mappingEnvironmentsHint' | translate }}</mat-hint>
       </mat-form-field>
 
       @switch (target) {
         @case ('HTTP') {
           <mat-form-field>
-            <mat-label>Entrypoint url</mat-label>
+            <mat-label>{{ 'settings.organization.entrypoints.entrypointUrl' | translate }}</mat-label>
             <input matInput formControlName="httpValue" type="url" placeholder="https://api.mycompany.com" required />
             @if (mappingForm.controls.httpValue.hasError('required')) {
-              <mat-error>Entrypoint Url is required.</mat-error>
+              <mat-error>{{ 'settings.organization.entrypoints.entrypointUrlRequired' | translate }}</mat-error>
             }
           </mat-form-field>
         }
         @case ('KAFKA') {
           <div class="kafka">
             <mat-form-field class="kafka__domain">
-              <mat-label>Default Kafka Bootstrap Domain Pattern</mat-label>
+              <mat-label>{{ 'settings.organization.entrypoints.kafkaDomain' | translate }}</mat-label>
               <input matInput formControlName="kafkaDomain" />
 
               @if (mappingForm.controls.kafkaDomain.hasError('maxLength')) {
-                <mat-error>Kafka Domain must be less than 201 characters.</mat-error>
+                <mat-error>{{ 'settings.organization.entrypoints.kafkaDomainMax' | translate }}</mat-error>
               }
               @if (mappingForm.controls.kafkaDomain.hasError('required')) {
-                <mat-error>Kafka Bootstrap Domain Pattern is required.</mat-error>
+                <mat-error>{{ 'settings.organization.entrypoints.kafkaDomainRequired' | translate }}</mat-error>
               }
               @if (mappingForm.controls.kafkaDomain.hasError('apiHostMissing')) {
-                <mat-error>Kafka Bootstrap Domain Pattern must contain {{ '{apiHost}' }}.</mat-error>
+                <mat-error>{{ 'settings.organization.entrypoints.kafkaDomainApiHost' | translate }}</mat-error>
               }
-              <mat-hint> To be configured according to the gateway configuration. e.g: {{ '{apiHost}.mycompany.org' }} </mat-hint>
+              <mat-hint>{{ 'settings.organization.entrypoints.kafkaDomainHint' | translate: { example: '{apiHost}.mycompany.org' } }}</mat-hint>
             </mat-form-field>
             <mat-form-field class="kafka__port">
-              <mat-label>Default Kafka port</mat-label>
+              <mat-label>{{ 'settings.organization.entrypoints.defaultKafkaPort' | translate }}</mat-label>
               <input matInput formControlName="kafkaPort" type="number" />
               @if (mappingForm.controls.kafkaPort.hasError('invalidPort')) {
-                <mat-error>Port should be in range between 1025 and 65535</mat-error>
+                <mat-error>{{ 'settings.organization.entrypoints.portRange' | translate }}</mat-error>
               }
             </mat-form-field>
           </div>
         }
         @case ('TCP') {
           <mat-form-field class="tcp__port">
-            <mat-label>Default TCP port</mat-label>
+            <mat-label>{{ 'settings.organization.entrypoints.defaultTcpPort' | translate }}</mat-label>
             <input matInput formControlName="tcpPort" type="number" />
             @if (mappingForm.controls.tcpPort.hasError('invalidPort')) {
-              <mat-error>Port should be in range between 1025 and 65535</mat-error>
+              <mat-error>{{ 'settings.organization.entrypoints.portRange' | translate }}</mat-error>
             }
           </mat-form-field>
         }
@@ -97,7 +105,7 @@
   </mat-dialog-content>
 
   <mat-dialog-actions class="actions">
-    <button mat-button [mat-dialog-close]="false">Cancel</button>
-    <button mat-button [disabled]="mappingForm.invalid" color="primary" type="submit">Ok</button>
+    <button mat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
+    <button mat-button [disabled]="mappingForm.invalid" color="primary" type="submit">{{ 'settings.organization.shared.ok' | translate }}</button>
   </mat-dialog-actions>
 </form>

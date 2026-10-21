@@ -19,8 +19,10 @@ import { CommonModule } from '@angular/common';
 
 import { GioChartPieComponent } from './gio-chart-pie.component';
 
+import { TranslatePipe } from '../../i18n/translate.pipe';
+
 @NgModule({
-  imports: [HighchartsChartModule, CommonModule],
+  imports: [HighchartsChartModule, CommonModule, TranslatePipe],
   declarations: [GioChartPieComponent],
   exports: [GioChartPieComponent],
 })

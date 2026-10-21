@@ -74,6 +74,8 @@ import { Group, Member } from '../../../entities/management-api-v2';
 import { ApiProduct } from '../../../entities/management-api-v2/api-product';
 import { SearchableUser } from '../../../entities/user/searchableUser';
 import { GioRoleService } from '../../../shared/components/gio-role/gio-role.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 export interface MemberRow {
   id: string;
@@ -104,8 +106,6 @@ const LOADING_STATE: MembersState = {
   groupCards: [],
 };
 
-const MEMBERS_PAGE_LOAD_FAILED = 'Could not load API Product members.';
-const FAILED_TO_LOAD_ALL_MEMBERS_FOR_TRANSFER = 'Could not load the full member list for transfer ownership. Using the visible page only.';
 
 export const GROUP_LIST_PAGE_SIZE = 9999;
 
@@ -152,6 +152,7 @@ function effectiveRoleName(member: Member): string {
     GioTableWrapperModule,
     GioUsersSelectorModule,
     ApiProductGroupMembersComponent,
+    TranslatePipe,
   ],
 })
 export class ApiProductMembersComponent {
@@ -165,6 +166,7 @@ export class ApiProductMembersComponent {
   private readonly gioRoleService = inject(GioRoleService);
   private readonly matDialog = inject(MatDialog);
   private readonly snackBarService = inject(SnackBarService);
+  private readonly languageService = inject(LanguageService);
   private readonly destroyRef = inject(DestroyRef);
 
   private readonly reloadMembers$ = new Subject<void>();
@@ -238,8 +240,8 @@ export class ApiProductMembersComponent {
           catchError((err: unknown) => {
             const message =
               err instanceof HttpErrorResponse
-                ? ((err.error?.message as string | undefined) ?? MEMBERS_PAGE_LOAD_FAILED)
-                : MEMBERS_PAGE_LOAD_FAILED;
+                ? ((err.error?.message as string | undefined) ?? this.languageService.translate('apiProducts.members.loadError'))
+                : this.languageService.translate('apiProducts.members.loadError');
             return of({ ...LOADING_STATE, isLoading: false, loadError: message });
           }),
         ),
@@ -330,7 +332,7 @@ export class ApiProductMembersComponent {
           }),
         ),
         tap(() => this.reloadMembers$.next()),
-        catchError(this.memberHttpErrorHandler('Could not update API Product groups.')),
+        catchError(this.memberHttpErrorHandler(this.languageService.translate('apiProducts.members.updateGroupsError'))),
         takeUntilDestroyed(this.destroyRef),
       )
       .subscribe();
@@ -401,7 +403,7 @@ export class ApiProductMembersComponent {
         : this.apiProductV2Service.getPagedMembers(apiProductId, 1, totalCount).pipe(
             map(res => res.data ?? []),
             catchError(() => {
-              this.snackBarService.error(FAILED_TO_LOAD_ALL_MEMBERS_FOR_TRANSFER);
+              this.snackBarService.error(this.languageService.translate('apiProducts.members.transferLoadError'));
               return of(mapRowsToMembers(rows));
             }),
           );
@@ -436,10 +438,10 @@ export class ApiProductMembersComponent {
           ),
         ),
         tap(() => {
-          this.snackBarService.success('Ownership transferred successfully.');
+          this.snackBarService.success(this.languageService.translate('apiProducts.members.transferred'));
           this.reloadMembers$.next();
         }),
-        catchError(this.memberHttpErrorHandler('Could not transfer ownership.')),
+        catchError(this.memberHttpErrorHandler(this.languageService.translate('apiProducts.members.transferError'))),
         take(1),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -453,9 +455,9 @@ export class ApiProductMembersComponent {
     const apiProductId = this.apiProductId();
     const confirm = this.matDialog.open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
       data: {
-        title: 'Remove API Product member',
-        content: `Are you sure you want to remove "<b>${member.displayName}</b>" from this API Product members? <br>This action cannot be undone!`,
-        confirmButton: 'Remove',
+        title: this.languageService.translate('apiProducts.members.removeTitle'),
+        content: this.languageService.translate('apiProducts.members.removeContent', { name: member.displayName }),
+        confirmButton: this.languageService.translate('common.remove'),
       },
       role: 'alertdialog',
       id: 'confirmApiProductMemberDeleteDialog',
@@ -467,7 +469,7 @@ export class ApiProductMembersComponent {
         filter(Boolean),
         switchMap(() => this.apiProductV2Service.deleteMember(apiProductId, member.id)),
         tap(() => {
-          this.snackBarService.success(`Member ${member.displayName} has been removed.`);
+          this.snackBarService.success(this.languageService.translate('apiProducts.members.removed', { name: member.displayName }));
           this.membersForm.get(member.id)?.disable({ emitEvent: false });
           const { pagination } = this.tableFilters();
           const totalCount = this.membersLoadState().totalCount - 1;
@@ -482,7 +484,7 @@ export class ApiProductMembersComponent {
             this.reloadMembers$.next();
           }
         }),
-        catchError(this.memberHttpErrorHandler('Could not remove member.')),
+        catchError(this.memberHttpErrorHandler(this.languageService.translate('apiProducts.members.removeError'))),
         take(1),
       )
       .subscribe();
@@ -533,12 +535,12 @@ export class ApiProductMembersComponent {
     forkJoin(requests)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Changes successfully saved!');
+          this.snackBarService.success(this.languageService.translate('apiProducts.members.saved'));
           this.clearPendingUsers();
           this.form.markAsPristine();
           this.reloadMembers$.next();
         }),
-        catchError(this.memberHttpErrorHandler('Could not save member changes.')),
+        catchError(this.memberHttpErrorHandler(this.languageService.translate('apiProducts.members.saveError'))),
       )
       .subscribe();
   }
@@ -646,7 +648,7 @@ export class ApiProductMembersComponent {
             }));
             return EMPTY;
           }
-          this.snackBarService.error(err.error?.message ?? 'Could not load inherited group members.');
+          this.snackBarService.error(err.error?.message ?? this.languageService.translate('apiProducts.members.inheritedLoadError'));
           this.groupInheritedVm.update(m => ({
             ...m,
             [groupId]: {

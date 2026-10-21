@@ -38,6 +38,7 @@ import { MatInput } from '@angular/material/input';
 import { MatMenu, MatMenuItem, MatMenuTrigger } from '@angular/material/menu';
 
 import { NotifierService } from '../../../../services-ngx/notifier.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { GeneralFormValue } from '../components/runtime-alert-create-general';
 import { DampeningMode, DampeningModesNames, DurationTimeUnit } from '../../../../entities/alert';
 
@@ -58,6 +59,7 @@ import { DampeningMode, DampeningModesNames, DurationTimeUnit } from '../../../.
     MatMenuTrigger,
     MatInput,
     NgIf,
+    TranslatePipe,
   ],
   templateUrl: './runtime-alert-create-notifications.component.html',
   styleUrl: './runtime-alert-create-notifications.component.scss',

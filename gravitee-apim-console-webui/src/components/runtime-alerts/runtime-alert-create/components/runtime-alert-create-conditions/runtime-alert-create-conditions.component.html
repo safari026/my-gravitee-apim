@@ -18,8 +18,8 @@
 
 <mat-card class="form-card">
   <mat-card-header>
-    <mat-card-title>Conditions</mat-card-title>
-    <mat-card-subtitle>Field metrics and condition for the rule</mat-card-subtitle>
+    <mat-card-title>{{ 'alerts.runtime.conditionsTitle' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'alerts.form.conditionHint' | translate }}</mat-card-subtitle>
   </mat-card-header>
 
   <div *ngIf="ruleType != null" class="separator-hr"></div>
@@ -90,7 +90,7 @@
       </form>
     </ng-container>
     <ng-template #defaultBlock>
-      <gio-banner-info>Select a rule before setting the condition.</gio-banner-info>
+      <gio-banner-info>{{ 'alerts.form.selectRule' | translate }}</gio-banner-info>
     </ng-template>
   </mat-card-content>
 </mat-card>

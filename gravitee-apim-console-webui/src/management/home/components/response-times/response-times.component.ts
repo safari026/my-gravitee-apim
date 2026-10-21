@@ -13,21 +13,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, DestroyRef, OnInit } from '@angular/core';
+import { Component, DestroyRef, Injector, OnInit } from '@angular/core';
 import { GioLoaderModule } from '@gravitee/ui-particles-angular';
 import { MatCardModule } from '@angular/material/card';
-import { switchMap } from 'rxjs/operators';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { switchMap, skip } from 'rxjs/operators';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 
 import { GioChartLineData, GioChartLineOptions } from '../../../../shared/components/gio-chart-line/gio-chart-line.component';
 import { AnalyticsService } from '../../../../services-ngx/analytics.service';
 import { HomeService } from '../../../../services-ngx/home.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { GioChartLineModule } from '../../../../shared/components/gio-chart-line/gio-chart-line.module';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'response-times',
-  imports: [GioChartLineModule, GioLoaderModule, MatCardModule],
+  imports: [GioChartLineModule, GioLoaderModule, MatCardModule, TranslatePipe],
   templateUrl: './response-times.component.html',
   styleUrl: './response-times.component.scss',
 })
@@ -41,9 +43,22 @@ export class ResponseTimesComponent implements OnInit {
     private readonly homeService: HomeService,
     private readonly destroyRef: DestroyRef,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit() {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        if (this.chartInput?.length) {
+          this.chartInput = this.chartInput.map(series => ({
+            ...series,
+            name: this.languageService.translate('dashboard.responseTime.series'),
+          }));
+        }
+      });
+
     this.homeService
       .timeRangeParams()
       .pipe(
@@ -60,7 +75,7 @@ export class ResponseTimesComponent implements OnInit {
         next: analyticsV4AverageResponseTimes => {
           this.chartInput = [
             {
-              name: 'Response time (ms)',
+              name: this.languageService.translate('dashboard.responseTime.series'),
               values: analyticsV4AverageResponseTimes.data,
             },
           ];

@@ -73,4 +73,17 @@ export class GioQuickTimeRangeComponent implements ControlValueAccessor {
     this._onTouched();
     this.onRefreshClicked.emit();
   }
+
+  timeframeLabelKey(id: string): string {
+    const labels: Record<string, string> = {
+      '1m': 'dashboard.timeframe.lastMinute',
+      '1h': 'dashboard.timeframe.lastHour',
+      '1d': 'dashboard.timeframe.lastDay',
+      '1w': 'dashboard.timeframe.lastWeek',
+      '1M': 'dashboard.timeframe.lastMonth',
+      custom: 'dashboard.timeframe.custom',
+    };
+
+    return labels[id] ?? id;
+  }
 }

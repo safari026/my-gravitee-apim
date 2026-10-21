@@ -20,6 +20,7 @@ import { now } from 'lodash';
 import { ApiService } from '../../../services/api.service';
 import ApplicationService from '../../../services/application.service';
 import AnalyticsService, { LogsQuery } from '../../../services/analytics.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class PlatformLogsController {
   private logs: { total: string; logs: any[]; metadata: any };
@@ -39,8 +40,13 @@ class PlatformLogsController {
     private ApplicationService: ApplicationService,
     private ngRouter: Router,
     private $scope: IScope,
+    private ngLanguageService: LanguageService,
   ) {
     this.query = new LogsQuery();
+  }
+
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
   }
 
   $onInit() {
@@ -142,6 +148,14 @@ class PlatformLogsController {
   }
 }
 
-PlatformLogsController.$inject = ['ApiService', 'AnalyticsService', 'Constants', 'ApplicationService', 'ngRouter', '$scope'];
+PlatformLogsController.$inject = [
+  'ApiService',
+  'AnalyticsService',
+  'Constants',
+  'ApplicationService',
+  'ngRouter',
+  '$scope',
+  'ngLanguageService',
+];
 
 export default PlatformLogsController;

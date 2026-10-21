@@ -15,31 +15,31 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>Generate a token</h2>
+<h2 mat-dialog-title>{{ 'settings.organization.userToken.title' | translate }}</h2>
 
 <form autocomplete="off" [formGroup]="tokenForm" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     <div *ngIf="!hasBeenGenerated" class="form">
       <mat-form-field>
-        <mat-label>Name</mat-label>
+        <mat-label>{{ 'settings.organization.shared.name' | translate }}</mat-label>
         <input matInput formControlName="name" required />
         <mat-hint align="end">{{ tokenForm.get('name').value?.length ?? 0 }}/64</mat-hint>
-        <mat-hint>What's this token for?</mat-hint>
-        <mat-error *ngIf="tokenForm.get('name').hasError('maxlength')">Name has to be less than 64 characters long.</mat-error>
-        <mat-error *ngIf="tokenForm.get('name').hasError('minlength')">Name has to be greater than 2 characters long.</mat-error>
-        <mat-error *ngIf="tokenForm.get('name').hasError('required')">Name is required.</mat-error>
+        <mat-hint>{{ 'settings.organization.userToken.nameHintPurpose' | translate }}</mat-hint>
+        <mat-error *ngIf="tokenForm.get('name').hasError('maxlength')">{{ 'settings.organization.userToken.nameMax' | translate }}</mat-error>
+        <mat-error *ngIf="tokenForm.get('name').hasError('minlength')">{{ 'settings.organization.userToken.nameMin' | translate }}</mat-error>
+        <mat-error *ngIf="tokenForm.get('name').hasError('required')">{{ 'settings.organization.shared.nameRequired' | translate }}</mat-error>
       </mat-form-field>
     </div>
 
     <div class="content" *ngIf="hasBeenGenerated">
       <gio-banner-info class="content__banner">
-        Make sure to copy your new personal access token now. You won’t be able to see it again.
+        {{ 'settings.organization.userToken.copyTokenBanner' | translate }}
       </gio-banner-info>
-      <h4>Token</h4>
+      <h4>{{ 'settings.organization.userToken.token' | translate }}</h4>
       <div class="content__code__token" gioClipboardCopyWrapper [contentToCopy]="token.token" [alwaysVisible]="true">
         <code>{{ token.token }}</code>
       </div>
-      <h4>Usage</h4>
+      <h4>{{ 'settings.organization.userToken.usage' | translate }}</h4>
       <div class="content__code" gioClipboardCopyWrapper [contentToCopy]="getExampleOfUse(token.token)" [alwaysVisible]="true">
         <code>{{ getExampleOfUse(token.token) }}</code>
       </div>
@@ -47,7 +47,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions class="actions">
-    <button mat-button [mat-dialog-close]="false">{{ hasBeenGenerated ? 'Close' : 'Cancel' }}</button>
-    <button mat-button color="primary" *ngIf="!hasBeenGenerated" [disabled]="tokenForm.invalid" type="submit">Generate</button>
+    <button mat-button [mat-dialog-close]="false">{{ hasBeenGenerated ? ('common.close' | translate) : ('common.cancel' | translate) }}</button>
+    <button mat-button color="primary" *ngIf="!hasBeenGenerated" [disabled]="tokenForm.invalid" type="submit">
+      {{ 'settings.organization.shared.generate' | translate }}
+    </button>
   </mat-dialog-actions>
 </form>

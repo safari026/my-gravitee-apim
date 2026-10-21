@@ -17,8 +17,8 @@
 -->
 <div class="header">
   <nav mat-tab-nav-bar mat-align-tabs="end" class="header__nav" [tabPanel]="tabPanel">
-    <a mat-tab-link [active]="activeTab === 'design'" (click)="activeTab = 'design'"> Design </a>
-    <a mat-tab-link [active]="activeTab === 'config'" (click)="activeTab = 'config'"> Configuration </a>
+    <a mat-tab-link [active]="activeTab === 'design'" (click)="activeTab = 'design'"> {{ 'settings.organization.policies.designTab' | translate }} </a>
+    <a mat-tab-link [active]="activeTab === 'config'" (click)="activeTab = 'config'"> {{ 'settings.organization.policies.configTab' | translate }} </a>
     <!-- save button -->
     <button
       *ngIf="!isReadonly"
@@ -29,7 +29,7 @@
       [disabled]="isSaveButtonDisabled"
       (click)="onSave()"
     >
-      Save
+      {{ 'common.save' | translate }}
     </button>
   </nav>
 </div>
@@ -49,6 +49,6 @@
       ></org-settings-platform-policies-config>
     </ng-container>
 
-    <ng-container *ngIf="isLoading"> Loading... </ng-container>
+    <ng-container *ngIf="isLoading"> {{ 'settings.organization.shared.loading' | translate }} </ng-container>
   </div>
 </mat-tab-nav-panel>

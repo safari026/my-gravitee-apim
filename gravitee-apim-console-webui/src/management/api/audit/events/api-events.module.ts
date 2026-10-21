@@ -22,10 +22,11 @@ import { MatTableModule } from '@angular/material/table';
 import { GioLoaderModule } from '@gravitee/ui-particles-angular';
 
 import { ApiEventsComponent } from './api-events.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [ApiEventsComponent],
   exports: [ApiEventsComponent],
-  imports: [CommonModule, MatIconModule, MatTooltipModule, MatTableModule, GioLoaderModule],
+  imports: [CommonModule, MatIconModule, MatTooltipModule, MatTableModule, GioLoaderModule, TranslatePipe],
 })
 export class ApiEventsModule {}

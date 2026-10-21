@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatInputModule } from '@angular/material/input';
@@ -58,6 +59,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     GioFormSlideToggleModule,
     GioTableWrapperModule,
     GioPermissionModule,
+    TranslatePipe,
   ],
   exports: [ApiPortalHeaderComponent],
 })

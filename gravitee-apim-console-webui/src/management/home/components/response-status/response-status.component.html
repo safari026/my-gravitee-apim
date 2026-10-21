@@ -18,8 +18,8 @@
 
 <mat-card>
   <mat-card-header>
-    <mat-card-title class="mat-h5">Response status</mat-card-title>
-    <mat-card-subtitle>Hits repartition by HTTP Status</mat-card-subtitle>
+    <mat-card-title class="mat-h5">{{ 'dashboard.responseStatus.title' | translate }}</mat-card-title>
+    <mat-card-subtitle>{{ 'dashboard.responseStatus.subtitle' | translate }}</mat-card-subtitle>
   </mat-card-header>
 
   @if (isLoading) {

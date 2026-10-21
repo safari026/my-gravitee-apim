@@ -24,6 +24,7 @@ import { GioClipboardModule, GioIconsModule } from '@gravitee/ui-particles-angul
 import { InstanceDetailsMonitoringComponent } from './instance-details-monitoring.component';
 
 import { GioCircularPercentageModule } from '../../../../shared/components/gio-circular-percentage/gio-circular-percentage.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [InstanceDetailsMonitoringComponent],
@@ -36,6 +37,7 @@ import { GioCircularPercentageModule } from '../../../../shared/components/gio-c
     GioClipboardModule,
     GioIconsModule,
     GioCircularPercentageModule,
+    TranslatePipe,
   ],
 })
 export class InstanceDetailsMonitoringModule {}

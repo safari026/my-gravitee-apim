@@ -25,6 +25,7 @@ import { Subject } from 'rxjs';
 import { ApiCreationStepService } from '../../services/api-creation-step.service';
 import { Step2Entrypoints0ArchitectureComponent } from '../step-2-entrypoints/step-2-entrypoints-0-architecture.component';
 import { Step2Entrypoints1ListComponent } from '../step-2-entrypoints/step-2-entrypoints-1-list.component';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'step-1-api-details',
@@ -45,6 +46,7 @@ export class Step1ApiDetailsComponent implements OnInit {
     private readonly matDialog: MatDialog,
     private readonly stepService: ApiCreationStepService,
     private readonly licenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -70,10 +72,10 @@ export class Step1ApiDetailsComponent implements OnInit {
       this.matDialog
         .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
           data: {
-            title: 'Are you sure?',
-            content: 'You still need to create your API. If you leave this page, you will lose any info you added.',
-            confirmButton: 'Discard changes',
-            cancelButton: 'Keep creating',
+            title: this.languageService.translate('apis.creation.v4.confirm.title'),
+            content: this.languageService.translate('apis.creation.v4.confirm.exitContent'),
+            confirmButton: this.languageService.translate('apis.creation.v4.confirm.discardChanges'),
+            cancelButton: this.languageService.translate('apis.creation.v4.confirm.keepCreating'),
           },
         })
         .afterClosed()

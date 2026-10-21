@@ -24,10 +24,11 @@ import { RouterModule } from '@angular/router';
 import { InstanceListComponent } from './instance-list.component';
 
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [InstanceListComponent],
   exports: [InstanceListComponent],
-  imports: [CommonModule, MatTableModule, MatIconModule, MatTooltipModule, GioTableWrapperModule, RouterModule],
+  imports: [CommonModule, MatTableModule, MatIconModule, MatTooltipModule, GioTableWrapperModule, RouterModule, TranslatePipe],
 })
 export class InstanceListModule {}

@@ -36,6 +36,7 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { ApiPlanV2Service } from '../../../services-ngx/api-plan-v2.service';
 import { PlanV4, Api, CreateApiV4, EndpointGroupV4, Entrypoint, Listener, ListenerType } from '../../../entities/management-api-v2';
 import { ApiReviewV2Service } from '../../../services-ngx/api-review-v2.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 export interface Result {
   errorMessages: string[];
@@ -115,6 +116,7 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
     private readonly apiPlanV2Service: ApiPlanV2Service,
     private readonly apiReviewV2Service: ApiReviewV2Service,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -149,7 +151,11 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
       .subscribe(
         finalResult => {
           if (isEmpty(finalResult.errorMessages)) {
-            this.snackBarService.success(`API ${finalResult.result.deployed ? 'deployed' : 'created'} successfully!`);
+            this.snackBarService.success(
+              this.languageService.translate(
+                finalResult.result.deployed ? 'apis.creation.v4.snackbar.deployed' : 'apis.creation.v4.snackbar.created',
+              ),
+            );
           } else {
             // When some non-blocking error happen
             this.snackBarService.error(finalResult.errorMessages.join('\n'));
@@ -160,7 +166,7 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
         },
         error => {
           // When the error is blocking
-          this.snackBarService.error(error.message ?? 'An error occurred while creating the API');
+          this.snackBarService.error(error.message ?? this.languageService.translate('apis.creation.v4.snackbar.createError'));
         },
       );
   }
@@ -229,7 +235,7 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
       map(apiEntity => ({ apiCreationPayload, result: { api: apiEntity }, errorMessages: [] })),
       catchError(err => {
         // Blocking error - If thrown, stop observable chain
-        return throwError({ message: err.error?.message ?? `Error occurred when creating API!` });
+        return throwError({ message: err.error?.message ?? this.languageService.translate('apis.creation.v4.snackbar.createFail') });
       }),
     );
   }
@@ -253,13 +259,23 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
             this.apiPlanV2Service.publish(api.id, plan.id).pipe(
               // If publish failed, return error message as result
               catchError(err => {
-                return of(`Error while publishing plan "${plan.name}": ${err.error?.message}.`);
+                return of(
+                  this.languageService.translate('apis.creation.v4.snackbar.publishPlan', {
+                    name: plan.name,
+                    reason: err.error?.message ?? '',
+                  }),
+                );
               }),
             ),
           ),
           // If create failed, return error message as result
           catchError(err => {
-            return of(`Error while creating plan "${plan.name}": ${err.error?.message}.`);
+            return of(
+              this.languageService.translate('apis.creation.v4.snackbar.createPlan', {
+                name: plan.name,
+                reason: err.error?.message ?? '',
+              }),
+            );
           }),
         ),
       ),
@@ -299,7 +315,10 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
       catchError(err => {
         return of({
           ...previousResult,
-          errorMessages: [...previousResult.errorMessages, `Error while starting API: ${err.error?.message}.`],
+          errorMessages: [
+            ...previousResult.errorMessages,
+            this.languageService.translate('apis.creation.v4.snackbar.startApi', { reason: err.error?.message ?? '' }),
+          ],
         });
       }),
     );
@@ -315,7 +334,10 @@ export class ApiCreationV4Component implements OnInit, OnDestroy {
       catchError(err => {
         return of({
           ...previousResult,
-          errorMessages: [...previousResult.errorMessages, `Error while asking for review: ${err.error?.message}.`],
+          errorMessages: [
+            ...previousResult.errorMessages,
+            this.languageService.translate('apis.creation.v4.snackbar.askReview', { reason: err.error?.message ?? '' }),
+          ],
         });
       }),
     );

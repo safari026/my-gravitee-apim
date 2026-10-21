@@ -22,10 +22,11 @@ import { MatCardModule } from '@angular/material/card';
 import { RuntimeAlertCreateConditionsComponent } from './runtime-alert-create-conditions.component';
 
 import { RuntimeAlertCreateConditionModule } from '../components/runtime-alert-create-condition.module';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertCreateConditionsComponent],
   exports: [RuntimeAlertCreateConditionsComponent],
-  imports: [CommonModule, GioBannerModule, RuntimeAlertCreateConditionModule, ReactiveFormsModule, MatCardModule],
+  imports: [CommonModule, GioBannerModule, RuntimeAlertCreateConditionModule, ReactiveFormsModule, MatCardModule, TranslatePipe],
 })
 export class RuntimeAlertCreateConditionsModule {}

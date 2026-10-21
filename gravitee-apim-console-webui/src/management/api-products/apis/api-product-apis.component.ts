@@ -48,6 +48,8 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
 import { ApiProductV2Service } from '../../../services-ngx/api-product-v2.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 export type ApiProductApiTableDS = {
   id: string;
@@ -87,6 +89,7 @@ const DEFAULT_FILTERS: ApiProductApisTableWrapperFilters = {
     GioAvatarModule,
     GioIconsModule,
     GioTableWrapperModule,
+    TranslatePipe,
   ],
   standalone: true,
 })
@@ -99,6 +102,7 @@ export class ApiProductApisComponent implements OnInit {
   private readonly snackBarService = inject(SnackBarService);
   private readonly matDialog = inject(MatDialog);
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
 
   protected readonly canUpdate = computed(() => this.permissionService.hasAnyMatching(['api_product-definition-u']));
 
@@ -109,7 +113,9 @@ export class ApiProductApisComponent implements OnInit {
   );
   apisTableDS: ApiProductApiTableDS = [];
   apisTableDSUnpaginatedLength = 0;
-  searchLabel = 'Search APIs...';
+  get searchLabel(): string {
+    return this.languageService.translate('common.searchApis');
+  }
   isLoadingData = true;
   readonly apiProductId = toSignal((this.activatedRoute.parent?.params ?? of({})).pipe(map(p => p['apiProductId'] ?? '')), {
     initialValue: '',
@@ -122,7 +128,9 @@ export class ApiProductApisComponent implements OnInit {
   /** Triggers a reload (e.g. after add/remove API) through the same switchMap as filter changes to avoid race conditions. */
   private readonly reloadTrigger$ = new Subject<void>();
 
-  private static readonly LOAD_API_PRODUCT_ERROR = 'An error occurred while loading the API Product';
+  private loadApiProductError(): string {
+    return this.languageService.translate('apiProducts.configuration.loadError');
+  }
 
   private handleError<T>(message: string, fallback: Observable<T>): (error: unknown) => Observable<T> {
     return (error: unknown) => {
@@ -199,12 +207,12 @@ export class ApiProductApisComponent implements OnInit {
       catchError((err: unknown) => {
         // 404 can occur when the product was deleted elsewhere, user opened a bookmark with a removed id, or the id in the URL is invalid.
         if (err instanceof HttpErrorResponse && err.status === 404) {
-          this.snackBarService.error((err.error as { message?: string })?.message ?? 'API Product not found.');
+          this.snackBarService.error((err.error as { message?: string })?.message ?? this.languageService.translate('apiProducts.apis.notFound'));
           this.isLoadingData = false;
           this.router.navigate(['../..'], { relativeTo: this.activatedRoute });
           return EMPTY;
         }
-        return this.handleError('An error occurred while loading APIs', of({ data: [], pagination: { totalCount: 0 } }))(err);
+        return this.handleError(this.languageService.translate('apiProducts.apis.loadError'), of({ data: [], pagination: { totalCount: 0 } }))(err);
       }),
       map(res => ({
         data: res.data ?? [],
@@ -246,7 +254,7 @@ export class ApiProductApisComponent implements OnInit {
   onAddApi(): void {
     const apiProductId = this.apiProductId();
     const addApis$ = this.apiProductV2Service.get(apiProductId).pipe(
-      catchError(this.handleError(ApiProductApisComponent.LOAD_API_PRODUCT_ERROR, EMPTY)),
+      catchError(this.handleError(this.loadApiProductError(), EMPTY)),
       switchMap(apiProduct =>
         this.matDialog
           .open<ApiProductAddApiDialogComponent, ApiProductAddApiDialogData, ApiProductAddApiDialogResult>(
@@ -273,8 +281,8 @@ export class ApiProductApisComponent implements OnInit {
     this.subscribeWithSuccessReload(addApis$, selectedApis => {
       const apiNames = selectedApis.map(api => api.name).join(', ');
       return selectedApis.length === 1
-        ? `API "${apiNames}" has been added to the API Product`
-        : `${selectedApis.length} APIs have been added to the API Product`;
+        ? this.languageService.translate('apiProducts.apis.addSuccessOne', { name: apiNames })
+        : this.languageService.translate('apiProducts.apis.addSuccessMany', { count: selectedApis.length });
     });
   }
 
@@ -288,7 +296,7 @@ export class ApiProductApisComponent implements OnInit {
     return this.apiProductV2Service.updateApiProductApis(apiProductId, updatedApiIds).pipe(
       tap(() => this.apiProductV2Service.notifyApiProductChanged()),
       map(() => selectedApis),
-      catchError(this.handleError('An error occurred while adding the APIs', EMPTY)),
+      catchError(this.handleError(this.languageService.translate('apiProducts.apis.addError'), EMPTY)),
     );
   }
 
@@ -298,9 +306,9 @@ export class ApiProductApisComponent implements OnInit {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Remove API',
-          content: 'Please note that once your API is removed from this API Product, consumers will lose access to this API.',
-          confirmButton: 'Remove',
+          title: this.languageService.translate('apiProducts.apis.removeTitle'),
+          content: this.languageService.translate('apiProducts.apis.removeContent'),
+          confirmButton: this.languageService.translate('common.remove'),
         },
         role: 'alertdialog',
         id: 'removeApiDialog',
@@ -310,17 +318,17 @@ export class ApiProductApisComponent implements OnInit {
         filter((result): result is true => result === true),
         switchMap(() => this.removeApiFromProduct(api, apiProductId)),
       );
-    this.subscribeWithSuccessReload(removeApi$, `API "${api.name}" has been removed from the API Product`);
+    this.subscribeWithSuccessReload(removeApi$, this.languageService.translate('apiProducts.apis.removeSuccessNamed', { name: api.name }));
   }
 
   private removeApiFromProduct(api: ApiProductApiTableDS[0], apiProductId: string): Observable<void> {
     return this.apiProductV2Service.get(apiProductId).pipe(
-      catchError(this.handleError(ApiProductApisComponent.LOAD_API_PRODUCT_ERROR, EMPTY)),
+      catchError(this.handleError(this.loadApiProductError(), EMPTY)),
       switchMap(apiProduct => {
         const updatedApiIds = (apiProduct.apiIds || []).filter(id => id !== api.id);
         return this.apiProductV2Service.updateApiProductApis(apiProductId, updatedApiIds).pipe(
           tap(() => this.apiProductV2Service.notifyApiProductChanged()),
-          catchError(this.handleError('An error occurred while removing the API', EMPTY)),
+          catchError(this.handleError(this.languageService.translate('apiProducts.danger.removeApiError'), EMPTY)),
           map(() => undefined),
         );
       }),

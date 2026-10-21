@@ -15,30 +15,30 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title class="title">Export API</span>
+<span mat-dialog-title class="title">{{ 'apis.general.export.title' | translate }}</span>
 
 <mat-dialog-content class="content">
   <mat-tab-group [(selectedIndex)]="selectedTabIndex">
     <!-- Tab - Export Json -->
-    <mat-tab label="Gravitee API definition">
+    <mat-tab [label]="'apis.general.export.graviteeDefinition' | translate">
       <div *ngIf="exportJsonFrom" class="content__json" [formGroup]="exportJsonFrom">
         <mat-form-field class="content__json__select">
-          <mat-label>Target APIM version</mat-label>
+          <mat-label>{{ 'apis.general.export.targetVersion' | translate }}</mat-label>
           <mat-select #exportVersionSelect formControlName="exportVersion" name="exportVersion">
             <mat-select-trigger *ngIf="getJsonOptions(exportVersionSelect.value) as option">
-              {{ option.label || '' }} <span *ngIf="option.isDeprecated" class="gio-badge-error">Deprecated</span>
+              {{ option.labelKey | translate }} <span *ngIf="option.isDeprecated" class="gio-badge-error">{{ 'apis.general.export.deprecated' | translate }}</span>
             </mat-select-trigger>
 
             <mat-option *ngFor="let option of jsonOptions" [value]="option.id">
-              {{ option.label }} <span *ngIf="option.isDeprecated" class="gio-badge-error">Deprecated</span>
+              {{ option.labelKey | translate }} <span *ngIf="option.isDeprecated" class="gio-badge-error">{{ 'apis.general.export.deprecated' | translate }}</span>
             </mat-option>
           </mat-select>
         </mat-form-field>
 
-        <h5>Include additional data</h5>
+        <h5>{{ 'apis.general.include.title' | translate }}</h5>
         <div class="content__options" formGroupName="options">
           <mat-checkbox class="content__options__option" *ngFor="let option of jsonOptionsCheckbox" [formControlName]="option.id">
-            {{ option.label }}
+            {{ ('apis.general.include.' + option.id) | translate }}
           </mat-checkbox>
         </div>
       </div>
@@ -47,14 +47,14 @@
     <mat-tab>
       <ng-template mat-tab-label>
         <mat-icon class="content__crd__label__icon" svgIcon="gio:kubernetes"></mat-icon>
-        CRD API Definition
+        {{ 'apis.general.export.crdDefinition' | translate }}
       </ng-template>
 
       <gio-banner-info>
         <div>
-          Export your API Definition as a Kubernetes resource and start using our Kubernetes Operator to manage your API declaratively.
+          {{ 'apis.general.export.crdBody' | translate }}
           <a href="https://documentation.gravitee.io/gravitee-kubernetes-operator-gko" target="_blank" rel="noopener noreferrer">
-            Link to documentation <mat-icon class="content__crd__link__icon" svgIcon="gio:external-link"></mat-icon>
+            {{ 'apis.general.export.docsLink' | translate }} <mat-icon class="content__crd__link__icon" svgIcon="gio:external-link"></mat-icon>
           </a>
         </div>
       </gio-banner-info>
@@ -63,6 +63,8 @@
 </mat-dialog-content>
 
 <mat-dialog-actions align="end" class="actions">
-  <button mat-flat-button [mat-dialog-close]="false">Cancel</button>
-  <button color="primary" mat-raised-button (click)="onExport()" data-testid="api_info_export_api">Export</button>
+  <button mat-flat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
+  <button color="primary" mat-raised-button (click)="onExport()" data-testid="api_info_export_api">{{
+    'apis.general.actions.export' | translate
+  }}</button>
 </mat-dialog-actions>

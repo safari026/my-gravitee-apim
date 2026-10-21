@@ -30,6 +30,7 @@ import { MatCardModule } from '@angular/material/card';
 import { MatButton } from '@angular/material/button';
 
 import { RuntimeAlertCreateTimeframeComponent } from './runtime-alert-create-timeframe.component';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertCreateTimeframeComponent],
@@ -49,6 +50,7 @@ import { RuntimeAlertCreateTimeframeComponent } from './runtime-alert-create-tim
     GioFormSlideToggleModule,
     MatCardModule,
     MatButton,
+    TranslatePipe,
   ],
 })
 export class RuntimeAlertCreateTimeframeModule {}

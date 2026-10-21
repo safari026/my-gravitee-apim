@@ -25,6 +25,8 @@ import { GioIconsModule } from '@gravitee/ui-particles-angular';
 
 import { GioTableWrapperComponent } from './gio-table-wrapper.component';
 
+import { TranslatePipe } from '../../i18n/translate.pipe';
+
 @NgModule({
   imports: [
     CommonModule,
@@ -35,6 +37,7 @@ import { GioTableWrapperComponent } from './gio-table-wrapper.component';
     MatIconModule,
     MatSortModule,
     GioIconsModule,
+    TranslatePipe,
   ],
   declarations: [GioTableWrapperComponent],
   exports: [GioTableWrapperComponent],

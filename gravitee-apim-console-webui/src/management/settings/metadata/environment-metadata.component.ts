@@ -19,6 +19,7 @@ import { map } from 'rxjs/operators';
 
 import { MetadataSaveServices } from '../../../components/gio-metadata/gio-metadata.component';
 import { EnvironmentMetadataService } from '../../../services-ngx/environment-metadata.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'environment-metadata',
@@ -33,6 +34,7 @@ export class EnvironmentMetadataComponent implements OnInit {
   constructor(
     private readonly environmentMetadataService: EnvironmentMetadataService,
     private readonly activatedRoute: ActivatedRoute,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -44,6 +46,6 @@ export class EnvironmentMetadataComponent implements OnInit {
       update: updateMetadata => this.environmentMetadataService.updateMetadata(updateMetadata),
       delete: metadataKey => this.environmentMetadataService.deleteMetadata(metadataKey),
     };
-    this.description = `Create Global metadata to retrieve custom information about your API`;
+    this.description = this.languageService.translate('settings.metadata.description');
   }
 }

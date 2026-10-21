@@ -16,30 +16,30 @@
 
 -->
 <div class="gv-forms gv-forms-fluid" layout="column">
-  <h1>Audit</h1>
+  <h1>{{$ctrl.translate('audit.title')}}</h1>
 
   <div class="gv-form">
-    <h2>Logs</h2>
+    <h2>{{$ctrl.translate('audit.logsSection')}}</h2>
     <div class="gv-form-content" layout="column">
       <div layout="row" layout-align="space-around end">
         <div layout="column" layout-align="end start">
           <div layout="row" layout-align="space-around end">
             <md-input-container>
-              <label>Events</label>
+              <label>{{$ctrl.translate('audit.filters.events')}}</label>
               <md-select ng-model="$ctrl.query.event">
                 <md-option ng-value="undefined"></md-option>
                 <md-option ng-repeat="evt in $ctrl.events" ng-value="evt"> {{evt}} </md-option>
               </md-select>
             </md-input-container>
             <md-input-container ng-if="!$ctrl.query.envLog && !$ctrl.query.orgLog && !$ctrl.api">
-              <label>Applications</label>
+              <label>{{$ctrl.translate('audit.filters.applications')}}</label>
               <md-select ng-model="$ctrl.query.application">
                 <md-option ng-value="undefined"></md-option>
                 <md-option ng-repeat="app in $ctrl.applications | orderBy:name" ng-value="app.id"> {{app.name}} </md-option>
               </md-select>
             </md-input-container>
             <md-input-container ng-if="!$ctrl.query.envLog && !$ctrl.query.orgLog && !$ctrl.api">
-              <label>APIs</label>
+              <label>{{$ctrl.translate('audit.filters.apis')}}</label>
               <md-select ng-model="$ctrl.query.api">
                 <md-option ng-value="undefined"></md-option>
                 <md-option ng-repeat="api in $ctrl.apis | orderBy:name" ng-value="api.id"> {{api.name}} </md-option>
@@ -48,22 +48,30 @@
           </div>
         </div>
         <div layout="row" layout-align="space-between end">
-          <md-datepicker ng-model="$ctrl.query.from" md-placeholder="Select start date" md-max-date="$ctrl.query.to"></md-datepicker>
-          <md-datepicker ng-model="$ctrl.query.to" md-placeholder="Select end date" md-min-date="$ctrl.query.from"></md-datepicker>
-          <md-button class="md-raised" ng-click="$ctrl.search()">Apply</md-button>
+          <md-datepicker
+            ng-model="$ctrl.query.from"
+            md-placeholder="{{$ctrl.translate('audit.filters.selectStartDate')}}"
+            md-max-date="$ctrl.query.to"
+          ></md-datepicker>
+          <md-datepicker
+            ng-model="$ctrl.query.to"
+            md-placeholder="{{$ctrl.translate('audit.filters.selectEndDate')}}"
+            md-min-date="$ctrl.query.from"
+          ></md-datepicker>
+          <md-button class="md-raised" ng-click="$ctrl.search()">{{$ctrl.translate('common.apply')}}</md-button>
         </div>
       </div>
       <md-table-container>
         <table md-table class="gv-table-dense">
           <thead md-head>
             <tr md-row>
-              <th md-column>Date</th>
-              <th md-column>User</th>
-              <th md-column ng-if="!$ctrl.api">Type</th>
-              <th md-column ng-if="!$ctrl.api">Reference</th>
-              <th md-column>Event</th>
-              <th md-column>Target</th>
-              <th md-column>Patch</th>
+              <th md-column>{{$ctrl.translate('audit.columns.date')}}</th>
+              <th md-column>{{$ctrl.translate('audit.columns.user')}}</th>
+              <th md-column ng-if="!$ctrl.api">{{$ctrl.translate('audit.columns.type')}}</th>
+              <th md-column ng-if="!$ctrl.api">{{$ctrl.translate('audit.columns.reference')}}</th>
+              <th md-column>{{$ctrl.translate('audit.columns.event')}}</th>
+              <th md-column>{{$ctrl.translate('audit.columns.target')}}</th>
+              <th md-column>{{$ctrl.translate('audit.columns.patch')}}</th>
             </tr>
           </thead>
           <tbody md-body>
@@ -87,12 +95,12 @@
                   ng-model="log.prettyPatch"
                   ng-if="log.displayPatch"
                 ></div>
-                <a ng-if="!log.displayPatch" ng-click="log.displayPatch=true">show</a>
-                <a ng-if="log.displayPatch" ng-click="log.displayPatch=false">hide</a>
+                <a ng-if="!log.displayPatch" ng-click="log.displayPatch=true">{{$ctrl.translate('audit.patch.show')}}</a>
+                <a ng-if="log.displayPatch" ng-click="log.displayPatch=false">{{$ctrl.translate('audit.patch.hide')}}</a>
               </td>
             </tr>
             <tr ng-if="$ctrl.auditLogs.length === 0">
-              <td md-cell colspan="7">No audit logs</td>
+              <td md-cell colspan="7">{{$ctrl.translate('audit.emptyLogs')}}</td>
             </tr>
           </tbody>
         </table>

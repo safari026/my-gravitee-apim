@@ -16,17 +16,17 @@
 
 -->
 <div class="gv-forms-header">
-  <h3>Filters</h3>
-  <div class="ipsum">Filters to apply condition only on a subset of events</div>
+  <h3>{{$ctrl.translate('alerts.filters.title')}}</h3>
+  <div class="ipsum">{{$ctrl.translate('alerts.filters.hint')}}</div>
 </div>
 
 <div class="gv-form-content" layout="column">
   <div style="margin-bottom: 5px" ng-if="$ctrl.alert.filters === undefined || $ctrl.alert.filters.length === 0">
-    <span style="font-style: italic">Filters allow you to apply conditions only on a subset of events.</span>
+    <span style="font-style: italic">{{$ctrl.translate('alerts.filters.empty')}}</span>
     <br />
   </div>
 
-  <a style="margin-bottom: 5px" ng-click="$ctrl.addFilter()" style="font-style: italic" ng-if="!$ctrl.isReadonly">> Add a filter</a>
+  <a style="margin-bottom: 5px" ng-click="$ctrl.addFilter()" style="font-style: italic" ng-if="!$ctrl.isReadonly">{{$ctrl.translate('alerts.filters.add')}}</a>
 
   <gv-alert-trigger-filter
     alert="$ctrl.alert"

@@ -15,15 +15,21 @@
     limitations under the License.
 
 -->
-<span matDialogTitle>Deploy your API Product</span>
+<span matDialogTitle>{{ 'apiProducts.deployDialog.title' | translate }}</span>
 
 <mat-dialog-content class="content">
-  <p class="mat-body-2">You are about to deploy your API Product to the gateway. All subscribed consumers will be affected.</p>
+  <p class="mat-body-2">{{ 'apiProducts.deployDialog.body' | translate }}</p>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-flat-button [mat-dialog-close]="undefined">Cancel</button>
-  <button color="primary" mat-raised-button aria-label="Deploy the API Product" data-testid="deploy_button" (click)="onDeploy()">
-    Deploy
+  <button mat-flat-button [mat-dialog-close]="undefined">{{ 'common.cancel' | translate }}</button>
+  <button
+    color="primary"
+    mat-raised-button
+    [attr.aria-label]="'apiProducts.deployDialog.deployAria' | translate"
+    data-testid="deploy_button"
+    (click)="onDeploy()"
+  >
+    {{ 'apiProducts.deployDialog.deploy' | translate }}
   </button>
 </mat-dialog-actions>

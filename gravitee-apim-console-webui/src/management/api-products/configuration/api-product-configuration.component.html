@@ -22,29 +22,29 @@
       <mat-card-content>
         <div class="configuration-card__fields">
           <mat-form-field appearance="outline" class="configuration-card__fields__name">
-            <mat-label>Name</mat-label>
+            <mat-label>{{ 'apiProducts.configuration.name' | translate }}</mat-label>
             <input matInput formControlName="name" />
             @if (form.controls.name.hasError('required')) {
-              <mat-error>Name is required.</mat-error>
+              <mat-error>{{ 'apiProducts.configuration.nameRequired' | translate }}</mat-error>
             } @else if (form.controls.name.hasError('unique')) {
-              <mat-error>API Product name must be unique</mat-error>
+              <mat-error>{{ 'apiProducts.configuration.nameUnique' | translate }}</mat-error>
             } @else if (form.controls.name.hasError('maxlength')) {
-              <mat-error>Name must be at most {{ nameMaxLength }} characters</mat-error>
+              <mat-error>{{ 'apiProducts.configuration.nameMax' | translate: { max: nameMaxLength } }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="configuration-card__fields__version">
-            <mat-label>Version</mat-label>
+            <mat-label>{{ 'apiProducts.configuration.version' | translate }}</mat-label>
             <input matInput formControlName="version" [maxlength]="versionMaxLength" />
             @if (form.controls.version.hasError('required')) {
-              <mat-error>Version is required.</mat-error>
+              <mat-error>{{ 'apiProducts.configuration.versionRequired' | translate }}</mat-error>
             } @else if (form.controls.version.hasError('maxlength')) {
-              <mat-error>Version must be at most {{ versionMaxLength }} characters</mat-error>
+              <mat-error>{{ 'apiProducts.configuration.versionMax' | translate: { max: versionMaxLength } }}</mat-error>
             }
           </mat-form-field>
 
           <mat-form-field appearance="outline" class="configuration-card__fields__description">
-            <mat-label>Description</mat-label>
+            <mat-label>{{ 'apiProducts.configuration.description' | translate }}</mat-label>
             <textarea matInput formControlName="description" rows="4"></textarea>
           </mat-form-field>
         </div>

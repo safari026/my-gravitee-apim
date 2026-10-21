@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { MatDialogModule } from '@angular/material/dialog';
 import { CommonModule } from '@angular/common';
@@ -55,6 +56,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     GioTableWrapperModule,
     GioFormTagsInputModule,
     GioPermissionModule,
+    TranslatePipe,
   ],
   declarations: [CustomUserFieldsComponent, CustomUserFieldsDialogComponent],
   exports: [CustomUserFieldsComponent],

@@ -33,10 +33,11 @@ import { AnalyticsTopFailedApi, AnalyticsDefinitionVersion } from '../../../../e
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'top-failed-apis',
-  imports: [GioLoaderModule, GioTableWrapperModule, MatCardModule, MatSortModule, MatTableModule, DecimalPipe],
+  imports: [GioLoaderModule, GioTableWrapperModule, MatCardModule, MatSortModule, MatTableModule, DecimalPipe, TranslatePipe],
   templateUrl: './top-failed-apis.component.html',
   styleUrl: './top-failed-apis.component.scss',
 })

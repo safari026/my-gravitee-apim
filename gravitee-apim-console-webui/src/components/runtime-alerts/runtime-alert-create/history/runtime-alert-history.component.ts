@@ -27,10 +27,11 @@ import { AlertService } from '../../../../services-ngx/alert.service';
 import { AlertHistoryEvent } from '../../../../entities/alerts/history';
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'runtime-alert-history',
-  imports: [GioTableWrapperModule, MatCardModule, MatButton, MatTableModule],
+  imports: [GioTableWrapperModule, MatCardModule, MatButton, MatTableModule, TranslatePipe],
   templateUrl: './runtime-alert-history.component.html',
   styleUrl: './runtime-alert-history.component.scss',
 })

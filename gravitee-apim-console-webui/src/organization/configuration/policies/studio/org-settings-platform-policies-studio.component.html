@@ -19,7 +19,7 @@
   <gv-design
     *ngIf="!isLoading"
     #gvDesignComponent
-    flowsTitle="Platform flows"
+    [attr.flowsTitle]="'settings.organization.policies.platformFlowsTitle' | translate"
     can-add
     has-policy-filter
     has-conditional-steps
@@ -38,4 +38,4 @@
     (:gv-expression-language:ready)="fetchSpelGrammar($any($event).detail)"
   ></gv-design>
 </div>
-<ng-container *ngIf="isLoading"> Loading... </ng-container>
+<ng-container *ngIf="isLoading"> {{ 'settings.organization.shared.loading' | translate }} </ng-container>

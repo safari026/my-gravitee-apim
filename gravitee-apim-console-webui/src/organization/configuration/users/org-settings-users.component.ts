@@ -22,6 +22,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 
 import { UsersService } from '../../../services-ngx/users.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { PagedResult } from '../../../entities/pagedResult';
 import { User } from '../../../entities/user/user';
 import { UserHelper } from '../../../entities/user/userHelper';
@@ -63,6 +64,7 @@ export class OrgSettingsUsersComponent implements OnInit, OnDestroy {
     private readonly usersService: UsersService,
     private readonly matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -112,9 +114,9 @@ export class OrgSettingsUsersComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '450px',
         data: {
-          title: 'Delete a user',
-          content: `Are you sure you want to delete the user <strong>${displayName}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.organization.users.deleteTitle'),
+          content: this.languageService.translate('settings.organization.users.deleteContent', { name: displayName }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteUserConfirmDialog',
@@ -123,7 +125,11 @@ export class OrgSettingsUsersComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.usersService.remove(userId)),
-        tap(() => this.snackBarService.success(`User ${displayName} is being deleted!`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.users.deleting', { name: displayName }),
+          ),
+        ),
         takeUntil(this.unsubscribe$),
       )
       .subscribe(() => this.filtersStream.next({ ...this.filtersStream.value }));

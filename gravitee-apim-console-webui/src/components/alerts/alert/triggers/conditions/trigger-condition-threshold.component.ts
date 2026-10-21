@@ -19,6 +19,12 @@ const AlertTriggerConditionThresholdComponent: ng.IComponentOptions = {
     isReadonly: '<',
   },
   template: require('html-loader!./trigger-condition-threshold.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
+  controller: [
+    'ngLanguageService',
+    function (ngLanguageService) {
+      this.translate = (key, params) => ngLanguageService.translate(key, params);
+    },
+  ],
 };
 
 export default AlertTriggerConditionThresholdComponent;

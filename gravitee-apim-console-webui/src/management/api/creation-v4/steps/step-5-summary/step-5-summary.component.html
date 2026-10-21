@@ -18,26 +18,26 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__subtitle">Review your API configuration</div>
-      <p class="api-creation-v4__step__header__paragraph-light">Verify all the information is correct before saving</p>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.summary.subtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.summary.hint' | translate }}</p>
     </div>
     <div class="step-5-summary__body">
       <!--    Step 1 -->
       <div id="step-1" class="step-5-summary__step">
-        <div class="mat-h3">API details</div>
+        <div class="mat-h3">{{ 'apis.creation.v4.summary.details' | translate }}</div>
         <div class="step-5-summary__step__body">
           <div class="step-5-summary__step__info">
             <div class="step-5-summary__step__info__row">
-              <span class="step-5-summary__step__info__key">API name:</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.apiName' | translate }}</span>
               <span class="step-5-summary__step__info__value">{{ currentStepPayload.name }}</span>
             </div>
             <div class="step-5-summary__step__info__row">
-              <span class="step-5-summary__step__info__key">Version:</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.version' | translate }}</span>
               <span class="step-5-summary__step__info__value">{{ currentStepPayload.version }}</span>
             </div>
             @if (currentStepPayload.description) {
               <div class="step-5-summary__step__info__row">
-                <span class="step-5-summary__step__info__key">Description:</span>
+                <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.description' | translate }}</span>
                 <span class="step-5-summary__step__info__value">
                   {{ currentStepPayload.description }}
                 </span>
@@ -45,25 +45,25 @@
             }
           </div>
           <div>
-            <button mat-stroked-button (click)="onChangeStepInfo('API details')">Change</button>
+            <button mat-stroked-button (click)="onChangeStepInfo('API details')">{{ 'apis.creation.v4.summary.change' | translate }}</button>
           </div>
         </div>
       </div>
       <!--    Step 2 -->
       <div id="step-2" class="step-5-summary__step">
-        <div class="mat-h3">Entrypoints</div>
+        <div class="mat-h3">{{ 'apis.creation.v4.summary.entrypoints' | translate }}</div>
         <div class="step-5-summary__step__body">
           <div class="step-5-summary__step__info">
             <div class="step-5-summary__step__info__row" *ngIf="paths?.length > 0">
-              <span class="step-5-summary__step__info__key">Path:</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.path' | translate }}</span>
               <span class="step-5-summary__step__info__value">{{ paths.join(', ') }}</span>
             </div>
             <div class="step-5-summary__step__info__row" *ngIf="hosts?.length > 0">
-              <span class="step-5-summary__step__info__key">Host:</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.host' | translate }}</span>
               <span class="step-5-summary__step__info__value">{{ hosts.join(', ') }}</span>
             </div>
             <div class="step-5-summary__step__info__row" *ngIf="host?.length > 0">
-              <span class="step-5-summary__step__info__key">Host:</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.host' | translate }}</span>
               <span>
                 <span class="step-5-summary__step__info__value">{{ host }}</span>
                 <!--                @if (kafkaDomainAndPort$ | async; as kafkaDomainAndPort) {-->
@@ -72,12 +72,14 @@
               </span>
             </div>
             <div class="step-5-summary__step__info__row">
-              <span class="step-5-summary__step__info__key">Type:</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.type' | translate }}</span>
               <span class="gio-badge-accent" *ngFor="let listenerType of listenerTypes">{{ listenerType }}</span>
             </div>
             <div class="step-5-summary__step__info__row">
-              <span class="step-5-summary__step__info__key">Entrypoints:</span>
-              <span class="gio-badge-warning api-creation-v4__badge" *ngIf="!entrypointsDeployable">Not deployed</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.entrypointsKey' | translate }}</span>
+              <span class="gio-badge-warning api-creation-v4__badge" *ngIf="!entrypointsDeployable">{{
+                'apis.creation.v4.notDeployed' | translate
+              }}</span>
               <div class="step-5-summary__badge-list">
                 <ng-container *ngFor="let entrypoint of currentStepPayload.selectedEntrypoints">
                   <span class="gio-badge-accent"
@@ -88,18 +90,20 @@
             </div>
           </div>
           <div>
-            <button mat-stroked-button (click)="onChangeStepInfo('Entrypoints')">Change</button>
+            <button mat-stroked-button (click)="onChangeStepInfo('Entrypoints')">{{ 'apis.creation.v4.summary.change' | translate }}</button>
           </div>
         </div>
       </div>
       <!--    Step 3 -->
       <div id="step-3" class="step-5-summary__step">
-        <div class="mat-h3">Endpoints</div>
+        <div class="mat-h3">{{ 'apis.creation.v4.summary.endpoints' | translate }}</div>
         <div class="step-5-summary__step__body">
           <div class="step-5-summary__step__info">
             <div class="step-5-summary__step__info__row">
-              <span class="step-5-summary__step__info__key">Endpoints:</span>
-              <span class="gio-badge-warning api-creation-v4__badge" *ngIf="!endpointsDeployable">Not deployed</span>
+              <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.endpointsKey' | translate }}</span>
+              <span class="gio-badge-warning api-creation-v4__badge" *ngIf="!endpointsDeployable">{{
+                'apis.creation.v4.notDeployed' | translate
+              }}</span>
               <div class="step-5-summary__badge-list">
                 <ng-container *ngFor="let endpoint of currentStepPayload.selectedEndpoints">
                   <span class="gio-badge-accent"
@@ -110,7 +114,7 @@
             </div>
           </div>
           <div>
-            <button mat-stroked-button (click)="onChangeStepInfo('Endpoints')">Change</button>
+            <button mat-stroked-button (click)="onChangeStepInfo('Endpoints')">{{ 'apis.creation.v4.summary.change' | translate }}</button>
           </div>
         </div>
       </div>
@@ -119,39 +123,41 @@
         <ng-container>
           @for (endpoint of currentStepPayload.selectedEndpoints; track endpoint) {
             <div id="step-31" class="step-5-summary__step">
-              <div class="mat-h3">Model</div>
+              <div class="mat-h3">{{ 'apis.creation.v4.summary.model' | translate }}</div>
               <div class="step-5-summary__step__body">
                 <div class="step-5-summary__step__info">
                   <div style="display: flex; align-items: center; gap: 16px">
                     <div style="flex: 1">
                       <div class="step-5-summary__step__info__row">
-                        <span class="step-5-summary__step__info__key">Provider:</span>
+                        <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.provider' | translate }}</span>
                         <span class="step-5-summary__step__info__value">{{ endpoint.configuration?.['provider'] }}</span>
                       </div>
                       <div class="step-5-summary__step__info__row">
-                        <span class="step-5-summary__step__info__key">Provider URL:</span>
+                        <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.providerUrl' | translate }}</span>
                         <span class="step-5-summary__step__info__value">{{ endpoint.configuration?.['target'] }}</span>
                       </div>
                     </div>
                     <div>
-                      <button mat-stroked-button (click)="onChangeStepInfo('Endpoints')">Change</button>
+                      <button mat-stroked-button (click)="onChangeStepInfo('Endpoints')">{{
+                        'apis.creation.v4.summary.change' | translate
+                      }}</button>
                     </div>
                   </div>
 
                   <div class="step-5-summary__step" *ngFor="let model of endpoint.configuration?.['models']; let i = index">
-                    <div class="mat-h3">Model {{ i + 1 }}</div>
+                    <div class="mat-h3">{{ 'apis.creation.v4.summary.modelN' | translate: { number: i + 1 } }}</div>
                     <div class="step-5-summary__step__body">
                       <div class="step-5-summary__step__info">
                         <div class="step-5-summary__step__info__row">
-                          <span class="step-5-summary__step__info__key">Name:</span>
+                          <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.modelName' | translate }}</span>
                           <span class="step-5-summary__step__info__value">{{ model.name }}</span>
                         </div>
                         <div class="step-5-summary__step__info__row">
-                          <span class="step-5-summary__step__info__key">Cost per 1m tokens (input) ($):</span>
+                          <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.inputCost' | translate }}</span>
                           <span class="step-5-summary__step__info__value">{{ model.inputPrice }}</span>
                         </div>
                         <div class="step-5-summary__step__info__row">
-                          <span class="step-5-summary__step__info__key">Cost per 1m tokens (output) ($):</span>
+                          <span class="step-5-summary__step__info__key">{{ 'apis.creation.v4.summary.outputCost' | translate }}</span>
                           <span class="step-5-summary__step__info__value">{{ model.outputPrice }}</span>
                         </div>
                       </div>
@@ -165,11 +171,13 @@
       }
       <!--    Step 4 -->
       <div id="step-4" class="step-5-summary__step">
-        <div class="mat-h3">Security</div>
+        <div class="mat-h3">{{ 'apis.creation.v4.summary.security' | translate }}</div>
         <div class="step-5-summary__step__body">
           <div class="step-5-summary__step__info">
             <div>
-              <span class="gio-badge-warning api-creation-v4__badge" *ngIf="hasInvalidNativeKafkaPlans">Conflicting Authentication</span>
+              <span class="gio-badge-warning api-creation-v4__badge" *ngIf="hasInvalidNativeKafkaPlans">{{
+                'apis.creation.v4.summary.conflictingAuth' | translate
+              }}</span>
             </div>
             <div class="step-5-summary__step__info__security__content" *ngIf="currentStepPayload.plans?.length > 0; else elseBlock">
               <div class="step-5-summary__step__info__security__content__card" *ngFor="let plan of currentStepPayload.plans">
@@ -179,9 +187,9 @@
                 </div>
               </div>
             </div>
-            <ng-template #elseBlock> No plans are selected. </ng-template>
+            <ng-template #elseBlock> {{ 'apis.creation.v4.summary.noPlans' | translate }} </ng-template>
           </div>
-          <button mat-stroked-button (click)="onChangeStepInfo('Security')">Change</button>
+          <button mat-stroked-button (click)="onChangeStepInfo('Security')">{{ 'apis.creation.v4.summary.change' | translate }}</button>
         </div>
       </div>
       <div *ngIf="shouldUpgrade">
@@ -195,13 +203,13 @@
     <div class="step-5-summary__footer">
       <div class="step-5-summary__footer__actions">
         <button mat-stroked-button type="button" (click)="createApi({ deploy: false, askForReview: false })">
-          Save API<mat-icon
+          {{ 'apis.creation.v4.summary.saveApi' | translate }}<mat-icon
             svgIcon="gio:info"
             class="step-5-summary__footer__button-icon"
-            matTooltip="Your API definition will be saved, but not deployed to the gateway."
+            [matTooltip]="'apis.creation.v4.summary.saveApiTooltip' | translate"
           ></mat-icon>
         </button>
-        <div [matTooltip]="deployTooltipMessage">
+        <div [matTooltip]="deployTooltipKey | translate">
           <button
             *ngIf="!hasReviewEnabled"
             data-testid="deploy_api_button"
@@ -211,7 +219,7 @@
             [disabled]="shouldUpgrade || hasInvalidNativeKafkaPlans"
             (click)="createApi({ deploy: true, askForReview: false })"
           >
-            Save & Deploy API<mat-icon svgIcon="gio:info" class="step-5-summary__footer__button-icon"></mat-icon>
+            {{ 'apis.creation.v4.summary.saveDeploy' | translate }}<mat-icon svgIcon="gio:info" class="step-5-summary__footer__button-icon"></mat-icon>
           </button>
         </div>
 
@@ -223,13 +231,13 @@
           type="button"
           (click)="createApi({ deploy: false, askForReview: true })"
         >
-          Save API & Ask for a review<mat-icon
+          {{ 'apis.creation.v4.summary.saveReview' | translate }}<mat-icon
             svgIcon="gio:info"
-            matTooltip="Your API definition will be saved and asked for review."
+            [matTooltip]="'apis.creation.v4.summary.saveReviewTooltip' | translate"
           ></mat-icon>
         </button>
       </div>
-      <span class="step-5-summary__footer__message">Your API will be saved, but not published to the portal</span>
+      <span class="step-5-summary__footer__message">{{ 'apis.creation.v4.summary.notPublished' | translate }}</span>
     </div>
   </mat-card-content>
 </mat-card>

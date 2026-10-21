@@ -17,7 +17,7 @@
 -->
 <mat-card class="api-quality">
   <mat-card-content>
-    <h3>Quality</h3>
+    <h3>{{ 'apis.general.quality.title' | translate }}</h3>
     <div *ngIf="qualityMetrics; else loading" class="api-quality__content">
       <gio-circular-percentage class="api-quality__content__score" [score]="qualityMetrics.score"></gio-circular-percentage>
       <div class="api-quality__content__list">
@@ -36,6 +36,6 @@
 </mat-card>
 
 <ng-template #loading>
-  Loading...
+  {{ 'common.loading' | translate }}
   <mat-progress-bar mode="indeterminate"></mat-progress-bar>
 </ng-template>

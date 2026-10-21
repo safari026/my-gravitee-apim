@@ -28,6 +28,7 @@ import { TasksHarness } from './tasks.harness';
 import { PagedResult } from '../../entities/pagedResult';
 import { Task } from '../../entities/task/task';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../shared/testing';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 describe('TasksComponent', () => {
   const responseData = {
@@ -296,6 +297,31 @@ describe('TasksComponent', () => {
         'subscriptions',
         subscriptionId,
       ]);
+    });
+  });
+
+  describe('i18n', () => {
+    beforeEach(async () => {
+      await init();
+      expectGetTasks();
+    });
+
+    it('should switch task labels to Russian and back', async () => {
+      const tasks = await harness.getTasks();
+      expect(await tasks[0].getText()).toContain('Subscription');
+
+      TestBed.inject(LanguageService).setLanguage('ru');
+      fixture.detectChanges();
+
+      const tasksRu = await harness.getTasks();
+      expect(await tasksRu[0].getText()).toContain('Подписка');
+      expect(await (await tasksRu[0].getHarness(MatButtonHarness)).getText()).toEqual('Подтвердить');
+
+      TestBed.inject(LanguageService).setLanguage('en');
+      fixture.detectChanges();
+
+      const tasksEn = await harness.getTasks();
+      expect(await tasksEn[0].getText()).toContain('Subscription');
     });
   });
 });

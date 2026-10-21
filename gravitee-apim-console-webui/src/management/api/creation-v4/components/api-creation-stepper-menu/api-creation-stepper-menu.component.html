@@ -18,8 +18,8 @@
 <mat-card class="api-creation-stepper">
   <mat-card-content>
     <div class="api-creation-stepper__header">
-      <div class="api-creation-stepper__title mat-h3">API creation</div>
-      <div class="api-creation-stepper__subtitle">Follow these steps to get your API</div>
+      <div class="api-creation-stepper__title mat-h3">{{ 'apis.creation.v4.stepper.title' | translate }}</div>
+      <div class="api-creation-stepper__subtitle">{{ 'apis.creation.v4.stepper.subtitle' | translate }}</div>
     </div>
 
     <div class="steps">
@@ -29,7 +29,7 @@
         [step]="menuStep"
         [activeStep]="currentStep.group.groupNumber === menuStep.groupNumber"
         (goToStep)="goToStep.emit($event)"
-        >{{ menuStep.label }}</stepper-menu-step
+        >{{ menuLabelKey(menuStep.label) | translate }}</stepper-menu-step
       >
     </div>
   </mat-card-content>

@@ -14,10 +14,16 @@
  * limitations under the License.
  */
 
-import { Component, Input, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, DestroyRef, inject, Injector, Input, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import * as Highcharts from 'highcharts';
+import { skip } from 'rxjs/operators';
 
 import { GioChartAbstractComponent } from '../gio-chart-abstract/gio-chart-abstract.component';
+import { LanguageService } from '../../i18n/language.service';
+
+const DEFAULT_INPUT_DESCRIPTION = 'Nb hits';
+const DEFAULT_TOTAL_INPUT_DESCRIPTION = 'Total';
 
 const defaultLabelFormatter = function () {
   const name = this.point.name;
@@ -65,14 +71,19 @@ export interface GioChartPieInput {
   standalone: false,
 })
 export class GioChartPieComponent extends GioChartAbstractComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly cdr = inject(ChangeDetectorRef);
+
   @Input()
   public input: GioChartPieInput[];
 
   @Input()
-  public inputDescription = 'Nb hits';
+  public inputDescription = DEFAULT_INPUT_DESCRIPTION;
 
   @Input()
-  public totalInputDescription = 'Total';
+  public totalInputDescription = DEFAULT_TOTAL_INPUT_DESCRIPTION;
 
   @Input()
   public showLegend = false;
@@ -86,7 +97,19 @@ export class GioChartPieComponent extends GioChartAbstractComponent implements O
   chartOptions: Highcharts.Options;
 
   ngOnInit() {
-    const totalInputDescription = this.totalInputDescription;
+    this.buildChartOptions();
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => {
+        this.buildChartOptions();
+        this.cdr.markForCheck();
+      });
+  }
+
+  private buildChartOptions(): void {
+    const inputDescription = this.resolveInputDescription();
+    const totalInputDescription = this.resolveTotalInputDescription();
 
     this.chartOptions = {
       title: {
@@ -135,11 +158,25 @@ export class GioChartPieComponent extends GioChartAbstractComponent implements O
       series: [
         {
           data: this.input?.map(d => [d.label, d.value]),
-          name: this.inputDescription,
+          name: inputDescription,
           colors: this.input?.map(d => d.color),
           type: 'pie',
         },
       ],
     };
+  }
+
+  private resolveInputDescription(): string {
+    if (this.inputDescription === DEFAULT_INPUT_DESCRIPTION) {
+      return this.languageService.translate('common.hits');
+    }
+    return this.inputDescription;
+  }
+
+  private resolveTotalInputDescription(): string {
+    if (this.totalInputDescription === DEFAULT_TOTAL_INPUT_DESCRIPTION) {
+      return this.languageService.translate('common.total');
+    }
+    return this.totalInputDescription;
   }
 }

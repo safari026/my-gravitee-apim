@@ -21,6 +21,7 @@ import { GioLicenseService, LicenseOptions, MenuSearchItem } from '@gravitee/ui-
 
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { ApimFeature, UTMTags } from '../../../shared/components/gio-license/gio-license-data';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { cleanRouterLink } from '../../../util/router-link.util';
 
 export interface MenuItem {
@@ -45,6 +46,7 @@ export class OrganizationNavigationService {
   constructor(
     private readonly permissionService: GioPermissionService,
     private readonly gioLicenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
 
   public getOrganizationNavigationRoutes(): GroupItem[] {
@@ -68,7 +70,7 @@ export class OrganizationNavigationService {
         return {
           name: item.displayName,
           routerLink: `/_organization/${cleanRouterLink(item.routerLink)}`,
-          category: `Organization / ${groupItem.title}`,
+          category: this.t('settings.organization.navigation.searchCategory', { group: groupItem.title }),
           groupIds: [ORGANIZATION_MENU_GROUP_ID],
         };
       }),
@@ -78,65 +80,65 @@ export class OrganizationNavigationService {
   private appendConsoleItems(): GroupItem {
     const items = this.filterMenuByPermission([
       {
-        displayName: 'Authentication',
+        displayName: this.t('settings.organization.navigation.items.authentication'),
         routerLink: 'identities',
         permissions: ['organization-identity_provider-r'],
       },
       {
-        displayName: 'Settings',
+        displayName: this.t('settings.organization.navigation.items.settings'),
         routerLink: 'settings',
         permissions: ['organization-settings-r'],
       },
     ]);
-    return items.length > 0 ? { title: 'Console', items } : null;
+    return items.length > 0 ? { title: this.t('settings.organization.navigation.groups.console'), items } : null;
   }
 
   private appendUserManagementItems(): GroupItem {
     const items = this.filterMenuByPermission([
       {
-        displayName: 'Users',
+        displayName: this.t('settings.organization.navigation.items.users'),
         routerLink: 'users',
         permissions: ['organization-user-c', 'organization-user-r', 'organization-user-u', 'organization-user-d'],
       },
       {
-        displayName: 'Roles',
+        displayName: this.t('settings.organization.navigation.items.roles'),
         routerLink: 'roles',
         permissions: ['organization-role-r'],
       },
     ]);
-    return items.length > 0 ? { title: 'User Management', items } : null;
+    return items.length > 0 ? { title: this.t('settings.organization.navigation.groups.userManagement'), items } : null;
   }
 
   private appendGatewayItems(): GroupItem {
     const items = this.filterMenuByPermission([
       {
-        displayName: 'Entrypoints & Sharding Tags',
+        displayName: this.t('settings.organization.navigation.items.entrypoints'),
         routerLink: 'entrypoints-and-sharding-tags',
         permissions: ['organization-tag-r'],
       },
       {
-        displayName: 'Tenants',
+        displayName: this.t('settings.organization.navigation.items.tenants'),
         routerLink: 'tenants',
         permissions: ['organization-tenant-r'],
       },
       {
-        displayName: 'Policies',
+        displayName: this.t('settings.organization.navigation.items.policies'),
         routerLink: 'policies',
         permissions: ['organization-policies-r'],
       },
     ]);
-    return items.length > 0 ? { title: 'Gateway', items } : null;
+    return items.length > 0 ? { title: this.t('settings.organization.navigation.groups.gateway'), items } : null;
   }
 
   private appendNotificationsItems(): GroupItem {
     const items = this.filterMenuByPermission([
       {
-        displayName: 'Templates',
+        displayName: this.t('settings.organization.navigation.items.templates'),
         routerLink: 'notification-templates',
         permissions: ['organization-notification_templates-r'],
       },
     ]);
-    return items.length > 0 ? { title: 'Notifications', items } : null;
+    return items.length > 0 ? { title: this.t('settings.organization.navigation.groups.notifications'), items } : null;
   }
 
   private appendAuditItems() {
@@ -146,28 +148,32 @@ export class OrganizationNavigationService {
       .pipe(map(notAllowed => (notAllowed ? 'gio:lock' : null)));
     const items = this.filterMenuByPermission([
       {
-        displayName: 'Audit',
+        displayName: this.t('settings.organization.navigation.items.audit'),
         routerLink: 'audit',
         licenseOptions,
         iconRight$,
       },
     ]);
 
-    return items.length > 0 ? { title: 'Audit', items } : null;
+    return items.length > 0 ? { title: this.t('settings.organization.navigation.groups.audit'), items } : null;
   }
 
   private appendCockpitItems(): GroupItem {
     const items = this.filterMenuByPermission([
       {
-        displayName: 'Discover Gravitee Cloud',
+        displayName: this.t('settings.organization.navigation.items.graviteeCloud'),
         routerLink: 'gravitee-cloud',
         permissions: ['organization-installation-r'],
       },
     ]);
-    return items.length > 0 ? { title: 'Gravitee Cloud', items } : null;
+    return items.length > 0 ? { title: this.t('settings.organization.navigation.groups.graviteeCloud'), items } : null;
   }
 
   private filterMenuByPermission(menuItems: MenuItem[]): MenuItem[] {
     return menuItems.filter(item => !item.permissions || this.permissionService.hasAnyMatching(item.permissions));
+  }
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.languageService.translate(key, params);
   }
 }

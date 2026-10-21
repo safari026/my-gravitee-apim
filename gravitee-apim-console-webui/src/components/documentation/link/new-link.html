@@ -20,22 +20,22 @@
 <div class="gv-form-content" layout="column">
   <form name="$ctrl.formNewLink" ng-submit="$ctrl.save()" novalidate>
     <md-input-container class="md-block">
-      <label>Type of link</label>
+      <label>{{$ctrl.translate('settings.documentation.typeOfLink')}}</label>
       <md-select ng-model="$ctrl.page.configuration.resourceType" required ng-change="$ctrl.onChangeLinkType()">
-        <md-option ng-value="'external'">External link</md-option>
-        <md-option ng-value="'page'">Link to an existing documentation page</md-option>
-        <md-option ng-value="'category'">Link to a category</md-option>
+        <md-option ng-value="'external'">{{$ctrl.translate('settings.documentation.externalLink')}}</md-option>
+        <md-option ng-value="'page'">{{$ctrl.translate('settings.documentation.pageLink')}}</md-option>
+        <md-option ng-value="'category'">{{$ctrl.translate('settings.documentation.categoryLink')}}</md-option>
       </md-select>
     </md-input-container>
 
     <!-- external link-->
     <div ng-if="'external' === $ctrl.page.configuration.resourceType">
       <md-input-container class="md-block" flex-gt-xs>
-        <label>Name</label>
+        <label>{{$ctrl.translate('settings.documentation.name')}}</label>
         <input ng-model="$ctrl.page.name" required />
       </md-input-container>
       <md-input-container class="md-block" flex-gt-xs>
-        <label>URL</label>
+        <label>{{$ctrl.translate('settings.documentation.url')}}</label>
         <input ng-model="$ctrl.page.content" required />
       </md-input-container>
     </div>
@@ -43,7 +43,7 @@
     <!-- category link -->
     <div ng-if="'category' === $ctrl.page.configuration.resourceType">
       <md-input-container ng-if="'category' === $ctrl.page.configuration.resourceType" class="md-block" flex-gt-xs>
-        <label>Target</label>
+        <label>{{$ctrl.translate('settings.documentation.target')}}</label>
         <md-select ng-model="$ctrl.page.content" required>
           <md-option ng-repeat="resource in $ctrl.categoryResources" ng-value="resource.key" ng-click="$ctrl.updateLinkName(resource.name)">
             {{ resource.name }}
@@ -55,17 +55,17 @@
         ng-model="$ctrl.page.configuration.inherit"
         ng-true-value="'true'"
         ng-false-value="'false'"
-        aria-label="Inherit from related category"
+        aria-label="{{$ctrl.translate('settings.documentation.inheritFromCategory')}}"
       >
-        Inherit name from category
+        {{$ctrl.translate('settings.documentation.inheritFromCategory')}}
       </md-switch>
       <div class="hint">
-        <div ng-if="$ctrl.page.configuration.inherit === 'false'">Switch on to inherit name from category.</div>
-        <div ng-if="$ctrl.page.configuration.inherit === 'true'">Switch off to be able to modify the name of the link.</div>
+        <div ng-if="$ctrl.page.configuration.inherit === 'false'">{{$ctrl.translate('settings.documentation.inheritFromCategoryOn')}}</div>
+        <div ng-if="$ctrl.page.configuration.inherit === 'true'">{{$ctrl.translate('settings.documentation.inheritFromCategoryOff')}}</div>
       </div>
 
       <md-input-container class="md-block" ng-if="$ctrl.page.configuration.inherit === 'false'" flex-gt-xs>
-        <label>Name</label>
+        <label>{{$ctrl.translate('settings.documentation.name')}}</label>
         <input ng-model="$ctrl.page.name" />
       </md-input-container>
     </div>
@@ -73,7 +73,7 @@
     <!-- page link -->
     <div ng-if="'page' === $ctrl.page.configuration.resourceType">
       <md-input-container ng-if="'page' === $ctrl.page.configuration.resourceType" class="md-block" flex-gt-xs>
-        <label>Target</label>
+        <label>{{$ctrl.translate('settings.documentation.target')}}</label>
         <md-select ng-model="$ctrl.page.content" required ng-change="$ctrl.checkIfFolder()">
           <md-option ng-repeat="resource in $ctrl.pageList" ng-value="resource.id" ng-click="$ctrl.updateLinkName(resource.name)">
             <md-icon md-svg-src="assets/logo_{{resource.type | lowercase}}.svg"></md-icon>
@@ -87,25 +87,25 @@
           ng-model="$ctrl.page.configuration.inherit"
           ng-true-value="'true'"
           ng-false-value="'false'"
-          aria-label="Inherit from related page"
+          aria-label="{{$ctrl.translate('settings.documentation.inheritFromPage')}}"
         >
-          Inherit name and translations from page
+          {{$ctrl.translate('settings.documentation.inheritFromPage')}}
         </md-switch>
         <div class="hint">
-          <div ng-if="$ctrl.page.configuration.inherit === 'false'">Switch on to inherit name and translations from page.</div>
+          <div ng-if="$ctrl.page.configuration.inherit === 'false'">{{$ctrl.translate('settings.documentation.inheritFromPageOn')}}</div>
           <div ng-if="$ctrl.page.configuration.inherit === 'true'">
-            Switch off to be able to modify the name of the link and add custom translations.
+            {{$ctrl.translate('settings.documentation.inheritFromPageOff')}}
           </div>
         </div>
 
         <md-input-container class="md-block" ng-if="$ctrl.page.configuration.inherit === 'false'" flex-gt-xs>
-          <label>Name</label>
+          <label>{{$ctrl.translate('settings.documentation.name')}}</label>
           <input ng-model="$ctrl.page.name" />
         </md-input-container>
       </div>
       <div ng-if="$ctrl.page.content && $ctrl.page.content === 'root'">
         <md-input-container class="md-block" flex-gt-xs>
-          <label>Name</label>
+          <label>{{$ctrl.translate('settings.documentation.name')}}</label>
           <input ng-model="$ctrl.page.name" required />
         </md-input-container>
       </div>
@@ -113,7 +113,7 @@
 
     <div class="md-actions gravitee-api-save-button" layout="row">
       <md-button class="md-raised md-primary" type="submit" ng-disabled="$ctrl.formNewLink.$invalid || $ctrl.formNewLink.$pristine">
-        Save
+        {{$ctrl.translate('common.save')}}
       </md-button>
     </div>
   </form>

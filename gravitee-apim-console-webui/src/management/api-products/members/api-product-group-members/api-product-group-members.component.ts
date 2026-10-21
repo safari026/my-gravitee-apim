@@ -21,6 +21,7 @@ import { isEqual } from 'lodash';
 
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export interface ApiProductGroupCardData {
   id: string;
@@ -44,7 +45,7 @@ export interface ApiProductGroupMembersViewModel {
 @Component({
   selector: 'api-product-group-members',
   standalone: true,
-  imports: [MatCardModule, MatTableModule, GioAvatarModule, GioLoaderModule, GioTableWrapperModule],
+  imports: [MatCardModule, MatTableModule, GioAvatarModule, GioLoaderModule, GioTableWrapperModule, TranslatePipe],
   templateUrl: './api-product-group-members.component.html',
   styleUrls: ['./api-product-group-members.component.scss'],
 })

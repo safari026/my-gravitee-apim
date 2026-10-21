@@ -26,27 +26,29 @@ import { AlertCondition } from '../../../../../../../entities/alerts/conditions'
   template: `
     <form *ngIf="form" [formGroup]="form" class="condition-row">
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Operator</mat-label>
+        <mat-label>{{ 'alerts.condition.operator' | translate }}</mat-label>
         <mat-select formControlName="operator" required>
-          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator.name }}</mat-option>
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{
+            'alerts.operators.' + operator.key | translate
+          }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.operator.hasError('required')">Operator is required.</mat-error>
+        <mat-error *ngIf="form.controls.operator.hasError('required')">{{ 'alerts.runtime.operatorRequired' | translate }}</mat-error>
       </mat-form-field>
 
       <mat-form-field *ngIf="thresholdType === 'number'; else percentageBlock" class="condition-row__form-field">
-        <mat-label>Threshold</mat-label>
+        <mat-label>{{ 'alerts.condition.threshold' | translate }}</mat-label>
         <input matInput formControlName="threshold" type="number" min="1" required />
-        <mat-error *ngIf="form.controls.threshold.hasError('required')">Threshold is required.</mat-error>
-        <mat-error *ngIf="form.controls.threshold.hasError('min')">The threshold value should be greater or equals to 1</mat-error>
+        <mat-error *ngIf="form.controls.threshold.hasError('required')">{{ 'alerts.condition.thresholdRequired' | translate }}</mat-error>
+        <mat-error *ngIf="form.controls.threshold.hasError('min')">{{ 'alerts.runtime.thresholdMinGte1' | translate }}</mat-error>
       </mat-form-field>
 
       <ng-template #percentageBlock>
         <mat-form-field class="condition-row__form-field">
-          <mat-label>Threshold (%)</mat-label>
+          <mat-label>{{ 'alerts.condition.thresholdPercent' | translate }}</mat-label>
           <input matInput formControlName="threshold" type="number" min="1" max="100" required />
-          <mat-error *ngIf="form.controls.threshold.hasError('required')">Threshold is required.</mat-error>
-          <mat-error *ngIf="form.controls.threshold.hasError('min')">The threshold value should be greater or equals to 1</mat-error>
-          <mat-error *ngIf="form.controls.threshold.hasError('max')">The threshold value should be not greater than 100</mat-error>
+          <mat-error *ngIf="form.controls.threshold.hasError('required')">{{ 'alerts.condition.thresholdRequired' | translate }}</mat-error>
+          <mat-error *ngIf="form.controls.threshold.hasError('min')">{{ 'alerts.runtime.thresholdMinGte1' | translate }}</mat-error>
+          <mat-error *ngIf="form.controls.threshold.hasError('max')">{{ 'alerts.runtime.thresholdMaxLte100' | translate }}</mat-error>
         </mat-form-field>
       </ng-template>
     </form>

@@ -22,22 +22,22 @@
       <h1>{{$ctrl.page.name}}</h1>
       <sup ng-if="($ctrl.isLink() && $ctrl.page.configuration.inherit && $ctrl.page.configuration.inherit === 'true')">
         <ng-md-icon icon="lock" size="12" style="fill: black">
-          <md-tooltip>Inherited</md-tooltip>
+          <md-tooltip>{{$ctrl.translate('settings.documentation.inherited')}}</md-tooltip>
         </ng-md-icon>
       </sup>
-      <a ng-click="$ctrl.cancel()">Back to Documentation</a>
+      <a ng-click="$ctrl.cancel()">{{$ctrl.translate('settings.documentation.backToDocumentation')}}</a>
     </div>
     <div ng-if="$ctrl.canUpdate">
-      <md-button class="md-raised md-primary" type="button" ng-if="$ctrl.page.source" ng-click="$ctrl.fetch()"> Fetch </md-button>
+      <md-button class="md-raised md-primary" type="button" ng-if="$ctrl.page.source" ng-click="$ctrl.fetch()"> {{$ctrl.translate('settings.documentation.fetch')}} </md-button>
       <md-button
         type="button"
         ng-disabled="$ctrl.readOnly"
         class="md-raised md-primary"
         ng-click="$ctrl.toggleRename()"
-        aria-label="Rename"
+        aria-label="{{$ctrl.translate('settings.documentation.rename')}}"
         ng-disabled="$ctrl.isLink() && $ctrl.page.configuration.inherit && $ctrl.page.configuration.inherit !== 'false'"
       >
-        Rename
+        {{$ctrl.translate('settings.documentation.rename')}}
       </md-button>
       <md-button
         ng-if="$ctrl.page.metadata.edit_url"
@@ -45,19 +45,19 @@
         style="padding: 0 6px"
         target="_blank"
         href="{{$ctrl.page.metadata.edit_url}}"
-        aria-label="Edit"
+        aria-label="{{$ctrl.translate('common.edit')}}"
       >
         <md-icon
           md-svg-icon="assets/logo_{{$ctrl.page.metadata.provider_name | lowercase}}-fetcher.svg"
           style="height: 24px; padding: 0; vertical-align: inherit"
         ></md-icon>
-        Edit on {{$ctrl.page.metadata.provider_name}}
+        {{$ctrl.translate('settings.documentation.editOn', { provider: $ctrl.page.metadata.provider_name })}}
       </md-button>
     </div>
   </div>
 
   <div ng-if="$ctrl.usedAsGeneralConditions()" class="page-as-general-conditions">
-    This page is used as general conditions, if you change the content please remember to notify your API subscribers
+    {{$ctrl.translate('settings.documentation.generalConditionsBanner')}}
   </div>
   <div class="gv-forms-header" layout="row" layout-align="space-between end" ng-if="rename">
     <div>
@@ -65,10 +65,10 @@
       <input type="text" ng-model="$ctrl.newName" autofocus />
     </div>
     <div>
-      <md-button ng-disabled="$ctrl.readOnly" type="button" class="md-raised md-primary" ng-click="$ctrl.rename()" aria-label="Edit">
-        Save
+      <md-button ng-disabled="$ctrl.readOnly" type="button" class="md-raised md-primary" ng-click="$ctrl.rename()" aria-label="{{$ctrl.translate('common.save')}}">
+        {{$ctrl.translate('common.save')}}
       </md-button>
-      <md-button ng-disabled="$ctrl.readOnly" class="md-raised" type="button" ng-click="$ctrl.toggleRename()"> Cancel </md-button>
+      <md-button ng-disabled="$ctrl.readOnly" class="md-raised" type="button" ng-click="$ctrl.toggleRename()"> {{$ctrl.translate('common.cancel')}} </md-button>
     </div>
   </div>
 
@@ -77,14 +77,14 @@
     <div class="gv-form-content" layout="column">
       <div ng-if="!$ctrl.readOnly && editorReadonly && $ctrl.canUpdate" class="gv-page-draft-banner">
         <ng-md-icon icon="warning" class="gv-warning"></ng-md-icon>
-        Page's content is retrieved from an external source. If you want to edit content manually,
-        <a ng-click="$ctrl.goToExternalSource()">please change the configuration</a>.
+        {{$ctrl.translate('settings.documentation.externalSourceBanner')}}
+        <a ng-click="$ctrl.goToExternalSource()">{{$ctrl.translate('settings.documentation.changeConfiguration')}}</a>.
       </div>
 
       <md-tabs md-dynamic-height md-selected="$ctrl.selectedTab">
         <!-- page -->
         <md-tab md-on-select="$ctrl.selectTab(0)">
-          <md-tab-label>Page</md-tab-label>
+          <md-tab-label>{{$ctrl.translate('settings.documentation.tabs.page')}}</md-tab-label>
           <md-tab-body>
             <div ng-if="$ctrl.currentTab === 'content'">
               <div class="gv-page-draft-banner" ng-if="!$ctrl.page.published">
@@ -114,7 +114,7 @@
 
         <!-- translations -->
         <md-tab md-on-select="$ctrl.selectTab(1)" ng-if="$ctrl.canUpdate && !$ctrl.isMarkdownTemplate()">
-          <md-tab-label>Translations</md-tab-label>
+          <md-tab-label>{{$ctrl.translate('settings.documentation.tabs.translations')}}</md-tab-label>
           <md-tab-body>
             <gv-edit-page-translations
               ng-if="$ctrl.page != null"
@@ -130,7 +130,7 @@
 
         <!-- configuration -->
         <md-tab md-on-select="$ctrl.selectTab(2)" ng-if="$ctrl.canUpdate && !$ctrl.isLink()">
-          <md-tab-label>Configuration</md-tab-label>
+          <md-tab-label>{{$ctrl.translate('settings.documentation.tabs.configuration')}}</md-tab-label>
           <md-tab-body>
             <gv-edit-page-configuration page="$ctrl.page" read-only="$ctrl.readOnly"></gv-edit-page-configuration>
           </md-tab-body>
@@ -138,7 +138,7 @@
 
         <!-- external source -->
         <md-tab md-on-select="$ctrl.selectTab(3)" ng-if="$ctrl.canUpdate && !$ctrl.isLink()">
-          <md-tab-label>External Source</md-tab-label>
+          <md-tab-label>{{$ctrl.translate('settings.documentation.tabs.externalSource')}}</md-tab-label>
           <md-tab-body>
             <gv-edit-page-fetchers
               ng-if="$ctrl.fetchers != null"
@@ -153,7 +153,7 @@
 
         <!-- access control -->
         <md-tab md-on-select="$ctrl.selectTab(4)" ng-if="$ctrl.canUpdate">
-          <md-tab-label>Access Control</md-tab-label>
+          <md-tab-label>{{$ctrl.translate('settings.documentation.tabs.accessControl')}}</md-tab-label>
           <md-tab-body>
             <gv-edit-page-acls
               read-only="!!$ctrl.readOnly && $ctrl.page != null"
@@ -170,7 +170,7 @@
           md-on-select="$ctrl.selectTab(5)"
           ng-if="!$ctrl.readOnly && $ctrl.canUpdate && ($ctrl.isMarkdown() || $ctrl.isAsciiDoc() || $ctrl.isAsyncApi())"
         >
-          <md-tab-label>Attached resources</md-tab-label>
+          <md-tab-label>{{$ctrl.translate('settings.documentation.tabs.attachedResources')}}</md-tab-label>
           <md-tab-body>
             <gv-edit-page-attached-resources
               api-id="$ctrl.apiId"
@@ -198,22 +198,22 @@
           ng-disabled="!$ctrl.page.name"
           ng-if="$ctrl.currentTab !== 'translations' || !$ctrl.currentTranslation"
         >
-          Save
+          {{$ctrl.translate('common.save')}}
         </md-button>
         <md-button
           ng-disabled="$ctrl.readOnly"
           permission
           permission-only="['environment-documentation-u', 'api-documentation-u']"
           type="button"
-          aria-label="Save translation"
+          aria-label="{{$ctrl.translate('settings.documentation.saveTranslation')}}"
           class="md-raised md-primary"
           ng-click="$ctrl.saveTranslation()"
           ng-if="$ctrl.currentTab === 'translations' && $ctrl.currentTranslation"
           ng-disabled="!$ctrl.currentTranslation.configuration.lang || !$ctrl.currentTranslation.name"
         >
-          Save translation
+          {{$ctrl.translate('settings.documentation.saveTranslation')}}
         </md-button>
-        <md-button ng-disabled="$ctrl.readOnly" class="md-raised" type="button" ng-click="$ctrl.reset()"> Reset </md-button>
+        <md-button ng-disabled="$ctrl.readOnly" class="md-raised" type="button" ng-click="$ctrl.reset()"> {{$ctrl.translate('common.reset')}} </md-button>
         <md-button
           ng-disabled="$ctrl.readOnly"
           class="md-flat md-warn"
@@ -221,7 +221,7 @@
           ng-if="$ctrl.page.source"
           ng-click="$ctrl.removeFetcher()"
         >
-          Remove External Source Configuration
+          {{$ctrl.translate('settings.documentation.removeExternalSource')}}
         </md-button>
       </div>
     </div>

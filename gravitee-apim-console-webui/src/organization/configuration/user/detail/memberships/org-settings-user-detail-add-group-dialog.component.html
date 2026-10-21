@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>Add a group with roles</h2>
+<h2 mat-dialog-title>{{ 'settings.organization.userMemberships.addGroupWithRolesTitle' | translate }}</h2>
 
 @if (groups(); as groups) {
   <form autocomplete="off" [formGroup]="addGroupForm" (ngSubmit)="onSubmit()">
@@ -23,27 +23,27 @@
       @if (groups.length !== 0) {
         <div class="form">
           <mat-form-field>
-            <mat-label>Group</mat-label>
-            <mat-select formControlName="groupId" aria-label="Groups selection" required>
+            <mat-label>{{ 'settings.organization.userMemberships.group' | translate }}</mat-label>
+            <mat-select formControlName="groupId" [attr.aria-label]="'settings.organization.userMemberships.groupsSelectionAria' | translate" required>
               @for (group of groups; track group.id) {
                 <mat-option [value]="group.id">{{ group.name }}</mat-option>
               }
             </mat-select>
             @if (addGroupForm.get('groupId').hasError('required')) {
-              <mat-error>Group is required.</mat-error>
+              <mat-error>{{ 'settings.organization.userMemberships.groupRequired' | translate }}</mat-error>
             }
           </mat-form-field>
 
           <div class="form__checkbox-field">
-            <mat-checkbox formControlName="isAdmin">Group admin role</mat-checkbox>
+            <mat-checkbox formControlName="isAdmin">{{ 'settings.organization.userMemberships.groupAdminRole' | translate }}</mat-checkbox>
           </div>
 
           <mat-form-field>
-            <mat-label>API Role</mat-label>
+            <mat-label>{{ 'settings.organization.userMemberships.apiRoleColumn' | translate }}</mat-label>
             <mat-select
               #apiRoleSelect="matSelect"
               formControlName="apiRole"
-              aria-label="API role"
+              [attr.aria-label]="'settings.organization.userMemberships.apiRoleLabel' | translate"
               panelClass="org-settings-user-detail__role-select-panel"
             >
               <mat-select-trigger>
@@ -54,7 +54,7 @@
                   >{{ apiRoleSelect.triggerValue }}</span
                 >
               </mat-select-trigger>
-              <mat-option>-- None --</mat-option>
+              <mat-option>{{ 'settings.organization.userMemberships.none' | translate }}</mat-option>
               @for (apiRole of apiRoles(); track apiRole.name) {
                 <mat-option
                   [disabled]="apiRole.system"
@@ -69,11 +69,11 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>API Product Role</mat-label>
+            <mat-label>{{ 'settings.organization.userMemberships.apiProductRoleColumn' | translate }}</mat-label>
             <mat-select
               #apiProductRoleSelect="matSelect"
               formControlName="apiProductRole"
-              aria-label="API Product role"
+              [attr.aria-label]="'settings.organization.userMemberships.apiProductRoleLabel' | translate"
               panelClass="org-settings-user-detail__role-select-panel"
             >
               <mat-select-trigger>
@@ -84,7 +84,7 @@
                   >{{ apiProductRoleSelect.triggerValue }}</span
                 >
               </mat-select-trigger>
-              <mat-option>-- None --</mat-option>
+              <mat-option>{{ 'settings.organization.userMemberships.none' | translate }}</mat-option>
               @for (apiProductRole of apiProductRoles(); track apiProductRole.name) {
                 <mat-option
                   [disabled]="apiProductRole.system"
@@ -99,11 +99,11 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Application Role</mat-label>
+            <mat-label>{{ 'settings.organization.userMemberships.applicationRoleColumn' | translate }}</mat-label>
             <mat-select
               #applicationRoleSelect="matSelect"
               formControlName="applicationRole"
-              aria-label="Application role"
+              [attr.aria-label]="'settings.organization.userMemberships.applicationRoleLabel' | translate"
               panelClass="org-settings-user-detail__role-select-panel"
             >
               <mat-select-trigger>
@@ -114,7 +114,7 @@
                   >{{ applicationRoleSelect.triggerValue }}</span
                 >
               </mat-select-trigger>
-              <mat-option>-- None --</mat-option>
+              <mat-option>{{ 'settings.organization.userMemberships.none' | translate }}</mat-option>
               @for (applicationRole of applicationRoles(); track applicationRole.name) {
                 <mat-option
                   [disabled]="applicationRole.system"
@@ -129,11 +129,11 @@
           </mat-form-field>
 
           <mat-form-field>
-            <mat-label>Integration Role</mat-label>
+            <mat-label>{{ 'settings.organization.userMemberships.integrationRoleColumn' | translate }}</mat-label>
             <mat-select
               #integrationRoleSelect="matSelect"
               formControlName="integrationRole"
-              aria-label="Integration role"
+              [attr.aria-label]="'settings.organization.userMemberships.integrationRoleLabel' | translate"
               panelClass="org-settings-user-detail__role-select-panel"
             >
               <mat-select-trigger>
@@ -144,7 +144,7 @@
                   >{{ integrationRoleSelect.triggerValue }}</span
                 >
               </mat-select-trigger>
-              <mat-option>-- None --</mat-option>
+              <mat-option>{{ 'settings.organization.userMemberships.none' | translate }}</mat-option>
               @for (integrationRole of integrationRoles(); track integrationRole.name) {
                 <mat-option
                   [disabled]="integrationRole.system"
@@ -159,17 +159,17 @@
           </mat-form-field>
         </div>
       } @else {
-        <gio-banner-warning>All groups are already added.</gio-banner-warning>
+        <gio-banner-warning>{{ 'settings.organization.userMemberships.allGroupsAdded' | translate }}</gio-banner-warning>
       }
       @if (addGroupForm.dirty && addGroupForm.hasError('leastOneIsRequired')) {
-        <div class="mat-caption error">At least one role is mandatory</div>
+        <div class="mat-caption error">{{ 'settings.organization.userMemberships.roleMandatory' | translate }}</div>
       }
     </mat-dialog-content>
 
     <mat-dialog-actions class="actions">
-      <button mat-button [mat-dialog-close]="false">Cancel</button>
+      <button mat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
       @if (groups.length !== 0) {
-        <button mat-button [disabled]="addGroupForm.invalid" color="primary" type="submit">Save</button>
+        <button mat-button [disabled]="addGroupForm.invalid" color="primary" type="submit">{{ 'common.save' | translate }}</button>
       }
     </mat-dialog-actions>
   </form>

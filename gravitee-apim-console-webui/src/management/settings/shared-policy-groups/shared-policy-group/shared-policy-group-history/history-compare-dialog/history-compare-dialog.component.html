@@ -15,14 +15,19 @@
     limitations under the License.
 
 -->
-<span mat-dialog-title
-  >Comparing version {{ data.left.version }} with version {{ rightIsPending ? 'to be deployed' : data.right.version }}</span
->
+<span mat-dialog-title>{{
+  'settings.sharedPolicyGroups.compareTitle'
+    | translate
+      : {
+          left: data.left.version,
+          right: rightIsPending ? ('settings.sharedPolicyGroups.comparePendingRight' | translate) : data.right.version,
+        }
+}}</span>
 
 <mat-dialog-content class="diff">
   <gio-diff [left]="left" [right]="right"></gio-diff>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-flat-button [mat-dialog-close]="false">Close</button>
+  <button mat-flat-button [mat-dialog-close]="false">{{ 'common.close' | translate }}</button>
 </mat-dialog-actions>

@@ -33,6 +33,7 @@ import { Group, Member } from '../../../../entities/management-api-v2';
 import { Role } from '../../../../entities/role/role';
 import { Constants } from '../../../../entities/Constants';
 import { ApiProduct } from '../../../../entities/management-api-v2/api-product';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export interface ApiProductOwnershipDialogData {
   apiProduct: ApiProduct;
@@ -71,6 +72,7 @@ type TransferOwnershipFormControls = {
     MatButtonModule,
     GioBannerModule,
     GioFormUserAutocompleteModule,
+    TranslatePipe,
   ],
 })
 export class ApiProductTransferOwnershipDialogComponent {

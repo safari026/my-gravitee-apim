@@ -23,8 +23,10 @@ import { MatRippleModule } from '@angular/material/core';
 import { ApiCreationStepperMenuComponent } from './api-creation-stepper-menu.component';
 import { StepperMenuStepComponent } from './stepper-menu-step/stepper-menu-step.component';
 
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
+
 @NgModule({
-  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatRippleModule, GioIconsModule],
+  imports: [CommonModule, ReactiveFormsModule, MatCardModule, MatRippleModule, GioIconsModule, TranslatePipe],
   declarations: [ApiCreationStepperMenuComponent, StepperMenuStepComponent],
   exports: [ApiCreationStepperMenuComponent],
 })

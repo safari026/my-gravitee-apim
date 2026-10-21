@@ -19,9 +19,9 @@
   <cdk-accordion-item class="accordion" #accordionItem="cdkAccordionItem" [attr.aria-expanded]="!accordionItem.expanded">
     <div class="accordion__header" (click)="accordionItem.toggle()">
       <div class="accordion__header__titles" (click)="accordionItem.toggle()">
-        <h4 class="accordion__header__titles__title" (click)="accordionItem.toggle()">Aggregation</h4>
+        <h4 class="accordion__header__titles__title" (click)="accordionItem.toggle()">{{ 'alerts.aggregation.title' | translate }}</h4>
         <div class="accordion__header__titles__subtitle" (click)="accordionItem.toggle()">
-          Aggregation allow you to group results based on a property
+          {{ 'alerts.aggregation.empty' | translate }}
         </div>
       </div>
       <mat-icon [svgIcon]="accordionItem.expanded ? 'gio:nav-arrow-up' : 'gio:nav-arrow-down'"></mat-icon>
@@ -29,9 +29,9 @@
     <div *ngIf="accordionItem.expanded" class="accordion__form">
       <form [formGroup]="form">
         <mat-form-field class="condition-row__form-field">
-          <mat-label>Property</mat-label>
+          <mat-label>{{ 'alerts.condition.property' | translate }}</mat-label>
           <mat-select formControlName="property">
-            <mat-option>None</mat-option>
+            <mat-option>{{ 'alerts.runtime.aggregationNone' | translate }}</mat-option>
             <mat-option *ngFor="let property of properties" [value]="property">{{ property.name }}</mat-option>
           </mat-select>
         </mat-form-field>

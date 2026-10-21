@@ -18,21 +18,24 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 2</div>
-      <div class="api-creation-v4__step__header__subtitle">Configure your API entrypoints</div>
-      <p class="api-creation-v4__step__header__paragraph-light">Configure how your users will consume your API</p>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 2 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.entrypoints.configSubtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.entrypoints.configHint' | translate }}</p>
     </div>
 
     <form *ngIf="formGroup" [formGroup]="formGroup" (ngSubmit)="save()">
       <div id="http-listeners" class="api-creation-v4__form-container" *ngIf="hasHttpListeners">
-        <h3>Configure common entrypoints fields</h3>
+        <h3>{{ 'apis.creation.v4.entrypoints.commonFields' | translate }}</h3>
 
         <div class="step-2-entrypoints-2-config__listeners-context__title">
-          <span class="mat-body-strong">Entrypoints context</span>
+          <span class="mat-body-strong">{{ 'apis.creation.v4.entrypoints.context' | translate }}</span>
 
           <button id="switchListenerType" mat-button type="button" (click)="enableVirtualHost = !enableVirtualHost">
             <mat-icon [svgIcon]="enableVirtualHost ? 'gio:cancel' : 'gio:check'"></mat-icon>
-            {{ enableVirtualHost ? 'Disable virtual hosts' : 'Enable virtual hosts' }}
+            {{
+              (enableVirtualHost ? 'apis.creation.v4.entrypoints.disableVirtualHosts' : 'apis.creation.v4.entrypoints.enableVirtualHosts')
+                | translate
+            }}
           </button>
         </div>
 
@@ -44,16 +47,16 @@
         ></gio-form-listeners-virtual-host>
       </div>
       <div id="tcp-listeners" class="api-creation-v4__form-container" *ngIf="hasTcpListeners">
-        <h3>Configure common entrypoints fields</h3>
+        <h3>{{ 'apis.creation.v4.entrypoints.commonFields' | translate }}</h3>
 
         <div class="step-2-entrypoints-2-config__listeners-context__title">
-          <span class="mat-body-strong">Entrypoints context</span>
+          <span class="mat-body-strong">{{ 'apis.creation.v4.entrypoints.context' | translate }}</span>
         </div>
 
         <gio-form-listeners-tcp-hosts formControlName="hosts"></gio-form-listeners-tcp-hosts>
       </div>
       <div id="kafka-listeners" class="api-creation-v4__form-container" *ngIf="hasKafkaListeners">
-        <h3>Configure common entrypoints fields</h3>
+        <h3>{{ 'apis.creation.v4.entrypoints.commonFields' | translate }}</h3>
 
         @if (kafkaDomains$ | async; as kafkaDomains) {
           <gio-form-listeners-kafka-host formControlName="kafka" [kafkaDomains]="kafkaDomains" />
@@ -86,7 +89,7 @@
       </div>
 
       <div class="api-creation-v4__step__footer">
-        <button id="previous" mat-stroked-button type="button" (click)="goBack()">Previous</button>
+        <button id="previous" mat-stroked-button type="button" (click)="goBack()">{{ 'apis.creation.v4.previous' | translate }}</button>
         <button
           id="validate"
           mat-flat-button
@@ -95,7 +98,7 @@
           [disabled]="formGroup.invalid || formGroup.pending"
           data-testid="validate_entrypoints_button"
         >
-          Validate my entrypoints
+          {{ 'apis.creation.v4.entrypoints.validate' | translate }}
         </button>
       </div>
     </form>

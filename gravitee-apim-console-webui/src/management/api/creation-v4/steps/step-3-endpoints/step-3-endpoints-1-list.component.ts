@@ -33,6 +33,7 @@ import {
 } from '../../../component/gio-information-dialog/gio-information-dialog.component';
 import { IconService } from '../../../../../services-ngx/icon.service';
 import { ApimFeature, UTMTags } from '../../../../../shared/components/gio-license/gio-license-data';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 
 @Component({
   selector: 'step-3-endpoints-1-list',
@@ -64,6 +65,7 @@ export class Step3Endpoints1ListComponent implements OnInit, OnDestroy {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly iconService: IconService,
     private readonly licenseService: GioLicenseService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -115,11 +117,10 @@ export class Step3Endpoints1ListComponent implements OnInit, OnDestroy {
       return this.matDialog
         .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
           data: {
-            title: 'Are you sure?',
-            content:
-              'Changing the endpoints list has impact on all following configuration steps. You will have to review all previously entered data.',
-            confirmButton: 'Validate',
-            cancelButton: 'Discard',
+            title: this.languageService.translate('apis.creation.v4.confirm.title'),
+            content: this.languageService.translate('apis.creation.v4.confirm.endpointsContent'),
+            confirmButton: this.languageService.translate('apis.creation.v4.confirm.validate'),
+            cancelButton: this.languageService.translate('apis.creation.v4.confirm.discard'),
           },
         })
         .afterClosed()

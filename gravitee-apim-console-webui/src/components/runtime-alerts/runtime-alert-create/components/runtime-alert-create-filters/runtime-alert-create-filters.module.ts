@@ -26,6 +26,7 @@ import { MatCard, MatCardContent, MatCardHeader, MatCardSubtitle, MatCardTitle }
 import { RuntimeAlertCreateFiltersComponent } from './runtime-alert-create-filters.component';
 
 import { RuntimeAlertCreateConditionModule } from '../components/runtime-alert-create-condition.module';
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
 
 @NgModule({
   declarations: [RuntimeAlertCreateFiltersComponent],
@@ -45,6 +46,7 @@ import { RuntimeAlertCreateConditionModule } from '../components/runtime-alert-c
     MatCardHeader,
     MatCard,
     MatCardContent,
+    TranslatePipe,
   ],
 })
 export class RuntimeAlertCreateFiltersModule {}

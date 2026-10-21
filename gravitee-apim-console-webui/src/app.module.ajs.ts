@@ -224,6 +224,7 @@ import SearchAndSelectComponent from './components/logs/search-and-select/search
 import { SearchAndSelectController } from './components/logs/search-and-select/search-and-select.controller';
 import AlertsActivityComponentAjs from './management/alerts/activity/alerts-activity.component.ajs';
 import { ApiV2Service } from './services-ngx/api-v2.service';
+import { LanguageService } from './shared/i18n/language.service';
 import { GioPermissionService } from './shared/components/gio-permission/gio-permission.service';
 import { ApiAnalyticsOverviewComponentAjs } from './management/api/analytics/overview/analytics-overview.component.ajs';
 import { Router } from '@angular/router';
@@ -522,6 +523,7 @@ graviteeManagementModule.service('TokenService', TokenService);
 graviteeManagementModule.service('EnvironmentService', EnvironmentService);
 graviteeManagementModule.service('FlowService', FlowService);
 graviteeManagementModule.factory('ngApiV2Service', downgradeInjectable(ApiV2Service));
+graviteeManagementModule.factory('ngLanguageService', downgradeInjectable(LanguageService));
 graviteeManagementModule.factory('ngGioPermissionService', downgradeInjectable(GioPermissionService));
 graviteeManagementModule.factory('ngGroupV2Service', downgradeInjectable(GroupV2Service));
 graviteeManagementModule.factory('ngApiPlanV2Service', downgradeInjectable(ApiPlanV2Service));

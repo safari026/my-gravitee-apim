@@ -25,6 +25,7 @@ import { GroupV2Service } from '../../../../services-ngx/group-v2.service';
 import { GioTableWrapperModule } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioTableWrapperFilters } from '../../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { UsersService } from '../../../../services-ngx/users.service';
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 
 export type Group = {
   id: string;
@@ -42,7 +43,7 @@ class MemberDataSource {
   selector: 'cluster-group-members',
   templateUrl: './cluster-group-members.component.html',
   styleUrls: ['./cluster-group-members.component.scss'],
-  imports: [MatCardModule, GioTableWrapperModule, MatTableModule, GioAvatarModule, GioLoaderModule, NgIf],
+  imports: [MatCardModule, GioTableWrapperModule, MatTableModule, GioAvatarModule, GioLoaderModule, NgIf, TranslatePipe],
 })
 export class ClusterGroupMembersComponent implements OnInit {
   destroyRef = inject(DestroyRef);

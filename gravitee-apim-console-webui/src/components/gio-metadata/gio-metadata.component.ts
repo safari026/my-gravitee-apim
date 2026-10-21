@@ -25,6 +25,7 @@ import { GioMetadataDialogComponent, GioMetadataDialogData } from './dialog/gio-
 
 import { Metadata, MetadataFormat, NewMetadata, UpdateMetadata } from '../../entities/metadata/metadata';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 import { SearchApiMetadataParam } from '../../entities/management-api-v2';
 import { GioTableWrapperFilters, Sort } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { gioTableFilterCollection } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.util';
@@ -87,7 +88,6 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   displayedColumns: string[];
   permissionPrefix: string;
   referenceType: 'API' | 'Application' | 'Global';
-  headerTitle: string;
   totalResults: number;
   form: FormGroup;
 
@@ -96,9 +96,9 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   private dataSourceAllResults: MetadataVM[];
 
   // API filter
-  apiSourceFilters: { label: string; value: string }[] = [
-    { label: 'Global', value: 'GLOBAL' },
-    { label: 'API', value: 'API' },
+  apiSourceFilters: { labelKey: string; value: string }[] = [
+    { labelKey: 'settings.metadata.headerTypes.Global', value: 'GLOBAL' },
+    { labelKey: 'settings.metadata.headerTypes.API', value: 'API' },
   ];
 
   @Input()
@@ -113,11 +113,11 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   constructor(
     private matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
     this.referenceType = this.metadataSaveServices.type;
-    this.headerTitle = this.referenceType === 'Application' ? 'Notification Template' : this.referenceType;
     this.permissionPrefix = this.referenceType === 'Global' ? 'environment' : this.referenceType.toLowerCase();
     this.displayedColumns = ['key', 'name', 'format', 'value', 'actions'];
     this.filterLocally = this.metadataSaveServices.paginate !== true;
@@ -158,6 +158,10 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
       .subscribe();
   }
 
+  get headerTitle(): string {
+    return this.languageService.translate(`settings.metadata.headerTypes.${this.referenceType}`);
+  }
+
   ngOnDestroy() {
     this.unsubscribe$.next();
     this.unsubscribe$.unsubscribe();
@@ -186,9 +190,9 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
             value: metadata.value,
           }),
         ),
-        tap(_ => this.snackBarService.success(`'${element.name}' updated successfully`)),
+        tap(_ => this.snackBarService.success(this.languageService.translate('settings.metadata.updated', { name: element.name }))),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Error during update');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('settings.metadata.updateError'));
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),
@@ -198,11 +202,16 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
   }
 
   deleteMetadata(element: MetadataVM): void {
-    const title = element.defaultValue ? 'Reset global metadata' : `Delete ${this.referenceType} metadata`;
+    const type = this.languageService.translate(`settings.metadata.headerTypes.${this.referenceType}`);
+    const title = element.defaultValue
+      ? this.languageService.translate('settings.metadata.resetTitle')
+      : this.languageService.translate('settings.metadata.deleteTitle', { type });
     const content = element.defaultValue
-      ? `Are you sure you want to reset '${element.name}' to its original value '${element.defaultValue}'?`
-      : `Are you sure you want to delete ${this.referenceType} metadata '${element.name}'?`;
-    const confirmButton = element.defaultValue ? 'Reset' : 'Delete';
+      ? this.languageService.translate('settings.metadata.resetContent', { name: element.name, defaultValue: element.defaultValue })
+      : this.languageService.translate('settings.metadata.deleteContent', { type, name: element.name });
+    const confirmButton = element.defaultValue
+      ? this.languageService.translate('common.reset')
+      : this.languageService.translate('common.delete');
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
@@ -217,9 +226,9 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirmed => confirmed),
         switchMap(_ => this.metadataSaveServices.delete(element.key)),
-        tap(_ => this.snackBarService.success(`'${element.name}' deleted successfully`)),
+        tap(_ => this.snackBarService.success(this.languageService.translate('settings.metadata.deleted', { name: element.name }))),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Error during deletion');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('settings.metadata.deleteError'));
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),
@@ -247,10 +256,10 @@ export class GioMetadataComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(metadata => {
-          this.snackBarService.success(`'${metadata.name}' created successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.metadata.created', { name: metadata.name }));
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during creation');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('settings.metadata.createError'));
           return EMPTY;
         }),
         switchMap(_ => this.initializeTable()),

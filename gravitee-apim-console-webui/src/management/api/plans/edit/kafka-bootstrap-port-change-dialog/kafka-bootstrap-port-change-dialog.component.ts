@@ -26,6 +26,8 @@ import { MatButton } from '@angular/material/button';
 import { MatCheckbox } from '@angular/material/checkbox';
 import { GioBannerModule } from '@gravitee/ui-particles-angular';
 
+import { TranslatePipe } from '../../../../../shared/i18n/translate.pipe';
+
 export interface KafkaBootstrapPortChangeDialogData {
   host?: string;
   oldPort?: number;
@@ -35,7 +37,7 @@ export interface KafkaBootstrapPortChangeDialogData {
 @Component({
   selector: 'kafka-bootstrap-port-change-dialog',
   standalone: true,
-  imports: [GioBannerModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButton, MatCheckbox],
+  imports: [GioBannerModule, MatDialogTitle, MatDialogContent, MatDialogActions, MatDialogClose, MatButton, MatCheckbox, TranslatePipe],
   templateUrl: './kafka-bootstrap-port-change-dialog.component.html',
 })
 export class KafkaBootstrapPortChangeDialogComponent {
@@ -45,4 +47,12 @@ export class KafkaBootstrapPortChangeDialogComponent {
     public readonly dialogRef: MatDialogRef<KafkaBootstrapPortChangeDialogComponent, boolean>,
     @Inject(MAT_DIALOG_DATA) public readonly data: KafkaBootstrapPortChangeDialogData,
   ) {}
+
+  get oldAddress(): string {
+    return this.data.host ? `${this.data.host}:${this.data.oldPort}` : String(this.data.oldPort ?? '');
+  }
+
+  get newAddress(): string {
+    return this.data.host ? `${this.data.host}:${this.data.newPort}` : String(this.data.newPort ?? '');
+  }
 }

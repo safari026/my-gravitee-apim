@@ -153,7 +153,7 @@ describe('ApiPlanListComponent', () => {
             actions: '',
           },
         ]);
-        expect(rowCells).toEqual([['', 'Default plan', 'API Key', 'PUBLISHED', '🙅, 🔑', '']]);
+        expect(rowCells).toEqual([['', 'Default plan', 'API Key', 'Published', '🙅, 🔑', '']]);
       }));
 
       it('should not display PUSH plan option for V2 APIs', fakeAsync(async () => {
@@ -209,7 +209,7 @@ describe('ApiPlanListComponent', () => {
         expectApiPlansListRequest([closedPlan], 'CLOSED');
 
         const { rowCells } = await computePlansTableCells();
-        expect(rowCells).toEqual([['', 'closed plan 🚪', 'API Key', 'CLOSED', 'tag1', '']]);
+        expect(rowCells).toEqual([['', 'closed plan 🚪', 'API Key', 'Closed', 'tag1', '']]);
       }));
 
       it('should search and not find any plan', fakeAsync(async () => {
@@ -335,7 +335,7 @@ describe('ApiPlanListComponent', () => {
           expectApiPlansListRequest([plan], 'STAGING');
 
           const table = await computePlansTableCells();
-          expect(table.rowCells).toEqual([['', 'publish me ☁️️', 'API Key', 'STAGING', 'tag1', '']]);
+          expect(table.rowCells).toEqual([['', 'publish me ☁️️', 'API Key', 'Staging', 'tag1', '']]);
 
           await planListHarness.clickPublishPlanButton();
 
@@ -357,7 +357,7 @@ describe('ApiPlanListComponent', () => {
           expectApiPlansListRequest([plan], 'STAGING');
 
           const table = await computePlansTableCells();
-          expect(table.rowCells).toEqual([['', 'publish me ☁️️', 'API Key', 'STAGING', 'tag1', '']]);
+          expect(table.rowCells).toEqual([['', 'publish me ☁️️', 'API Key', 'Staging', 'tag1', '']]);
 
           await planListHarness.clickPublishPlanButton();
 
@@ -378,7 +378,7 @@ describe('ApiPlanListComponent', () => {
           await initComponent([plan]);
 
           const table = await computePlansTableCells();
-          expect(table.rowCells).toEqual([['', 'deprecate me 😥️', 'API Key', 'PUBLISHED', 'tag1', '']]);
+          expect(table.rowCells).toEqual([['', 'deprecate me 😥️', 'API Key', 'Published', 'tag1', '']]);
 
           await planListHarness.clickDeprecatePlanButton();
 
@@ -397,7 +397,7 @@ describe('ApiPlanListComponent', () => {
           await initComponent([plan]);
 
           const table = await computePlansTableCells();
-          expect(table.rowCells).toEqual([['', 'deprecate me 😥️', 'API Key', 'PUBLISHED', 'tag1', '']]);
+          expect(table.rowCells).toEqual([['', 'deprecate me 😥️', 'API Key', 'Published', 'tag1', '']]);
 
           await planListHarness.clickDeprecatePlanButton();
 
@@ -419,7 +419,7 @@ describe('ApiPlanListComponent', () => {
             await initComponent([plan]);
 
             const table = await computePlansTableCells();
-            expect(table.rowCells).toEqual([['', 'close me 🚪️', 'API Key', 'PUBLISHED', 'tag1', '']]);
+            expect(table.rowCells).toEqual([['', 'close me 🚪️', 'API Key', 'Published', 'tag1', '']]);
 
             await planListHarness.clickClosePlanButton();
 
@@ -440,7 +440,7 @@ describe('ApiPlanListComponent', () => {
             await initComponent([plan]);
 
             const table = await computePlansTableCells();
-            expect(table.rowCells).toEqual([['', 'close me 🚪️', 'API Key', 'PUBLISHED', 'tag1', '']]);
+            expect(table.rowCells).toEqual([['', 'close me 🚪️', 'API Key', 'Published', 'tag1', '']]);
 
             await planListHarness.clickClosePlanButton();
 
@@ -544,7 +544,7 @@ describe('ApiPlanListComponent', () => {
             actions: '',
           },
         ]);
-        expect(rowCells).toEqual([['', 'Default plan', 'API Key', 'PUBLISHED', '🙅, 🔑', '']]);
+        expect(rowCells).toEqual([['', 'Default plan', 'API Key', 'Published', '🙅, 🔑', '']]);
       }));
 
       it.each`
@@ -956,7 +956,7 @@ describe('ApiPlanListComponent', () => {
             actions: '',
           },
         ]);
-        expect(rowCells).toEqual([['', 'Default plan', 'API Key', 'PUBLISHED', '', '']]);
+        expect(rowCells).toEqual([['', 'Default plan', 'API Key', 'Published', '', '']]);
       }));
 
       it('should hide create plan button', fakeAsync(async () => {

@@ -18,9 +18,9 @@
 <form name="$ctrl.formACLs" novalidate style="padding: 1rem">
   <div layout="row">
     <gv-switch
-      label="Private"
+      ng-attr-label="{{$ctrl.translate('settings.documentation.private')}}"
       flex="100"
-      description="Deny access to an anonymous user and more fine grained access management with roles and groups"
+      ng-attr-description="{{$ctrl.translate('settings.documentation.privateDescription')}}"
       gv-model
       ng-model="acls.isPrivate"
       ng-disabled="$ctrl.readOnly"
@@ -29,7 +29,7 @@
 
   <div layout="row">
     <md-input-container class="md-block" flex="100">
-      <label>Roles</label>
+      <label>{{$ctrl.translate('settings.documentation.roles')}}</label>
       <md-select ng-model="acls.roles" multiple ng-disabled="$ctrl.readOnly || !acls.isPrivate">
         <md-option ng-repeat="role in $ctrl.roles | orderBy:'name'" ng-value="role.id"> {{role.name}} </md-option>
       </md-select>
@@ -38,7 +38,7 @@
 
   <div layout="row">
     <md-input-container class="md-block" flex="100">
-      <label>Groups</label>
+      <label>{{$ctrl.translate('settings.documentation.groups')}}</label>
       <md-select ng-model="acls.groups" multiple ng-disabled="$ctrl.readOnly || !acls.isPrivate">
         <md-option ng-repeat="group in $ctrl.groups | orderBy:'name'" ng-value="group.id"> {{group.name}} </md-option>
       </md-select>
@@ -47,9 +47,9 @@
 
   <div layout="row">
     <gv-switch
-      label="Excluded"
+      ng-attr-label="{{$ctrl.translate('settings.documentation.excluded')}}"
       flex="100"
-      description="Exclude access to selected roles/groups"
+      ng-attr-description="{{$ctrl.translate('settings.documentation.excludedDescription')}}"
       ng-disabled="$ctrl.readOnly || !acls.isPrivate"
       ng-model="acls.excludedAccessControls"
       gv-model

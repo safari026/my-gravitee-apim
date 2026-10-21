@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { EMPTY, Observable, Subject } from 'rxjs';
 import { catchError, filter, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { GIO_DIALOG_WIDTH, GioConfirmDialogComponent, GioConfirmDialogData } from '@gravitee/ui-particles-angular';
@@ -46,6 +47,7 @@ enum ToggleOptions {
   standalone: false,
 })
 export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
+  private readonly languageService = inject(LanguageService);
   protected readonly ToggleOptions = ToggleOptions;
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
   public settings: PortalSettings = {};
@@ -86,7 +88,7 @@ export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
       .getHeadersList$()
       .pipe(
         catchError(_ => {
-          this.snackBarService.error('Error occurred.');
+          this.snackBarService.error(this.languageService.translate('settings.apiPortalHeader.error'));
           return [];
         }),
         takeUntil(this.unsubscribe$),
@@ -98,11 +100,15 @@ export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
 
   private createMessage(option: ToggleOptions): string {
     const messages = {
-      [ToggleOptions.show_tags]: 'Tags are now ' + (this.settings.portal.apis.apiHeaderShowTags.enabled ? 'visible' : 'hidden'),
-      [ToggleOptions.show_categories]:
-        'Categories are now ' + (this.settings.portal.apis.apiHeaderShowCategories.enabled ? 'visible' : 'hidden'),
-      [ToggleOptions.promoted_api_mode]:
-        'Promotion banner is now ' + (this.settings.portal.apis.promotedApiMode.enabled ? 'visible' : 'hidden'),
+      [ToggleOptions.show_tags]: this.settings.portal.apis.apiHeaderShowTags.enabled
+        ? this.languageService.translate('settings.apiPortalHeader.tagsVisible')
+        : this.languageService.translate('settings.apiPortalHeader.tagsHidden'),
+      [ToggleOptions.show_categories]: this.settings.portal.apis.apiHeaderShowCategories.enabled
+        ? this.languageService.translate('settings.apiPortalHeader.categoriesVisible')
+        : this.languageService.translate('settings.apiPortalHeader.categoriesHidden'),
+      [ToggleOptions.promoted_api_mode]: this.settings.portal.apis.promotedApiMode.enabled
+        ? this.languageService.translate('settings.apiPortalHeader.bannerVisible')
+        : this.languageService.translate('settings.apiPortalHeader.bannerHidden'),
     };
     return messages[option];
   }
@@ -156,7 +162,7 @@ export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
   private changeHeaderOrder(updatedHeader): Observable<ApiPortalHeader[]> {
     return this.environmentApiHeadersService.updateApiHeader(updatedHeader).pipe(
       tap(() => {
-        this.snackBarService.success('Order updated successfully');
+        this.snackBarService.success(this.languageService.translate('settings.apiPortalHeader.orderUpdated'));
       }),
       catchError(({ error }) => {
         this.snackBarService.error(error);
@@ -207,7 +213,7 @@ export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
           return this.environmentApiHeadersService.updateApiHeader(payload);
         }),
         tap(() => {
-          this.snackBarService.success('API Information updated successfully');
+          this.snackBarService.success(this.languageService.translate('settings.apiPortalHeader.updated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -222,9 +228,9 @@ export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete API Information',
-          content: 'Are you sure you want to delete this API Information?',
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.apiPortalHeader.deleteTitle'),
+          content: this.languageService.translate('settings.apiPortalHeader.deleteContent'),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deletePortalHeaderConfirmDialog',
@@ -234,7 +240,7 @@ export class ApiPortalHeaderComponent implements OnInit, OnDestroy {
         filter((confirm: boolean): boolean => confirm),
         switchMap(() => this.environmentApiHeadersService.deleteApiHeader(header)),
         tap(() => {
-          this.snackBarService.success(`API Information ${header.name} deleted successfully`);
+          this.snackBarService.success(this.languageService.translate('settings.apiPortalHeader.deleted'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error);

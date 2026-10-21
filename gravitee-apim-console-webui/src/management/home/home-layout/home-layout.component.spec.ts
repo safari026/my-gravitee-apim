@@ -25,6 +25,8 @@ import { RouterModule } from '@angular/router';
 import { HomeLayoutComponent } from './home-layout.component';
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 describe('HomeLayoutComponent', () => {
   let fixture: ComponentFixture<HomeLayoutComponent>;
@@ -34,11 +36,12 @@ describe('HomeLayoutComponent', () => {
   beforeEach(() => {
     TestBed.configureTestingModule({
       declarations: [HomeLayoutComponent],
-      imports: [NoopAnimationsModule, GioTestingModule, RouterModule, MatTabsModule],
+      imports: [NoopAnimationsModule, GioTestingModule, RouterModule, MatTabsModule, TranslatePipe],
     });
   });
 
   beforeEach(() => {
+    localStorage.removeItem('gio-console-lang');
     fixture = TestBed.createComponent(HomeLayoutComponent);
     loader = TestbedHarnessEnvironment.loader(fixture);
 
@@ -46,6 +49,7 @@ describe('HomeLayoutComponent', () => {
   });
 
   afterEach(() => {
+    localStorage.removeItem('gio-console-lang');
     httpTestingController.verify();
   });
 
@@ -59,6 +63,29 @@ describe('HomeLayoutComponent', () => {
 
     // Change Tasks label when tasks are loaded
     expectGetTasks();
+    expect(await links[2].getLabel()).toEqual('My Tasks 42');
+  });
+
+  it('should switch tab labels to Russian without recreating the component', async () => {
+    const tabs = await loader.getHarness(MatTabNavBarHarness);
+    const links = await tabs.getLinks();
+    expectGetTasks();
+
+    expect(await links[0].getLabel()).toEqual('Overview');
+    expect(await links[2].getLabel()).toEqual('My Tasks 42');
+
+    TestBed.inject(LanguageService).setLanguage('ru');
+    fixture.detectChanges();
+
+    expect(await links[0].getLabel()).toEqual('Обзор');
+    expect(await links[1].getLabel()).toEqual('Проверка работоспособности API');
+    expect(await links[2].getLabel()).toEqual('Мои задачи 42');
+    expect(await links[3].getLabel()).toEqual('Рассылки');
+
+    TestBed.inject(LanguageService).setLanguage('en');
+    fixture.detectChanges();
+
+    expect(await links[0].getLabel()).toEqual('Overview');
     expect(await links[2].getLabel()).toEqual('My Tasks 42');
   });
 

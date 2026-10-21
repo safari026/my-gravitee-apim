@@ -15,30 +15,30 @@
     limitations under the License.
 
 -->
-<h3>General</h3>
+<h3>{{$ctrl.translate('settings.documentation.general')}}</h3>
 <md-input-container ng-if="!$ctrl.isMarkdownTemplate()" class="md-block gv-input-container-dense">
-  <md-checkbox ng-disabled="$ctrl.readOnly" ng-model="$ctrl.page.homepage" aria-label="set as homepage" class="md-align-top-left" flex>
-    Set as homepage
+  <md-checkbox ng-disabled="$ctrl.readOnly" ng-model="$ctrl.page.homepage" aria-label="{{$ctrl.translate('settings.documentation.setAsHomepage')}}" class="md-align-top-left" flex>
+    {{$ctrl.translate('settings.documentation.setAsHomepage')}}
   </md-checkbox>
 </md-input-container>
 
 <md-input-container class="md-block gv-input-container-dense">
   <md-checkbox
     ng-model="$ctrl.page.published"
-    aria-label="{{!$ctrl.isMarkdownTemplate() ? 'Published' : 'Available'}}"
+    aria-label="{{!$ctrl.isMarkdownTemplate() ? $ctrl.translate('settings.documentation.published') : $ctrl.translate('settings.documentation.available')}}"
     class="md-align-top-left"
     flex
     ng-disabled="$ctrl.readOnly || $ctrl.usedAsGeneralConditions()"
   >
-    {{($ctrl.usedAsGeneralConditions() ? 'Publish this page (Used as general conditions, publishing actions are disabled)' :
-    !$ctrl.isMarkdownTemplate() ? 'Publish this page' : 'Make template available')}}
+    {{($ctrl.usedAsGeneralConditions() ? $ctrl.translate('settings.documentation.publishUsedAsGc') :
+    !$ctrl.isMarkdownTemplate() ? $ctrl.translate('settings.documentation.publishPage') : $ctrl.translate('settings.documentation.makeTemplateAvailable'))}}
   </md-checkbox>
 </md-input-container>
 
 <!-- SWAGGER Configuration -->
 <div ng-if="$ctrl.isSwagger()" layout="column">
   <div ng-if="$ctrl.shouldShowOpenApiDocFormat">
-    <h3>OpenAPI documentation viewer:</h3>
+    <h3>{{$ctrl.translate('settings.documentation.openApiViewer')}}</h3>
     <md-radio-group ng-model="$ctrl.page.configuration.viewer" ng-disabled="$ctrl.readOnly">
       <md-radio-button value="Swagger" class="md-primary">{{ $ctrl.openApiFormatLabel('Swagger') }}</md-radio-button>
       <md-radio-button value="Redoc">{{ $ctrl.openApiFormatLabel('Redoc') }}</md-radio-button>
@@ -51,19 +51,18 @@
     ng-false-value="'false'"
     ng-click="$ctrl.toggleEntrypointAsServer()"
   >
-    Use entrypoints of the API as server urls (in that case, the base URL is no more used).
+    {{$ctrl.translate('settings.documentation.entrypointsAsServers')}}
   </md-checkbox>
 
   <md-input-container class="md-block">
-    <label>Base URL</label>
+    <label>{{$ctrl.translate('settings.documentation.baseUrl')}}</label>
     <input
       type="text"
       ng-model="$ctrl.page.configuration.tryItURL"
       ng-disabled="$ctrl.page.configuration.entrypointsAsServers === 'true'"
     />
     <div class="hint">
-      Custom base URL to use as server url (if empty and not using api's entrypoints, the server url of the swagger / openapi descriptor
-      will be used).
+      {{$ctrl.translate('settings.documentation.baseUrlHint')}}
     </div>
   </md-input-container>
 
@@ -73,13 +72,13 @@
     ng-true-value="'true'"
     ng-false-value="'false'"
   >
-    Use context-path of the API (this will replace the path of the server url with the context-path of the API)
+    {{$ctrl.translate('settings.documentation.contextPath')}}
   </md-checkbox>
 
   <div ng-if="$ctrl.page.configuration.viewer === 'Swagger'" layout="column">
-    <h3>Swagger</h3>
+    <h3>{{$ctrl.translate('settings.documentation.swagger')}}</h3>
     <md-checkbox ng-disabled="$ctrl.readOnly" ng-model="$ctrl.page.configuration.tryIt" ng-true-value="'true'" ng-false-value="'false'">
-      Enable "Try it!" mode. Perhaps you will have to configure the CORS in the proxy section.
+      {{$ctrl.translate('settings.documentation.tryIt')}}
     </md-checkbox>
     <md-checkbox
       ng-disabled="$ctrl.readOnly"
@@ -87,7 +86,7 @@
       ng-true-value="'true'"
       ng-false-value="'false'"
     >
-      Disable response body styling for large JSON payloads
+      {{$ctrl.translate('settings.documentation.disableSyntax')}}
     </md-checkbox>
     <md-checkbox
       ng-disabled="$ctrl.readOnly"
@@ -95,10 +94,10 @@
       ng-true-value="'true'"
       ng-false-value="'false'"
     >
-      Allow "Try it!" for anonymous users
+      {{$ctrl.translate('settings.documentation.tryItAnonymous')}}
     </md-checkbox>
     <md-checkbox ng-disabled="$ctrl.readOnly" ng-model="$ctrl.page.configuration.showURL" ng-true-value="'true'" ng-false-value="'false'">
-      Show the URL to download the content
+      {{$ctrl.translate('settings.documentation.showUrl')}}
     </md-checkbox>
     <md-checkbox
       ng-disabled="$ctrl.readOnly"
@@ -106,17 +105,17 @@
       ng-true-value="'true'"
       ng-false-value="'false'"
     >
-      Display the operationId in the operations list
+      {{$ctrl.translate('settings.documentation.displayOperationId')}}
     </md-checkbox>
     <md-checkbox ng-disabled="$ctrl.readOnly" ng-model="$ctrl.page.configuration.usePkce" ng-true-value="'true'" ng-false-value="'false'">
-      Use PKCE when authenticating with OAuth with authorization code flow
+      {{$ctrl.translate('settings.documentation.usePkce')}}
     </md-checkbox>
     <md-input-container class="md-block">
-      <label>Default expansion setting for the operations and tags</label>
+      <label>{{$ctrl.translate('settings.documentation.docExpansion')}}</label>
       <md-select ng-disabled="$ctrl.readOnly" ng-model="$ctrl.page.configuration.docExpansion">
-        <md-option ng-value="'list'">Expands only the tags</md-option>
-        <md-option ng-value="'full'">Expands the tags and operations</md-option>
-        <md-option ng-value="'none'">Expands nothing</md-option>
+        <md-option ng-value="'list'">{{$ctrl.translate('settings.documentation.expandTags')}}</md-option>
+        <md-option ng-value="'full'">{{$ctrl.translate('settings.documentation.expandTagsAndOps')}}</md-option>
+        <md-option ng-value="'none'">{{$ctrl.translate('settings.documentation.expandNothing')}}</md-option>
       </md-select>
     </md-input-container>
     <md-checkbox
@@ -126,7 +125,7 @@
       ng-false-value="'false'"
       class="md-block"
     >
-      Add a top bar to filter content
+      {{$ctrl.translate('settings.documentation.enableFiltering')}}
     </md-checkbox>
     <md-checkbox
       ng-disabled="$ctrl.readOnly"
@@ -135,7 +134,7 @@
       ng-false-value="'false'"
       class="md-block"
     >
-      Display vendor extension (X-) fields and values for Operations, Parameters, and Schema
+      {{$ctrl.translate('settings.documentation.showExtensions')}}
     </md-checkbox>
     <md-checkbox
       ng-disabled="$ctrl.readOnly"
@@ -143,12 +142,12 @@
       ng-true-value="'true'"
       ng-false-value="'false'"
     >
-      Display extensions (pattern, maxLength, minLength, maximum, minimum) fields and values for Parameters
+      {{$ctrl.translate('settings.documentation.showCommonExtensions')}}
     </md-checkbox>
     <md-input-container class="md-block">
-      <label>Number of max tagged operations displayed</label>
+      <label>{{$ctrl.translate('settings.documentation.maxTaggedOps')}}</label>
       <input ng-disabled="$ctrl.readOnly" type="number" ng-model="$ctrl.page.configuration.maxDisplayedTags" />
-      <div class="hint">Limits the number of tagged operations displayed to at most this many (-1 means show all operations).</div>
+      <div class="hint">{{$ctrl.translate('settings.documentation.maxTaggedOpsHint')}}</div>
     </md-input-container>
   </div>
 </div>

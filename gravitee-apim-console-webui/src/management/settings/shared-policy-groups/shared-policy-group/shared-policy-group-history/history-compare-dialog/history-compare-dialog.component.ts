@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../../../../shared/i18n/translate.pipe';
 import { ChangeDetectionStrategy, Component, Inject } from '@angular/core';
 import { MatButtonModule } from '@angular/material/button';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
@@ -33,7 +34,7 @@ export type HistoryCompareDialogResult = boolean;
   templateUrl: './history-compare-dialog.component.html',
   styleUrls: ['./history-compare-dialog.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
-  imports: [MatDialogModule, MatButtonModule, GioDiffModule],
+  imports: [MatDialogModule, MatButtonModule, GioDiffModule, TranslatePipe],
 })
 export class HistoryCompareDialogComponent {
   protected readonly left = JSON.stringify(this.data.left, null, 2);

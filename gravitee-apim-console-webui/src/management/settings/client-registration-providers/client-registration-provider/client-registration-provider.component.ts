@@ -15,7 +15,8 @@
  */
 import { JKSTrustStore, PKCS12TrustStore } from 'src/entities/management-api-v2';
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 import { EMPTY, Subject } from 'rxjs';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
 import { catchError, takeUntil, tap } from 'rxjs/operators';
@@ -32,36 +33,46 @@ import { ClientRegistrationProvider } from '../../../../entities/client-registra
   standalone: false,
 })
 export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
+  private readonly languageService = inject(LanguageService);
   private unsubscribe$ = new Subject<void>();
   public updateMode: boolean;
   public providerForm: UntypedFormGroup;
-  public initialAccessTokenTypes: { name: string; value: ClientRegistrationProvider['initial_access_token_type'] }[] = [
-    {
-      name: 'Client Credentials',
-      value: 'CLIENT_CREDENTIALS',
-    },
-    {
-      name: 'Initial Access Token',
-      value: 'INITIAL_ACCESS_TOKEN',
-    },
-  ];
+  public get initialAccessTokenTypes(): {
+    name: string;
+    value: ClientRegistrationProvider['initial_access_token_type'];
+  }[] {
+    return [
+      {
+        name: this.languageService.translate('settings.clientRegistration.tokenClientCredentials'),
+        value: 'CLIENT_CREDENTIALS',
+      },
+      {
+        name: this.languageService.translate('settings.clientRegistration.tokenInitialAccessToken'),
+        value: 'INITIAL_ACCESS_TOKEN',
+      },
+    ];
+  }
   public renewClientSecretMethods = ['POST', 'PATCH', 'PUT'];
   public renewClientSecretClientIdElToken = '{#client_id}';
   public renewClientSecretEndpointUrlExample: string = 'https://[am_gateway]/[domain]/oidc/register/{#client_id}/renew_secret';
 
   public formInitialValues: unknown;
 
-  public trustStoreTypes = [
-    { label: 'None', value: 'NONE' },
-    { label: 'Java Trust Store (.jks)', value: 'JKS' },
-    { label: 'PKCS#12 (.p12) / PFX (.pfx)', value: 'PKCS12' },
-  ];
+  public get trustStoreTypes(): { label: string; value: string }[] {
+    return [
+      { label: this.languageService.translate('settings.clientRegistration.storeNone'), value: 'NONE' },
+      { label: this.languageService.translate('settings.clientRegistration.storeJksTrust'), value: 'JKS' },
+      { label: this.languageService.translate('settings.clientRegistration.storePkcs12'), value: 'PKCS12' },
+    ];
+  }
 
-  public keyStoreTypes = [
-    { label: 'None', value: 'NONE' },
-    { label: 'Java Key Store (.jks)', value: 'JKS' },
-    { label: 'PKCS#12 (.p12) / PFX (.pfx)', value: 'PKCS12' },
-  ];
+  public get keyStoreTypes(): { label: string; value: string }[] {
+    return [
+      { label: this.languageService.translate('settings.clientRegistration.storeNone'), value: 'NONE' },
+      { label: this.languageService.translate('settings.clientRegistration.storeJksKey'), value: 'JKS' },
+      { label: this.languageService.translate('settings.clientRegistration.storePkcs12'), value: 'PKCS12' },
+    ];
+  }
 
   constructor(
     private readonly router: Router,
@@ -108,13 +119,21 @@ export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
           .update({ ...providerFormValueToSave, id: this.activatedRoute.snapshot.params.providerId })
           .pipe(
             tap(clientRegistrationProvider => {
-              this.snackBarService.success(`Client registration provider  ${clientRegistrationProvider.name} has been updated.`);
+              this.snackBarService.success(
+                this.languageService.translate('settings.clientRegistration.providerUpdated', {
+                  name: clientRegistrationProvider.name,
+                }),
+              );
               this.providerForm.markAsPristine();
             }),
           )
       : this.clientRegistrationProvidersService.create(providerFormValueToSave).pipe(
           tap(clientRegistrationProvider => {
-            this.snackBarService.success(`Client registration provider  ${clientRegistrationProvider.name} has been created.`);
+            this.snackBarService.success(
+              this.languageService.translate('settings.clientRegistration.providerCreated', {
+                name: clientRegistrationProvider.name,
+              }),
+            );
             this.providerForm.markAsPristine();
           }),
         );

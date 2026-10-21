@@ -20,10 +20,10 @@ import { Component } from '@angular/core';
   template: `
     <nav mat-tab-nav-bar class="navigation-tabs" [tabPanel]="tabPanel">
       <a mat-tab-link routerLinkActive #rla1="routerLinkActive" [active]="rla1.isActive" routerLink="list"
-        ><mat-icon class="navigation-tabs__icon" svgIcon="gio:home"></mat-icon> My alerts</a
+        ><mat-icon class="navigation-tabs__icon" svgIcon="gio:home"></mat-icon> {{ 'alerts.tabs.myAlerts' | translate }}</a
       >
       <a mat-tab-link routerLinkActive #rla2="routerLinkActive" [active]="rla2.isActive" routerLink="activity"
-        ><mat-icon class="navigation-tabs__icon" svgIcon="gio:activity"></mat-icon> Activity</a
+        ><mat-icon class="navigation-tabs__icon" svgIcon="gio:activity"></mat-icon> {{ 'alerts.tabs.activity' | translate }}</a
       >
     </nav>
     <mat-tab-nav-panel #tabPanel>

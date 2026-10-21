@@ -18,8 +18,8 @@
 <div class="org-navigation">
   <div class="org-navigation__nav">
     <gio-submenu theme="light" [static]="true">
-      <button gioSubmenuTitle mat-button aria-label="Organization Settings" (click)="goBack()">
-        <mat-icon svgIcon="gio:arrow-left"></mat-icon>Organization
+      <button gioSubmenuTitle mat-button [attr.aria-label]="'settings.organization.navigation.settingsTitle' | translate" (click)="goBack()">
+        <mat-icon svgIcon="gio:arrow-left"></mat-icon>{{ 'settings.organization.navigation.root' | translate }}
       </button>
       <ng-container *ngFor="let group of groupItems">
         <gio-submenu-group [title]="group.title" *ngIf="group.title" theme="light">

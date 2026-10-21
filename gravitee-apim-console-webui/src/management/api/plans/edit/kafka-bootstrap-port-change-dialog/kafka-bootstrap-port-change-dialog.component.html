@@ -15,43 +15,36 @@
     limitations under the License.
 
 -->
-<h2 mat-dialog-title>{{ data.newPort == null ? 'Remove bootstrap port' : 'Change bootstrap port' }}</h2>
+<h2 mat-dialog-title>
+  {{ (data.newPort == null ? 'apis.plans.kafkaPortDialog.removeTitle' : 'apis.plans.kafkaPortDialog.changeTitle') | translate }}
+</h2>
 
 <mat-dialog-content>
   <gio-banner-warning>
-    Warning:
+    {{ 'apis.plans.kafkaPortDialog.warning' | translate }}
     {{
-      data.newPort == null
-        ? 'removing the bootstrap port will disable port-based routing and break all consumers of this plan.'
-        : 'changing the bootstrap port will break all consumers of this plan.'
+      (data.newPort == null ? 'apis.plans.kafkaPortDialog.removeWarning' : 'apis.plans.kafkaPortDialog.changeWarning') | translate
     }}
   </gio-banner-warning>
 
   @if (data.newPort == null) {
-    <p>
-      Removing the bootstrap port will disable port-based routing for this API; it will revert to host-based routing. All clients currently
-      configured with <strong>{{ data.host ? data.host + ':' + data.oldPort : data.oldPort }}</strong> will lose connectivity until they
-      update their Kafka bootstrap configuration.
-    </p>
+    <p [innerHTML]="'apis.plans.kafkaPortDialog.removeBody' | translate: { address: oldAddress }"></p>
   } @else if (data.host) {
-    <p>
-      The new bootstrap address will be <strong>{{ data.host }}:{{ data.newPort }}</strong
-      >. All clients currently configured with <strong>{{ data.host }}:{{ data.oldPort }}</strong> will lose connectivity until they update
-      their Kafka bootstrap configuration.
-    </p>
+    <p
+      [innerHTML]="
+        'apis.plans.kafkaPortDialog.changeBodyWithHost' | translate: { newAddress: newAddress, oldAddress: oldAddress }
+      "
+    ></p>
   } @else {
-    <p>
-      The bootstrap port is changing from <strong>{{ data.oldPort }}</strong> to <strong>{{ data.newPort }}</strong
-      >. All clients currently configured with the old port will lose connectivity until they update their Kafka bootstrap configuration.
-    </p>
+    <p [innerHTML]="'apis.plans.kafkaPortDialog.changeBody' | translate: { oldPort: data.oldPort, newPort: data.newPort }"></p>
   }
 
-  <mat-checkbox (change)="isConfirmed = $event.checked"
-    >I understand that all consumers of this plan must update their bootstrap configuration.</mat-checkbox
-  >
+  <mat-checkbox (change)="isConfirmed = $event.checked">{{ 'apis.plans.kafkaPortDialog.confirmCheckbox' | translate }}</mat-checkbox>
 </mat-dialog-content>
 
 <mat-dialog-actions align="end">
-  <button mat-flat-button [mat-dialog-close]="false">Cancel</button>
-  <button mat-raised-button color="primary" [mat-dialog-close]="true" [disabled]="!isConfirmed">Confirm and save</button>
+  <button mat-flat-button [mat-dialog-close]="false">{{ 'common.cancel' | translate }}</button>
+  <button mat-raised-button color="primary" [mat-dialog-close]="true" [disabled]="!isConfirmed">
+    {{ 'apis.plans.kafkaPortDialog.confirmSave' | translate }}
+  </button>
 </mat-dialog-actions>

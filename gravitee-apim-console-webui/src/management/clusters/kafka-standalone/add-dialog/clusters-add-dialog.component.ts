@@ -24,6 +24,8 @@ import { GioFormFocusInvalidModule } from '@gravitee/ui-particles-angular';
 import { map, startWith } from 'rxjs/operators';
 import { Observable } from 'rxjs';
 
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+
 export type ClustersAddDialogData = undefined;
 export type ClustersAddDialogResult = undefined | { name: string; description?: string; bootstrapServers: string };
 
@@ -31,7 +33,16 @@ export type ClustersAddDialogResult = undefined | { name: string; description?: 
   selector: 'clusters-add-dialog',
   templateUrl: './clusters-add-dialog.component.html',
   styleUrls: ['./clusters-add-dialog.component.scss'],
-  imports: [CommonModule, ReactiveFormsModule, MatDialogModule, MatButtonModule, MatFormFieldModule, MatInput, GioFormFocusInvalidModule],
+  imports: [
+    CommonModule,
+    ReactiveFormsModule,
+    MatDialogModule,
+    MatButtonModule,
+    MatFormFieldModule,
+    MatInput,
+    GioFormFocusInvalidModule,
+    TranslatePipe,
+  ],
   standalone: true,
 })
 export class ClustersAddDialogComponent {

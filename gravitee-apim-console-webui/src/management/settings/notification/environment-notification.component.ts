@@ -14,7 +14,8 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { Component, Inject, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatDialog } from '@angular/material/dialog';
 import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, combineLatest, EMPTY, Observable, Subject } from 'rxjs';
@@ -44,6 +45,7 @@ import { Constants } from '../../../entities/Constants';
   standalone: false,
 })
 export class EnvironmentNotificationComponent implements OnInit, OnDestroy {
+  private readonly languageService = inject(LanguageService);
   private envId = this.constants.org.currentEnv.id;
   private notifications$: BehaviorSubject<NotificationSettings[]> = new BehaviorSubject(null);
   private unsubscribe$: Subject<boolean> = new Subject<boolean>();
@@ -122,7 +124,7 @@ export class EnvironmentNotificationComponent implements OnInit, OnDestroy {
           }),
         ),
         tap(() => {
-          this.snackBarService.success('Notification created successfully');
+          this.snackBarService.success(this.languageService.translate('settings.notifications.created'));
           this.refreshList();
         }),
         switchMap(created => {
@@ -146,9 +148,9 @@ export class EnvironmentNotificationComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: GIO_DIALOG_WIDTH.SMALL,
         data: {
-          title: 'Delete notification',
-          content: `Are you sure you want to delete the notification <strong>${notification.name}</strong>?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('settings.notifications.deleteTitle'),
+          content: this.languageService.translate('settings.notifications.deleteContent', { name: notification.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deleteNotificationConfirmDialog',
@@ -158,7 +160,7 @@ export class EnvironmentNotificationComponent implements OnInit, OnDestroy {
         filter(confirm => confirm === true),
         switchMap(() => this.notificationService.delete(notification.id)),
         tap(() => {
-          this.snackBarService.success(`"${notification.name}" has been deleted`);
+          this.snackBarService.success(this.languageService.translate('settings.notifications.deleted', { name: notification.name }));
           this.refreshList();
         }),
         catchError(({ error }) => {
@@ -203,7 +205,7 @@ export class EnvironmentNotificationComponent implements OnInit, OnDestroy {
         filter(result => !!result),
         switchMap(updated => this.notificationService.update(notification.id ?? '', updated)),
         tap(() => {
-          this.snackBarService.success('Notification saved successfully');
+          this.snackBarService.success(this.languageService.translate('settings.notifications.saved'));
           this.refreshList();
         }),
       );

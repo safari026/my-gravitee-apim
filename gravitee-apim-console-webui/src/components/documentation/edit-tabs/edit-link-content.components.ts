@@ -16,6 +16,7 @@
 import { IController } from 'angular';
 
 import { DocumentationService } from '../../../services/documentation.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class EditLinkContentComponentController implements IController {
   categoryResources: any[];
@@ -24,7 +25,12 @@ class EditLinkContentComponentController implements IController {
   pageList: any[];
   systemFoldersById: any;
 
-  constructor(private readonly DocumentationService: DocumentationService) {}
+  constructor(
+    private readonly DocumentationService: DocumentationService,
+    private readonly ngLanguageService: LanguageService,
+  ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   checkIfFolder() {
     if (this.page.content) {
@@ -75,7 +81,7 @@ class EditLinkContentComponentController implements IController {
     }
   }
 }
-EditLinkContentComponentController.$inject = ['DocumentationService'];
+EditLinkContentComponentController.$inject = ['DocumentationService', 'ngLanguageService'];
 
 export const EditLinkContentComponent: ng.IComponentOptions = {
   bindings: {

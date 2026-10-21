@@ -16,9 +16,9 @@
 
 -->
 <div class="title">
-  <h1>Categories</h1>
+  <h1>{{ 'settings.navigation.items.categories' | translate }}</h1>
   @if (hasPortalNextEnabled) {
-    <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;Applies to both portals </span>
+    <span class="gio-badge-warning"> <mat-icon svgIcon="gio:chat-lines"> </mat-icon>&nbsp;{{ 'settings.portal.appliesToBoth' | translate }} </span>
   }
 </div>
 
@@ -26,9 +26,9 @@
   <mat-card-content class="categories__content">
     <div class="categories__actions">
       <gio-form-slide-toggle [formGroup]="portalSettingsForm">
-        <gio-form-label>Enable Category Mode</gio-form-label>
-        Replace the API gallery by a Category gallery in the Developer Portal
-        <mat-slide-toggle formControlName="enabled" gioFormSlideToggle aria-label="Enable category mode"></mat-slide-toggle>
+        <gio-form-label>{{ 'settings.categories.enableMode' | translate }}</gio-form-label>
+        {{ 'settings.categories.enableModeHint' | translate }}
+        <mat-slide-toggle formControlName="enabled" gioFormSlideToggle [attr.aria-label]="'settings.categories.enableModeAria' | translate"></mat-slide-toggle>
       </gio-form-slide-toggle>
       <button
         class="add-button"
@@ -37,12 +37,12 @@
         color="primary"
         *gioPermission="{ anyOf: ['environment-category-c'] }"
       >
-        <mat-icon>add</mat-icon> Add Category
+        <mat-icon>add</mat-icon> {{ 'settings.categories.add' | translate }}
       </button>
     </div>
 
     @if (categoriesDS$ | async; as categoriesDS) {
-      <table mat-table [dataSource]="categoriesDS" id="categoriesTable" aria-label="Categories table">
+      <table mat-table [dataSource]="categoriesDS" id="categoriesTable" [attr.aria-label]="'settings.categories.tableAria' | translate">
         <!-- Picture Column -->
         <ng-container matColumnDef="picture">
           <th mat-header-cell *matHeaderCellDef id="picture"></th>
@@ -59,12 +59,12 @@
 
         <!-- Display Name Column -->
         <ng-container matColumnDef="name">
-          <th mat-header-cell *matHeaderCellDef id="name">Name</th>
+          <th mat-header-cell *matHeaderCellDef id="name">{{ 'settings.analytics.name' | translate }}</th>
           <td mat-cell *matCellDef="let element" title="{{ element.name }}">
             <div>
               {{ element.name }}
               @if (element.hidden) {
-                <span class="gio-badge-neutral" matTooltip="Hidden"><mat-icon svgIcon="gio:eye-off" /></span>
+                <span class="gio-badge-neutral" [matTooltip]="'settings.categories.hidden' | translate"><mat-icon svgIcon="gio:eye-off" /></span>
               }
             </div>
           </td>
@@ -72,13 +72,13 @@
 
         <!-- Display Description Column -->
         <ng-container matColumnDef="description">
-          <th mat-header-cell *matHeaderCellDef id="description">Description</th>
+          <th mat-header-cell *matHeaderCellDef id="description">{{ 'settings.authentication.description' | translate }}</th>
           <td mat-cell *matCellDef="let element">{{ element.description }}</td>
         </ng-container>
 
         <!-- Display API Count Column -->
         <ng-container matColumnDef="count">
-          <th mat-header-cell *matHeaderCellDef id="api-count">API Count</th>
+          <th mat-header-cell *matHeaderCellDef id="api-count">{{ 'settings.categories.apiCount' | translate }}</th>
           <td mat-cell *matCellDef="let element">
             {{ element.totalApis }}
           </td>
@@ -93,7 +93,7 @@
                 <button
                   mat-button
                   (click)="showCategory(element)"
-                  matTooltip="Show Category"
+                  [matTooltip]="'settings.categories.show' | translate"
                   *gioPermission="{ anyOf: ['environment-category-u'] }"
                 >
                   <mat-icon svgIcon="gio:cloud-published"></mat-icon>
@@ -102,7 +102,7 @@
                 <button
                   mat-button
                   (click)="hideCategory(element)"
-                  matTooltip="Hide Category"
+                  [matTooltip]="'settings.categories.hide' | translate"
                   *gioPermission="{ anyOf: ['environment-category-u'] }"
                 >
                   <mat-icon svgIcon="gio:cloud-unpublished"></mat-icon>
@@ -112,7 +112,7 @@
                 mat-button
                 [disabled]="i === 0"
                 (click)="moveUp(i, categoriesDS)"
-                matTooltip="Move Up"
+                [matTooltip]="'settings.categories.moveUp' | translate"
                 *gioPermission="{ anyOf: ['environment-category-u'] }"
               >
                 <mat-icon svgIcon="gio:arrow-up"></mat-icon>
@@ -121,16 +121,16 @@
                 mat-button
                 [disabled]="i === categoriesDS.length - 1"
                 (click)="moveDown(i, categoriesDS)"
-                matTooltip="Move Down"
+                [matTooltip]="'settings.categories.moveDown' | translate"
                 *gioPermission="{ anyOf: ['environment-category-u'] }"
               >
                 <mat-icon svgIcon="gio:arrow-down"></mat-icon>
               </button>
               <button
                 mat-button
-                aria-label="Button to edit category"
+                [attr.aria-label]="'settings.categories.editAria' | translate"
                 [routerLink]="['.', element.id]"
-                matTooltip="Edit"
+                [matTooltip]="'common.edit' | translate"
                 *gioPermission="{ anyOf: ['environment-category-u'] }"
               >
                 <mat-icon data-testid="api_list_edit_button">edit</mat-icon>
@@ -139,7 +139,7 @@
                 mat-button
                 *gioPermission="{ anyOf: ['environment-category-d'] }"
                 (click)="deleteCategory(element)"
-                matTooltip="Delete"
+                [matTooltip]="'common.delete' | translate"
               >
                 <mat-icon svgIcon="gio:trash"></mat-icon>
               </button>
@@ -153,7 +153,7 @@
         <!-- Row shown when there is no data -->
         <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
           <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
-            {{ 'There are no categories for this environment.' }}
+            {{ 'settings.categories.empty' | translate }}
           </td>
         </tr>
       </table>

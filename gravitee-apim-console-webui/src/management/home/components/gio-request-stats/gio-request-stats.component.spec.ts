@@ -23,6 +23,7 @@ import { GioRequestStatsHarness } from './gio-request-stats.harness';
 import { GioRequestStatsComponent } from './gio-request-stats.component';
 
 import { AnalyticsStatsResponse } from '../../../../entities/analytics/analyticsResponse';
+import { GioTestingModule } from '../../../../shared/testing';
 
 describe('GioRequestStatsComponent', () => {
   let fixture: ComponentFixture<GioRequestStatsComponent>;
@@ -30,7 +31,7 @@ describe('GioRequestStatsComponent', () => {
 
   beforeEach(() => {
     TestBed.configureTestingModule({
-      imports: [NoopAnimationsModule, GioRequestStatsModule],
+      imports: [NoopAnimationsModule, GioRequestStatsModule, GioTestingModule],
       providers: [],
     });
 

@@ -24,6 +24,7 @@ import { QualityRuleService } from '../../../../services-ngx/quality-rule.servic
 import { ApiQualityRuleService } from '../../../../services-ngx/api-quality-rule.service';
 import { SnackBarService } from '../../../../services-ngx/snack-bar.service';
 import { ApiReviewV2Service } from '../../../../services-ngx/api-review-v2.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 export interface ApiReviewDialogData {
   apiId: string;
@@ -61,6 +62,7 @@ export class ApiReviewDialogComponent implements OnDestroy {
     private readonly flowService: FlowService,
     private readonly apiQualityRuleService: ApiQualityRuleService,
     private readonly apiReviewV2Service: ApiReviewV2Service,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit() {
@@ -120,10 +122,10 @@ export class ApiReviewDialogComponent implements OnDestroy {
       .subscribe(
         () => {
           this.dialogRef.close();
-          this.snackBarService.success('API review saved.');
+          this.snackBarService.success(this.languageService.translate('apis.navigation.review.saved'));
         },
         () => {
-          this.snackBarService.error('An error occurred while saving API review.');
+          this.snackBarService.error(this.languageService.translate('apis.navigation.review.error'));
         },
       );
   }

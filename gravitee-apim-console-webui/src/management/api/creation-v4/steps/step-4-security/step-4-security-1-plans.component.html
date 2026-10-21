@@ -18,16 +18,15 @@
 <mat-card class="api-creation-v4__step">
   <mat-card-content>
     <div class="api-creation-v4__step__header">
-      <div class="api-creation-v4__step__header__step-number">Step 4</div>
-      <div class="api-creation-v4__step__header__subtitle">Security</div>
-      <p class="api-creation-v4__step__header__paragraph-light">Regulate access to your API by configuring plans and access control</p>
+      <div class="api-creation-v4__step__header__step-number">{{ 'apis.creation.v4.step' | translate: { number: 4 } }}</div>
+      <div class="api-creation-v4__step__header__subtitle">{{ 'apis.creation.v4.security.subtitle' | translate }}</div>
+      <p class="api-creation-v4__step__header__paragraph-light">{{ 'apis.creation.v4.security.hint' | translate }}</p>
     </div>
 
     <ng-container *ngIf="view === 'list'">
       @if (isNativeKafkaApi) {
         <gio-banner type="info">
-          Kafka APIs cannot mix Keyless, mTLS, and authentication (OAuth2, JWT, API Key) plans. In order to automatically deploy your API,
-          choose one type: either Keyless, mTLS, or authentication plans.
+          {{ 'apis.creation.v4.security.kafkaBanner' | translate }}
         </gio-banner>
       }
       <step-4-security-1-plans-list

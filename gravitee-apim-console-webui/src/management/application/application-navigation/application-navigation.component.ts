@@ -14,10 +14,11 @@
  * limitations under the License.
  */
 
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { GioMenuSearchService, GioMenuService, MenuSearchItem } from '@gravitee/ui-particles-angular';
-import { Subject } from 'rxjs';
-import { filter, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { combineLatest, Subject } from 'rxjs';
+import { filter, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { flatMap } from 'lodash';
 import { ActivatedRoute, NavigationEnd, Router } from '@angular/router';
 
@@ -25,6 +26,7 @@ import { cleanRouterLink, getPathFromRoot } from '../../../util/router-link.util
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { Application } from '../../../entities/application/Application';
 import { ApplicationService } from '../../../services-ngx/application.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 export interface MenuItem {
   displayName: string;
@@ -60,88 +62,30 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
     private readonly gioMenuService: GioMenuService,
     private readonly applicationService: ApplicationService,
     private readonly gioMenuSearchService: GioMenuSearchService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
+
+  private t(key: string): string {
+    return this.languageService.translate(`applications.navigation.${key}`);
+  }
 
   ngOnInit() {
     this.gioMenuService.reduced$.pipe(takeUntil(this.unsubscribe$)).subscribe(reduced => {
       this.hasBreadcrumb = reduced;
     });
 
-    this.applicationService
-      .getLastApplicationFetch(this.activatedRoute.snapshot.params.applicationId)
+    combineLatest([
+      this.applicationService.getLastApplicationFetch(this.activatedRoute.snapshot.params.applicationId),
+      toObservable(this.languageService.currentLanguage, { injector: this.injector }).pipe(
+        startWith(this.languageService.currentLanguage()),
+      ),
+    ])
       .pipe(
-        tap(application => {
+        tap(([application]) => {
           this.application = application;
-
-          this.subMenuItems = this.filterMenuByPermission([
-            {
-              displayName: 'Global settings',
-              routerLink: 'general',
-              permissions: ['application-definition-r'],
-            },
-            {
-              displayName: 'User and group access',
-              permissions: ['application-member-r'],
-              routerLink: 'members',
-              tabs: [
-                {
-                  displayName: 'Members',
-                  routerLink: 'members',
-                },
-                {
-                  displayName: 'Groups',
-                  routerLink: 'groups',
-                },
-                {
-                  displayName: 'Transfer ownership',
-                  routerLink: 'transfer-ownership',
-                },
-              ],
-            },
-            ...(application.api_key_mode === 'SHARED'
-              ? [
-                  {
-                    displayName: 'Subscriptions',
-                    permissions: ['application-member-r'],
-                    routerLink: 'subscriptions',
-                    tabs: [
-                      {
-                        displayName: 'Subscriptions',
-                        routerLink: 'subscriptions',
-                      },
-                      {
-                        displayName: 'Shared API Keys',
-                        routerLink: 'shared-api-keys',
-                      },
-                    ],
-                  },
-                ]
-              : [
-                  {
-                    displayName: 'Subscriptions',
-                    routerLink: 'subscriptions',
-                    permissions: ['application-subscription-r'],
-                  },
-                ]),
-            {
-              displayName: 'Analytics',
-              routerLink: 'analytics',
-              permissions: ['application-analytics-r'],
-            },
-            {
-              displayName: 'Logs',
-              routerLink: 'logs',
-              permissions: ['application-log-r'],
-            },
-            {
-              displayName: 'Notification settings',
-              routerLink: 'notifications',
-              permissions: ['application-notification-r', 'application-alert-r'],
-            },
-          ]);
-
+          this.subMenuItems = this.buildMenu(application);
           this.selectedItemWithTabs = this.subMenuItems.find(item => item.tabs && this.isTabActive(item.tabs));
-
           this.gioMenuSearchService.addMenuSearchItems(this.getApplicationNavigationSearchItems());
         }),
         switchMap(() => this.router.events),
@@ -188,6 +132,75 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
     return flatMap(tabs, tab => tab).some(tab => this.isActive(tab));
   }
 
+  private buildMenu(application: Application): MenuItem[] {
+    return this.filterMenuByPermission([
+      {
+        displayName: this.t('globalSettings'),
+        routerLink: 'general',
+        permissions: ['application-definition-r'],
+      },
+      {
+        displayName: this.t('userAndGroupAccess'),
+        permissions: ['application-member-r'],
+        routerLink: 'members',
+        tabs: [
+          {
+            displayName: this.t('members'),
+            routerLink: 'members',
+          },
+          {
+            displayName: this.t('groups'),
+            routerLink: 'groups',
+          },
+          {
+            displayName: this.t('transferOwnership'),
+            routerLink: 'transfer-ownership',
+          },
+        ],
+      },
+      ...(application.api_key_mode === 'SHARED'
+        ? [
+            {
+              displayName: this.t('subscriptions'),
+              permissions: ['application-member-r'],
+              routerLink: 'subscriptions',
+              tabs: [
+                {
+                  displayName: this.t('subscriptions'),
+                  routerLink: 'subscriptions',
+                },
+                {
+                  displayName: this.t('sharedApiKeys'),
+                  routerLink: 'shared-api-keys',
+                },
+              ],
+            },
+          ]
+        : [
+            {
+              displayName: this.t('subscriptions'),
+              routerLink: 'subscriptions',
+              permissions: ['application-subscription-r'],
+            },
+          ]),
+      {
+        displayName: this.t('analytics'),
+        routerLink: 'analytics',
+        permissions: ['application-analytics-r'],
+      },
+      {
+        displayName: this.t('logs'),
+        routerLink: 'logs',
+        permissions: ['application-log-r'],
+      },
+      {
+        displayName: this.t('notifications'),
+        routerLink: 'notifications',
+        permissions: ['application-notification-r', 'application-alert-r'],
+      },
+    ]);
+  }
+
   private filterMenuByPermission(menuItems: MenuItem[]): MenuItem[] {
     if (menuItems) {
       return menuItems.filter(item => !item.permissions || this.permissionService.hasAnyMatching(item.permissions));
@@ -204,7 +217,7 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
       acc.push({
         name: item.displayName,
         routerLink: `${parentRouterLink}/${cleanRouterLink(item.routerLink)}`,
-        category: `Applications`,
+        category: this.t('applications'),
         groupIds: [environmentId, applicationId],
       });
 
@@ -212,7 +225,7 @@ export class ApplicationNavigationComponent implements OnInit, OnDestroy {
         acc.push({
           name: tab.displayName,
           routerLink: `${parentRouterLink}/${cleanRouterLink(tab.routerLink)}`,
-          category: `Applications / ${item.displayName}`,
+          category: `${this.t('applications')} / ${item.displayName}`,
           groupIds: [environmentId, applicationId],
         });
       });

@@ -25,6 +25,7 @@ import { Organization } from '../../../entities/organization/organization';
 import { PathOperator, Step } from '../../../entities/flow/flow';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 interface FlowVM {
   name?: string;
@@ -50,6 +51,7 @@ export interface DefinitionVM {
 })
 export class OrgSettingsPlatformPoliciesComponent implements OnInit, OnDestroy {
   private readonly permissionService = inject(GioPermissionService);
+  private readonly languageService = inject(LanguageService);
 
   readonly isReadonly = !this.permissionService.hasAnyMatching([
     'organization-policies-c',
@@ -103,8 +105,9 @@ export class OrgSettingsPlatformPoliciesComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '450px',
         data: {
-          title: 'Deploy the policies?',
-          content: 'Platform policies will be automatically deployed on gateways.',
+          title: this.languageService.translate('settings.organization.policies.deployTitle'),
+          content: this.languageService.translate('settings.organization.policies.deployContent'),
+          confirmButton: this.languageService.translate('common.save'),
         },
         role: 'alertdialog',
       })
@@ -130,7 +133,7 @@ export class OrgSettingsPlatformPoliciesComponent implements OnInit, OnDestroy {
         ),
         switchMap(organizationToSave => this.organizationService.update(organizationToSave)),
         tap(() => {
-          this.snackBarService.success('Platform policies successfully updated!');
+          this.snackBarService.success(this.languageService.translate('settings.organization.policies.updated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);

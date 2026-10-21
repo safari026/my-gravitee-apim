@@ -24,6 +24,8 @@ import { MatIconTestingModule } from '@angular/material/icon/testing';
 
 import { KafkaBootstrapPortChangeDialogComponent } from './kafka-bootstrap-port-change-dialog.component';
 
+import { GioTestingModule } from '../../../../../shared/testing';
+
 describe('KafkaBootstrapPortChangeDialogComponent', () => {
   let fixture: ComponentFixture<KafkaBootstrapPortChangeDialogComponent>;
   let component: KafkaBootstrapPortChangeDialogComponent;
@@ -34,7 +36,7 @@ describe('KafkaBootstrapPortChangeDialogComponent', () => {
     dialogRefClose = jest.fn();
 
     TestBed.configureTestingModule({
-      imports: [KafkaBootstrapPortChangeDialogComponent, NoopAnimationsModule, MatIconTestingModule],
+      imports: [KafkaBootstrapPortChangeDialogComponent, NoopAnimationsModule, MatIconTestingModule, GioTestingModule],
       providers: [
         { provide: MAT_DIALOG_DATA, useValue: data },
         { provide: MatDialogRef, useValue: { close: dialogRefClose } },

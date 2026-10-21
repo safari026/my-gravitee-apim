@@ -25,6 +25,7 @@ import { Moment } from 'moment';
 import { ApiAuditService } from '../../../services-ngx/api-audit.service';
 import { GioTableWrapperFilters } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.component';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { endOfDay } from '../../../util/date.util';
 
 interface ApiAuditData {
@@ -75,6 +76,7 @@ export class ApiAuditListComponent implements OnInit, OnDestroy {
     private apiAuditService: ApiAuditService,
     public readonly activatedRoute: ActivatedRoute,
     private snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
   ) {}
 
   public ngOnInit() {
@@ -116,7 +118,7 @@ export class ApiAuditListComponent implements OnInit, OnDestroy {
             .getAudit(this.activatedRoute.snapshot.params.apiId, auditFilters, tableWrapper.pagination.index, tableWrapper.pagination.size)
             .pipe(
               catchError(() => {
-                this.snackBarService.error('Unable to try the request, please try again');
+                this.snackBarService.error(this.languageService.translate('audit.loadError'));
                 return EMPTY;
               }),
             ),

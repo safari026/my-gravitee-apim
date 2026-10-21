@@ -19,12 +19,12 @@
   <mat-card class="rateLimit-card">
     <mat-card-content>
       <gio-form-slide-toggle>
-        <gio-form-label>Rate Limiting</gio-form-label>
-        Rate limit how many HTTP requests an application can make in a given period of seconds or minutes.
+        <gio-form-label>{{ 'apis.plans.form.rateLimiting' | translate }}</gio-form-label>
+        {{ 'apis.plans.form.rateLimitingHint' | translate }}
         <mat-slide-toggle
           gioFormSlideToggle
           formControlName="rateLimitEnabled"
-          aria-label="Toggle to enable rate limit"
+          [aria-label]="'apis.plans.form.rateLimitAria' | translate"
           name="rateLimit"
         ></mat-slide-toggle>
       </gio-form-slide-toggle>
@@ -42,12 +42,12 @@
   <mat-card class="quota-card">
     <mat-card-content>
       <gio-form-slide-toggle>
-        <gio-form-label>Quota</gio-form-label>
-        Rate limit how many HTTP requests an application can make in a given period of hours, days or months.
+        <gio-form-label>{{ 'apis.plans.form.quota' | translate }}</gio-form-label>
+        {{ 'apis.plans.form.quotaHint' | translate }}
         <mat-slide-toggle
           gioFormSlideToggle
           formControlName="quotaEnabled"
-          aria-label="Toggle to enable quota"
+          [aria-label]="'apis.plans.form.quotaAria' | translate"
           name="quota"
         ></mat-slide-toggle>
       </gio-form-slide-toggle>
@@ -67,12 +67,12 @@
     <mat-card class="resourceFiltering-card">
       <mat-card-content>
         <gio-form-slide-toggle>
-          <gio-form-label>Resource Filtering</gio-form-label>
-          Restrict resources according to whitelist and / or blacklist rules.
+          <gio-form-label>{{ 'apis.plans.form.resourceFiltering' | translate }}</gio-form-label>
+          {{ 'apis.plans.form.resourceFilteringHint' | translate }}
           <mat-slide-toggle
             gioFormSlideToggle
             formControlName="resourceFilteringEnabled"
-            aria-label="Comment when subscribing to the plan toggle"
+            [aria-label]="'apis.plans.form.resourceFilteringAria' | translate"
             name="resourceFilteringEnabled"
           ></mat-slide-toggle>
         </gio-form-slide-toggle>

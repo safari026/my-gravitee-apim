@@ -17,27 +17,29 @@
 -->
 
 <form [formGroup]="form" *ngIf="form" (ngSubmit)="onSubmit()">
-  <span mat-dialog-title>Transfer ownership</span>
+  <span mat-dialog-title>{{ 'kafka.transfer.title' | translate }}</span>
   <mat-dialog-content class="transfer-ownership">
-    <p class="transfer-ownership__subtitle">Transfer ownership and grant access to your Cluster to another user</p>
+    <p class="transfer-ownership__subtitle">{{ 'kafka.transfer.subtitle' | translate }}</p>
 
     <ng-container>
-      <div>Choose a new Primary Owner:</div>
+      <div>{{ 'kafka.transfer.chooseOwner' | translate }}</div>
       <mat-button-toggle-group
-        aria-label="Select User or Group"
+        [attr.aria-label]="'kafka.transfer.userOrGroupAria' | translate"
         class="transfer-ownership__userOrGroup__toggle-group"
         formControlName="transferMode"
       >
         <mat-button-toggle class="transfer-ownership__userOrGroup__toggle-group__toggle" value="ENTITY_MEMBER">
-          Cluster member
+          {{ 'kafka.transfer.member' | translate }}
         </mat-button-toggle>
-        <mat-button-toggle class="transfer-ownership__userOrGroup__toggle-group__toggle" value="OTHER_USER"> Other user </mat-button-toggle>
+        <mat-button-toggle class="transfer-ownership__userOrGroup__toggle-group__toggle" value="OTHER_USER">
+          {{ 'kafka.transfer.otherUser' | translate }}
+        </mat-button-toggle>
       </mat-button-toggle-group>
     </ng-container>
 
     <div class="transfer-ownership__userOrGroup" *ngIf="form.get('transferMode').value === 'ENTITY_MEMBER'">
       <mat-form-field class="transfer-ownership__userOrGroup__field">
-        <mat-label>Select Cluster member</mat-label>
+        <mat-label>{{ 'kafka.transfer.selectMember' | translate }}</mat-label>
         <mat-select formControlName="entityMember">
           <mat-option *ngFor="let member of entityMembers" [value]="member">{{ member.displayName }}</mat-option>
         </mat-select>
@@ -50,7 +52,7 @@
 
     <div *ngIf="form.valid" class="transfer-ownership__userOrGroup">
       <mat-form-field class="transfer-ownership__userOrGroup__field">
-        <mat-label>New role for current Primary Owner</mat-label>
+        <mat-label>{{ 'kafka.transfer.newRole' | translate }}</mat-label>
         <mat-select formControlName="roleId">
           <mat-option *ngFor="let role of poRoles" [value]="role.name">{{ role.name }}</mat-option>
         </mat-select>
@@ -59,13 +61,13 @@
 
     <gio-banner-warning *ngIf="form.valid">
       <div class="transfer-ownership__new-role">
-        This action cannot be undone. If you are the primary owner of this Cluster, your role will be set to
+        {{ 'kafka.transfer.irreversible' | translate }}
         <code>{{ form.get('roleId').value }}</code
         >.
       </div>
     </gio-banner-warning>
   </mat-dialog-content>
   <mat-dialog-actions align="end">
-    <button mat-raised-button color="primary" [disabled]="!form.valid">Transfer</button>
+    <button mat-raised-button color="primary" [disabled]="!form.valid">{{ 'common.transfer' | translate }}</button>
   </mat-dialog-actions>
 </form>

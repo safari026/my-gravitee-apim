@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-import { Component, Inject, OnDestroy, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, Inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { flatMap } from 'lodash';
-import { filter, map, shareReplay, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { filter, map, shareReplay, skip, startWith, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { GIO_DIALOG_WIDTH, GioBannerTypes, GioMenuSearchService, GioMenuService, MenuSearchItem } from '@gravitee/ui-particles-angular';
 import { combineLatest, Observable, Subject } from 'rxjs';
 import { MatDialog } from '@angular/material/dialog';
@@ -42,6 +43,7 @@ import { Api } from '../../../entities/management-api-v2';
 import { ApiService } from '../../../services-ngx/api.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { IntegrationsService } from '../../../services-ngx/integrations.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 type TopBanner = {
   title: string;
@@ -73,6 +75,9 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
   public banners$: Observable<TopBanner[]> = combineLatest([
     this.apiV2Service.getLastApiFetch(this.activatedRoute.snapshot.params.apiId),
     this.apiV2Service.verifyDeploy(this.activatedRoute.snapshot.params.apiId),
+    toObservable(this.languageService.currentLanguage, { injector: this.injector }).pipe(
+      startWith(this.languageService.currentLanguage()),
+    ),
   ]).pipe(
     map(([api, verifyDeploymentResponse]) => {
       const banners: TopBanner[] = [];
@@ -82,10 +87,10 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
       if (isApiReviewer && this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'IN_REVIEW') {
         // 'api-reviews-u'
         banners.push({
-          title: 'As an API reviewer, there are some changes made on this API that required a review before been applied.',
+          title: this.t('banners.reviewerChangesNeeded'),
           type: 'info',
           action: {
-            btnText: 'Review changes',
+            btnText: this.t('banners.reviewChanges'),
             onClick: () => {
               this.isActionDisabled = true;
               this.matDialog
@@ -109,10 +114,10 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
       }
       if (isApiReviewer && this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'REVIEW_OK') {
         banners.push({
-          title: 'As an API reviewer, you have accepted the changes made on this API.',
+          title: this.t('banners.reviewerAccepted'),
           type: 'success',
           action: {
-            btnText: 'Review changes',
+            btnText: this.t('banners.reviewChanges'),
             onClick: () => {
               this.isActionDisabled = true;
               this.matDialog
@@ -136,10 +141,10 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
       }
       if (isApiReviewer && this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'REQUEST_FOR_CHANGES') {
         banners.push({
-          title: 'As an API reviewer, you have rejected the changes made on this API.',
+          title: this.t('banners.reviewerRejected'),
           type: 'warning',
           action: {
-            btnText: 'Review changes',
+            btnText: this.t('banners.reviewChanges'),
             onClick: () => {
               this.isActionDisabled = true;
               this.matDialog
@@ -166,21 +171,21 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
       if (!isApiReviewer && this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'IN_REVIEW') {
         // not 'api-reviews-u'
         banners.push({
-          title: 'The API reviewer has been asked to review the changes.',
+          title: this.t('banners.reviewAsked'),
           type: 'info',
         });
       }
       if (!isApiReviewer && this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'REVIEW_OK') {
         // not 'api-reviews-u'
         banners.push({
-          title: 'The API reviewer has accepted the changes made on this API.',
+          title: this.t('banners.reviewerAcceptedNonReviewer'),
           type: 'success',
         });
       }
       if (!isApiReviewer && this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'REQUEST_FOR_CHANGES') {
         // not 'api-reviews-u'
         banners.push({
-          title: 'The API reviewer has asked for changes to be made on this API.',
+          title: this.t('banners.reviewerRequestedChanges'),
           type: 'warning',
         });
       }
@@ -188,7 +193,7 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
       // Other banners
       if (this.constants.env.settings?.apiReview?.enabled && api.workflowState === 'DRAFT') {
         banners.push({
-          title: 'This API is a draft.',
+          title: this.t('banners.draft'),
           type: 'info',
         });
       }
@@ -201,10 +206,10 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
         banners.push(
           canUpdateApiDefinition
             ? {
-                title: 'This API is out of sync.',
+                title: this.t('banners.outOfSync'),
                 type: 'warning',
                 action: {
-                  btnText: 'Deploy API',
+                  btnText: this.t('banners.deployApi'),
                   onClick: () => {
                     this.isActionDisabled = true;
                     this.matDialog
@@ -229,7 +234,7 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
                 },
               }
             : {
-                title: 'This API is out of sync.',
+                title: this.t('banners.outOfSync'),
                 type: 'warning',
               },
         );
@@ -237,15 +242,15 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
 
       if (api.lifecycleState === 'DEPRECATED') {
         banners.push({
-          title: 'This API is deprecated.',
+          title: this.t('banners.deprecated'),
           type: 'error',
         });
       }
 
       if (!verifyDeploymentResponse.ok) {
         banners.push({
-          title: 'This API cannot be deployed.',
-          body: 'The current configuration uses features not in your license.',
+          title: this.t('banners.cannotDeploy'),
+          body: this.t('banners.cannotDeployBody'),
           type: 'error',
         });
       }
@@ -272,7 +277,14 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
     private readonly snackBarService: SnackBarService,
     private readonly gioMenuSearchService: GioMenuSearchService,
     public readonly integrationsService: IntegrationsService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+    private readonly changeDetectorRef: ChangeDetectorRef,
   ) {}
+
+  private t(key: string, params?: Record<string, string | number>): string {
+    return this.languageService.translate(`apis.navigation.${key}`, params);
+  }
 
   ngOnInit() {
     this.gioMenuService.reduced$.pipe(takeUntil(this.unsubscribe$)).subscribe(reduced => {
@@ -285,16 +297,7 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
       .getLastApiFetch(this.activatedRoute.snapshot.params.apiId)
       .pipe(
         tap(api => (this.currentApi = api)),
-        tap(api => {
-          const menu = this.computeMenu(api).getMenu(api);
-          this.groupItems = menu.groupItems;
-          this.subMenuItems = menu.subMenuItems;
-          this.gioMenuSearchService.addMenuSearchItems(this.getApiNavigationSearchItems());
-
-          this.breadcrumbItems = this.computeBreadcrumbItems();
-          this.selectedItemWithTabs = this.findMenuItemWithTabs();
-          this.selectedItemHeader = this.findActiveMenuItemHeader();
-        }),
+        tap(api => this.applyMenu(api)),
         switchMap(() => this.router.events),
         filter(event => event instanceof NavigationEnd),
         map((event: NavigationEnd) => event),
@@ -305,6 +308,27 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => {
+        if (!this.currentApi) {
+          return;
+        }
+        this.applyMenu(this.currentApi);
+        this.changeDetectorRef.markForCheck();
+      });
+  }
+
+  private applyMenu(api: Api): void {
+    const menu = this.computeMenu(api).getMenu(api);
+    this.groupItems = menu.groupItems;
+    this.subMenuItems = menu.subMenuItems;
+    this.gioMenuSearchService.removeMenuSearchItems([api.id]);
+    this.gioMenuSearchService.addMenuSearchItems(this.getApiNavigationSearchItems());
+    this.breadcrumbItems = this.computeBreadcrumbItems();
+    this.selectedItemWithTabs = this.findMenuItemWithTabs();
+    this.selectedItemHeader = this.findActiveMenuItemHeader();
   }
 
   ngOnDestroy() {
@@ -396,7 +420,7 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
         acc.push({
           name: item.displayName,
           routerLink: `${parentRouterLink}/${routerLink}`,
-          category: `Apis`,
+          category: this.t('searchCategory'),
           groupIds: [environmentId, apiId],
         });
       }
@@ -406,7 +430,7 @@ export class ApiNavigationComponent implements OnInit, OnDestroy {
           acc.push({
             name: tab.displayName,
             routerLink: `${parentRouterLink}/${cleanRouterLink(tab.routerLink)}`,
-            category: `Apis / ${item.displayName}`,
+            category: this.t('searchCategoryItem', { item: item.displayName }),
             groupIds: [environmentId, apiId],
           });
         }

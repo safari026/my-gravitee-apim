@@ -16,6 +16,7 @@
 import { IController } from 'angular';
 
 import { PageType } from '../../../services/documentation.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 class EditPageConfigurationComponentController implements IController {
   page: any;
@@ -24,7 +25,12 @@ class EditPageConfigurationComponentController implements IController {
   shouldShowOpenApiDocFormat = false;
   settings: any;
 
-  constructor(private readonly Constants: any) {}
+  constructor(
+    private readonly Constants: any,
+    private readonly ngLanguageService: LanguageService,
+  ) {}
+
+  translate = (key: string, params?: Record<string, string | number>) => this.ngLanguageService.translate(key, params);
 
   isSwagger(): boolean {
     return PageType.SWAGGER === this.page.type;
@@ -51,7 +57,7 @@ class EditPageConfigurationComponentController implements IController {
 
   openApiFormatLabel(format: string) {
     if (this.settings && this.settings.openAPIDocViewer && format === this.settings.openAPIDocViewer.openAPIDocType.defaultType) {
-      return `${format} (Default)`;
+      return this.translate('settings.documentation.defaultFormat', { format });
     } else {
       return format;
     }
@@ -68,7 +74,7 @@ class EditPageConfigurationComponentController implements IController {
     return this.page.generalConditions;
   }
 }
-EditPageConfigurationComponentController.$inject = ['Constants'];
+EditPageConfigurationComponentController.$inject = ['Constants', 'ngLanguageService'];
 
 export const EditPageConfigurationComponent: ng.IComponentOptions = {
   bindings: {

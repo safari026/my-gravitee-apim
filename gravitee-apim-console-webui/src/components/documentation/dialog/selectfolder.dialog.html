@@ -15,7 +15,7 @@
     limitations under the License.
 
 -->
-<md-dialog aria-label="confirm-dialog">
+<md-dialog aria-label="{{title}}">
   <md-dialog-content layout-padding>
     <h4>{{title}}</h4>
     <div ng-repeat="folder in folders">
@@ -24,6 +24,6 @@
     </div>
   </md-dialog-content>
   <md-dialog-actions layout="row">
-    <md-button ng-click="ctrl.cancel()">Cancel</md-button>
+    <md-button ng-click="ctrl.cancel()">{{ctrl.translate('common.cancel')}}</md-button>
   </md-dialog-actions>
 </md-dialog>

@@ -28,6 +28,9 @@ import { MatIconModule } from '@angular/material/icon';
 
 import { LoginComponent } from './login.component';
 
+import { AuthLanguageToggleComponent } from '../auth-language-toggle.component';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 @NgModule({
   declarations: [LoginComponent],
   exports: [LoginComponent],
@@ -43,6 +46,8 @@ import { LoginComponent } from './login.component';
     MatIconModule,
 
     GioIconsModule,
+    TranslatePipe,
+    AuthLanguageToggleComponent,
     RouterModule,
   ],
 })

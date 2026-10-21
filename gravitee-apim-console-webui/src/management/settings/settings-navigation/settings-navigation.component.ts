@@ -13,13 +13,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { takeUntil } from 'rxjs/operators';
 import { Subject } from 'rxjs';
-import { GioMenuService } from '@gravitee/ui-particles-angular';
+import { GioMenuSearchService, GioMenuService } from '@gravitee/ui-particles-angular';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { GroupItem, MenuItem, SettingsNavigationService } from './settings-navigation.service';
+
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'settings-navigation',
@@ -27,16 +30,19 @@ import { GroupItem, MenuItem, SettingsNavigationService } from './settings-navig
   styleUrls: ['./settings-navigation.component.scss'],
   standalone: false,
 })
-export class SettingsNavigationComponent implements OnInit {
+export class SettingsNavigationComponent implements OnInit, OnDestroy {
   public groupItems: GroupItem[] = [];
   public hasBreadcrumb = false;
-  private unsubscribe$ = new Subject();
+  private unsubscribe$ = new Subject<void>();
 
   constructor(
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
     private readonly gioMenuService: GioMenuService,
+    private readonly gioMenuSearchService: GioMenuSearchService,
     private readonly settingsNavigationService: SettingsNavigationService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit() {
@@ -44,7 +50,15 @@ export class SettingsNavigationComponent implements OnInit {
       this.hasBreadcrumb = reduced;
     });
 
-    this.groupItems = this.settingsNavigationService.getSettingsNavigationRoutes();
+    this.refreshNavigation();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshNavigation());
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
   }
 
   isActive(item: MenuItem): boolean {
@@ -69,5 +83,14 @@ export class SettingsNavigationComponent implements OnInit {
     });
 
     return breadcrumbItems;
+  }
+
+  private refreshNavigation() {
+    this.groupItems = this.settingsNavigationService.getSettingsNavigationRoutes();
+    const envHrid = this.activatedRoute.snapshot.pathFromRoot.map(route => route.params['envHrid']).find(Boolean);
+    if (envHrid) {
+      this.gioMenuSearchService.removeMenuSearchItems([envHrid]);
+      this.gioMenuSearchService.addMenuSearchItems(this.settingsNavigationService.getSettingsNavigationSearchItems(envHrid));
+    }
   }
 }

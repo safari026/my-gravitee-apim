@@ -16,13 +16,15 @@
 
 import { Component, ElementRef, Inject, Injector, SimpleChange } from '@angular/core';
 import { UpgradeComponent } from '@angular/upgrade/static';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 import { isEmpty, isEqual } from 'lodash';
-import { distinctUntilChanged, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { distinctUntilChanged, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { combineLatest, from, Subject } from 'rxjs';
 
 import { DocumentationService, Page } from '../../services/documentation.service';
 import { ApiService } from '../../services/api.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   template: '',
@@ -49,8 +51,16 @@ export class DocumentationManagementComponent extends UpgradeComponent {
     private readonly activatedRoute: ActivatedRoute,
     @Inject('ajsDocumentationService') private readonly ajsDocumentationService: DocumentationService,
     @Inject('ajsApiService') private readonly ajsApiService: ApiService,
+    private readonly languageService: LanguageService,
   ) {
     super('documentationManagementAjs', elementRef, injector);
+    toObservable(this.languageService.currentLanguage, { injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
   }
 
   override ngOnInit() {
@@ -103,6 +113,7 @@ export class DocumentationManagementComponent extends UpgradeComponent {
             folders: new SimpleChange(null, this.folders, this.firstChange),
             systemFolders: new SimpleChange(null, this.systemFolders, this.firstChange),
             activatedRoute: new SimpleChange(null, this.activatedRoute, this.firstChange),
+            language: new SimpleChange(null, this.languageService.currentLanguage(), this.firstChange),
           });
 
           if (this.firstChange) {
@@ -113,5 +124,12 @@ export class DocumentationManagementComponent extends UpgradeComponent {
         takeUntil(this.unsubscribe$),
       )
       .subscribe();
+  }
+
+  override ngOnDestroy() {
+    this.unsubscribe$.next();
+    this.unsubscribe$.complete();
+
+    super.ngOnDestroy();
   }
 }

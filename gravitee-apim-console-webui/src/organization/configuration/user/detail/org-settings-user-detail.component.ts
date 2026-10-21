@@ -46,6 +46,7 @@ import { Token } from '../../../../entities/user/userTokens';
 import { UsersTokenService } from '../../../../services-ngx/users-token.service';
 import { Constants } from '../../../../entities/Constants';
 import { GioPermissionService } from '../../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
 
 interface UserVM extends User {
   organizationRoles: string;
@@ -135,6 +136,7 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
     private readonly matDialog: MatDialog,
     @Inject(Constants) private readonly constants: Constants,
     private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -265,7 +267,7 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
     zip(...observableToZip)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Roles successfully updated');
+          this.snackBarService.success(this.languageService.translate('settings.organization.userDetail.rolesUpdated'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -288,13 +290,11 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Reset user password',
-          content: `
-          Are you sure you want to reset password of user <strong>${this.user.displayName}</strong> ?
-          <br>
-          The user will receive an email with a link to set a new password.
-          `,
-          confirmButton: 'Reset',
+          title: this.languageService.translate('settings.organization.userDetail.resetPasswordTitle'),
+          content: this.languageService.translate('settings.organization.userDetail.resetPasswordContent', {
+            name: this.user.displayName,
+          }),
+          confirmButton: this.languageService.translate('settings.organization.shared.reset'),
         },
         role: 'alertdialog',
         id: 'resetUserPasswordConfirmDialog',
@@ -303,7 +303,11 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.usersService.resetPassword(this.user.id)),
-        tap(() => this.snackBarService.success(`The password of user "${this.user.displayName}" has been successfully reset`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.userDetail.passwordReset', { name: this.user.displayName }),
+          ),
+        ),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -316,14 +320,14 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
   onProcessRegistration(state: 'accept' | 'reject') {
     const wording = {
       accept: {
-        content: `Are you sure you want to accept the registration request of <strong>${this.user.displayName}</strong> ?`,
-        confirmButton: 'Accept',
-        success: `User "${this.user.displayName}" has been accepted`,
+        content: this.languageService.translate('settings.organization.userDetail.acceptContent', { name: this.user.displayName }),
+        confirmButton: this.languageService.translate('settings.organization.shared.accept'),
+        success: this.languageService.translate('settings.organization.userDetail.accepted', { name: this.user.displayName }),
       },
       reject: {
-        content: `Are you sure you want to reject the registration request of <strong>${this.user.displayName}</strong> ?`,
-        confirmButton: 'Reject',
-        success: `User "${this.user.displayName}" has been rejected`,
+        content: this.languageService.translate('settings.organization.userDetail.rejectContent', { name: this.user.displayName }),
+        confirmButton: this.languageService.translate('settings.organization.shared.reject'),
+        success: this.languageService.translate('settings.organization.userDetail.rejected', { name: this.user.displayName }),
       },
     };
 
@@ -331,7 +335,7 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'User registration',
+          title: this.languageService.translate('settings.organization.userDetail.registrationTitle'),
           content: wording[state].content,
           confirmButton: wording[state].confirmButton,
         },
@@ -382,9 +386,9 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         width: '450px',
         data: {
-          title: 'Revoke a token',
-          content: `Are you sure you want to revoke the token <strong>${token.name}</strong>?`,
-          confirmButton: 'Remove',
+          title: this.languageService.translate('settings.organization.userDetail.revokeTokenTitle'),
+          content: this.languageService.translate('settings.organization.userDetail.revokeTokenContent', { name: token.name }),
+          confirmButton: this.languageService.translate('settings.organization.shared.remove'),
         },
         role: 'alertdialog',
         id: 'revokeUsersTokenDialog',
@@ -393,7 +397,7 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.usersTokenService.revokeToken(this.activatedRoute.snapshot.params.userId, token.id)),
-        tap(() => this.snackBarService.success(`Token successfully deleted!`)),
+        tap(() => this.snackBarService.success(this.languageService.translate('settings.organization.userDetail.tokenDeleted'))),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;
@@ -431,9 +435,9 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .open<GioConfirmDialogComponent, GioConfirmDialogData>(GioConfirmDialogComponent, {
         width: '500px',
         data: {
-          title: 'Convert to service account',
-          content: `Are you sure you want to convert <strong>${this.user.displayName}</strong> to a service account? This action cannot be undone.`,
-          confirmButton: 'Convert',
+          title: this.languageService.translate('settings.organization.userDetail.convertTitle'),
+          content: this.languageService.translate('settings.organization.userDetail.convertContent', { name: this.user.displayName }),
+          confirmButton: this.languageService.translate('settings.organization.shared.convert'),
         },
         role: 'alertdialog',
         id: 'convertToServiceAccountConfirmDialog',
@@ -442,7 +446,11 @@ export class OrgSettingsUserDetailComponent implements OnInit, OnDestroy {
       .pipe(
         filter(confirm => confirm === true),
         switchMap(() => this.usersService.updateServiceAccountStatus(this.user.id, true)),
-        tap(() => this.snackBarService.success(`User "${this.user.displayName}" has been converted to a service account`)),
+        tap(() =>
+          this.snackBarService.success(
+            this.languageService.translate('settings.organization.userDetail.converted', { name: this.user.displayName }),
+          ),
+        ),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
           return EMPTY;

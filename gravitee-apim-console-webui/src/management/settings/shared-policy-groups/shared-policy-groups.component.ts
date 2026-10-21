@@ -13,6 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
 import { CommonModule } from '@angular/common';
 import { ChangeDetectionStrategy, Component, DestroyRef, inject, OnInit } from '@angular/core';
 import { MatCardModule } from '@angular/material/card';
@@ -79,10 +81,12 @@ type PageTableVM = {
     GioPermissionModule,
     GioTableWrapperModule,
     SharedPolicyGroupsStateBadgeComponent,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SharedPolicyGroupsComponent implements OnInit {
+  private readonly languageService = inject(LanguageService);
   private readonly sharedPolicyGroupsService = inject(SharedPolicyGroupsService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly matDialog = inject(MatDialog);
@@ -176,11 +180,13 @@ export class SharedPolicyGroupsComponent implements OnInit {
       )
       .subscribe({
         next: sharedPolicyGroup => {
-          this.snackBarService.success('Shared Policy Group created');
+          this.snackBarService.success(this.languageService.translate('settings.sharedPolicyGroups.created'));
           this.router.navigate([sharedPolicyGroup.id, 'studio'], { relativeTo: this.activatedRoute });
         },
         error: error => {
-          this.snackBarService.error(error?.error?.message ?? 'Error during Shared Policy Group creation!');
+          this.snackBarService.error(
+            error?.error?.message ?? this.languageService.translate('settings.sharedPolicyGroups.createError'),
+          );
         },
       });
   }
@@ -190,9 +196,16 @@ export class SharedPolicyGroupsComponent implements OnInit {
   }
 
   protected onRemove(sharedPolicyGroupId: string) {
-    removeSharedPolicyGroup(this.matDialog, this.snackBarService, this.sharedPolicyGroupsService, sharedPolicyGroupId, () => {
-      this.refreshPageTableVM$.next();
-    });
+    removeSharedPolicyGroup(
+      this.matDialog,
+      this.snackBarService,
+      this.sharedPolicyGroupsService,
+      this.languageService,
+      sharedPolicyGroupId,
+      () => {
+        this.refreshPageTableVM$.next();
+      },
+    );
   }
 }
 
@@ -207,18 +220,17 @@ export const removeSharedPolicyGroup = (
   matDialog: MatDialog,
   snackBarService: SnackBarService,
   sharedPolicyGroupsService: SharedPolicyGroupsService,
+  languageService: LanguageService,
   sharedPolicyGroupId: string,
   onSuccess: () => void = () => {},
 ) => {
   matDialog
     .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
       data: {
-        title: 'Remove Shared Policy Group',
-        content: `Are you sure you want to remove this Shared Policy Group?<br>
-If this Shared Policy Group is used in API flows, be sure to inform API publishers before making this change.<br>
-If an API flow still uses this Shared Policy Group, the API flow will ignore it and continue to run.`,
+        title: languageService.translate('settings.sharedPolicyGroups.removeTitle'),
+        content: languageService.translate('settings.sharedPolicyGroups.removeContent'),
 
-        confirmButton: 'Remove',
+        confirmButton: languageService.translate('common.remove'),
       },
       role: 'alertdialog',
       id: 'remove-spg-dialog',
@@ -231,11 +243,11 @@ If an API flow still uses this Shared Policy Group, the API flow will ignore it 
     )
     .subscribe({
       next: () => {
-        snackBarService.success('Shared Policy Group removed');
+        snackBarService.success(languageService.translate('settings.sharedPolicyGroups.removed'));
         onSuccess();
       },
       error: e => {
-        snackBarService.error(e.error?.message ?? 'An error occurred while removing the Shared Policy Group');
+        snackBarService.error(e.error?.message ?? languageService.translate('settings.sharedPolicyGroups.removeError'));
         throw e;
       },
     });

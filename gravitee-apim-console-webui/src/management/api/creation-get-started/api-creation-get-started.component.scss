@@ -34,27 +34,11 @@ $typography: map.get(gio.$mat-theme, typography);
       &__action {
         display: flex;
         gap: 8px;
-
-        .mat-icon {
-          width: 20px;
-          height: 20px;
-          margin-left: 8px;
-        }
       }
 
       .mat-body {
         margin-top: 8px;
         padding-bottom: 30px;
-      }
-    }
-
-    &--v2 {
-      display: flex;
-      gap: 8px;
-      align-items: center;
-
-      .mat-body {
-        color: mat.m2-get-color-from-palette(gio.$mat-space-palette, 'lighter40');
       }
     }
   }
@@ -69,10 +53,5 @@ $typography: map.get(gio.$mat-theme, typography);
     &__description {
       color: mat.m2-get-color-from-palette(gio.$mat-space-palette, 'lighter40');
     }
-  }
-
-  &__path-based {
-    text-align: right;
-    padding: 24px 0 0 0;
   }
 }

@@ -31,6 +31,8 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { TagService } from '../../../services-ngx/tag.service';
 import { Tag } from '../../../entities/tag/tag';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 interface DeploymentForm {
   tags: FormControl<string[]>;
@@ -41,7 +43,7 @@ interface DeploymentForm {
   templateUrl: './api-product-deployment.component.html',
   styleUrls: ['./api-product-deployment.component.scss'],
   standalone: true,
-  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatSelectModule, GioSaveBarModule],
+  imports: [ReactiveFormsModule, MatCardModule, MatFormFieldModule, MatSelectModule, GioSaveBarModule, TranslatePipe],
 })
 export class ApiProductDeploymentComponent {
   private readonly destroyRef = inject(DestroyRef);
@@ -50,6 +52,7 @@ export class ApiProductDeploymentComponent {
   private readonly permissionService = inject(GioPermissionService);
   private readonly snackBarService = inject(SnackBarService);
   private readonly tagService = inject(TagService);
+  private readonly languageService = inject(LanguageService);
 
   protected readonly isReadOnly = !this.permissionService.hasAnyMatching(['api_product-definition-u']);
 
@@ -74,7 +77,7 @@ export class ApiProductDeploymentComponent {
         return id
           ? this.apiProductV2Service.get(id).pipe(
               catchError(error => {
-                this.snackBarService.error(error.error?.message || 'An error occurred while loading the API Product');
+                this.snackBarService.error(error.error?.message || this.languageService.translate('apiProducts.configuration.loadError'));
                 return of(null);
               }),
             )
@@ -117,11 +120,11 @@ export class ApiProductDeploymentComponent {
         tap(() => {
           this.apiProductV2Service.notifyApiProductChanged();
           this.initialFormValue.set(this.form.getRawValue());
-          this.snackBarService.success('Configuration successfully saved!');
+          this.snackBarService.success(this.languageService.translate('apiProducts.configuration.saved'));
           this.reload$.next();
         }),
         catchError(error => {
-          this.snackBarService.error(error.error?.message || error.message || 'An error occurred while updating the API Product');
+          this.snackBarService.error(error.error?.message || error.message || this.languageService.translate('apiProducts.configuration.updateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

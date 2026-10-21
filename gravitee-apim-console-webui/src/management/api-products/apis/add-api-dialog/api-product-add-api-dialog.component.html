@@ -16,13 +16,13 @@
 
 -->
 
-<h2 mat-dialog-title>Add API</h2>
+<h2 mat-dialog-title>{{ 'apiProducts.apis.dialogTitle' | translate }}</h2>
 
 <form autocomplete="off" (ngSubmit)="submit()">
   <mat-dialog-content class="dialog-content">
     <gio-banner-info>
-      Can't see all your APIs?
-      <span gioBannerBody>APIs must have API products enabled before they appear in the list.</span>
+      {{ 'apiProducts.apis.dialogBanner' | translate }}
+      <span gioBannerBody>{{ 'apiProducts.apis.dialogBannerBody' | translate }}</span>
     </gio-banner-info>
 
     @if (validationError(); as error) {
@@ -31,7 +31,7 @@
 
     @if (selectedApisWithContext().length > 0) {
       <div class="selected-apis-section">
-        <h3 class="selected-apis-section__header">APIs added to this product</h3>
+        <h3 class="selected-apis-section__header">{{ 'apiProducts.apis.selectedHeader' | translate }}</h3>
         <mat-chip-set class="selected-apis-section__chips">
           @for (api of selectedApisWithContext(); track api.id) {
             <mat-chip
@@ -46,7 +46,7 @@
                 <span class="selected-apis-section__chip-path">{{ api.contextPath }}</span>
               }
               @if (api.lifecycleState === 'DEPRECATED') {
-                <span class="gio-badge-error">Deprecated</span>
+                <span class="gio-badge-error">{{ 'apiProducts.apis.deprecated' | translate }}</span>
               }
               <mat-icon matChipRemove>cancel</mat-icon>
             </mat-chip>
@@ -56,10 +56,10 @@
     }
 
     <mat-form-field appearance="outline" class="form-field">
-      <mat-label>Add APIs</mat-label>
+      <mat-label>{{ 'apiProducts.apis.addApis' | translate }}</mat-label>
       <input matInput type="search" [matAutocomplete]="auto" [formControl]="searchApiControl" [attr.data-testid]="'api-select-input'" />
       @if (searchApiControl.value) {
-        <button matSuffix mat-icon-button aria-label="Clear input" (click)="resetSearchTerm()">
+        <button matSuffix mat-icon-button [attr.aria-label]="'common.clearInput' | translate" (click)="resetSearchTerm()">
           <mat-icon>close</mat-icon>
         </button>
       }
@@ -82,13 +82,13 @@
                   }
                 </span>
                 @if (option.lifecycleState === 'DEPRECATED') {
-                  <span class="autocompleteRow__badge gio-badge-error">Deprecated</span>
+                  <span class="autocompleteRow__badge gio-badge-error">{{ 'apiProducts.apis.deprecated' | translate }}</span>
                 }
               </span>
             </mat-option>
           } @empty {
             @if (hasNonEmptySearchTerm()) {
-              <mat-option disabled>No APIs matching search criteria</mat-option>
+              <mat-option disabled>{{ 'common.noMatchingApis' | translate }}</mat-option>
             }
           }
         }
@@ -97,9 +97,9 @@
   </mat-dialog-content>
 
   <mat-dialog-actions class="actions">
-    <button type="button" mat-button (click)="onCancelClick()" [attr.data-testid]="'cancel-button'">Cancel</button>
+    <button type="button" mat-button (click)="onCancelClick()" [attr.data-testid]="'cancel-button'">{{ 'common.cancel' | translate }}</button>
     <button type="submit" [disabled]="selectedApis().length === 0" mat-raised-button color="primary" [attr.data-testid]="'submit-button'">
-      Add API
+      {{ 'apiProducts.apis.add' | translate }}
     </button>
   </mat-dialog-actions>
 </form>

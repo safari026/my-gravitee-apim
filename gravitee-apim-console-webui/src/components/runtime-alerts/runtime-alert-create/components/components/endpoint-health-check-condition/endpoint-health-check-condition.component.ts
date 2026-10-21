@@ -29,10 +29,7 @@ type EndpointHealthCheckFormGroup = FormGroup<{
   selector: 'endpoint-health-check-condition',
   template: `
     <div>
-      <p>
-        This rule does not require any configuration. However, it is possible to define an aggregation to receive an alert per api endpoint
-        instead of an unique alert in case multiple endpoints are concerned
-      </p>
+      <p>{{ 'alerts.condition.healthCheckHint' | translate }}</p>
     </div>
     <aggregation-condition
       [form]="form.controls.projections"

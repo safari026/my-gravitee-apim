@@ -26,24 +26,26 @@ import { AlertCondition } from '../../../../../../../entities/alerts/conditions'
   template: `
     <form *ngIf="form" [formGroup]="form" class="condition-row">
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Operator</mat-label>
+        <mat-label>{{ 'alerts.condition.operator' | translate }}</mat-label>
         <mat-select formControlName="operator" required>
-          <mat-option *ngFor="let operator of operators" [value]="operator">{{ operator.name }}</mat-option>
+          <mat-option *ngFor="let operator of operators" [value]="operator">{{
+            'alerts.operators.' + operator.key | translate
+          }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.operator.hasError('required')">Operator is required.</mat-error>
+        <mat-error *ngIf="form.controls.operator.hasError('required')">{{ 'alerts.runtime.operatorRequired' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Multiplier</mat-label>
+        <mat-label>{{ 'alerts.condition.multiplier' | translate }}</mat-label>
         <input matInput formControlName="multiplier" type="number" [min]="1" required />
-        <mat-error *ngIf="form.controls.multiplier.hasError('required')">Multiplier is required.</mat-error>
-        <mat-error *ngIf="form.controls.multiplier.hasError('min')">The multiplier value should be greater or equals to 1.</mat-error>
+        <mat-error *ngIf="form.controls.multiplier.hasError('required')">{{ 'alerts.condition.multiplierRequired' | translate }}</mat-error>
+        <mat-error *ngIf="form.controls.multiplier.hasError('min')">{{ 'alerts.condition.multiplierMin' | translate }}</mat-error>
       </mat-form-field>
       <mat-form-field class="condition-row__form-field">
-        <mat-label>Property</mat-label>
+        <mat-label>{{ 'alerts.condition.property' | translate }}</mat-label>
         <mat-select formControlName="property" required>
           <mat-option *ngFor="let property of properties" [value]="property">{{ property.name }}</mat-option>
         </mat-select>
-        <mat-error *ngIf="form.controls.property.hasError('required')">Property is required.</mat-error>
+        <mat-error *ngIf="form.controls.property.hasError('required')">{{ 'alerts.condition.propertyRequired' | translate }}</mat-error>
       </mat-form-field>
     </form>
   `,

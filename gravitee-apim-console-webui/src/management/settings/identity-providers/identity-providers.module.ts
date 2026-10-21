@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
 import { NgModule } from '@angular/core';
@@ -53,6 +54,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     MatTooltipModule,
     MatSlideToggleModule,
     MatSnackBarModule,
+    TranslatePipe,
   ],
 })
 export class IdentityProvidersModule {}

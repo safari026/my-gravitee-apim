@@ -16,12 +16,15 @@
 import { Component, ElementRef, Injector, Input, OnDestroy, SimpleChange } from '@angular/core';
 import { UpgradeComponent } from '@angular/upgrade/static';
 import { combineLatest, Subject } from 'rxjs';
-import { takeUntil } from 'rxjs/operators';
+import { skip, takeUntil } from 'rxjs/operators';
 import { ActivatedRoute } from '@angular/router';
+import { toObservable } from '@angular/core/rxjs-interop';
 
 import { GroupService } from '../../../../services-ngx/group.service';
 import { TenantService } from '../../../../services-ngx/tenant.service';
 import { TagService } from '../../../../services-ngx/tag.service';
+import { LanguageService } from '../../../../shared/i18n/language.service';
+import { Language } from '../../../../shared/i18n/translations';
 
 @Component({
   template: '',
@@ -35,6 +38,7 @@ export class ApiCreationV2Component extends UpgradeComponent implements OnDestro
   @Input() groups;
   @Input() tenants;
   @Input() tags;
+  @Input() language: Language;
   private page = 1;
   private pageSize = 50;
 
@@ -42,16 +46,28 @@ export class ApiCreationV2Component extends UpgradeComponent implements OnDestro
 
   constructor(
     elementRef: ElementRef,
-    injector: Injector,
+    private readonly injector: Injector,
     private readonly groupService: GroupService,
     private readonly tenantService: TenantService,
     private readonly tagService: TagService,
     public readonly activatedRoute: ActivatedRoute,
+    private readonly languageService: LanguageService,
   ) {
     super('apiCreationV2ComponentAjs', elementRef, injector);
   }
 
   override ngOnInit() {
+    this.language = this.languageService.currentLanguage();
+
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(language => {
+        this.language = language;
+        this.ngOnChanges({
+          language: new SimpleChange(null, language, false),
+        });
+      });
+
     combineLatest([this.groupService.listPaginated(this.page, this.pageSize), this.tenantService.list(), this.tagService.list()])
       .pipe(takeUntil(this.unsubscribe$))
       .subscribe(([groups, tenants, tags]) => {
@@ -65,6 +81,7 @@ export class ApiCreationV2Component extends UpgradeComponent implements OnDestro
           tenants: new SimpleChange(null, this.tenants, true),
           tags: new SimpleChange(null, this.tags, true),
           activatedRoute: new SimpleChange(null, this.activatedRoute, true),
+          language: new SimpleChange(null, this.language, true),
         });
 
         super.ngOnInit();

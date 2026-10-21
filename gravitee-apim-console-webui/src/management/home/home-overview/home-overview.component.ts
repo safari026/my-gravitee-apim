@@ -29,6 +29,7 @@ import { v4ApisRequestStats } from '../components/dashboard-api-request-stats/da
 import { HomeService } from '../../../services-ngx/home.service';
 import { AnalyticsTopApis } from '../../../entities/analytics/analytics';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 @Component({
   selector: 'home-overview',
@@ -57,6 +58,7 @@ export class HomeOverviewComponent implements OnInit, OnDestroy {
     private readonly changeDetectorRef: ChangeDetectorRef,
     private readonly snackBarService: SnackBarService,
     private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
@@ -183,7 +185,7 @@ export class HomeOverviewComponent implements OnInit, OnDestroy {
           this.changeDetectorRef.markForCheck();
         },
         error: () => {
-          this.snackBarService.error('Can not get V4 Api Analytics Response Status');
+          this.snackBarService.error(this.languageService.translate('dashboard.errors.v4ResponseStatus'));
         },
       });
 
@@ -201,7 +203,7 @@ export class HomeOverviewComponent implements OnInit, OnDestroy {
           this.changeDetectorRef.markForCheck();
         },
         error: () => {
-          this.snackBarService.error('Can not get V4 Top APIs');
+          this.snackBarService.error(this.languageService.translate('dashboard.errors.v4TopApis'));
         },
       });
 

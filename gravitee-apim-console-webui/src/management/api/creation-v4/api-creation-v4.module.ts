@@ -68,6 +68,7 @@ import { GioFormQosModule } from '../component/gio-form-qos/gio-form-qos.module'
 import { GioLicenseBannerModule } from '../../../shared/components/gio-license-banner/gio-license-banner.module';
 import { GioFormListenersTcpHostsModule } from '../component/gio-form-listeners/gio-form-listeners-tcp-hosts/gio-form-listeners-tcp-hosts.module';
 import { GioFormListenersKafkaHostComponent } from '../component/gio-form-listeners/gio-form-listeners-kafka/gio-form-listeners-kafka-host.component';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @NgModule({
   imports: [
@@ -108,6 +109,7 @@ import { GioFormListenersKafkaHostComponent } from '../component/gio-form-listen
     MatSelectModule,
     GioLicenseBannerModule,
     RouterModule,
+    TranslatePipe,
   ],
   declarations: [
     ApiCreationV4Component,
