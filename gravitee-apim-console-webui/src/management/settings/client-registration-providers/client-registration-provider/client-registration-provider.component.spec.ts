@@ -24,6 +24,7 @@ import { UntypedFormGroup } from '@angular/forms';
 
 import { ClientRegistrationProviderComponent } from './client-registration-provider.component';
 
+import { LanguageService } from '../../../../shared/i18n/language.service';
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../shared/testing';
 import { ClientRegistrationProvidersModule } from '../client-registration-providers.module';
 import {
@@ -71,6 +72,40 @@ describe('ClientRegistrationProvider', () => {
     it('should init', async () => {
       expect(loader).toBeTruthy();
       expect(fixture.componentInstance.updateMode).toBeFalsy();
+    });
+
+    it('should keep option arrays stable and refresh labels when the language changes', () => {
+      const component = fixture.componentInstance;
+      const tokenTypes = component.initialAccessTokenTypes;
+      const trustStoreTypes = component.trustStoreTypes;
+      const keyStoreTypes = component.keyStoreTypes;
+      const languageService = TestBed.inject(LanguageService);
+
+      expect(tokenTypes.map(type => type.value)).toEqual(['CLIENT_CREDENTIALS', 'INITIAL_ACCESS_TOKEN']);
+      expect(trustStoreTypes.map(type => type.value)).toEqual(['NONE', 'JKS', 'PKCS12']);
+      expect(keyStoreTypes.map(type => type.value)).toEqual(['NONE', 'JKS', 'PKCS12']);
+      expect(tokenTypes[0].name).toBe('Client Credentials');
+      expect(trustStoreTypes[0].label).toBe('None');
+      expect(keyStoreTypes[1].label).toBe('Java Key Store (.jks)');
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(component.initialAccessTokenTypes).toBe(tokenTypes);
+      expect(component.trustStoreTypes).toBe(trustStoreTypes);
+      expect(component.keyStoreTypes).toBe(keyStoreTypes);
+      expect(tokenTypes.map(type => type.value)).toEqual(['CLIENT_CREDENTIALS', 'INITIAL_ACCESS_TOKEN']);
+      expect(tokenTypes[1].name).toBe('Начальный токен доступа');
+      expect(trustStoreTypes[0].label).toBe('Нет');
+      expect(keyStoreTypes[1].label).toBe('Java Key Store (.jks)');
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(component.initialAccessTokenTypes).toBe(tokenTypes);
+      expect(tokenTypes[0].name).toBe('Client Credentials');
+      expect(trustStoreTypes[0].label).toBe('None');
+      expect(keyStoreTypes[0].label).toBe('None');
     });
 
     it('should document the AM renew secret endpoint with an EL client_id token', () => {

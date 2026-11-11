@@ -15,11 +15,12 @@
  */
 import { JKSTrustStore, PKCS12TrustStore } from 'src/entities/management-api-v2';
 
-import { Component, inject, OnDestroy, OnInit } from '@angular/core';
+import { Component, inject, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { LanguageService } from '../../../../shared/i18n/language.service';
 import { EMPTY, Subject } from 'rxjs';
 import { UntypedFormControl, UntypedFormGroup, Validators } from '@angular/forms';
-import { catchError, takeUntil, tap } from 'rxjs/operators';
+import { catchError, skip, takeUntil, tap } from 'rxjs/operators';
 import { ActivatedRoute, Router } from '@angular/router';
 
 import { ClientRegistrationProvidersService } from '../../../../services-ngx/client-registration-providers.service';
@@ -34,45 +35,40 @@ import { ClientRegistrationProvider } from '../../../../entities/client-registra
 })
 export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
   private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
   private unsubscribe$ = new Subject<void>();
   public updateMode: boolean;
   public providerForm: UntypedFormGroup;
-  public get initialAccessTokenTypes(): {
+  public initialAccessTokenTypes: {
     name: string;
     value: ClientRegistrationProvider['initial_access_token_type'];
-  }[] {
-    return [
-      {
-        name: this.languageService.translate('settings.clientRegistration.tokenClientCredentials'),
-        value: 'CLIENT_CREDENTIALS',
-      },
-      {
-        name: this.languageService.translate('settings.clientRegistration.tokenInitialAccessToken'),
-        value: 'INITIAL_ACCESS_TOKEN',
-      },
-    ];
-  }
+  }[] = [
+    {
+      name: '',
+      value: 'CLIENT_CREDENTIALS',
+    },
+    {
+      name: '',
+      value: 'INITIAL_ACCESS_TOKEN',
+    },
+  ];
   public renewClientSecretMethods = ['POST', 'PATCH', 'PUT'];
   public renewClientSecretClientIdElToken = '{#client_id}';
   public renewClientSecretEndpointUrlExample: string = 'https://[am_gateway]/[domain]/oidc/register/{#client_id}/renew_secret';
 
   public formInitialValues: unknown;
 
-  public get trustStoreTypes(): { label: string; value: string }[] {
-    return [
-      { label: this.languageService.translate('settings.clientRegistration.storeNone'), value: 'NONE' },
-      { label: this.languageService.translate('settings.clientRegistration.storeJksTrust'), value: 'JKS' },
-      { label: this.languageService.translate('settings.clientRegistration.storePkcs12'), value: 'PKCS12' },
-    ];
-  }
+  public trustStoreTypes: { label: string; value: string }[] = [
+    { label: '', value: 'NONE' },
+    { label: '', value: 'JKS' },
+    { label: '', value: 'PKCS12' },
+  ];
 
-  public get keyStoreTypes(): { label: string; value: string }[] {
-    return [
-      { label: this.languageService.translate('settings.clientRegistration.storeNone'), value: 'NONE' },
-      { label: this.languageService.translate('settings.clientRegistration.storeJksKey'), value: 'JKS' },
-      { label: this.languageService.translate('settings.clientRegistration.storePkcs12'), value: 'PKCS12' },
-    ];
-  }
+  public keyStoreTypes: { label: string; value: string }[] = [
+    { label: '', value: 'NONE' },
+    { label: '', value: 'JKS' },
+    { label: '', value: 'PKCS12' },
+  ];
 
   constructor(
     private readonly router: Router,
@@ -82,6 +78,11 @@ export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
   ) {}
 
   ngOnInit(): void {
+    this.refreshOptionLabels();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshOptionLabels());
+
     if (this.activatedRoute?.snapshot?.params?.providerId) {
       this.clientRegistrationProvidersService
         .get(this.activatedRoute.snapshot.params.providerId)
@@ -189,6 +190,19 @@ export class ClientRegistrationProviderComponent implements OnInit, OnDestroy {
         this.providerForm.updateValueAndValidity();
       });
     this.formInitialValues = this.providerForm.value;
+  }
+
+  private refreshOptionLabels(): void {
+    this.initialAccessTokenTypes[0].name = this.languageService.translate('settings.clientRegistration.tokenClientCredentials');
+    this.initialAccessTokenTypes[1].name = this.languageService.translate('settings.clientRegistration.tokenInitialAccessToken');
+
+    this.trustStoreTypes[0].label = this.languageService.translate('settings.clientRegistration.storeNone');
+    this.trustStoreTypes[1].label = this.languageService.translate('settings.clientRegistration.storeJksTrust');
+    this.trustStoreTypes[2].label = this.languageService.translate('settings.clientRegistration.storePkcs12');
+
+    this.keyStoreTypes[0].label = this.languageService.translate('settings.clientRegistration.storeNone');
+    this.keyStoreTypes[1].label = this.languageService.translate('settings.clientRegistration.storeJksKey');
+    this.keyStoreTypes[2].label = this.languageService.translate('settings.clientRegistration.storePkcs12');
   }
 
   isClientCredentials(): boolean {
