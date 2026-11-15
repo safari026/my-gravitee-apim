@@ -18,6 +18,8 @@ const ContextualDocComponentAjs: ng.IComponentOptions = {
   controller: 'ContextualDocController',
   bindings: {
     contextualDocumentationPage: '<',
+    language: '<',
+    documentationTitle: '<',
     onClose: '&',
   },
 };

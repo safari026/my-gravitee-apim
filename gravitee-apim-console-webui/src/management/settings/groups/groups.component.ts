@@ -53,6 +53,7 @@ import { GioPermissionService } from '../../../shared/components/gio-permission/
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import { Group, GroupEventRule } from '../../../entities/group/group';
 import { GroupService } from '../../../services-ngx/group.service';
+import { SettingsSaveBarComponent } from '../settings-save-bar/settings-save-bar.component';
 import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 
 export interface GroupsResponse {
@@ -97,6 +98,7 @@ export interface GroupsResponse {
     MatOptionModule,
     MatCheckboxModule,
     GioSaveBarModule,
+    SettingsSaveBarComponent,
     GioPermissionModule,
     MatTabsModule,
     MatMenuModule,

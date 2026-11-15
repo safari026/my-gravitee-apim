@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { SettingsSaveBarComponent } from '../settings-save-bar/settings-save-bar.component';
 import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
@@ -68,6 +69,7 @@ import { GioTableWrapperModule } from '../../../shared/components/gio-table-wrap
     MatInput,
     GioFormFilePickerModule,
     GioSaveBarModule,
+    SettingsSaveBarComponent,
     GioTableWrapperModule,
     MatRadioGroup,
     MatRadioButton,

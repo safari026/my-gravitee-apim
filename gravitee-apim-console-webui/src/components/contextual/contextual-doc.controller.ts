@@ -15,16 +15,21 @@
  */
 import { marked } from 'marked';
 
+import { contextualDocumentationUrl } from './contextual-doc-url';
+
 class ContextualDocController {
   public contextualDocumentationPage;
+  public language;
+  public documentationTitle;
   public onClose;
+  public requestId = 0;
 
   public page: any = {};
 
   constructor(private $http) {}
 
   $onChanges(changes) {
-    if (changes.contextualDocumentationPage) {
+    if (changes.contextualDocumentationPage || changes.language) {
       this.changeDocumentationPage(this.contextualDocumentationPage);
     }
   }
@@ -34,11 +39,27 @@ class ContextualDocController {
   }
 
   changeDocumentationPage(page?: string) {
-    if (page) {
-      this.$http.get(`./docs/${page}.md`).then((response: any) => {
-        this.page.content = marked.parse(response.data);
-      });
+    if (!page) {
+      this.page.content = '';
+      return;
     }
+
+    const requestId = (this.requestId += 1);
+    const primary = contextualDocumentationUrl(page, this.language);
+    const fallback = contextualDocumentationUrl(page, 'en');
+    const apply = (response: { data: string }) => {
+      if (requestId !== this.requestId) {
+        return;
+      }
+      this.page.content = marked.parse(response.data);
+    };
+
+    this.$http.get(primary).then(apply, () => {
+      if (primary === fallback || requestId !== this.requestId) {
+        return;
+      }
+      this.$http.get(fallback).then(apply);
+    });
   }
 }
 ContextualDocController.$inject = ['$http'];

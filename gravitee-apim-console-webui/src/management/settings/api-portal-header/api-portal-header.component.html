@@ -28,7 +28,7 @@
         </mat-card-header>
         <mat-card-content *ngIf="!!settings.portal" class="toggle-group">
           <gio-form-slide-toggle>
-            Show tags list
+            {{ 'settings.apiPortalHeader.showTags' | translate }}
             <mat-slide-toggle
               gioFormSlideToggle
               [attr.aria-label]="'settings.apiPortalHeader.showTagsAria' | translate"
@@ -40,7 +40,7 @@
           </gio-form-slide-toggle>
 
           <gio-form-slide-toggle>
-            Show categories
+            {{ 'settings.apiPortalHeader.showCategories' | translate }}
             <mat-slide-toggle
               gioFormSlideToggle
               [attr.aria-label]="'settings.apiPortalHeader.showCategoriesAria' | translate"
@@ -158,7 +158,7 @@
         </mat-card-header>
         <mat-card-content>
           <gio-form-slide-toggle *ngIf="!!settings.portal">
-            Display promotion banner
+            {{ 'settings.apiPortalHeader.promotion' | translate }}
             <mat-slide-toggle
               gioFormSlideToggle
               [attr.aria-label]="'settings.apiPortalHeader.promotion' | translate"

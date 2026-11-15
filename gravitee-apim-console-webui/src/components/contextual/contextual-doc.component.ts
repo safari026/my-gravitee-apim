@@ -29,6 +29,12 @@ export class ContextualDocComponentComponent extends UpgradeComponent {
   @Input()
   public contextualDocumentationPage: string;
 
+  @Input()
+  public language: string;
+
+  @Input()
+  public documentationTitle: string;
+
   @Output()
   onClose!: EventEmitter<void>;
   constructor(elementRef: ElementRef, injector: Injector) {

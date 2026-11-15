@@ -52,7 +52,7 @@
               <mat-hint>{{ 'settings.categories.pageHint' | translate }}</mat-hint>
             </mat-form-field>
             <gio-form-slide-toggle>
-              Hide Category
+              {{ 'settings.categories.hide' | translate }}
               <mat-slide-toggle gioFormSlideToggle formControlName="hidden" [attr.aria-label]="'settings.categories.hideCategory' | translate"></mat-slide-toggle>
             </gio-form-slide-toggle>
           </div>
@@ -215,11 +215,11 @@
       </mat-card>
     }
 
-    <gio-save-bar
+    <settings-save-bar
       [creationMode]="mode === 'new'"
       [form]="categoryDetails"
       [formInitialValues]="categoryDetailsInitialValue"
       (submitted)="onSubmit()"
-    ></gio-save-bar>
+    ></settings-save-bar>
   </form>
 }

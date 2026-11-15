@@ -13,10 +13,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ChangeDetectorRef, Component } from '@angular/core';
+import { ChangeDetectorRef, Component, Injector } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { ActivatedRoute, Router, RoutesRecognized } from '@angular/router';
 import { Subject } from 'rxjs';
-import { distinctUntilChanged, filter, map, startWith, takeUntil } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, skip, startWith, takeUntil } from 'rxjs/operators';
+
+import { LanguageService } from '../shared/i18n/language.service';
 
 @Component({
   selector: 'management-root',
@@ -35,6 +38,8 @@ import { distinctUntilChanged, filter, map, startWith, takeUntil } from 'rxjs/op
         class="documentation"
         *ngIf="openContextualDoc"
         [contextualDocumentationPage]="contextualDocumentationPage"
+        [language]="documentationLanguage"
+        [documentationTitle]="documentationTitle"
         (onClose)="openContextualDocumentationPage(false)"
       ></gio-contextual-doc>
     </div>
@@ -89,15 +94,25 @@ export class ManagementComponent {
 
   openContextualDoc: boolean = localStorage.getItem(this.contextualDocVisibilityKey) === 'true';
   contextualDocumentationPage: string;
+  documentationLanguage = 'en';
+  documentationTitle = 'Documentation';
   public isLoading = false;
 
   constructor(
     public readonly router: Router,
     public readonly activatedRoute: ActivatedRoute,
     private changeDetectorRef: ChangeDetectorRef,
-  ) {}
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
+  ) {
+    this.refreshDocumentationLanguage();
+  }
 
   ngOnInit() {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshDocumentationLanguage());
+
     // Necessary to refresh view when envId changes
     this.activatedRoute.params
       .pipe(
@@ -140,5 +155,10 @@ export class ManagementComponent {
   openContextualDocumentationPage(open: boolean) {
     localStorage.setItem(this.contextualDocVisibilityKey, String(open));
     this.openContextualDoc = open;
+  }
+
+  private refreshDocumentationLanguage() {
+    this.documentationLanguage = this.languageService.currentLanguage() === 'ru' ? 'ru' : 'en';
+    this.documentationTitle = this.languageService.translate('common.contextualDocumentation');
   }
 }

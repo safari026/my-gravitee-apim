@@ -1,0 +1,12 @@
+:host ::ng-deep .save-bar__content__label {
+  font-size: 0;
+  line-height: 0;
+}
+
+:host ::ng-deep .save-bar__content__label::after {
+  content: var(--settings-save-bar-label);
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 22px;
+  letter-spacing: 0.4px;
+}

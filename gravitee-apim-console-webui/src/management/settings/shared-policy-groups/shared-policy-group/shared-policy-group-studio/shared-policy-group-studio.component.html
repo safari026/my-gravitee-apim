@@ -71,7 +71,7 @@
 
     <div class="card__content">
       @if (isReadOnly) {
-        <gio-banner-info>The policies of a shared policy group are only shown to users who can edit shared policy groups.</gio-banner-info>
+        <gio-banner-info>{{ 'settings.sharedPolicyGroups.policiesHiddenFromReaders' | translate }}</gio-banner-info>
       } @else {
         @if (policies$ | async; as policies) {
           <gio-policy-group-studio

@@ -1,0 +1,27 @@
+# Роли
+
+Роль может относиться к API, приложению, порталу или в более широком смысле к управлению платформой.
+
+Каждая роль задаёт набор разрешений (READ, CREATE, UPDATE, DELETE (CRUD)) на ресурсы API Management.
+
+Роль изменяется кнопкой *edit* в соответствующей области:
+
+* ORGANIZATION role
+
+Операции CRUD для: USER, ENVIRONMENT, ROLE.
+
+* ENVIRONMENT role
+
+Операции CRUD для: INSTANCE, GROUP, SHARDING TAG, TENANT, API, APPLICATION, AUDIT, PLATFORM, NOTIFICATION, MESSAGE, DICTIONARY, ALERT, ENTRYPOINTS, SETTINGS, DASHBOARD, QUALITY RULES, METADATA, DOCUMENTATION, VIEW, TOP APIS, API HEADERS, IDENTITY PROVIDERS, CLIENT REGISTRATION PROVIDER, PORTAL THEME.
+
+* API role
+
+Операции CRUD для: DEFINITION, GATEWAY_DEFINITION, PLAN, SUBSCRIPTION, MEMBER, METADATA, ANALYTICS, EVENT, HEALTH, LOG, DOCUMENTATION, RATINGS, RATINGS ANSWERS, AUSIT, DISCOVERY, NOTIFICATION, MESSAGE, ALERT, RESPONSE TEMPLATES, REVIEWS, QUALITY RULES.
+
+* APPLICATION role
+
+Операции CRUD для: DEFINITION, MEMBER, ANALYTICS, LOG, SUBSCRIPTION, NOTIFICATION, ALERT.
+
+## Примечание
+
+Если роли MANAGEMENT выдано разрешение GROUP, для просмотра ролей группы также нужна операция READ разрешения ROLE.

@@ -14,6 +14,7 @@
  * limitations under the License.
  */
 
+import { SettingsSaveBarComponent } from '../settings-save-bar/settings-save-bar.component';
 import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { CommonModule } from '@angular/common';
 import { RouterModule } from '@angular/router';
@@ -56,6 +57,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     GioFormSlideToggleModule,
     GioPermissionModule,
     GioSaveBarModule,
+    SettingsSaveBarComponent,
     GioTableWrapperModule,
     MatButtonModule,
     MatCardModule,

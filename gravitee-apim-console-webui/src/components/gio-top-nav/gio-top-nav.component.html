@@ -33,7 +33,7 @@
         mat-icon-button
         type="button"
         (click)="openContextualDocumentationClick()"
-        aria-label="Display contextual documentation"
+        [attr.aria-label]="'common.contextualDocumentationOpen' | translate"
         *ngIf="!isOEM && displayContextualDocumentationButton"
         data-pendoId="sidenav-resource-center"
         data-testid="top-nav-contextual-documentation-button"

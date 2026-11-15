@@ -16,6 +16,8 @@ export const ruCommon = {
   noStatus: 'Без статуса',
   add: 'Добавить',
   create: 'Создать',
+  discard: 'Отменить',
+  unsavedChanges: 'Есть несохраненные изменения',
   update: 'Обновить',
   edit: 'Изменить',
   import: 'Импортировать',
@@ -42,6 +44,8 @@ export const ruCommon = {
   language: {
     switch: 'Переключить язык',
   },
+  contextualDocumentation: 'Документация',
+  contextualDocumentationOpen: 'Показать контекстную справку',
 
   daysLeft: {
     expiresToday: 'Истекает сегодня',

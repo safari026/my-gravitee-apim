@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { SettingsSaveBarComponent } from '../../settings-save-bar/settings-save-bar.component';
 import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
 import { LanguageService } from '../../../../shared/i18n/language.service';
 import { Role } from 'src/entities/role/role';
@@ -134,6 +135,7 @@ export interface TooManyUsersDialogData {
     MatOptionModule,
     MatCheckboxModule,
     GioSaveBarModule,
+    SettingsSaveBarComponent,
     GioPermissionModule,
     MatTabsModule,
     MatMenuModule,

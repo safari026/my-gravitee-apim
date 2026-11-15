@@ -1,0 +1,30 @@
+<gio-save-bar
+  #saveBar
+  [opened]="opened"
+  [invalidState]="invalidState"
+  [creationMode]="creationMode"
+  [form]="form"
+  [formInitialValues]="formInitialValues"
+  [hideSubmitButton]="true"
+  [hideDiscardButton]="true"
+  (submitted)="submitted.emit()"
+  (resetClicked)="resetClicked.emit()"
+  (submittedInvalidState)="submittedInvalidState.emit()"
+>
+  @if (!creationMode) {
+    <button class="save-bar__content__actions__reset-button" mat-button type="button" (click)="saveBar.onResetClicked()">
+      {{ 'common.discard' | translate }}
+    </button>
+  }
+  <button
+    class="save-bar__content__actions__submit-button"
+    [class.invalid]="(form && form.invalid) || invalidState"
+    mat-flat-button
+    color="primary"
+    [type]="form ? 'submit' : 'button'"
+    [disabled]="saveBar.isSubmitted"
+    (click)="saveBar.onSubmitClicked()"
+  >
+    {{ (creationMode ? 'common.create' : 'common.save') | translate }}{{ saveBar.isSubmitted ? '...' : '' }}
+  </button>
+</gio-save-bar>

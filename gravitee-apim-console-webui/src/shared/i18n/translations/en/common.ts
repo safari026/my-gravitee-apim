@@ -16,6 +16,8 @@ export const enCommon = {
   noStatus: 'No status',
   add: 'Add',
   create: 'Create',
+  discard: 'Discard',
+  unsavedChanges: 'You have unsaved changes',
   update: 'Update',
   edit: 'Edit',
   import: 'Import',
@@ -42,6 +44,8 @@ export const enCommon = {
   language: {
     switch: 'Switch language',
   },
+  contextualDocumentation: 'Documentation',
+  contextualDocumentationOpen: 'Display contextual documentation',
 
   daysLeft: {
     expiresToday: 'Expires today',

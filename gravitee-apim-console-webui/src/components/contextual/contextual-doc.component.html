@@ -19,7 +19,7 @@
   <div class="contextual-doc-container__fixed">
     <div class="contextual-doc-header">
       <div class="contextual-doc-header-title">
-        <h3>Documentation</h3>
+        <h3>{{ $ctrl.documentationTitle || 'Documentation' }}</h3>
       </div>
       <div>
         <a ng-click="$ctrl.close()"><ng-md-icon icon="close" style="fill: rgba(0, 0, 0, 0.54)" size="20" style="top: 0"></ng-md-icon></a>

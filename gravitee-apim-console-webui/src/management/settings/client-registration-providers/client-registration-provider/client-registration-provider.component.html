@@ -314,11 +314,11 @@
     </mat-card-content>
   </mat-card>
 
-  <gio-save-bar
+  <settings-save-bar
     *gioPermission="{ anyOf: ['environment-client_registration_provider-c', 'environment-client_registration_provider-u'] }"
     [creationMode]="!updateMode"
     [form]="providerForm"
     [formInitialValues]="formInitialValues"
   >
-  </gio-save-bar>
+  </settings-save-bar>
 </form>

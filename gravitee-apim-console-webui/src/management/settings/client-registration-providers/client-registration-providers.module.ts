@@ -13,6 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
+import { SettingsSaveBarComponent } from '../settings-save-bar/settings-save-bar.component';
 import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { CommonModule } from '@angular/common';
 import { NgModule } from '@angular/core';
@@ -77,6 +78,7 @@ import { GioPermissionModule } from '../../../shared/components/gio-permission/g
     GioAvatarModule,
     GioGoBackButtonModule,
     GioSaveBarModule,
+    SettingsSaveBarComponent,
     GioFormFocusInvalidModule,
     GioFormTagsInputModule,
     GioPermissionModule,
