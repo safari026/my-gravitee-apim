@@ -17,6 +17,17 @@ import { marked } from 'marked';
 
 import { contextualDocumentationUrl } from './contextual-doc-url';
 
+export function isHtmlApplicationDocument(body: string): boolean {
+  const documentStart = body
+    .replace(/^\uFEFF/, '')
+    .replace(/^(?:\s*<!--[\s\S]*?-->)*/, '')
+    .trimStart()
+    .slice(0, 32)
+    .toLowerCase();
+
+  return documentStart.startsWith('<!doctype html') || documentStart.startsWith('<html');
+}
+
 class ContextualDocController {
   public contextualDocumentationPage;
   public language;
@@ -47,19 +58,52 @@ class ContextualDocController {
     const requestId = (this.requestId += 1);
     const primary = contextualDocumentationUrl(page, this.language);
     const fallback = contextualDocumentationUrl(page, 'en');
-    const apply = (response: { data: string }) => {
-      if (requestId !== this.requestId) {
+    const stillCurrent = () => requestId === this.requestId;
+    const showDocumentation = (data: string) => {
+      if (stillCurrent()) {
+        this.page.content = marked.parse(data);
+      }
+    };
+    const showEmpty = () => {
+      if (stillCurrent()) {
+        this.page.content = '';
+      }
+    };
+    const usableDocumentation = (data: unknown): data is string =>
+      typeof data === 'string' && data.trim().length > 0 && !isHtmlApplicationDocument(data);
+    const loadFallback = () => {
+      if (!stillCurrent()) {
         return;
       }
-      this.page.content = marked.parse(response.data);
+      if (primary === fallback) {
+        showEmpty();
+        return;
+      }
+      this.$http.get(fallback).then(
+        (response: { data: unknown }) => {
+          if (usableDocumentation(response?.data)) {
+            showDocumentation(response.data);
+            return;
+          }
+          showEmpty();
+        },
+        () => showEmpty(),
+      );
     };
 
-    this.$http.get(primary).then(apply, () => {
-      if (primary === fallback || requestId !== this.requestId) {
-        return;
-      }
-      this.$http.get(fallback).then(apply);
-    });
+    this.$http.get(primary).then(
+      (response: { data: unknown }) => {
+        if (!stillCurrent()) {
+          return;
+        }
+        if (usableDocumentation(response?.data)) {
+          showDocumentation(response.data);
+          return;
+        }
+        loadFallback();
+      },
+      () => loadFallback(),
+    );
   }
 }
 ContextualDocController.$inject = ['$http'];
