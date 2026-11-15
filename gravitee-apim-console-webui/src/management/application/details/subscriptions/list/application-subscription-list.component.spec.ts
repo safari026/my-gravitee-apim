@@ -32,7 +32,8 @@ import { ApplicationSubscriptionListHarness } from './application-subscription-l
 
 import { CONSTANTS_TESTING, GioTestingModule } from '../../../../../shared/testing';
 import { fakeApplication } from '../../../../../entities/application/Application.fixture';
-import { SubscriptionPage } from '../../../../../entities/subscription/subscription';
+import { SUBSCRIPTION_STATUS_DISPLAY, SubscriptionPage } from '../../../../../entities/subscription/subscription';
+import { LanguageService } from '../../../../../shared/i18n/language.service';
 import { fakePagedResult } from '../../../../../entities/pagedResult';
 import { Api, fakeProxyApiV4 } from '../../../../../entities/management-api-v2';
 import { fakeSubscriptionPage } from '../../../../../entities/subscription/subscription.fixture';
@@ -67,6 +68,7 @@ describe('ApplicationSubscriptionListComponent', () => {
 
   afterEach(() => {
     httpTestingController.verify();
+    TestBed.inject(LanguageService).setLanguage('en');
   });
 
   describe('URL query params tests', () => {
@@ -134,6 +136,52 @@ describe('ApplicationSubscriptionListComponent', () => {
       const apiKeyInput = await harness.getApiKeyInput();
       expect(await apiKeyInput.isDisabled()).toEqual(false);
       expect(await apiKeyInput.getValue()).toEqual('');
+    }));
+  });
+
+  describe('status option stability', () => {
+    beforeEach(async () => {
+      await init();
+    });
+
+    it('should keep status options stable and refresh labels when the language changes', fakeAsync(async () => {
+      await initComponent([]);
+      const component = fixture.componentInstance.subscriptionListComponent;
+      const statuses = component.statuses;
+      const statusObjects = [...statuses];
+      const languageService = TestBed.inject(LanguageService);
+      const selectedStatuses = component.filtersForm.controls.status.value;
+
+      expect(statuses.map(status => status.id)).toEqual(SUBSCRIPTION_STATUS_DISPLAY.map(status => status.id));
+      expect(statuses.map(status => status.name)).toEqual(['Accepted', 'Closed', 'Paused', 'Pending', 'Rejected', 'Resumed']);
+      expect(selectedStatuses).toEqual(['ACCEPTED', 'PAUSED', 'PENDING']);
+      statuses.forEach((status, index) => expect(status).not.toBe(SUBSCRIPTION_STATUS_DISPLAY[index]));
+
+      languageService.setLanguage('ru');
+      fixture.detectChanges();
+
+      expect(component.statuses).toBe(statuses);
+      statuses.forEach((status, index) => expect(status).toBe(statusObjects[index]));
+      expect(statuses.map(status => status.id)).toEqual(SUBSCRIPTION_STATUS_DISPLAY.map(status => status.id));
+      expect(statuses.map(status => status.name)).toEqual(
+        SUBSCRIPTION_STATUS_DISPLAY.map(status => languageService.translate(`applications.subscriptions.status.${status.id}`)),
+      );
+      expect(component.filtersForm.controls.status.value).toBe(selectedStatuses);
+      expect(SUBSCRIPTION_STATUS_DISPLAY.map(status => status.name)).toEqual([
+        'Accepted',
+        'Closed',
+        'Paused',
+        'Pending',
+        'Rejected',
+        'Resumed',
+      ]);
+
+      languageService.setLanguage('en');
+      fixture.detectChanges();
+
+      expect(component.statuses).toBe(statuses);
+      expect(statuses.map(status => status.name)).toEqual(['Accepted', 'Closed', 'Paused', 'Pending', 'Rejected', 'Resumed']);
+      expect(component.filtersForm.controls.status.value).toEqual(['ACCEPTED', 'PAUSED', 'PENDING']);
     }));
   });
 

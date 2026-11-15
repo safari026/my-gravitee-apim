@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
-import { catchError, debounceTime, distinctUntilChanged, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
+import { catchError, debounceTime, distinctUntilChanged, filter, map, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 import { BehaviorSubject, EMPTY, Observable, of, Subject, combineLatest } from 'rxjs';
 import { get, isEqual } from 'lodash';
 import { FormControl, FormGroup } from '@angular/forms';
@@ -94,12 +95,9 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
     status: new FormControl(),
     apiKey: new FormControl(),
   });
-  public get statuses() {
-    return SUBSCRIPTION_STATUS_DISPLAY.map(status => ({
-      ...status,
-      name: this.languageService.translate(`applications.subscriptions.status.${status.id}`),
-    }));
-  }
+  public statuses: { id: SubscriptionStatus; name: string; badge: string }[] = SUBSCRIPTION_STATUS_DISPLAY.map(status => ({
+    ...status,
+  }));
 
   // Create filters stream
   public filtersStream = new BehaviorSubject<SubscriptionsFilters>({
@@ -126,9 +124,15 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
     private readonly permissionService: GioPermissionService,
     private readonly matDialog: MatDialog,
     private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   ngOnInit(): void {
+    this.refreshStatusLabels();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshStatusLabels());
+
     this.initFilters();
 
     this.filtersForm.valueChanges.pipe(distinctUntilChanged(isEqual), takeUntil(this.unsubscribe$)).subscribe(({ apis, status, apiKey }) =>
@@ -229,6 +233,12 @@ export class ApplicationSubscriptionListComponent implements OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.unsubscribe$.next(true);
     this.unsubscribe$.unsubscribe();
+  }
+
+  private refreshStatusLabels(): void {
+    this.statuses.forEach(status => {
+      status.name = this.languageService.translate(`applications.subscriptions.status.${status.id}`);
+    });
   }
 
   onFiltersChanged(filters: GioTableWrapperFilters) {
