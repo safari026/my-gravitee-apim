@@ -13,7 +13,8 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, Inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, Inject, inject, Injector, OnInit } from '@angular/core';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { AsyncPipe, NgOptimizedImage } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import {
@@ -25,7 +26,7 @@ import {
 } from '@gravitee/ui-particles-angular';
 import { MatButtonModule } from '@angular/material/button';
 import { Observable, of } from 'rxjs';
-import { map } from 'rxjs/operators';
+import { map, skip } from 'rxjs/operators';
 import { isEmpty } from 'lodash';
 
 import { MenuItem, PortalNavigationService } from './portal-navigation.service';
@@ -38,6 +39,8 @@ import { GioNotificationMenuModule } from '../../components/gio-notification-men
 import { GioTopNavModule } from '../../components/gio-top-nav/gio-top-nav.module';
 import { GioSideNavModule } from '../../components/gio-side-nav/gio-side-nav.module';
 import { PortalSettingsService } from '../../services-ngx/portal-settings.service';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'portal-navigation',
@@ -64,6 +67,7 @@ import { PortalSettingsService } from '../../services-ngx/portal-settings.servic
 
     // Custom Components
     PortalUserAvatarComponent,
+    TranslatePipe,
   ],
   templateUrl: './portal-navigation.component.html',
   styleUrl: './portal-navigation.component.scss',
@@ -74,6 +78,10 @@ export class PortalNavigationComponent implements OnInit {
   customLogo: string;
   portalUrl$: Observable<string> = of();
 
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
+
   constructor(
     @Inject(Constants) public readonly constants: Constants,
     private portalNavigationService: PortalNavigationService,
@@ -81,7 +89,10 @@ export class PortalNavigationComponent implements OnInit {
   ) {}
 
   ngOnInit() {
-    this.mainMenuItems = this.portalNavigationService.getMainMenuItems();
+    this.refreshMenu();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshMenu());
 
     if (this.constants.customization && this.constants.customization.logo) {
       this.customLogo = this.constants.customization.logo;
@@ -93,8 +104,12 @@ export class PortalNavigationComponent implements OnInit {
         map(settings =>
           isEmpty(settings?.portal?.url)
             ? undefined
-            : this.constants.env.baseURL.replace('{:envId}', this.constants.org.currentEnv.id) + '/portal/redirect?version=next',
+            : this.constants.env.baseURL.replace('{:envId}', this.constants.org.currentEnv.id) + '/portal/redirect',
         ),
       );
+  }
+
+  private refreshMenu(): void {
+    this.mainMenuItems = this.portalNavigationService.getMainMenuItems();
   }
 }

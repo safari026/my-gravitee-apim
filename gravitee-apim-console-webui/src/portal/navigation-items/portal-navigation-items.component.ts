@@ -35,7 +35,7 @@ import { MatDialog } from '@angular/material/dialog';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { BehaviorSubject, EMPTY, Observable, of } from 'rxjs';
 import { HttpErrorResponse } from '@angular/common/http';
-import { AsyncPipe, NgTemplateOutlet, TitleCasePipe } from '@angular/common';
+import { AsyncPipe, NgTemplateOutlet } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { CdkScrollable } from '@angular/cdk/scrolling';
 
@@ -83,6 +83,8 @@ import { confirmDiscardChanges, normalizeContent } from '../../shared/utils/cont
 import { PortalNavigationItemIconPipe } from '../icon/portal-navigation-item-icon.pipe';
 import { AsyncApiEditorComponent } from '../components/asyncapi-editor/asyncapi-editor.component';
 import { OpenApiEditorComponent } from '../components/openapi-editor/openapi-editor.component';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 type AsyncApiSpecValidationError = {
   message: string;
@@ -112,13 +114,14 @@ type AsyncApiSpecValidationError = {
     MatCardModule,
     MatTooltipModule,
     NgTemplateOutlet,
-    TitleCasePipe,
     PortalNavigationItemIconPipe,
+    TranslatePipe,
     CdkScrollable,
   ],
 })
 export class PortalNavigationItemsComponent implements HasUnsavedChanges {
   private destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   // UI State & Forms
   private isReadOnly = !inject(GioPermissionService).hasAnyMatching(['environment-documentation-u']);
@@ -197,11 +200,14 @@ export class PortalNavigationItemsComponent implements HasUnsavedChanges {
     return !selectedNavigationItemParent?.data?.published;
   });
   readonly publishDisabledTooltip: Signal<string> = computed(() => {
+    this.languageService.currentLanguage();
     if (!this.publishDisabled()) {
       return '';
     }
 
-    return `A navigation item cannot be published within an unpublished ${this.selectedNavigationItemParent()?.data?.type?.toLocaleLowerCase()}`;
+    return this.languageService.translate('developerPortal.navigation.unpublishedParent', {
+      type: this.selectedNavigationItemParent()?.data?.type?.toLocaleLowerCase() ?? '',
+    });
   });
   readonly publishActionDisabled: Signal<boolean> = computed(() => this.actionsDisabled() || this.publishDisabled());
   readonly selectedNavigationItemIsPublished: Signal<boolean> = computed(() => {

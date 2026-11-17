@@ -239,6 +239,8 @@
         "affected:lint:license": "nx affected -t lint-license",
         "graph": "nx graph",
         "console:serve": "NODE_OPTIONS=--max_old_space_size=7168 nx serve console",
+        "portal:serve": "node gravitee-apim-portal-webui/scripts/serve-dev.js",
+        "console:portal:serve": "node gravitee-apim-portal-webui/scripts/serve-with-console.js",
         "console:serve:apim-master": "BACKEND_ENV=apim-master-api.team-apim.gravitee.dev NODE_OPTIONS=--max_old_space_size=7168 nx serve console",
         "console:serve:apim-gko": "BACKEND_ENV=apim-dev-api.team-gko.gravitee.dev NODE_OPTIONS=--max_old_space_size=7168 nx serve console",
         "console:build": "NODE_OPTIONS=--max_old_space_size=7168 nx build console",

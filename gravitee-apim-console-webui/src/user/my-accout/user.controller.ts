@@ -18,6 +18,7 @@ import NotificationService from '../../services/notification.service';
 import TokenService from '../../services/token.service';
 import UserService from '../../services/user.service';
 import { Constants } from '../../entities/Constants';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 class UserController {
   private originalPicture: any;
@@ -35,6 +36,7 @@ class UserController {
     private TokenService: TokenService,
     private $mdDialog: angular.material.IDialogService,
     private Constants: Constants,
+    private ngLanguageService: LanguageService,
   ) {}
 
   $onInit() {
@@ -74,6 +76,10 @@ class UserController {
     }
   }
 
+  translate(key: string, params?: Record<string, string | number>): string {
+    return this.ngLanguageService.translate(key, params);
+  }
+
   save() {
     // "Use default" clears the picture URL that was present on load. Translate that into an explicit
     // empty string so the backend removes the avatar — a null/absent picture means "leave unchanged".
@@ -82,11 +88,11 @@ class UserController {
     }
     this.UserService.save(this.user)
       .then(() => {
-        this.NotificationService.show('User has been updated successfully');
+        this.NotificationService.show(this.translate('userMenu.account.updated'));
         this.onSaved();
       })
       .catch(error => {
-        this.NotificationService.showError(error?.data ? error : { data: 'Failed to update user' });
+        this.NotificationService.showError(error?.data ? error : { data: this.translate('userMenu.account.updateFailed') });
       });
   }
 
@@ -109,23 +115,23 @@ class UserController {
         template: require('html-loader!../../components/dialog/confirmAndValidate.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          title: 'Are you sure you want to delete your account ?',
-          warning: 'This operation is irreversible.',
-          msg: 'After removing your account, you will be automatically logout.',
-          validationMessage: 'Please, type in your username <code>' + this.user.displayName + '</code> to confirm.',
+          title: this.translate('userMenu.account.deleteTitle'),
+          warning: this.translate('userMenu.account.deleteWarning'),
+          msg: this.translate('userMenu.account.deleteMessage'),
+          validationMessage: this.translate('userMenu.account.deleteValidation', { name: this.user.displayName }),
           validationValue: this.user.displayName,
-          confirmButton: 'Yes, delete my account',
+          confirmButton: this.translate('userMenu.account.deleteConfirm'),
         },
       })
       .then(response => {
         if (response) {
           return this.UserService.removeCurrentUser()
             .then(() => {
-              this.NotificationService.show('You have been successfully deleted');
+              this.NotificationService.show(this.translate('userMenu.account.deleted'));
               this.onDeleteMyAccount();
             })
             .catch(error => {
-              this.NotificationService.showError(error?.data ? error : { data: 'Failed to delete account' });
+              this.NotificationService.showError(error?.data ? error : { data: this.translate('userMenu.account.deleteFailed') });
             });
         }
       });
@@ -154,8 +160,8 @@ class UserController {
         clickOutsideToClose: false,
         escapeToClose: false,
         locals: {
-          msg: 'Any applications or scripts using this token will no longer be able to access the Gravitee.io management API. You cannot undo this action.',
-          title: 'Generate Personal Access Token',
+          msg: this.translate('userMenu.account.generateHint'),
+          title: this.translate('userMenu.account.generateTitle'),
         },
       })
       .then(tokenGenerated => {
@@ -173,25 +179,25 @@ class UserController {
         template: require('html-loader!../../components/dialog/confirmWarning.dialog.html').default, // eslint-disable-line @typescript-eslint/no-var-requires
         clickOutsideToClose: true,
         locals: {
-          msg: 'Any applications or scripts using this token will no longer be able to access the Gravitee.io management API. You cannot undo this action.',
-          title: 'Are you sure you want to revoke the token "' + token.name + '"?',
-          confirmButton: 'Revoke',
+          msg: this.translate('userMenu.account.generateHint'),
+          title: this.translate('userMenu.account.revokeTitle', { name: token.name }),
+          confirmButton: this.translate('userMenu.account.revoke'),
         },
       })
       .then(response => {
         if (response) {
           this.TokenService.revoke(token)
             .then(() => {
-              this.NotificationService.show('Token "' + token.name + '" has been revoked.');
+              this.NotificationService.show(this.translate('userMenu.account.tokenRevoked', { name: token.name }));
               this.$onInit();
             })
             .catch(error => {
-              this.NotificationService.showError(error?.data ? error : { data: 'Failed to revoke token' });
+              this.NotificationService.showError(error?.data ? error : { data: this.translate('userMenu.account.revokeFailed') });
             });
         }
       });
   }
 }
-UserController.$inject = ['UserService', 'NotificationService', 'TokenService', '$mdDialog', 'Constants'];
+UserController.$inject = ['UserService', 'NotificationService', 'TokenService', '$mdDialog', 'Constants', 'ngLanguageService'];
 
 export default UserController;

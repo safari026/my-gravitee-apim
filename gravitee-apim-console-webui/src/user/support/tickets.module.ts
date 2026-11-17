@@ -38,6 +38,8 @@ import { TicketsRoutingModule } from './tickets-routing.module';
 
 import { GioGoBackButtonModule } from '../../shared/components/gio-go-back-button/gio-go-back-button.module';
 import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+import { SettingsSaveBarComponent } from '../../management/settings/settings-save-bar/settings-save-bar.component';
 
 @NgModule({
   imports: [
@@ -65,6 +67,8 @@ import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper
     GioFormFocusInvalidModule,
     GioFormSlideToggleModule,
     GioTableWrapperModule,
+    TranslatePipe,
+    SettingsSaveBarComponent,
 
     TicketsRoutingModule,
   ],

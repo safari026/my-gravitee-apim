@@ -34,6 +34,8 @@ import { PortalSettings } from '../../../entities/portal/portalSettings';
 import { ApiPortalHeader } from '../../../entities/apiPortalHeader';
 import { EnvironmentApiHeadersService } from '../../../services-ngx/environment-api-headers.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { PortalSettingsService } from '../../../services-ngx/portal-settings.service';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import {
@@ -67,12 +69,14 @@ interface ApiForm {
     MatFormFieldModule,
     MatInputModule,
     MatSelectModule,
+    TranslatePipe,
   ],
   templateUrl: './portal-api-list.component.html',
   styleUrl: './portal-api-list.component.scss',
 })
 export class PortalApiListComponent implements OnInit {
   private destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   settings: PortalSettings = {};
   dataSource: ApiPortalHeader[] = [];
@@ -99,7 +103,7 @@ export class PortalApiListComponent implements OnInit {
       .getApiHeaders()
       .pipe(
         catchError(_ => {
-          this.snackBarService.error('Error occurred.');
+          this.snackBarService.error(this.languageService.translate('developerPortal.api.genericError'));
           return [];
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -141,11 +145,11 @@ export class PortalApiListComponent implements OnInit {
   private changeHeaderOrder(updatedHeader: ApiPortalHeader): Observable<ApiPortalHeader[]> {
     return this.environmentApiHeadersService.updateApiHeader(updatedHeader).pipe(
       tap((apiPortalHeaders: ApiPortalHeader[]) => {
-        this.snackBarService.success('API details order updated successfully');
+        this.snackBarService.success(this.languageService.translate('developerPortal.api.orderUpdated'));
         this.updateDataSource(apiPortalHeaders);
       }),
       catchError(({ error }) => {
-        this.snackBarService.error(error?.message ? error.message : 'Error during updating order of API details');
+        this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.api.orderError'));
         return EMPTY;
       }),
       takeUntilDestroyed(this.destroyRef),
@@ -176,11 +180,11 @@ export class PortalApiListComponent implements OnInit {
         filter((data): boolean => !!data),
         switchMap((data: ApiPortalHeaderEditDialogResult) => this.environmentApiHeadersService.createApiHeader(data)),
         tap((apiPortalHeaders: ApiPortalHeader[]) => {
-          this.snackBarService.success(`API information created successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.api.created'));
           this.updateDataSource(apiPortalHeaders);
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during creating');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.api.createError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -209,11 +213,11 @@ export class PortalApiListComponent implements OnInit {
           return this.environmentApiHeadersService.updateApiHeader(payload);
         }),
         tap((apiPortalHeaders: ApiPortalHeader[]) => {
-          this.snackBarService.success(`API Information '${header.name}' updated successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.api.updated', { name: header.name }));
           this.updateDataSource(apiPortalHeaders);
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during updating');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.api.updateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -225,9 +229,9 @@ export class PortalApiListComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete API Information',
-          content: 'Are you sure you want to delete this API Information?',
-          confirmButton: 'Delete',
+          title: this.languageService.translate('developerPortal.api.deleteTitle'),
+          content: this.languageService.translate('developerPortal.api.deleteContent'),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'deletePortalHeaderConfirmDialog',
@@ -237,11 +241,11 @@ export class PortalApiListComponent implements OnInit {
         filter(confirmed => confirmed),
         switchMap(_ => this.environmentApiHeadersService.deleteApiHeader(header)),
         tap((apiPortalHeaders: ApiPortalHeader[]) => {
-          this.snackBarService.success(`API Information '${header.name}' deleted successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.api.deleted', { name: header.name }));
           this.updateDataSource(apiPortalHeaders);
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during deleting');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.api.deleteError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -283,10 +287,10 @@ export class PortalApiListComponent implements OnInit {
           return this.portalSettingsService.save(updatedSettingsPayload);
         }),
         tap(() => {
-          this.snackBarService.success(`API Configuration updated successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.api.configUpdated'));
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during updating');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.api.updateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

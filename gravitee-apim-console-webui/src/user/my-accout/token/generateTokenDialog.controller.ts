@@ -14,9 +14,10 @@
  * limitations under the License.
  */
 
-function DialogGenerateTokenController($scope, $mdDialog, locals, TokenService, NotificationService, Constants, $location) {
+function DialogGenerateTokenController($scope, $mdDialog, locals, TokenService, NotificationService, Constants, $location, ngLanguageService) {
   this.title = locals.title;
   this.msg = locals.msg;
+  this.translate = (key, params) => ngLanguageService.translate(key, params);
 
   this.cancel = function () {
     $mdDialog.hide(false);
@@ -29,14 +30,14 @@ function DialogGenerateTokenController($scope, $mdDialog, locals, TokenService, 
   this.generate = function () {
     TokenService.create({ name: this.name })
       .then(response => {
-        NotificationService.show('Token "' + this.name + '" has been successfully generated.');
+        NotificationService.show(this.translate('userMenu.account.tokenGenerated', { name: this.name }));
         this.token = response.data;
       })
       .catch(error => NotificationService.showError(error.data.message));
   };
 
   this.onClipboardSuccess = function () {
-    NotificationService.show('The token has been copied to clipboard');
+    NotificationService.show(this.translate('userMenu.account.tokenCopied'));
   };
 
   this.getExampleOfUse = function (token) {
@@ -47,6 +48,15 @@ function DialogGenerateTokenController($scope, $mdDialog, locals, TokenService, 
     return `curl -H "Authorization: Bearer ${token}" "${envBaseURL}"`;
   };
 }
-DialogGenerateTokenController.$inject = ['$scope', '$mdDialog', 'locals', 'TokenService', 'NotificationService', 'Constants', '$location'];
+DialogGenerateTokenController.$inject = [
+  '$scope',
+  '$mdDialog',
+  'locals',
+  'TokenService',
+  'NotificationService',
+  'Constants',
+  '$location',
+  'ngLanguageService',
+];
 
 export default DialogGenerateTokenController;

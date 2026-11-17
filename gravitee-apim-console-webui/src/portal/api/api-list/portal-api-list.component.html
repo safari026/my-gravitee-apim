@@ -22,31 +22,28 @@
         <mat-card-content class="api-style__content">
           <div class="api-style__content__header">
             <div class="api-style__content__header__title">
-              <h3>API Configuration</h3>
+              <h3>{{ 'developerPortal.api.configuration' | translate }}</h3>
             </div>
           </div>
           <div>
             <div class="api-style__content__header__title">
-              <h5>API Subscription</h5>
+              <h5>{{ 'developerPortal.api.subscription' | translate }}</h5>
               <both-portals-badge data-testid="both-portals-badge-for-api-subscription" />
             </div>
-            <div class="menu-api__content__header__description">Customize the information included in API header</div>
+            <div class="menu-api__content__header__description">{{ 'developerPortal.api.headerHint' | translate }}</div>
             <mat-form-field appearance="outline" class="api-key-header">
               <input matInput formControlName="apiKeyHeader" />
-              <mat-label>API Key Header</mat-label>
-              <mat-hint
-                >Used to display CURL commands in the Developer Portal. To ensure valid CURL commands, make sure this value matches the
-                defined API Key Header in the Gateway YAML configuration.
-              </mat-hint>
+              <mat-label>{{ 'developerPortal.api.apiKeyHeader' | translate }}</mat-label>
+              <mat-hint>{{ 'developerPortal.api.apiKeyHint' | translate }}</mat-hint>
             </mat-form-field>
           </div>
           <div>
             <div class="api-style__content__header__title">
-              <h5>Permitted Kafka SASL Mechanisms</h5>
+              <h5>{{ 'developerPortal.api.kafkaMechanisms' | translate }}</h5>
             </div>
             <div>
               <mat-form-field appearance="fill" class="api-kakfa-sasl-mechanism-select">
-                <mat-label>Kafka SASL Mechanisms</mat-label>
+                <mat-label>{{ 'developerPortal.api.kafkaMechanismsLabel' | translate }}</mat-label>
                 <mat-select formControlName="kafkaSaslMechanisms" multiple>
                   @for (mechanism of availableKafkaMechanisms; track mechanism) {
                     <mat-option [value]="mechanism">
@@ -64,10 +61,10 @@
           <div class="api-style__content__header__title-row">
             <div class="api-style__content__header">
               <div class="api-style__content__header__title">
-                <h3>API Details</h3>
+                <h3>{{ 'developerPortal.api.details' | translate }}</h3>
                 <both-portals-badge data-testid="both-portals-badge-for-api-details" />
               </div>
-              <div class="menu-api__content__header__description">Customize the information displayed on the API details page</div>
+              <div class="menu-api__content__header__description">{{ 'developerPortal.api.detailsHint' | translate }}</div>
             </div>
             <button
               class="add-button"
@@ -78,7 +75,7 @@
               data-testid="add-information-button"
             >
               <mat-icon>add</mat-icon>
-              Add Information
+              {{ 'developerPortal.api.addInformation' | translate }}
             </button>
           </div>
           <table
@@ -90,7 +87,7 @@
             cdkDropListData="dataSource"
           >
             <caption style="display: none">
-              Table with API Information
+              {{ 'developerPortal.api.tableCaption' | translate }}
             </caption>
 
             <!-- Position Column -->
@@ -103,26 +100,26 @@
 
             <!-- Name Column -->
             <ng-container matColumnDef="name">
-              <th mat-header-cell *matHeaderCellDef>Name</th>
+              <th mat-header-cell *matHeaderCellDef>{{ 'developerPortal.common.name' | translate }}</th>
               <td mat-cell *matCellDef="let element">{{ element.name }}</td>
             </ng-container>
 
             <!-- Value Column -->
             <ng-container matColumnDef="value">
-              <th mat-header-cell *matHeaderCellDef>Value</th>
+              <th mat-header-cell *matHeaderCellDef>{{ 'developerPortal.api.value' | translate }}</th>
               <td mat-cell *matCellDef="let element">{{ element.value }}</td>
             </ng-container>
 
             <!-- Actions Column -->
             <ng-container matColumnDef="actions">
-              <th mat-header-cell *matHeaderCellDef>Actions</th>
+              <th mat-header-cell *matHeaderCellDef>{{ 'developerPortal.common.actions' | translate }}</th>
               <td mat-cell *matCellDef="let element">
                 <div>
                   <button
                     (click)="updateHeader(element)"
                     mat-icon-button
-                    aria-label="Button to edit header"
-                    matTooltip="Edit header"
+                    [attr.aria-label]="'developerPortal.api.editHeaderAria' | translate"
+                    [matTooltip]="'developerPortal.api.editHeader' | translate"
                     *gioPermission="{ anyOf: ['environment-settings-c', 'environment-settings-u', 'environment-settings-d'] }"
                     data-testid="edit-button"
                   >
@@ -132,8 +129,8 @@
                   <button
                     (click)="deleteHeader(element)"
                     mat-icon-button
-                    aria-label="Button to delete header"
-                    matTooltip="Delete header"
+                    [attr.aria-label]="'developerPortal.api.deleteHeaderAria' | translate"
+                    [matTooltip]="'developerPortal.api.deleteHeader' | translate"
                     *gioPermission="{ anyOf: ['environment-settings-d'] }"
                     data-testid="delete-button"
                   >
@@ -155,7 +152,9 @@
 
             <!-- Row shown when there is no data -->
             <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow data-testid="no-data-row">
-              <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No headers to display.</td>
+              <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+                {{ 'developerPortal.api.empty' | translate }}
+              </td>
             </tr>
           </table>
         </mat-card-content>

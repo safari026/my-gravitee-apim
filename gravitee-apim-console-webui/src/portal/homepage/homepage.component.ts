@@ -33,6 +33,8 @@ import { SnackBarService } from '../../services-ngx/snack-bar.service';
 import { PortalNavigationPage, PortalPageContent } from '../../entities/management-api-v2';
 import { HasUnsavedChanges } from '../../shared/guards/has-unsaved-changes.guard';
 import { confirmDiscardChanges, normalizeContent } from '../../shared/utils/content.util';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 export interface PortalHomepage {
   navigationItem: PortalNavigationPage;
@@ -41,7 +43,7 @@ export interface PortalHomepage {
 
 @Component({
   selector: 'homepage',
-  imports: [PortalHeaderComponent, ReactiveFormsModule, GraviteeMarkdownEditorModule, MatButtonModule, MatTooltipModule],
+  imports: [PortalHeaderComponent, ReactiveFormsModule, GraviteeMarkdownEditorModule, MatButtonModule, MatTooltipModule, TranslatePipe],
   templateUrl: './homepage.component.html',
   styleUrl: './homepage.component.scss',
 })
@@ -51,9 +53,12 @@ export class HomepageComponent implements HasUnsavedChanges {
     disabled: true,
   });
 
+  private readonly languageService = inject(LanguageService);
+
   togglePublishActionText = computed(() => {
+    this.languageService.currentLanguage();
     const published = this.portalHomepagePublished();
-    return published ? 'Unpublish' : 'Publish';
+    return this.languageService.translate(published ? 'developerPortal.common.unpublish' : 'developerPortal.common.publish');
   });
 
   isSaveDisabled = computed(() => {
@@ -135,10 +140,10 @@ export class HomepageComponent implements HasUnsavedChanges {
     const updateObj = { ...nav, published: !isCurrentlyPublished };
 
     const data: GioConfirmDialogData = {
-      title: `${this.togglePublishActionText()} page?`,
-      content: isCurrentlyPublished
-        ? `This action will unpublish the page. It will no longer be visible on the developer portal, but you can publish it again at any time.`
-        : `Your changes will be published. The updated page will be visible on your developer portal.`,
+      title: this.languageService.translate('developerPortal.homepage.confirmTitle', { action: this.togglePublishActionText() }),
+      content: this.languageService.translate(
+        isCurrentlyPublished ? 'developerPortal.homepage.unpublishContent' : 'developerPortal.homepage.publishContent',
+      ),
       confirmButton: this.togglePublishActionText(),
     };
     this.matDialog
@@ -160,11 +165,20 @@ export class HomepageComponent implements HasUnsavedChanges {
               navigationItem: { ...currentNav, published: updatedPage.published },
             };
           });
-          this.snackbarService.success(`Page has been ${updatedPage.published ? 'publish' : 'unpublish'}ed successfully.`);
+          this.snackbarService.success(
+            this.languageService.translate(
+              updatedPage.published ? 'developerPortal.homepage.publishedSuccess' : 'developerPortal.homepage.unpublishedSuccess',
+            ),
+          );
         }),
         takeUntilDestroyed(this.destroyRef),
         catchError(({ error }) => {
-          this.snackbarService.error(error?.message ?? `Failed to ${this.togglePublishActionText().toLowerCase()} page.`);
+          this.snackbarService.error(
+            error?.message ??
+              this.languageService.translate(
+                isCurrentlyPublished ? 'developerPortal.homepage.unpublishError' : 'developerPortal.homepage.publishError',
+              ),
+          );
           return EMPTY;
         }),
       )
@@ -183,7 +197,7 @@ export class HomepageComponent implements HasUnsavedChanges {
       })
       .pipe(
         tap(portalPage => {
-          this.snackbarService.success(`The page has been updated successfully`);
+          this.snackbarService.success(this.languageService.translate('developerPortal.homepage.updated'));
           this.portalHomepage.update(current => {
             return {
               ...current,
@@ -192,7 +206,7 @@ export class HomepageComponent implements HasUnsavedChanges {
           });
         }),
         catchError(() => {
-          this.snackbarService.error('An error occurred while updating the homepage');
+          this.snackbarService.error(this.languageService.translate('developerPortal.homepage.updateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),

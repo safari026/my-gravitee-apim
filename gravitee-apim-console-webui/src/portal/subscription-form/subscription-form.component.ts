@@ -39,6 +39,8 @@ import { SubscriptionFormService } from '../../services-ngx/subscription-form.se
 import { HasUnsavedChanges } from '../../shared/guards/has-unsaved-changes.guard';
 import { normalizeContent } from '../../shared/utils/content.util';
 import { GioPermissionModule } from '../../shared/components/gio-permission/gio-permission.module';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'subscription-form',
@@ -51,6 +53,7 @@ import { GioPermissionModule } from '../../shared/components/gio-permission/gio-
     MatSlideToggleModule,
     GioFormSlideToggleModule,
     GioPermissionModule,
+    TranslatePipe,
   ],
   templateUrl: './subscription-form.component.html',
   styleUrl: './subscription-form.component.scss',
@@ -62,6 +65,7 @@ export class SubscriptionFormComponent implements HasUnsavedChanges {
   private readonly gioPermissionService = inject(GioPermissionService);
   private readonly destroyRef = inject(DestroyRef);
   private readonly matDialog = inject(MatDialog);
+  private readonly languageService = inject(LanguageService);
   private readonly store = inject(GMD_FORM_STATE_STORE);
 
   private readonly subscriptionForm: WritableSignal<SubscriptionForm | null> = signal(null);
@@ -73,7 +77,7 @@ export class SubscriptionFormComponent implements HasUnsavedChanges {
   private readonly subscriptionFormResult = toSignal(
     this.subscriptionFormService.getSubscriptionForm().pipe(
       catchError(({ error }) => {
-        this.snackbarService.error(error?.message ?? 'An error occurred while loading the subscription form');
+        this.snackbarService.error(error?.message ?? this.languageService.translate('developerPortal.subscriptionForm.loadError'));
         return EMPTY;
       }),
     ),
@@ -85,17 +89,22 @@ export class SubscriptionFormComponent implements HasUnsavedChanges {
 
   /** Only severity `error` blocks save; `warning` (e.g. normalized lengths) does not. */
   protected readonly hasConfigErrors = computed(() => this.store.criticalConfigErrors().length > 0);
-  readonly configErrorsTooltip = 'Fix configuration errors before continuing.';
+  readonly configErrorsTooltip = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate('developerPortal.subscriptionForm.fixErrors');
+  });
   readonly subscriptionFormEnabled = computed(() => this.subscriptionForm()?.enabled ?? false);
 
   readonly enabledControlTooltip = computed(() => {
-    if (!this.canUpdate()) return 'You do not have permission to change this.';
-    if (this.hasConfigErrors()) return this.configErrorsTooltip;
+    this.languageService.currentLanguage();
+    if (!this.canUpdate()) return this.languageService.translate('developerPortal.subscriptionForm.noPermission');
+    if (this.hasConfigErrors()) return this.configErrorsTooltip();
     return '';
   });
 
   readonly saveButtonTooltip = computed(() => {
-    if (this.hasConfigErrors()) return this.configErrorsTooltip;
+    this.languageService.currentLanguage();
+    if (this.hasConfigErrors()) return this.configErrorsTooltip();
     return '';
   });
 
@@ -156,11 +165,11 @@ export class SubscriptionFormComponent implements HasUnsavedChanges {
       })
       .pipe(
         tap(updatedForm => {
-          this.snackbarService.success(`The subscription form has been updated successfully`);
+          this.snackbarService.success(this.languageService.translate('developerPortal.subscriptionForm.updated'));
           this.subscriptionForm.set(updatedForm);
         }),
         catchError(({ error }) => {
-          this.snackbarService.error(error?.message ?? 'An error occurred while updating the subscription form');
+          this.snackbarService.error(error?.message ?? this.languageService.translate('developerPortal.subscriptionForm.updateError'));
           return EMPTY;
         }),
         takeUntilDestroyed(this.destroyRef),
@@ -178,20 +187,21 @@ export class SubscriptionFormComponent implements HasUnsavedChanges {
       return;
     }
     const saveBeforeToggle = this.hasUnsavedChanges();
-    const action = enabled ? 'Enable' : 'Disable';
     const data: GioConfirmDialogData = saveBeforeToggle
       ? {
-          title: `${action} subscription form?`,
-          content: `You have unsaved changes. Save the form before changing visibility.`,
-          confirmButton: `Save and ${action.toLowerCase()}`,
-          cancelButton: 'Cancel',
+          title: this.languageService.translate(enabled ? 'developerPortal.subscriptionForm.enableTitle' : 'developerPortal.subscriptionForm.disableTitle'),
+          content: this.languageService.translate('developerPortal.subscriptionForm.unsavedContent'),
+          confirmButton: this.languageService.translate(
+            enabled ? 'developerPortal.subscriptionForm.saveAndEnable' : 'developerPortal.subscriptionForm.saveAndDisable',
+          ),
+          cancelButton: this.languageService.translate('common.cancel'),
         }
       : {
-          title: `${action} subscription form?`,
-          content: enabled
-            ? `This action will enable the subscription form. It will be visible to API consumers in the Developer Portal.`
-            : `This action will disable the subscription form. It will no longer be visible in the Developer Portal, but you can enable it again at any time.`,
-          confirmButton: action,
+          title: this.languageService.translate(enabled ? 'developerPortal.subscriptionForm.enableTitle' : 'developerPortal.subscriptionForm.disableTitle'),
+          content: this.languageService.translate(
+            enabled ? 'developerPortal.subscriptionForm.enableContent' : 'developerPortal.subscriptionForm.disableContent',
+          ),
+          confirmButton: this.languageService.translate(enabled ? 'developerPortal.subscriptionForm.enable' : 'developerPortal.subscriptionForm.disable'),
         };
 
     this.matDialog
@@ -240,11 +250,15 @@ export class SubscriptionFormComponent implements HasUnsavedChanges {
       tap(updatedForm => {
         this.subscriptionForm.set(updatedForm);
         this.enabledControl.setValue(updatedForm.enabled, { emitEvent: false });
-        this.snackbarService.success(`Subscription form has been ${updatedForm.enabled ? 'enabled' : 'disabled'} successfully.`);
+        this.snackbarService.success(
+          this.languageService.translate(
+            updatedForm.enabled ? 'developerPortal.subscriptionForm.enabled' : 'developerPortal.subscriptionForm.disabled',
+          ),
+        );
       }),
       catchError(({ error }) => {
         this.resetEnabledToInitial();
-        this.snackbarService.error(error?.message ?? `Failed to ${action} subscription form.`);
+        this.snackbarService.error(error?.message ?? this.languageService.translate('developerPortal.subscriptionForm.toggleError', { action }));
         return EMPTY;
       }),
     );

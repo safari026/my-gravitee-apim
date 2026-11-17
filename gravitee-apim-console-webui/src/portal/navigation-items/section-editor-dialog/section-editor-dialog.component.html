@@ -22,7 +22,7 @@
 <form [formGroup]="form" (ngSubmit)="onSubmit()">
   <mat-dialog-content>
     @if (showPageTypeSelection()) {
-      <div class="form-field-title">Page Type</div>
+      <div class="form-field-title">{{ 'developerPortal.section.pageType' | translate }}</div>
       <gio-form-selection-inline class="section-editor-dialog__page-types" formControlName="contentType">
         @for (option of pageContentTypeOptions; track option.value) {
           <gio-form-selection-inline-card [value]="option.value" [disabled]="!option.available">
@@ -33,52 +33,52 @@
         }
       </gio-form-selection-inline>
     }
-    <div class="form-field-title">Title</div>
+    <div class="form-field-title">{{ 'developerPortal.common.title' | translate }}</div>
     <mat-form-field>
       <mat-label>{{ titleFieldLabel }}</mat-label>
       <input matInput formControlName="title" required />
       @if (form.controls.title.hasError('required')) {
-        <mat-error>Title is required</mat-error>
+        <mat-error>{{ 'developerPortal.section.titleRequired' | translate }}</mat-error>
       }
     </mat-form-field>
 
     @if (linkedApiName(); as linkedApiName) {
-      <label class="sr-only" for="linked-api-name">Linked API (read-only)</label>
+      <label class="sr-only" for="linked-api-name">{{ 'developerPortal.section.linkedApi' | translate }}</label>
       <mat-form-field class="section-editor-dialog__linked-api">
-        <mat-label>Linked API (read-only)</mat-label>
+        <mat-label>{{ 'developerPortal.section.linkedApi' | translate }}</mat-label>
         <input id="linked-api-name" matInput disabled [value]="linkedApiName" data-testid="linked-api-name" />
-        <mat-hint>This is the original API name and cannot be changed.</mat-hint>
+        <mat-hint>{{ 'developerPortal.section.linkedApiHint' | translate }}</mat-hint>
       </mat-form-field>
     }
 
     @if (type === 'LINK') {
-      <div class="form-field-title">Link settings</div>
+      <div class="form-field-title">{{ 'developerPortal.section.linkSettings' | translate }}</div>
       <mat-form-field>
-        <mat-label>URL</mat-label>
+        <mat-label>{{ 'developerPortal.common.url' | translate }}</mat-label>
         <input matInput formControlName="url" required />
         @if (form.controls.url.hasError('required')) {
-          <mat-error>URL is required</mat-error>
+          <mat-error>{{ 'developerPortal.section.urlRequired' | translate }}</mat-error>
         }
         @if (form.controls.url.hasError('invalidUrl')) {
-          <mat-error>Invalid URL format</mat-error>
+          <mat-error>{{ 'developerPortal.section.invalidUrl' | translate }}</mat-error>
         }
       </mat-form-field>
     }
 
-    <div class="form-field-title">Authentication</div>
+    <div class="form-field-title">{{ 'developerPortal.common.authentication' | translate }}</div>
     <span [matTooltip]="publicDisabledTooltip()" [matTooltipDisabled]="!publicDisabled()">
-      <mat-slide-toggle formControlName="isPrivate" aria-label="Require authentication to view this AP"
-        >Authentication is required to view this {{ type | lowercase }}.</mat-slide-toggle
+      <mat-slide-toggle formControlName="isPrivate" [attr.aria-label]="'developerPortal.section.authAria' | translate"
+        >{{ 'developerPortal.section.authRequired' | translate: { type: type | lowercase } }}</mat-slide-toggle
       >
     </span>
 
     <gio-banner-info type="info">
-      This change will not be visible in the Developer Portal until you publish the {{ type | lowercase }}.
+      {{ 'developerPortal.section.publishBanner' | translate: { type: type | lowercase } }}
     </gio-banner-info>
   </mat-dialog-content>
 
   <mat-dialog-actions align="end">
-    <button mat-button type="button" (click)="onCancel()">Cancel</button>
+    <button mat-button type="button" (click)="onCancel()">{{ 'common.cancel' | translate }}</button>
     <button mat-flat-button color="primary" type="submit" [disabled]="!form.valid || formIsUnchanged()">{{ buttonTitle }}</button>
   </mat-dialog-actions>
 </form>

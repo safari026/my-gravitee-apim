@@ -17,6 +17,8 @@ import { Injectable } from '@angular/core';
 import { addTranslations, setLanguage } from '@gravitee/ui-components/src/lib/i18n';
 import { TranslateService } from '@ngx-translate/core';
 import { Title } from '@angular/platform-browser';
+import { Observable } from 'rxjs';
+import { tap } from 'rxjs/operators';
 
 import { environment } from '../../environments/environment';
 
@@ -24,6 +26,8 @@ import { environment } from '../../environments/environment';
   providedIn: 'root',
 })
 export class TranslationService {
+  static readonly STORAGE_KEY = 'gio-portal-lang';
+
   constructor(
     private translateService: TranslateService,
     private titleService: Title,
@@ -34,13 +38,27 @@ export class TranslationService {
       this.translateService.addLangs(environment.locales);
       const defaultLang = environment.locales[0];
       this.translateService.setDefaultLang(defaultLang);
-      const browserLang = this.translateService.getBrowserLang();
-      this.translateService.use(environment.locales.includes(browserLang) ? browserLang : defaultLang).subscribe(translations => {
-        setLanguage(this.translateService.currentLang);
-        addTranslations(this.translateService.currentLang, translations, this.translateService.currentLang);
+      this.use(this.readStoredLanguage() ?? defaultLang).subscribe(() => {
         this.translateService.get('site.title').subscribe(title => this.titleService.setTitle(title));
         resolve(true);
       });
     });
+  }
+
+  use(lang: string): Observable<unknown> {
+    if (lang === 'en' || lang === 'ru') {
+      localStorage.setItem(TranslationService.STORAGE_KEY, lang);
+    }
+    return this.translateService.use(lang).pipe(
+      tap(translations => {
+        setLanguage(this.translateService.currentLang);
+        addTranslations(this.translateService.currentLang, translations as object, this.translateService.currentLang);
+      }),
+    );
+  }
+
+  private readStoredLanguage(): string | null {
+    const stored = localStorage.getItem(TranslationService.STORAGE_KEY);
+    return stored === 'en' || stored === 'ru' ? stored : null;
   }
 }

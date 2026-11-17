@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { FormControl, FormGroup, Validators } from '@angular/forms';
 import { ActivatedRoute, Params, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
@@ -71,7 +71,7 @@ type SearchableKeys = keyof typeof searchableKeysMapping;
   styleUrls: ['./api-general.component.css'],
   standalone: false,
 })
-export class ApiGeneralComponent implements OnInit {
+export class ApiGeneralComponent implements OnInit, OnDestroy {
   private apiId: any;
   private ratingPageSize: any;
   private ratingsMetadata: any;
@@ -127,6 +127,7 @@ export class ApiGeneralComponent implements OnInit {
     }
 
     this.hasRatingFeature = this.configService.hasFeature(FeatureEnum.rating);
+    this.translateService.onLangChange.pipe(takeUntil(this.unsubscribe$)).subscribe(() => this.computeBackButton());
 
     this.portalService
       .getCategories({ size: -1 })
@@ -475,6 +476,11 @@ export class ApiGeneralComponent implements OnInit {
   onSortRatings({ target }) {
     this.currentOrder = target.value;
     this._updateRatings();
+  }
+
+  ngOnDestroy() {
+    this.unsubscribe$.next(undefined);
+    this.unsubscribe$.complete();
   }
 
   goBack() {

@@ -13,13 +13,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit } from '@angular/core';
+import { Component, Injector, OnDestroy, OnInit } from '@angular/core';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { EMPTY, Subject } from 'rxjs';
-import { catchError, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
 
 import { UserNotificationService } from '../../services-ngx/user-notification.service';
 import { UserNotification } from '../../entities/user-notification/userNotification';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'gio-notification-menu',
@@ -33,11 +35,14 @@ export class GioNotificationMenuComponent implements OnInit, OnDestroy {
   public hasNotifications = false;
   public userNotificationsCount = 0;
   public userNotifications: UserNotification[];
+  public notificationSummary = '';
   public isOpen: boolean;
 
   constructor(
     public readonly userNotificationService: UserNotificationService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
+    private readonly injector: Injector,
   ) {}
 
   public ngOnInit(): void {
@@ -50,7 +55,11 @@ export class GioNotificationMenuComponent implements OnInit, OnDestroy {
         this.userNotificationsCount = notificationPagedResult.page.total_elements;
         this.hasNotifications = this.userNotificationsCount > 0;
         this.userNotifications = notificationPagedResult.data;
+        this.refreshNotificationSummary();
       });
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshNotificationSummary());
     this.startNotificationFetch$.next();
   }
 
@@ -64,7 +73,7 @@ export class GioNotificationMenuComponent implements OnInit, OnDestroy {
       .deleteAll()
       .pipe(
         tap(() => {
-          this.snackBarService.success('Notifications successfully deleted!');
+          this.snackBarService.success(this.languageService.translate('userMenu.notifications.deletedAll'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -80,7 +89,7 @@ export class GioNotificationMenuComponent implements OnInit, OnDestroy {
       .delete(userNotification.id)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Notification successfully deleted!');
+          this.snackBarService.success(this.languageService.translate('userMenu.notifications.deletedOne'));
         }),
         catchError(({ error }) => {
           this.snackBarService.error(error.message);
@@ -93,5 +102,11 @@ export class GioNotificationMenuComponent implements OnInit, OnDestroy {
 
   onOutsideClick() {
     this.isOpen = false;
+  }
+
+  private refreshNotificationSummary() {
+    const count = this.userNotifications?.length ?? 0;
+    const key = count < 2 ? 'userMenu.notifications.countOne' : 'userMenu.notifications.countMany';
+    this.notificationSummary = this.languageService.translate(key, { count });
   }
 }

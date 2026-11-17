@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, HostListener, OnInit } from '@angular/core';
+import { Component, HostListener, OnDestroy, OnInit } from '@angular/core';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 
 import {
   Api,
@@ -46,7 +47,7 @@ import '@gravitee/ui-components/wc/gv-option';
   styleUrls: ['./filtered-catalog.component.css'],
   standalone: false,
 })
-export class FilteredCatalogComponent implements OnInit {
+export class FilteredCatalogComponent implements OnInit, OnDestroy {
   static readonly RANDOM_MAX_SIZE = 4;
   static readonly DEFAULT_DISPLAY = 'cards';
 
@@ -72,6 +73,15 @@ export class FilteredCatalogComponent implements OnInit {
     filter: 'filter',
   };
   private defaultCategory: { value; label };
+  private langChangeSub: Subscription;
+  private readonly displayOptionDefs = [
+    {
+      id: FilteredCatalogComponent.DEFAULT_DISPLAY,
+      icon: 'layout:layout-4-blocks',
+      titleKey: 'catalog.display.cards',
+    },
+    { id: 'list', icon: 'layout:layout-horizontal', titleKey: 'catalog.display.list' },
+  ];
   emptyIcon: string;
   emptyMessage: any;
   isDocHidden = true;
@@ -92,21 +102,14 @@ export class FilteredCatalogComponent implements OnInit {
 
   ngOnInit() {
     this.emptyIcon = this.activatedRoute.snapshot.data.icon || 'general:sad';
-    this.translateService
-      .get('catalog.defaultCategory')
-      .toPromise()
-      .then(
-        label =>
-          (this.defaultCategory = {
-            value: '',
-            label,
-          }),
-      );
+    this.defaultCategory = { value: '', label: '' };
+    this.options = this.displayOptionDefs.map(option => ({ id: option.id, icon: option.icon, title: '' }));
+    this.refreshCatalogLabels();
+    this.langChangeSub = this.translateService.onLangChange.subscribe(() => this.refreshCatalogLabels());
     this.currentDisplay =
       this.activatedRoute.snapshot.queryParamMap.get('display') ||
       localStorage.getItem('user-display-mode') ||
       FilteredCatalogComponent.DEFAULT_DISPLAY;
-    this._initDisplayOptions();
 
     this.filterApiQuery = this.activatedRoute.snapshot.data.filterApiQuery;
 
@@ -141,21 +144,20 @@ export class FilteredCatalogComponent implements OnInit {
     });
   }
 
-  private _initDisplayOptions() {
-    this.options = [
-      {
-        id: FilteredCatalogComponent.DEFAULT_DISPLAY,
-        icon: 'layout:layout-4-blocks',
-        title: 'catalog.display.cards',
-      },
-      { id: 'list', icon: 'layout:layout-horizontal', title: 'catalog.display.list' },
-    ].map(option => {
-      this.translateService.get(option.title).subscribe(title => (option.title = title));
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      option.title = '';
-      return option;
+  ngOnDestroy() {
+    this.langChangeSub?.unsubscribe();
+  }
+
+  private refreshCatalogLabels() {
+    this.translateService.get('catalog.defaultCategory').subscribe(label => {
+      this.defaultCategory.label = label;
     });
+    this.options.forEach((option, index) => {
+      this.translateService.get(this.displayOptionDefs[index].titleKey).subscribe(title => (option.title = title));
+    });
+    if (this.empty) {
+      this.updateEmptyState();
+    }
   }
 
   _load() {

@@ -18,29 +18,29 @@
 <div class="user-support-ticket">
   <h2>
     <gio-go-back-button [routerLink]="'../'"></gio-go-back-button>
-    Ticket detail
+    {{ 'userMenu.tickets.detailTitle' | translate }}
   </h2>
 
   <mat-card>
     <mat-card-content>
       <dl class="gio-description-list" *ngIf="ticket">
         <ng-container *ngIf="ticket.api">
-          <dt>API</dt>
+          <dt>{{ 'userMenu.tickets.api' | translate }}</dt>
           <dd>{{ ticket.api }}</dd>
         </ng-container>
 
         <ng-container *ngIf="ticket.application">
-          <dt>Application</dt>
+          <dt>{{ 'userMenu.tickets.application' | translate }}</dt>
           <dd>{{ ticket.application }}</dd>
         </ng-container>
 
-        <dt>Date</dt>
+        <dt>{{ 'userMenu.tickets.date' | translate }}</dt>
         <dd>{{ ticket.created_at | date: 'medium' }}</dd>
 
-        <dt>Subject</dt>
+        <dt>{{ 'userMenu.tickets.subject' | translate }}</dt>
         <dd>{{ ticket.subject }}</dd>
 
-        <dt>Content</dt>
+        <dt>{{ 'userMenu.tickets.content' | translate }}</dt>
         <dd class="user-support-ticket__content">{{ ticket.content }}</dd>
       </dl>
     </mat-card-content>

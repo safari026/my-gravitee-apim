@@ -16,6 +16,7 @@
 import { Injectable } from '@angular/core';
 
 import { GioPermissionService } from '../../shared/components/gio-permission/gio-permission.service';
+import { LanguageService } from '../../shared/i18n/language.service';
 
 export interface MenuItem {
   icon?: string;
@@ -25,7 +26,8 @@ export interface MenuItem {
 }
 
 interface MenuItemConfig {
-  displayName: string;
+  labelKey?: string;
+  displayName?: string;
   routerLink: string;
   icon: string;
   permissions: string[];
@@ -35,41 +37,44 @@ interface MenuItemConfig {
   providedIn: 'root',
 })
 export class PortalNavigationService {
-  constructor(private readonly permissionService: GioPermissionService) {}
+  constructor(
+    private readonly permissionService: GioPermissionService,
+    private readonly languageService: LanguageService,
+  ) {}
 
   private allMenuItems: MenuItemConfig[] = [
     {
-      displayName: 'Catalog',
+      labelKey: 'developerPortal.menu.catalog',
       routerLink: 'catalog',
       icon: 'gio:report-columns',
       permissions: ['environment-category-r', 'environment-category-u'],
     },
     {
-      displayName: 'Navigation',
+      labelKey: 'developerPortal.menu.navigation',
       routerLink: 'navigation',
       icon: 'gio:page',
       permissions: ['environment-settings-r', 'environment-settings-u'],
     },
     {
-      displayName: 'API',
+      labelKey: 'developerPortal.menu.api',
       routerLink: 'api',
       icon: 'gio:cloud-settings',
       permissions: ['environment-settings-r', 'environment-settings-u'],
     },
     {
-      displayName: 'Theme',
+      labelKey: 'developerPortal.menu.theme',
       routerLink: 'theme',
       icon: 'gio:color-picker',
       permissions: ['environment-theme-r', 'environment-theme-u'],
     },
     {
-      displayName: 'Homepage',
+      labelKey: 'developerPortal.menu.homepage',
       routerLink: 'homepage',
       icon: 'gio:box',
       permissions: ['environment-documentation-r', 'environment-documentation-u'],
     },
     {
-      displayName: 'Subscription Form',
+      labelKey: 'developerPortal.menu.subscriptionForm',
       routerLink: 'subscription-form',
       icon: 'gio:list-check',
       permissions: ['environment-metadata-r', 'environment-metadata-u'],
@@ -79,8 +84,8 @@ export class PortalNavigationService {
   public getMainMenuItems(): MenuItem[] {
     return this.allMenuItems
       .filter(item => this.permissionService.hasAnyMatching(item.permissions))
-      .map(({ displayName, routerLink, icon }) => ({
-        displayName,
+      .map(({ labelKey, displayName, routerLink, icon }) => ({
+        displayName: labelKey ? this.languageService.translate(labelKey) : displayName,
         routerLink,
         icon,
       }));

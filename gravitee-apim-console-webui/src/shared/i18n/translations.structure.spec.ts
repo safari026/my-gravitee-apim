@@ -203,6 +203,7 @@ describe('i18n translations', () => {
     expect(languageService.translate('apiProducts.create.title')).toBe('Create API Product');
     expect(languageService.translate('kafka.list.title')).toBe('Kafka Standalones');
     expect(languageService.translate('kafka.add.title')).toBe('Create a new cluster');
+    expect(languageService.translate('developerPortal.menu.catalog')).toBe('Catalog');
 
     languageService.setLanguage('ru');
     expect(languageService.translate('common.cancel')).toBe('Отмена');
@@ -243,6 +244,7 @@ describe('i18n translations', () => {
     expect(languageService.translate('apiProducts.list.title')).toBe('API-продукты');
     expect(languageService.translate('apiProducts.create.title')).toBe('Создать API-продукт');
     expect(languageService.translate('kafka.list.title')).toBe('Автономные Kafka');
+    expect(languageService.translate('developerPortal.menu.catalog')).toBe('Каталог');
     expect(languageService.translate('kafka.add.title')).toBe('Создать новый кластер');
 
     languageService.setLanguage('en');

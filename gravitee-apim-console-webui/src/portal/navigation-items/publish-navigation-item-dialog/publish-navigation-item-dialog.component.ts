@@ -14,6 +14,8 @@
  * limitations under the License.
  */
 import { Component, computed, inject, signal } from '@angular/core';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
@@ -38,13 +40,14 @@ type PublishNavigationItemDialogForm = FormGroup<PublishNavigationItemDialogForm
 
 @Component({
   selector: 'publish-navigation-item-dialog',
-  imports: [MatDialogModule, ReactiveFormsModule, MatButtonModule, MatCheckboxModule],
+  imports: [MatDialogModule, ReactiveFormsModule, MatButtonModule, MatCheckboxModule, TranslatePipe],
   templateUrl: './publish-navigation-item-dialog.component.html',
   styleUrls: ['./publish-navigation-item-dialog.component.scss'],
 })
 export class PublishNavigationItemDialogComponent {
   private readonly dialogRef = inject(MatDialogRef<PublishNavigationItemDialogComponent, PublishNavigationItemDialogResult>);
   private readonly data: PublishNavigationItemDialogData = inject(MAT_DIALOG_DATA);
+  private readonly languageService = inject(LanguageService);
 
   private readonly navItem = signal(this.data.navItem);
   readonly form: PublishNavigationItemDialogForm = new FormGroup<PublishNavigationItemDialogFormControls>({
@@ -52,31 +55,61 @@ export class PublishNavigationItemDialogComponent {
   });
 
   readonly isContainer = computed(() => this.navItem().type === 'FOLDER' || this.navItem().type === 'API');
-  readonly typeLabel = computed(() => (this.navItem().type === 'API' ? 'API' : this.navItem().type.toLowerCase()));
+  readonly typeLabel = computed(() => {
+    this.languageService.currentLanguage();
+    return this.navItem().type === 'API'
+      ? 'API'
+      : this.languageService.translate(`developerPortal.section.${this.navItem().type.toLowerCase()}`);
+  });
   readonly isPublishing = computed(() => !this.navItem().published);
-  readonly action = computed(() => (this.isPublishing() ? 'Publish' : 'Unpublish'));
+  readonly action = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(this.isPublishing() ? 'developerPortal.common.publish' : 'developerPortal.common.unpublish');
+  });
   readonly showPropagationCheckbox = computed(() => this.isPublishing() && this.isContainer());
-  readonly title = computed(() => `${this.action()} "${this.navItem().title}" ${this.typeLabel()}?`);
-  readonly pastAction = computed(() => `${this.action().toLowerCase()}ed`);
-  readonly contentScope = computed(() => (this.isContainer() ? ' and its content ' : ' '));
-  readonly propagatedItemsLabel = computed(() =>
-    this.navItem().type === 'FOLDER' ? 'nested documentation and APIs' : 'nested documentation',
+  readonly title = computed(() =>
+    this.languageService.translate('developerPortal.publish.title', {
+      action: this.action(),
+      name: this.navItem().title,
+      type: this.typeLabel(),
+    }),
   );
-  readonly propagationCheckboxLabel = computed(() => `Also publish all ${this.propagatedItemsLabel()}`);
+  readonly pastAction = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(this.isPublishing() ? 'developerPortal.publish.published' : 'developerPortal.publish.unpublished');
+  });
+  readonly contentScope = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(this.isContainer() ? 'developerPortal.publish.contentScope' : 'developerPortal.publish.space');
+  });
+  readonly propagatedItemsLabel = computed(() => {
+    this.languageService.currentLanguage();
+    return this.languageService.translate(
+      this.navItem().type === 'FOLDER' ? 'developerPortal.publish.nestedDocsAndApis' : 'developerPortal.publish.nestedDocs',
+    );
+  });
+  readonly propagationCheckboxLabel = computed(() =>
+    this.languageService.translate('developerPortal.publish.alsoPublish', { items: this.propagatedItemsLabel() }),
+  );
   readonly warning = computed(() => {
     if (!this.isContainer()) {
       return '';
     }
-    return this.isPublishing()
-      ? ` Publishing this ${this.typeLabel()} will also publish all ${this.propagatedItemsLabel()}. Do you want to proceed?`
-      : ` Unpublishing this ${this.typeLabel()} will also unpublish all ${this.propagatedItemsLabel()}. This action cannot be undone automatically. Do you want to proceed?`;
+    return this.languageService.translate(
+      this.isPublishing() ? 'developerPortal.publish.publishWarning' : 'developerPortal.publish.unpublishWarning',
+      { type: this.typeLabel(), items: this.propagatedItemsLabel() },
+    );
   });
-  readonly messageWithPropagation = computed(
-    () => `This ${this.typeLabel()} will be ${this.pastAction()}. This change will be visible in the Developer Portal.`,
+  readonly messageWithPropagation = computed(() =>
+    this.languageService.translate('developerPortal.publish.withPropagation', { type: this.typeLabel(), past: this.pastAction() }),
   );
-  readonly messageWithoutPropagation = computed(
-    () =>
-      `This ${this.typeLabel()}${this.contentScope()}will be ${this.pastAction()}. This change will be visible in the Developer Portal.${this.warning()}`,
+  readonly messageWithoutPropagation = computed(() =>
+    this.languageService.translate('developerPortal.publish.withoutPropagation', {
+      type: this.typeLabel(),
+      scope: this.contentScope(),
+      past: this.pastAction(),
+      warning: this.warning(),
+    }),
   );
   readonly message = computed(() => (this.showPropagationCheckbox() ? this.messageWithPropagation() : this.messageWithoutPropagation()));
 

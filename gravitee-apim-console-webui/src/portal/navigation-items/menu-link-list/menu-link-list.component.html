@@ -19,8 +19,8 @@
   <mat-card-content class="menu-link-list__content">
     <div class="menu-link-list__content__header">
       <div class="menu-link-list__content__header__title">
-        <h3>Menu Links</h3>
-        <div class="menu-link-list__content__header__description">Customize the Developer Portal top bar menu with up to 5 links</div>
+        <h3>{{ 'developerPortal.navigation.menuLinks' | translate }}</h3>
+        <div class="menu-link-list__content__header__description">{{ 'developerPortal.navigation.menuLinksHint' | translate }}</div>
       </div>
       <div
         class="menu-link-list__header__action"
@@ -34,7 +34,7 @@
           aria-label="add-link"
           data-testid="add_link_button"
         >
-          <mat-icon>add</mat-icon> Add Link
+          <mat-icon>add</mat-icon> {{ 'developerPortal.navigation.addLinkButton' | translate }}
         </button>
       </div>
     </div>
@@ -58,13 +58,15 @@
 
       <!-- Name Column -->
       <ng-container matColumnDef="name">
-        <th mat-header-cell *matHeaderCellDef data-testid="link_name">Name</th>
+        <th mat-header-cell *matHeaderCellDef data-testid="link_name">{{ 'developerPortal.common.name' | translate }}</th>
         <td mat-cell *matCellDef="let element" data-testid="link_name_cell">{{ element.name }}</td>
       </ng-container>
 
       <!-- Type Column -->
       <ng-container matColumnDef="type">
-        <th mat-header-cell *matHeaderCellDef data-testid="link_type" class="badge-column-header">Type</th>
+        <th mat-header-cell *matHeaderCellDef data-testid="link_type" class="badge-column-header">
+          {{ 'developerPortal.common.type' | translate }}
+        </th>
         <td mat-cell *matCellDef="let element" data-testid="link_type_cell">
           <span class="gio-badge-neutral">{{ element.readableType }}</span>
         </td>
@@ -72,13 +74,15 @@
 
       <!-- Target Column -->
       <ng-container matColumnDef="target">
-        <th mat-header-cell *matHeaderCellDef data-testid="link_target">Target</th>
+        <th mat-header-cell *matHeaderCellDef data-testid="link_target">{{ 'developerPortal.common.target' | translate }}</th>
         <td mat-cell *matCellDef="let element" data-testid="link_target_cell">{{ element.target }}</td>
       </ng-container>
 
       <!-- Target Visibility -->
       <ng-container matColumnDef="visibility">
-        <th mat-header-cell *matHeaderCellDef data-testid="link_target" class="badge-column-header">Visibility</th>
+        <th mat-header-cell *matHeaderCellDef data-testid="link_target" class="badge-column-header">
+          {{ 'developerPortal.common.visibility' | translate }}
+        </th>
         <td mat-cell *matCellDef="let element" data-testid="link_target_cell">
           <span class="gio-badge-neutral">{{ element.readableVisibility }}</span>
         </td>
@@ -86,7 +90,7 @@
 
       <!-- Actions Column -->
       <ng-container matColumnDef="actions">
-        <th mat-header-cell *matHeaderCellDef data-testid="link_actions">Actions</th>
+        <th mat-header-cell *matHeaderCellDef data-testid="link_actions">{{ 'developerPortal.common.actions' | translate }}</th>
         <td mat-cell *matCellDef="let element">
           <div
             class="menu-link-list__actions"
@@ -97,7 +101,7 @@
               type="button"
               class="update-link"
               [routerLink]="'./' + element.id"
-              matTooltip="Edit"
+              [matTooltip]="'common.edit' | translate"
               data-testid="link_edit_button"
             >
               <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
@@ -107,7 +111,7 @@
               type="button"
               class="delete-link"
               (click)="deleteLink(element)"
-              matTooltip="Delete"
+              [matTooltip]="'common.delete' | translate"
               data-testid="link_delete_button"
             >
               <mat-icon svgIcon="gio:trash"></mat-icon>
@@ -127,7 +131,9 @@
 
       <!-- Row shown when there is no data -->
       <tr class="mat-mdc-row mdc-data-table__row" *matNoDataRow>
-        <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">No link found</td>
+        <td class="mat-mdc-cell mdc-data-table__cell" [attr.colspan]="displayedColumns.length">
+          {{ 'developerPortal.navigation.noLink' | translate }}
+        </td>
       </tr>
     </table>
   </mat-card-content>

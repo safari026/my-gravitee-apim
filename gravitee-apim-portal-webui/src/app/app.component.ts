@@ -32,6 +32,7 @@ import {
 import { TranslateService } from '@ngx-translate/core';
 import { Title } from '@angular/platform-browser';
 import { ViewportScroller } from '@angular/common';
+import { Subscription } from 'rxjs';
 import {
   ActivatedRoute,
   NavigationEnd,
@@ -61,6 +62,7 @@ import { GvSlot } from './directives/gv-slot';
 import { GoogleAnalyticsService } from './services/google-analytics.service';
 import { EventService, GvEvent } from './services/event.service';
 import { PreviewService } from './services/preview.service';
+import { TranslationService } from './services/translation.service';
 
 @Component({
   selector: 'app-root',
@@ -92,11 +94,15 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   private interval: any;
   public numberOfPortalNotifications: any;
   public homepageTitle: string;
+  public currentLanguage: 'en' | 'ru' = 'en';
   public currentYear = new Date().getFullYear().toString();
+  private homepageTitleFromConfig = false;
+  private langChangeSub: Subscription;
 
   constructor(
     private titleService: Title,
     private translateService: TranslateService,
+    private translationService: TranslationService,
     private router: Router,
     private currentUserService: CurrentUserService,
     private navRouteService: NavRouteService,
@@ -135,8 +141,28 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   }
 
   async ngOnInit() {
-    this.homepageTitle =
-      this.configurationService.get('portal.homepageTitle') || (await this.translateService.get('homepage.title').toPromise());
+    const configuredHomepageTitle = this.configurationService.get('portal.homepageTitle');
+    this.homepageTitleFromConfig = !!configuredHomepageTitle;
+    this.homepageTitle = configuredHomepageTitle || (await this.translateService.get('homepage.title').toPromise());
+    this.currentLanguage = this.translateService.currentLang === 'ru' ? 'ru' : 'en';
+    this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
+      this.currentLanguage = this.translateService.currentLang === 'ru' ? 'ru' : 'en';
+      if (!this.homepageTitleFromConfig) {
+        this.translateService.get('homepage.title').subscribe(title => (this.homepageTitle = title));
+      }
+      const currentRoute: ActivatedRoute = this.navRouteService.findCurrentRoute(this.activatedRoute);
+      if (currentRoute) {
+        this._setBrowserTitle(currentRoute);
+      }
+      this.refreshNavigationLabels();
+      if (this.notification?.code) {
+        this.translateService.get(this.notification.code, this.notification.parameters).subscribe(translatedMessage => {
+          if (this.notification && (this.notification.code !== translatedMessage || !this.notification.message)) {
+            this.notification.message = translatedMessage;
+          }
+        });
+      }
+    });
     this.googleAnalyticsService.load();
     this.currentUserService.get().subscribe(newCurrentUser => {
       this.currentUser = newCurrentUser;
@@ -222,6 +248,7 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
   @HostListener('window:beforeunload')
   async ngOnDestroy() {
     clearInterval(this.interval);
+    this.langChangeSub?.unsubscribe();
     this.eventService.unsubscribe();
   }
 
@@ -342,6 +369,31 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
     return g == null;
   }
 
+  setPortalLanguage(lang: 'en' | 'ru'): void {
+    if (this.currentLanguage === lang) {
+      return;
+    }
+    this.translationService.use(lang).subscribe();
+  }
+
+  togglePortalLanguage(): void {
+    this.setPortalLanguage(this.currentLanguage === 'en' ? 'ru' : 'en');
+  }
+
+  private refreshNavigationLabels() {
+    // gv-nav and gv-menu compare only path and active state. A same-turn replacement is also collapsed by Angular,
+    // so the empty list has to be committed before the translated routes are assigned.
+    this.mainRoutes = Promise.resolve([]);
+    this.menuRoutes = Promise.resolve([]);
+    this.userRoutes = Promise.resolve([]);
+    setTimeout(() => {
+      this._loadPortalLinks();
+      const currentRoute: ActivatedRoute = this.navRouteService.findCurrentRoute(this.activatedRoute);
+      this.menuRoutes = this.navRouteService.getSiblingsNav(currentRoute);
+      this.userRoutes = this.navRouteService.getUserNav();
+    });
+  }
+
   private _onNavigationEnd(event: NavigationEnd) {
     this.isHomepage = this.isHomepageUrl(event.url);
     if (this.isHomepage) {
@@ -349,6 +401,26 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
       this.isSticky = false;
       this.isStickyHomepage = false;
     }
+    this._loadPortalLinks();
+
+    const currentRoute: ActivatedRoute = this.navRouteService.findCurrentRoute(this.activatedRoute);
+    this.menuRoutes = this.navRouteService.getSiblingsNav(currentRoute);
+    if (this.menuRoutes) {
+      const menuOption = currentRoute.snapshot.data.menu;
+      if (typeof menuOption === 'object') {
+        const parentSlots = currentRoute.parent && currentRoute.parent.snapshot.data.menu && currentRoute.parent.snapshot.data.menu.slots;
+        this._injectMenuSlots({ ...menuOption.slots, ...parentSlots });
+      } else {
+        this._clearMenuSlots();
+      }
+    } else {
+      this._clearMenuSlots();
+    }
+    this.computeMenuMode();
+    this.computeHomepageHeight();
+  }
+
+  private _loadPortalLinks() {
     this.portalService.getPortalLinks().subscribe(portalLinks => {
       if (portalLinks.slots) {
         // deepcode ignore reDOS: <please specify a reason of ignoring this>
@@ -392,22 +464,6 @@ export class AppComponent implements AfterViewInit, OnInit, OnDestroy {
         }
       }
     });
-
-    const currentRoute: ActivatedRoute = this.navRouteService.findCurrentRoute(this.activatedRoute);
-    this.menuRoutes = this.navRouteService.getSiblingsNav(currentRoute);
-    if (this.menuRoutes) {
-      const menuOption = currentRoute.snapshot.data.menu;
-      if (typeof menuOption === 'object') {
-        const parentSlots = currentRoute.parent && currentRoute.parent.snapshot.data.menu && currentRoute.parent.snapshot.data.menu.slots;
-        this._injectMenuSlots({ ...menuOption.slots, ...parentSlots });
-      } else {
-        this._clearMenuSlots();
-      }
-    } else {
-      this._clearMenuSlots();
-    }
-    this.computeMenuMode();
-    this.computeHomepageHeight();
   }
 
   private _clearMenuSlots() {

@@ -16,32 +16,32 @@
 
 -->
 <portal-header
-  subtitle="Define the subscription form that will be displayed to users when subscribing to APIs"
-  [title]="'Subscription Form'"
+  [subtitle]="'developerPortal.subscriptionForm.subtitle' | translate"
+  [title]="'developerPortal.subscriptionForm.title' | translate"
   [showActions]="true"
 >
   <div additionalActions class="actions">
     <mat-slide-toggle
-      aria-label="Visible to API consumers"
+      [attr.aria-label]="'developerPortal.subscriptionForm.visibleAria' | translate"
       labelPosition="before"
       [formControl]="enabledControl"
       [matTooltip]="enabledControlTooltip()"
       [matTooltipDisabled]="!enabledControlTooltip()"
       data-testid="enable-toggle"
     >
-      Visible to API consumers
+      {{ 'developerPortal.subscriptionForm.visible' | translate }}
     </mat-slide-toggle>
     <button
       *gioPermission="{ anyOf: ['environment-metadata-u'] }"
       mat-flat-button
       color="primary"
-      aria-label="Update subscription form"
+      [attr.aria-label]="'developerPortal.subscriptionForm.updateAria' | translate"
       (click)="updateSubscriptionForm()"
       [disabled]="isSaveDisabled()"
       [matTooltip]="saveButtonTooltip()"
       [matTooltipDisabled]="!saveButtonTooltip()"
     >
-      Save
+      {{ 'common.save' | translate }}
     </button>
   </div>
 </portal-header>

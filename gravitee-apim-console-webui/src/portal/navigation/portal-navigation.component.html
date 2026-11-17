@@ -17,15 +17,15 @@
 -->
 <gio-top-bar class="header">
   @if (customLogo) {
-    <img [src]="customLogo" alt="custom logo" class="header__custom-logo" />
+    <img [src]="customLogo" [attr.alt]="'developerPortal.shell.customLogoAlt' | translate" class="header__custom-logo" />
   } @else {
     <button mat-icon-button>
       <img class="gravitee-logo" ngSrc="assets/gravitee_logo_solaris.png" alt="Gravitee" height="62" width="64" />
     </button>
   }
-  <gio-top-bar-content type="portal" productName="Developer Portal"></gio-top-bar-content>
+  <gio-top-bar-content type="portal" [productName]="'developerPortal.shell.productName' | translate"></gio-top-bar-content>
   @if (portalUrl$ | async; as portalUrl) {
-    <gio-top-bar-link [url]="portalUrl" name="Open Website" />
+    <gio-top-bar-link [url]="portalUrl" [name]="'developerPortal.shell.openWebsite' | translate" />
   }
   <gio-top-bar-menu>
     <portal-user-avatar />

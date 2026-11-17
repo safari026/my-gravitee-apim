@@ -14,6 +14,6 @@
  * limitations under the License.
  */
 export const environment = {
-  locales: ['en', 'fr', 'cs', 'it'],
+  locales: ['en', 'ru', 'fr', 'cs', 'it'],
   production: true,
 };

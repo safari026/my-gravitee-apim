@@ -117,7 +117,7 @@
         type="button"
         mat-icon-button
         class="tree__button more-actions"
-        aria-label="More actions"
+        [attr.aria-label]="'developerPortal.navigation.moreActions' | translate"
         [attr.data-testid]="'more-actions-' + node.id"
         [matMenuTriggerFor]="moreMenu"
         (click)="$event.stopPropagation()"
@@ -132,7 +132,11 @@
   </ng-template>
 } @else {
   <div class="tree__empty-state">
-    <empty-state iconName="gio:page" title="Items" message="Start by adding your first page." />
+    <empty-state
+      iconName="gio:page"
+      [title]="'developerPortal.navigation.emptyTitle' | translate"
+      [message]="'developerPortal.navigation.emptyMessage' | translate"
+    />
   </div>
 }
 
@@ -141,23 +145,23 @@
     @if (canCreate) {
       <button mat-menu-item (click)="onCreate(node, 'PAGE')">
         <mat-icon [svgIcon]="'PAGE' | portalNavigationItemIcon"></mat-icon>
-        Add Page
+        {{ 'developerPortal.navigation.addPage' | translate }}
       </button>
 
       @if (node.type != 'API') {
         <button mat-menu-item (click)="onCreate(node, 'API')">
           <mat-icon [svgIcon]="'API' | portalNavigationItemIcon"></mat-icon>
-          Add API
+          {{ 'developerPortal.navigation.addApi' | translate }}
         </button>
       }
 
       <button mat-menu-item (click)="onCreate(node, 'FOLDER')">
         <mat-icon [svgIcon]="'FOLDER' | portalNavigationItemIcon"></mat-icon>
-        Add Folder
+        {{ 'developerPortal.navigation.addFolder' | translate }}
       </button>
       <button mat-menu-item (click)="onCreate(node, 'LINK')">
         <mat-icon [svgIcon]="'LINK' | portalNavigationItemIcon"></mat-icon>
-        Add Link
+        {{ 'developerPortal.navigation.addLink' | translate }}
       </button>
       @if (canUpdate || canDelete) {
         <mat-divider></mat-divider>
@@ -167,7 +171,7 @@
   @if (canUpdate) {
     <button mat-menu-item (click)="onEdit(node)" data-testid="edit-node-button">
       <mat-icon svgIcon="gio:edit-pencil"></mat-icon>
-      Edit
+      {{ 'common.edit' | translate }}
     </button>
 
     @if (isUnpublished(node)) {
@@ -182,13 +186,13 @@
           data-testid="publish-node-button"
         >
           <mat-icon svgIcon="gio:eye-empty"></mat-icon>
-          Publish
+          {{ 'developerPortal.common.publish' | translate }}
         </button>
       </span>
     } @else {
       <button mat-menu-item (click)="onUnpublish(node)" data-testid="unpublish-node-button">
         <mat-icon svgIcon="gio:eye-off"></mat-icon>
-        Unpublish
+        {{ 'developerPortal.common.unpublish' | translate }}
       </button>
     }
   }
@@ -196,7 +200,7 @@
   @if (canDelete) {
     <button mat-menu-item class="tree__menu-item-delete" (click)="onDelete(node)" data-testid="delete-node-button">
       <mat-icon class="tree__menu-item-delete">delete</mat-icon>
-      Delete
+      {{ 'common.delete' | translate }}
     </button>
   }
 </ng-template>

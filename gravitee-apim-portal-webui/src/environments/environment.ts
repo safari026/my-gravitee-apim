@@ -18,7 +18,7 @@
 // The list of file replacements can be found in `angular.json`.
 
 export const environment = {
-  locales: ['en', 'fr', 'cs', 'it'],
+  locales: ['en', 'ru', 'fr', 'cs', 'it'],
   production: false,
 };
 

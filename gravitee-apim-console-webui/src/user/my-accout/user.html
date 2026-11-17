@@ -16,7 +16,7 @@
 
 -->
 <div class="gv-forms" style="padding: 20px">
-  <h1>User information</h1>
+  <h1>{{ $ctrl.translate('userMenu.account.title') }}</h1>
   <div class="gv-form">
     <p>{{$ctrl.user.displayName}}</p>
     <div class="gv-form-content gravitee-user-container" layout="column">
@@ -26,7 +26,7 @@
             <div class="gravitee-user-container__info-row">
               <ng-md-icon class="gravitee-user-container__editable-info-row__icon" icon="person"></ng-md-icon>
               <md-input-container class="gravitee-user-container__editable-info-row__label">
-                <label>Firstname</label>
+                <label>{{ $ctrl.translate('userMenu.account.firstname') }}</label>
                 <input
                   ng-model="$ctrl.user.firstname"
                   type="text"
@@ -35,7 +35,7 @@
                 />
               </md-input-container>
               <md-input-container class="gravitee-user-container__editable-info-row__label">
-                <label>Lastname</label>
+                <label>{{ $ctrl.translate('userMenu.account.lastname') }}</label>
                 <input
                   ng-model="$ctrl.user.lastname"
                   type="text"
@@ -47,7 +47,7 @@
             <div class="gravitee-user-container__editable-info-row">
               <ng-md-icon class="gravitee-user-container__editable-info-row__icon" icon="contact_mail"></ng-md-icon>
               <md-input-container class="gravitee-user-container__editable-info-row__label">
-                <label>Email</label>
+                <label>{{ $ctrl.translate('userMenu.account.email') }}</label>
                 <input ng-model="$ctrl.user.email" type="text" ng-required="$ctrl.isInternalUser()" ng-disabled="!$ctrl.isInternalUser()" />
               </md-input-container>
             </div>
@@ -100,30 +100,32 @@
               image-name="$ctrl.user.displayName"
               image-form="formUser"
               can-delete="true"
-              delete-label="Use default"
+              delete-label="{{ $ctrl.translate('userMenu.account.useDefault') }}"
             ></gravitee-image>
           </div>
         </div>
         <div layout="row" style="margin-top: 20px">
-          <md-button type="submit" ng-disabled="formUser.$pristine">Update</md-button>
-          <md-button ng-click="$ctrl.cancel()" ng-disabled="formUser.$pristine">Cancel</md-button>
+          <md-button type="submit" ng-disabled="formUser.$pristine">{{ $ctrl.translate('userMenu.account.update') }}</md-button>
+          <md-button ng-click="$ctrl.cancel()" ng-disabled="formUser.$pristine">{{ $ctrl.translate('userMenu.account.cancel') }}</md-button>
         </div>
       </form>
     </div>
   </div>
 
   <div class="gv-form">
-    <h2>Personal access tokens</h2>
-    <span>Tokens you have generated that can be used to access the Gravitee.io management API.</span>
+    <h2>{{ $ctrl.translate('userMenu.account.tokensTitle') }}</h2>
+    <span>{{ $ctrl.translate('userMenu.account.tokensHint') }}</span>
     <div class="gv-form-content" layout="column">
-      <md-button class="md-raised" ng-click="$ctrl.generateToken()" style="width: 40%; margin: 0 auto"> Generate token </md-button>
+      <md-button class="md-raised" ng-click="$ctrl.generateToken()" style="width: 40%; margin: 0 auto">
+        {{ $ctrl.translate('userMenu.account.generateToken') }}
+      </md-button>
       <md-table-container ng-show="$ctrl.tokens.length">
         <table md-table>
           <thead md-head>
             <tr md-row>
-              <th md-column>Name</th>
-              <th md-column>Created</th>
-              <th md-column>Last use</th>
+              <th md-column>{{ $ctrl.translate('userMenu.account.name') }}</th>
+              <th md-column>{{ $ctrl.translate('userMenu.account.created') }}</th>
+              <th md-column>{{ $ctrl.translate('userMenu.account.lastUse') }}</th>
               <th md-column></th>
             </tr>
           </thead>
@@ -136,10 +138,15 @@
                 <span><b>{{token.created_at | datetimeFilter}}</b></span>
               </td>
               <td md-cell>
-                <span><b>{{token.last_use_at? (token.last_use_at | humanDateFilter) : 'never'}}</b></span>
+                <span><b>{{token.last_use_at? (token.last_use_at | humanDateFilter) : $ctrl.translate('userMenu.account.never')}}</b></span>
               </td>
               <td md-cell>
-                <ng-md-icon ng-click="$ctrl.revoke(token)" icon="delete" size="24" title="Revoke token '{{token.name}}'"></ng-md-icon>
+                <ng-md-icon
+                  ng-click="$ctrl.revoke(token)"
+                  icon="delete"
+                  size="24"
+                  title="{{ $ctrl.translate('userMenu.account.revokeToken', { name: token.name }) }}"
+                ></ng-md-icon>
               </td>
             </tr>
           </tbody>
@@ -149,20 +156,26 @@
   </div>
 
   <div class="gv-form gv-form-danger" ng-if="$ctrl.displayDangerZone()">
-    <h2>Danger Zone</h2>
+    <h2>{{ $ctrl.translate('userMenu.account.dangerTitle') }}</h2>
     <div class="gv-form-content" layout="column">
       <div layout="row" layout-align="space-between center" ng-if="!$ctrl.canDeleteMyAccount()">
         <div class="gv-form-danger-text">
-          Please transfer ownership of your APIs and applications or delete them before deleting your account
+          {{ $ctrl.translate('userMenu.account.dangerHint') }}
         </div>
-        <div><md-button class="md-flat md-warn" type="button" ng-disabled="true">Delete my account</md-button></div>
+        <div>
+          <md-button class="md-flat md-warn" type="button" ng-disabled="true">{{ $ctrl.translate('userMenu.account.deleteAccount') }}</md-button>
+        </div>
       </div>
 
       <div layout="row" layout-align="space-between center" ng-if="$ctrl.canDeleteMyAccount()">
         <div class="gv-form-danger-text">
-          Please transfer ownership of your APIs and applications or delete them before deleting your account
+          {{ $ctrl.translate('userMenu.account.dangerHint') }}
         </div>
-        <div><md-button class="md-flat md-warn" type="button" ng-click="$ctrl.deleteMyAccount()">Delete my account</md-button></div>
+        <div>
+          <md-button class="md-flat md-warn" type="button" ng-click="$ctrl.deleteMyAccount()">{{
+            $ctrl.translate('userMenu.account.deleteAccount')
+          }}</md-button>
+        </div>
       </div>
     </div>
   </div>

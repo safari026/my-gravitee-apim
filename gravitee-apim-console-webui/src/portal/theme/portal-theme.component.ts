@@ -35,6 +35,8 @@ import { PortalHeaderComponent } from '../components/header/portal-header.compon
 import { UiPortalThemeService } from '../../services-ngx/ui-theme.service';
 import { ThemePortalNext, UpdateThemePortalNext } from '../../entities/management-api-v2';
 import { SnackBarService } from '../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../shared/i18n/language.service';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 import { GioPermissionService } from '../../shared/components/gio-permission/gio-permission.service';
 import { NewPortalBadgeComponent } from '../components/portal-badge/new-portal-badge/new-portal-badge.component';
 
@@ -73,6 +75,7 @@ export interface ThemeVM {
     GioMonacoEditorModule,
     PortalHeaderComponent,
     NewPortalBadgeComponent,
+    TranslatePipe,
   ],
   standalone: true,
 })
@@ -134,6 +137,7 @@ export class PortalThemeComponent implements OnInit {
   private initialTheme: ThemePortalNext;
   private defaultValues: ThemeVM;
   private destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   constructor(
     private readonly uiPortalThemeService: UiPortalThemeService,
@@ -200,7 +204,7 @@ export class PortalThemeComponent implements OnInit {
       .updateTheme(updateTheme)
       .pipe(
         tap(() => {
-          this.snackBarService.success('Theme successfully saved!');
+          this.snackBarService.success(this.languageService.translate('developerPortal.theme.saved'));
         }),
         tap((theme: ThemePortalNext) => {
           this.initialTheme = theme;

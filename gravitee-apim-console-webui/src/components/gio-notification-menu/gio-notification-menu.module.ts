@@ -25,8 +25,20 @@ import { MatListModule } from '@angular/material/list';
 
 import { GioNotificationMenuComponent } from './gio-notification-menu.component';
 
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
+
 @NgModule({
-  imports: [CommonModule, MatIconModule, GioIconsModule, MatButtonModule, MatDividerModule, MatListModule, OverlayModule, MatCardModule],
+  imports: [
+    CommonModule,
+    MatIconModule,
+    GioIconsModule,
+    MatButtonModule,
+    MatDividerModule,
+    MatListModule,
+    OverlayModule,
+    MatCardModule,
+    TranslatePipe,
+  ],
   declarations: [GioNotificationMenuComponent],
   exports: [GioNotificationMenuComponent],
 })

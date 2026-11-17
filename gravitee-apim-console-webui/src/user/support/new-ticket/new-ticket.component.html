@@ -16,22 +16,22 @@
 
 -->
 <form [formGroup]="ticketForm" (ngSubmit)="onSubmit()" gioFormFocusInvalid class="user-support-new-ticket">
-  <h2><gio-go-back-button [routerLink]="'../'"></gio-go-back-button> New Ticket</h2>
-  <h4>Create a new support ticket</h4>
+  <h2><gio-go-back-button [routerLink]="'../'"></gio-go-back-button> {{ 'userMenu.tickets.newTitle' | translate }}</h2>
+  <h4>{{ 'userMenu.tickets.newSubtitle' | translate }}</h4>
 
   <mat-card>
     <mat-card-content>
       <mat-form-field class="user-support-new-ticket__form-field">
-        <mat-label>API</mat-label>
-        <mat-select formControlName="api" aria-label="API" data-testid="api">
+        <mat-label>{{ 'userMenu.tickets.api' | translate }}</mat-label>
+        <mat-select formControlName="api" [attr.aria-label]="'userMenu.tickets.api' | translate" data-testid="api">
           <mat-option></mat-option>
           <mat-option *ngFor="let api of apis" [value]="api.id">{{ api.name }} ({{ api.apiVersion }})</mat-option>
         </mat-select>
       </mat-form-field>
 
       <mat-form-field class="user-support-new-ticket__form-field">
-        <mat-label>Application</mat-label>
-        <mat-select formControlName="application" aria-label="Application" data-testid="application">
+        <mat-label>{{ 'userMenu.tickets.application' | translate }}</mat-label>
+        <mat-select formControlName="application" [attr.aria-label]="'userMenu.tickets.application' | translate" data-testid="application">
           <mat-option></mat-option>
           <mat-option *ngFor="let application of applications" [value]="application.id"
             >{{ application.name }} ({{ application.owner.displayName }})</mat-option
@@ -40,13 +40,13 @@
       </mat-form-field>
 
       <mat-form-field class="user-support-new-ticket__form-field">
-        <mat-label>Subject</mat-label>
+        <mat-label>{{ 'userMenu.tickets.subject' | translate }}</mat-label>
         <input matInput formControlName="subject" required data-testid="subject" />
-        <mat-error *ngIf="ticketForm.get('subject').errors?.required">This field is required.</mat-error>
+        <mat-error *ngIf="ticketForm.get('subject').errors?.required">{{ 'userMenu.tickets.required' | translate }}</mat-error>
       </mat-form-field>
 
       <mat-form-field class="user-support-new-ticket__form-field">
-        <mat-label>Content</mat-label>
+        <mat-label>{{ 'userMenu.tickets.content' | translate }}</mat-label>
         <textarea
           matInput
           formControlName="content"
@@ -55,20 +55,20 @@
           data-testid="content"
         >
         </textarea>
-        <mat-error *ngIf="ticketForm.get('content').errors?.required">This field is required.</mat-error>
+        <mat-error *ngIf="ticketForm.get('content').errors?.required">{{ 'userMenu.tickets.required' | translate }}</mat-error>
       </mat-form-field>
 
       <gio-form-slide-toggle>
-        Receive a copy of this ticket by email
+        {{ 'userMenu.tickets.copyByEmail' | translate }}
         <mat-slide-toggle
           gioFormSlideToggle
           formControlName="copyToSender"
-          aria-label="Copy to sender"
+          [attr.aria-label]="'userMenu.tickets.copyAria' | translate"
           data-testid="copyToSender"
         ></mat-slide-toggle>
       </gio-form-slide-toggle>
     </mat-card-content>
   </mat-card>
 
-  <gio-save-bar [creationMode]="true" [form]="ticketForm"> </gio-save-bar>
+  <settings-save-bar [creationMode]="true" [form]="ticketForm"></settings-save-bar>
 </form>

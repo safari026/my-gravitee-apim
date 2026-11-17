@@ -13,9 +13,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, OnDestroy, OnInit, ViewChild } from '@angular/core';
+import { Component, inject, Injector, OnDestroy, OnInit, ViewChild } from '@angular/core';
 import { EMPTY, Subject, of } from 'rxjs';
-import { catchError, filter, map, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { catchError, filter, map, skip, switchMap, takeUntil, tap } from 'rxjs/operators';
+import { toObservable } from '@angular/core/rxjs-interop';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
 import { GioConfirmDialogComponent, GioConfirmDialogData } from '@gravitee/ui-particles-angular';
 import { CommonModule } from '@angular/common';
@@ -38,11 +39,12 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
 import {
   PortalMenuLink,
   toReadableMenuLinkType,
-  toReadableMenuLinkVisibility,
   UpdatePortalMenuLink,
 } from '../../../entities/management-api-v2';
 import { UiPortalMenuLinksService } from '../../../services-ngx/ui-portal-menu-links.service';
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 type PortalMenuLinkListVM = PortalMenuLink & {
   readableType: string;
@@ -68,12 +70,14 @@ type PortalMenuLinkListVM = PortalMenuLink & {
     CdkDropList,
     CdkDrag,
     GioPermissionModule,
+    TranslatePipe,
   ],
 })
 export class MenuLinkListComponent implements OnInit, OnDestroy {
   @ViewChild('table', { static: true }) table: MatTable<PortalMenuLinkListVM>;
 
   private unsubscribe$: Subject<void> = new Subject<void>();
+  private readonly injector = inject(Injector);
 
   canAddLink = true;
   dataSource: PortalMenuLinkListVM[];
@@ -83,10 +87,14 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
     private matDialog: MatDialog,
     private readonly snackBarService: SnackBarService,
     private readonly uiPortalMenuLinksService: UiPortalMenuLinksService,
+    private readonly languageService: LanguageService,
   ) {}
 
   ngOnInit(): void {
     this.initializeTable();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntil(this.unsubscribe$))
+      .subscribe(() => this.refreshReadableLabels());
   }
 
   ngOnDestroy() {
@@ -95,9 +103,9 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
   }
 
   deleteLink(element: PortalMenuLink): void {
-    const title = 'Delete menu link';
-    const content = 'Please note that once your menu link is deleted, it cannot be restored.';
-    const confirmButton = 'Delete';
+    const title = this.languageService.translate('developerPortal.navigation.deleteLinkTitle');
+    const content = this.languageService.translate('developerPortal.navigation.deleteLinkContent');
+    const confirmButton = this.languageService.translate('common.delete');
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
@@ -113,11 +121,11 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
         filter(confirmed => confirmed),
         switchMap(_ => this.uiPortalMenuLinksService.delete(element.id)),
         tap(_ => {
-          this.snackBarService.success(`Menu link '${element.name}' deleted successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.navigation.deleted', { name: element.name }));
           this.initializeTable();
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ?? 'Error during deletion');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('developerPortal.catalog.deleteError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
@@ -138,11 +146,11 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
         filter(menuLink => !!menuLink),
         switchMap(menuLink => this.uiPortalMenuLinksService.create({ ...menuLink })),
         tap(menuLink => {
-          this.snackBarService.success(`Menu link '${menuLink.name}' created successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.navigation.created', { name: menuLink.name }));
           this.initializeTable();
         }),
         catchError(({ error }) => {
-          this.snackBarService.error(error?.message ? error.message : 'Error during creation');
+          this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.navigation.createError'));
           return EMPTY;
         }),
         takeUntil(this.unsubscribe$),
@@ -170,7 +178,7 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
         this.table.renderRows();
       },
       error: error => {
-        this.snackBarService.error(error?.message ? error.message : 'Error during update');
+        this.snackBarService.error(error?.message ? error.message : this.languageService.translate('developerPortal.navigation.updateError'));
         return EMPTY;
       },
     });
@@ -184,8 +192,8 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
           response.data.map(link => {
             return <PortalMenuLinkListVM>{
               ...link,
-              readableType: toReadableMenuLinkType(link.type),
-              readableVisibility: toReadableMenuLinkVisibility(link.visibility),
+              readableType: this.readableType(link.type),
+              readableVisibility: this.readableVisibility(link.visibility),
             };
           }),
         ),
@@ -199,5 +207,23 @@ export class MenuLinkListComponent implements OnInit, OnDestroy {
         }),
       )
       .subscribe();
+  }
+
+  private refreshReadableLabels(): void {
+    this.dataSource?.forEach(link => {
+      link.readableType = this.readableType(link.type);
+      link.readableVisibility = this.readableVisibility(link.visibility);
+    });
+    this.table?.renderRows();
+  }
+
+  private readableType(type: PortalMenuLink['type']): string {
+    return type === 'EXTERNAL' ? this.languageService.translate('developerPortal.navigation.website') : toReadableMenuLinkType(type);
+  }
+
+  private readableVisibility(visibility: PortalMenuLink['visibility']): string {
+    return this.languageService.translate(
+      visibility === 'PRIVATE' ? 'developerPortal.common.private' : 'developerPortal.common.public',
+    );
   }
 }

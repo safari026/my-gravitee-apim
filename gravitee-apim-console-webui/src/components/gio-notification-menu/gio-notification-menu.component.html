@@ -21,7 +21,7 @@
   type="button"
   cdkOverlayOrigin
   #trigger="cdkOverlayOrigin"
-  aria-label="Open notifications"
+  [attr.aria-label]="'userMenu.notifications.open' | translate"
 >
   <mat-icon svgIcon="gio:bell"></mat-icon>
   <span *ngIf="hasNotifications" class="gio-notification-menu__badge gio-badge-accent">{{ userNotificationsCount }}</span>
@@ -35,10 +35,9 @@
   <mat-card class="gio-notification-menu mat-mdc-elevation-specific mat-elevation-z4">
     <mat-card-content>
       <div class="gio-notification-menu__header" [class.empty]="!userNotifications.length">
-        <div *ngIf="userNotifications.length < 2">{{ userNotifications.length }} notification</div>
-        <div *ngIf="userNotifications.length > 1">{{ userNotifications.length }} notifications</div>
+        <div>{{ notificationSummary }}</div>
         <button mat-button (click)="deleteAll()" *ngIf="userNotifications.length > 0">
-          <span>Delete all</span>
+          <span>{{ 'userMenu.notifications.deleteAll' | translate }}</span>
         </button>
       </div>
     </mat-card-content>
@@ -55,7 +54,7 @@
           mat-icon-button
           (click)="delete(userNotification)"
           type="button"
-          aria-label="Delete notification"
+          [attr.aria-label]="'userMenu.notifications.deleteOne' | translate"
           class="gio-notification-menu__list-item__meta"
         >
           <mat-icon svgIcon="gio:trash"></mat-icon>

@@ -31,7 +31,9 @@ describe('UserController (my account)', () => {
     };
     notificationService = { show: jest.fn(), showError: jest.fn() };
 
-    controller = new UserController(userService, notificationService, {} as any, {} as any, {} as any);
+    controller = new UserController(userService, notificationService, {} as any, {} as any, {} as any, {
+      translate: (key: string) => key,
+    } as any);
     controller['onSaved'] = jest.fn();
   });
 

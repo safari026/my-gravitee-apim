@@ -67,6 +67,15 @@ export class ApplicationAnalyticsComponent implements OnInit, OnDestroy {
       this.translateService.get('application.analytics.displayLogs').subscribe(displayAnalytics => {
         this.link = { label: displayAnalytics, relativePath: '../logs', icon: 'communication:clipboard-list' };
       });
+      this.subscription.add(
+        this.translateService.onLangChange.subscribe(() => {
+          this.translateService.get('application.analytics.displayLogs').subscribe(label => {
+            if (this.link) {
+              this.link.label = label;
+            }
+          });
+        }),
+      );
     }
   }
 

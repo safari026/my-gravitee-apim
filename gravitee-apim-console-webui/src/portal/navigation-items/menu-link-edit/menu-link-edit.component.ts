@@ -34,6 +34,8 @@ import {
   UpdatePortalMenuLink,
 } from '../../../entities/management-api-v2';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'menu-link-edit',
@@ -50,6 +52,7 @@ import { SnackBarService } from '../../../services-ngx/snack-bar.service';
     MatIcon,
     RouterLink,
     GioFormSelectionInlineModule,
+    TranslatePipe,
   ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -64,6 +67,7 @@ export class MenuLinkEditComponent implements OnInit {
   readableMenuLinkType: string;
 
   private destroyRef: DestroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
 
   constructor(
     private activatedRoute: ActivatedRoute,
@@ -77,7 +81,10 @@ export class MenuLinkEditComponent implements OnInit {
       .pipe(
         tap(portalMenuLink => {
           this.initialValue = portalMenuLink;
-          this.readableMenuLinkType = toReadableMenuLinkType(portalMenuLink.type);
+          this.readableMenuLinkType =
+            portalMenuLink.type === 'EXTERNAL'
+              ? this.languageService.translate('developerPortal.navigation.website')
+              : toReadableMenuLinkType(portalMenuLink.type);
         }),
         takeUntilDestroyed(this.destroyRef),
       )
@@ -103,10 +110,10 @@ export class MenuLinkEditComponent implements OnInit {
       .pipe(takeUntilDestroyed(this.destroyRef))
       .subscribe({
         error: ({ error }) => {
-          this.snackBarService.error(error?.message ?? 'An error occurred while updating menu link.');
+          this.snackBarService.error(error?.message ?? this.languageService.translate('developerPortal.navigation.updateLinkError'));
         },
         next: portalMenuLink => {
-          this.snackBarService.success(`Menu link '${portalMenuLink.name}' updated successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.navigation.updated', { name: portalMenuLink.name }));
           this.menuLinkEditForm.markAsPristine();
           this.initialValue = portalMenuLink;
         },

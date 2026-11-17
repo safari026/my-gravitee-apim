@@ -43,6 +43,15 @@ describe('AppComponent', () => {
     expect(app).toBeTruthy();
   });
 
+  it('shows the round language toggle with English active by default', () => {
+    const button = spectator.query('.layout__lang');
+
+    expect(button).toBeTruthy();
+    expect(button.getAttribute('aria-label')).toBe('Switch language');
+    expect(button.getAttribute('aria-pressed')).toBe('false');
+    expect(button.querySelector('svg')).toBeTruthy();
+  });
+
   it('should preserve navigation context but not documentation page when changing route', () => {
     const router = TestBed.inject(Router);
     jest.spyOn(router, 'navigate').mockResolvedValue(true);

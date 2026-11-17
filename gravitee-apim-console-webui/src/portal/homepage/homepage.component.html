@@ -15,31 +15,41 @@
     limitations under the License.
 
 -->
-<portal-header subtitle="Edit your Developer Portal Homepage with Gravitee Markdown" [title]="'Homepage'" [showActions]="true">
+<portal-header
+  [subtitle]="'developerPortal.homepage.subtitle' | translate"
+  [title]="'developerPortal.homepage.title' | translate"
+  [showActions]="true"
+>
   @if (portalHomepage()) {
     <span badge [class]="portalHomepagePublished() ? 'gio-badge-success' : 'gio-badge-warning'" data-testid="status-badge">
-      {{ portalHomepagePublished() ? 'Published' : 'Unpublished' }}
+      {{ (portalHomepagePublished() ? 'developerPortal.common.published' : 'developerPortal.common.unpublished') | translate }}
     </span>
   }
 
   <div
     additionalActions
-    matTooltip="You don’t have the permissions to update this page. Please contact your administrator."
+    [matTooltip]="'developerPortal.homepage.permissionTooltip' | translate"
     [matTooltipDisabled]="!contentControl.disabled"
     class="actions"
   >
     <button
       class="actions__toggle-publish"
       mat-stroked-button
-      [attr.aria-label]="togglePublishActionText() + ' portal page'"
+      [attr.aria-label]="'developerPortal.homepage.toggleAria' | translate: { action: togglePublishActionText() }"
       (click)="togglePublish()"
       [disabled]="!isTogglePublishActive()"
       data-testid="toggle-publish-button"
     >
       {{ togglePublishActionText() }}
     </button>
-    <button mat-flat-button color="primary" aria-label="Update portal page" (click)="updatePortalPage()" [disabled]="isSaveDisabled()">
-      Save
+    <button
+      mat-flat-button
+      color="primary"
+      [attr.aria-label]="'developerPortal.homepage.updateAria' | translate"
+      (click)="updatePortalPage()"
+      [disabled]="isSaveDisabled()"
+    >
+      {{ 'common.save' | translate }}
     </button>
   </div>
 </portal-header>

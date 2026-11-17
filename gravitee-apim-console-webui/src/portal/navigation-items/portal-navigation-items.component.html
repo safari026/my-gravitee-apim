@@ -15,20 +15,22 @@
     limitations under the License.
 
 -->
-<portal-header title="Manage your navigation" />
+<portal-header [title]="'developerPortal.navigation.manage' | translate" />
 
 <main class="page-layout">
   <section class="panel sections-panel" [style.width.px]="panelWidth()">
     <header class="panel-header sections-panel__header">
-      <h3>Navigation items</h3>
+      <h3>{{ 'developerPortal.navigation.items' | translate }}</h3>
       <div class="panel-header__actions">
         <button
           mat-stroked-button
           type="button"
           data-testid="toggle-tree-expansion"
           [disabled]="!canToggleTreeExpansion()"
-          [attr.aria-label]="isAnyTreeNodeExpanded() ? 'Collapse all navigation items' : 'Expand all navigation items'"
-          [matTooltip]="isAnyTreeNodeExpanded() ? 'Collapse all' : 'Expand all'"
+          [attr.aria-label]="
+            (isAnyTreeNodeExpanded() ? 'developerPortal.navigation.collapseAria' : 'developerPortal.navigation.expandAria') | translate
+          "
+          [matTooltip]="(isAnyTreeNodeExpanded() ? 'developerPortal.navigation.collapse' : 'developerPortal.navigation.expand') | translate"
           (click)="onToggleTreeExpansion()"
         >
           <mat-icon>{{ isAnyTreeNodeExpanded() ? 'unfold_less' : 'unfold_more' }}</mat-icon>
@@ -37,26 +39,26 @@
           <button
             mat-stroked-button
             type="button"
-            aria-label="Add new section"
+            [attr.aria-label]="'developerPortal.navigation.addSection' | translate"
             [matMenuTriggerFor]="addSectionMenu"
             (menuClosed)="addSectionMenuOpen = false"
             (menuOpened)="addSectionMenuOpen = true"
           >
             <span class="panel-header__actions__add__label"
-              >Add
+              >{{ 'common.add' | translate }}
               <mat-icon svgIcon="gio:nav-arrow-down" class="panel-header__actions__add__label__icon" [class.opened]="addSectionMenuOpen">
               </mat-icon>
             </span>
           </button>
           <mat-menu #addSectionMenu="matMenu">
             <button mat-menu-item (click)="onAddSection('PAGE')">
-              <mat-icon [svgIcon]="'PAGE' | portalNavigationItemIcon"></mat-icon> Add Page
+              <mat-icon [svgIcon]="'PAGE' | portalNavigationItemIcon"></mat-icon> {{ 'developerPortal.navigation.addPage' | translate }}
             </button>
             <button mat-menu-item (click)="onAddSection('LINK')">
-              <mat-icon [svgIcon]="'LINK' | portalNavigationItemIcon"></mat-icon> Add Link
+              <mat-icon [svgIcon]="'LINK' | portalNavigationItemIcon"></mat-icon> {{ 'developerPortal.navigation.addLink' | translate }}
             </button>
             <button mat-menu-item (click)="onAddSection('FOLDER')">
-              <mat-icon [svgIcon]="'FOLDER' | portalNavigationItemIcon"></mat-icon> Add Folder
+              <mat-icon [svgIcon]="'FOLDER' | portalNavigationItemIcon"></mat-icon> {{ 'developerPortal.navigation.addFolder' | translate }}
             </button>
           </mat-menu>
         </ng-container>
@@ -77,7 +79,7 @@
   </section>
 
   <div class="resize-handle-container" (mousedown)="onResizeStart($event)">
-    <hr class="resize-handle" aria-label="Resize navigation panel" aria-orientation="vertical" />
+    <hr class="resize-handle" [attr.aria-label]="'developerPortal.navigation.resize' | translate" aria-orientation="vertical" />
     <mat-icon svgIcon="gio:drag-indicator"></mat-icon>
   </div>
 
@@ -92,17 +94,26 @@
 
             <div class="panel-header__title__badges">
               <span [class]="selectedNavigationItemIsPublished() ? 'gio-badge-success' : 'gio-badge-warning'">
-                {{ selectedNavigationItemIsPublished() ? 'Published' : 'Unpublished' }}
+                {{
+                  (selectedNavigationItemIsPublished() ? 'developerPortal.common.published' : 'developerPortal.common.unpublished') | translate
+                }}
               </span>
-              <span class="gio-badge-primary">{{ selectedNavigationItem().data.visibility | titlecase }}</span>
+              <span class="gio-badge-primary">{{
+                (selectedNavigationItem().data.visibility === 'PRIVATE' ? 'developerPortal.common.private' : 'developerPortal.common.public')
+                  | translate
+              }}</span>
             </div>
           </div>
 
           @if (selectedApiId()) {
             <div class="panel-header__title__linked-api" data-testid="linked-api-header">
-              <span>Linked API:</span>
+              <span>{{ 'developerPortal.navigation.linkedApi' | translate }}</span>
               <span class="panel-header__title__linked-api__value">
-                {{ selectedLinkedApiName.isLoading() ? 'Loading...' : (selectedLinkedApiName.value() ?? selectedApiId()) }}
+                {{
+                  selectedLinkedApiName.isLoading()
+                    ? ('developerPortal.common.loading' | translate)
+                    : (selectedLinkedApiName.value() ?? selectedApiId())
+                }}
               </span>
             </div>
           }
@@ -110,19 +121,21 @@
       }
       <div class="panel-header__actions" *gioPermission="{ anyOf: ['environment-documentation-u'] }">
         <mat-slide-toggle data-testid="preview-toggle" [checked]="isPreviewVisible()" (change)="isPreviewVisible.set($event.checked)">
-          Preview
+          {{ 'developerPortal.common.preview' | translate }}
         </mat-slide-toggle>
         @if (currentPageContentType() === 'OPENAPI') {
-          <button [disabled]="actionsDisabled()" mat-stroked-button (click)="onConfigure()">Configure</button>
+          <button [disabled]="actionsDisabled()" mat-stroked-button (click)="onConfigure()">
+            {{ 'developerPortal.common.configure' | translate }}
+          </button>
         }
-        <button [disabled]="actionsDisabled()" mat-stroked-button (click)="onEdit()">Edit</button>
+        <button [disabled]="actionsDisabled()" mat-stroked-button (click)="onEdit()">{{ 'common.edit' | translate }}</button>
         <span [matTooltip]="publishDisabledTooltip()" [matTooltipDisabled]="!publishDisabled()">
           <button [disabled]="publishActionDisabled()" mat-stroked-button (click)="onPublishToggle()">
-            {{ selectedNavigationItemIsPublished() ? 'Unpublish' : 'Publish' }}
+            {{ (selectedNavigationItemIsPublished() ? 'developerPortal.common.unpublish' : 'developerPortal.common.publish') | translate }}
           </button>
         </span>
         <button mat-flat-button color="primary" [disabled]="contentControl.pristine || contentControl.invalid" (click)="onSave()">
-          Save
+          {{ 'common.save' | translate }}
         </button>
       </div>
     </header>
@@ -169,8 +182,8 @@
           <mat-card-content>
             <empty-state
               iconName="gio:alert-circle"
-              title="Page Not Found"
-              message="The requested page does not exist. Please select a page from the navigation items."
+              [title]="'developerPortal.navigation.pageNotFound' | translate"
+              [message]="'developerPortal.navigation.pageMissing' | translate"
             />
           </mat-card-content>
         </mat-card>
@@ -185,7 +198,11 @@
   <div class="empty-editor">
     <mat-card appearance="outlined" class="empty-state">
       <mat-card-content>
-        <empty-state iconName="gio:code" title="Editor" message="Select a page from the navigation panel to edit its content." />
+        <empty-state
+          iconName="gio:code"
+          [title]="'developerPortal.navigation.editor' | translate"
+          [message]="'developerPortal.navigation.selectPage' | translate"
+        />
       </mat-card-content>
     </mat-card>
 
@@ -195,8 +212,8 @@
         <mat-card-content>
           <empty-state
             iconName="gio:monitor"
-            title="Preview"
-            message="Use the page preview to see exactly how your content will look before you publish it."
+            [title]="'developerPortal.common.preview' | translate"
+            [message]="'developerPortal.navigation.previewHint' | translate"
           />
         </mat-card-content>
       </mat-card>
@@ -208,7 +225,11 @@
   <div class="empty-editor">
     <mat-card appearance="outlined" class="empty-state">
       <mat-card-content>
-        <empty-state iconName="gio:alert-circle" title="Page Not Found" message="Failed to load page content." />
+        <empty-state
+          iconName="gio:alert-circle"
+          [title]="'developerPortal.navigation.pageNotFound' | translate"
+          [message]="'developerPortal.navigation.failedToLoadPage' | translate"
+        />
       </mat-card-content>
     </mat-card>
   </div>

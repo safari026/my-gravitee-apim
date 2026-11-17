@@ -1,0 +1,1185 @@
+{
+  "analytics": {
+    "empty": "Нет данных для отображения",
+    "timeframes": {
+      "day": "День",
+      "days": "дн.",
+      "hour": "Час",
+      "hours": "ч.",
+      "minutes": "Минуты"
+    }
+  },
+  "api": {
+    "createdAt": "Создан",
+    "deployedAt": "Развёрнут",
+    "description": "Описание",
+    "endpoint": "Контекстный путь",
+    "information": {
+      "about": "Описание",
+      "beFirstToRate": "Оставьте первую оценку",
+      "categories": "Категории",
+      "entrypoints": "URL доступа",
+      "labels": "Метки",
+      "metrics": "Метрики",
+      "ratings": "Оценки",
+      "resources": "Ресурсы"
+    },
+    "list": {
+      "connectedApps": "Подключённые приложения"
+    },
+    "name": "Название",
+    "owner": "Владелец",
+    "publishedAt": "Опубликован",
+    "version": "Версия"
+  },
+  "apiGeneral": {
+    "backToApplication": "Вернуться к приложению «{name}»",
+    "backToCatalog": "Вернуться в каталог",
+    "backToCategory": "Вернуться к категории «{name}»",
+    "backToSearch": "Вернуться к результатам поиска",
+    "description": "Описание",
+    "giveRating": "Оставить отзыв",
+    "rate": "Оценить",
+    "rateComment": "Расскажите, почему",
+    "rateTitle": "Вы бы порекомендовали этот API?",
+    "rateTitlePlaceholder": "В двух словах",
+    "ratingAnswerCreated": "Ответ отправлен",
+    "ratingAnswerDeleted": "Ответ удалён",
+    "ratingCreated": "Отзыв отправлен",
+    "ratingDeleted": "Отзыв удалён",
+    "ratingUpdated": "Спасибо за отзыв",
+    "ratingsSortOptions": {
+      "answers": "Сначала с ответами",
+      "best": "Сначала лучшие",
+      "newest": "Сначала новые",
+      "oldest": "Сначала старые",
+      "worst": "Сначала худшие"
+    },
+    "showMore": "Показать ещё",
+    "userRatings": "Оценки пользователей"
+  },
+  "apiKeyMode": {
+    "description": "Этот выбор нельзя будет изменить",
+    "exclusive": {
+      "description": "для каждой новой подписки будет создан новый ключ API",
+      "title": "Отдельный ключ API"
+    },
+    "shared": {
+      "description": "для каждой новой подписки будет использоваться один и тот же ключ API",
+      "title": "Общий ключ API"
+    },
+    "title": "Режим управления ключом API"
+  },
+  "apiSubscribe": {
+    "apps": {
+      "chooseApp": "Выберите приложение",
+      "comment": "Комментарий для владельца API",
+      "connectedApps": "У вас уже есть <b>{count}</b> {count, plural, =0{} one{подключённое приложение} other{подключённых приложений}} к API <b>{apiName}</b>.",
+      "createApp": "Создать приложение",
+      "description": "Приложение связывает вас как потребителя с подпиской на план API.",
+      "missingClientId": "Не указан client_id",
+      "noAvailableApplications": "Нет доступных приложений."
+    },
+    "chooseApp": {
+      "title": "Выбор приложения"
+    },
+    "chooseKeyMode": {
+      "title": "Выбор режима ключа API"
+    },
+    "choosePlan": {
+      "title": "Выбор плана"
+    },
+    "connectedApps": "{count, plural, =0{} one{Подключённое приложение} other{Подключённые приложения}} к {planName}",
+    "errors": {
+      "information": "При оформлении подписки произошла ошибка.",
+      "notConnected": "Войдите или создайте учётную запись, чтобы подписаться на API.",
+      "sorry": "Не удалось оформить подписку"
+    },
+    "exit": "Выйти",
+    "nextStep": "Далее",
+    "plan": "План",
+    "plans": {
+      "description": "Каталог, в котором собраны ваши API",
+      "sample": "Можно начинать работу с API",
+      "title": "Планы и возможности",
+      "tcpSampleNote": "Команда может отличаться в зависимости от настроек безопасности API. Подробности смотрите в документации API."
+    },
+    "previousStep": "Назад",
+    "success": {
+      "congratulations": "Готово!",
+      "discoverApi": "Перейти к API",
+      "goToHome": "На главную",
+      "oauth2": "Чтобы вызывать этот API, сначала получите access_token на сервере авторизации.",
+      "subscriptionAccepted": "Подписка приложения <b>{appName}</b> на план <b>{planName}</b> API <b>{apiName}</b> принята!",
+      "subscriptionKey": "Ваш персональный ключ для доступа к API",
+      "subscriptionPending": "Подписка приложения <b>{appName}</b> на план <b>{planName}</b> API <b>{apiName}</b> ожидает подтверждения.",
+      "subscriptionRejected": "Подписка приложения <b>{appName}</b> на план <b>{planName}</b> API <b>{apiName}</b> отклонена."
+    },
+    "validate": {
+      "askConfirmation": "Подписка приложения <b>{appName}</b> на план <b>{planName}</b> API <b>{apiName}</b> будет оформлена.",
+      "information": "{hasAutoValidation, select, true {Проверка выполняется автоматически: после оформления подписки API можно использовать сразу.} other {Подписку должен подтвердить владелец. Когда доступ будет открыт, вы получите письмо.}}",
+      "notCompleted": "Подписка на API <b>{apiName}</b> не заполнена. Вернитесь к предыдущим шагам и укажите недостающие данные.",
+      "subscription": "Отправить заявку",
+      "title": "Подтверждение"
+    },
+    "planSubscription": {
+      "title": "Настройте подписку",
+      "channel": "Выберите канал подписки",
+      "entrypointId": "Выберите точку входа",
+      "entrypointConfiguration": "Настройте точку входа"
+    }
+  },
+  "application": {
+    "alerts": {
+      "add": {
+        "description": {
+          "label": "Описание",
+          "placeholder": "Опишите оповещение..."
+        },
+        "reset": "Сбросить",
+        "success": "Оповещение создано",
+        "title": "Добавить оповещение",
+        "type": {
+          "placeholder": "Выберите тип",
+          "status": {
+            "http_status": {
+              "placeholder": "Статус"
+            },
+            "percent": {
+              "placeholder": "0..100"
+            }
+          }
+        }
+      },
+      "delete": {
+        "success": "Оповещение удалено"
+      },
+      "disabled": "Чтобы задать правила оповещений, обратитесь к администратору.",
+      "information": "Уведомление получат все участники приложения, у которых указан адрес электронной почты",
+      "list": {
+        "empty": "Оповещения не настроены",
+        "title": "Список оповещений"
+      },
+      "maximum": "Достигнут предел: не больше 10 оповещений",
+      "phrase": {
+        "api": {
+          "all": "Все API"
+        },
+        "last": "за последние",
+        "on": "Оповещение по",
+        "response_time": {
+          "second": "превышает",
+          "third": "мс"
+        },
+        "status": {
+          "second": "превышает",
+          "third": "%"
+        },
+        "when": "Когда"
+      },
+      "timeUnits": {
+        "hours": "часов",
+        "minutes": "минут",
+        "seconds": "секунд"
+      },
+      "type": {
+        "response_time": "среднее время ответа (мс)",
+        "status": "HTTP-статус"
+      },
+      "update": {
+        "success": "Оповещение обновлено"
+      },
+      "webhook": {
+        "method": {
+          "title": "HTTP-метод, которым будет вызываться URL при каждом срабатывании оповещения"
+        },
+        "notifierWarning": "Чтобы отправлять уведомления через webhook, попросите администратора установить плагин webhook",
+        "switch": {
+          "label": "Уведомление webhook",
+          "title": "Включите webhook, чтобы при каждом срабатывании оповещения выполнялся HTTP-вызов"
+        },
+        "url": {
+          "placeholder": "https://my.domain/my/example/url",
+          "title": "URL, который будет вызываться при каждом срабатывании оповещения"
+        }
+      }
+    },
+    "analytics": {
+      "displayLogs": "Открыть журналы",
+      "exportCSV": "Экспортировать в CSV",
+      "filters": {
+        "advanced": {
+          "hide": "Скрыть расширенные фильтры",
+          "show": "Показать расширенные фильтры"
+        },
+        "api": {
+          "label": "API",
+          "title": "Выберите API"
+        },
+        "methods": {
+          "label": "HTTP-методы",
+          "title": "Выберите HTTP-метод"
+        },
+        "path": {
+          "label": "Путь",
+          "title": "Выберите путь"
+        },
+        "payloads": {
+          "label": "Тело сообщения",
+          "title": "Текст для поиска в теле сообщения"
+        },
+        "requestId": {
+          "label": "Идентификатор запроса",
+          "title": "Введите идентификатор запроса"
+        },
+        "responseTimes": {
+          "label": "Время ответа",
+          "title": "Выберите интервал времени ответа"
+        },
+        "status": {
+          "label": "HTTP-статус",
+          "title": "Выберите HTTP-статус"
+        },
+        "transactionId": {
+          "label": "Идентификатор транзакции",
+          "title": "Выберите идентификатор транзакции"
+        }
+      },
+      "goToAlerts": "Создать оповещения",
+      "search": "Найти"
+    },
+    "change_background": "Сменить фон",
+    "change_picture": "Сменить изображение",
+    "client_id": {
+      "label": "Client ID",
+      "title": "Client ID"
+    },
+    "client_secret": {
+      "label": "Секрет клиента",
+      "title": "Секрет клиента"
+    },
+    "delete": {
+      "cancel": "Отмена",
+      "message": "Удалить это приложение?",
+      "ok": "ОК"
+    },
+    "description": {
+      "label": "Для чего нужно это приложение",
+      "title": "Описание"
+    },
+    "domain": {
+      "label": "https://my-app.com",
+      "title": "Домен приложения"
+    },
+    "general": "Общие сведения",
+    "information": {
+      "createdDate": "Создано",
+      "lastUpdate": "Обновлено",
+      "owner": "Владелец",
+      "title": "Сведения",
+      "type": "Тип"
+    },
+    "list": {
+      "connectedApis": "API в подписке"
+    },
+    "log": {
+      "request": "Запрос",
+      "requestBody": "Тело запроса",
+      "requestContentLength": "Размер отправленных данных",
+      "requestHeaders": "Заголовки HTTP-запроса",
+      "requestId": "Идентификатор запроса",
+      "response": "Ответ",
+      "responseBody": "Тело ответа",
+      "responseContentLength": "Размер полученных данных",
+      "responseHeaders": "Заголовки HTTP-ответа",
+      "responseTime": "Время ответа",
+      "transactionId": "Идентификатор транзакции"
+    },
+    "logs": {
+      "api": "API",
+      "date": "Дата",
+      "displayAnalytics": "Открыть аналитику",
+      "method": "Метод",
+      "path": "Путь",
+      "plan": "План",
+      "responseTime": "Время ответа",
+      "status": "Статус",
+      "title": "Журналы"
+    },
+    "members": {
+      "add": {
+        "add": "Добавить",
+        "reset": "Сбросить",
+        "role": {
+          "name": "Роль",
+          "placeholder": "Выберите роль"
+        },
+        "success": "Участник добавлен",
+        "title": "Добавить участника",
+        "user": {
+          "name": "Пользователь",
+          "placeholder": "Найти пользователя..."
+        }
+      },
+      "inherited": {
+        "groupTitle": "{nbMembers} участников унаследовано из группы «{groupName}»",
+        "hide": "Скрыть",
+        "show": "Показать",
+        "title": "Унаследованные участники"
+      },
+      "list": {
+        "member": "Участник",
+        "remove": {
+          "message": "Удалить этого участника?",
+          "success": "Участник удалён",
+          "title": "Удалить участника"
+        },
+        "role": "Роль",
+        "success": "Роль обновлена",
+        "title": "Список участников"
+      },
+      "transferOwnership": {
+        "confirm": {
+          "cancel": "Отмена",
+          "message": "Это действие нельзя отменить.<br/> Новым владельцем станет <b>{name}</b>.<br/> Вы будете перенаправлены к списку приложений.",
+          "ok": "Передать приложение"
+        },
+        "currentPrimaryOwnerNewRole": {
+          "name": "Новая роль",
+          "placeholder": "Выберите новую роль текущего основного владельца"
+        },
+        "information": "Передайте полный доступ к этому приложению другому пользователю.",
+        "newPrimaryOwner": {
+          "name": "Новый основной владелец",
+          "placeholder": "Найти нового основного владельца..."
+        },
+        "reset": "Сбросить",
+        "success": "Основной владелец обновлён",
+        "title": "Передача владения",
+        "transfer": "Передать"
+      }
+    },
+    "metadata": {
+      "format": "Формат",
+      "key": "Ключ",
+      "list": {
+        "add": {
+          "title": "Добавить"
+        },
+        "remove": {
+          "title": "Удалить"
+        },
+        "title": "Список метаданных"
+      },
+      "name": "Название",
+      "reset": {
+        "title": "Сбросить"
+      },
+      "update": {
+        "success": "Изменения сохранены",
+        "title": "Обновить"
+      },
+      "value": "Значение"
+    },
+    "name": {
+      "label": "Название приложения",
+      "title": "Название приложения"
+    },
+    "notifications": {
+      "NEW_SUPPORT_TICKET": {
+        "description": "Уведомление придёт, когда будет создано обращение по вашему приложению",
+        "label": "Новое обращение в поддержку"
+      },
+      "SUBSCRIPTION": {
+        "title": "Подписка"
+      },
+      "SUBSCRIPTION_ACCEPTED": {
+        "description": "Уведомление придёт, когда подписку примут",
+        "label": "Подписка принята"
+      },
+      "SUBSCRIPTION_CLOSED": {
+        "description": "Уведомление придёт, когда подписку закроют",
+        "label": "Подписка закрыта"
+      },
+      "SUBSCRIPTION_NEW": {
+        "description": "Уведомление придёт, когда запросят новую подписку",
+        "label": "Новая подписка"
+      },
+      "SUBSCRIPTION_PAUSED": {
+        "description": "Уведомление придёт, когда подписку приостановят",
+        "label": "Подписка приостановлена"
+      },
+      "SUBSCRIPTION_REJECTED": {
+        "description": "Уведомление придёт, когда подписку отклонят",
+        "label": "Подписка отклонена"
+      },
+      "SUBSCRIPTION_RESUMED": {
+        "description": "Уведомление придёт, когда приостановленную подписку возобновят",
+        "label": "Подписка возобновлена"
+      },
+      "SUBSCRIPTION_TRANSFERRED": {
+        "description": "Уведомление придёт, когда подписку передадут",
+        "label": "Подписка передана"
+      },
+      "SUPPORT": {
+        "title": "Поддержка"
+      },
+      "header": "О каких событиях вы хотите получать уведомления?",
+      "saveSuccess": "Подписки на уведомления этого приложения сохранены",
+      "title": "Подписки"
+    },
+    "oauth2": "Интеграция OAuth2",
+    "renewSecret": {
+      "label": "Обновить секрет",
+      "message": "Обновить секрет приложения?<br/> После обновления текущим секретом нельзя будет выпускать новые токены доступа и вызывать API."
+    },
+    "shared-key": {
+      "info": {
+        "created_at": "Создан",
+        "end_at": "Действует до",
+        "title": "Ключ API"
+      },
+      "message": "Приложение использует один и тот же ключ API для всех своих подписок.",
+      "no-key": {
+        "create": "Новый ключ можно создать кнопкой «Обновить».",
+        "message": "Действующий общий ключ API не найден.",
+        "recommendation": "Обратитесь к владельцу приложения."
+      },
+      "renew": {
+        "message": "Обновить этот общий ключ API?",
+        "success": "Общий ключ API обновлён",
+        "title": "Обновить"
+      },
+      "revoke": {
+        "message": "Отозвать этот общий ключ API?",
+        "success": "Общий ключ API отозван",
+        "title": "Отозвать"
+      },
+      "title": "Приложение с общим ключом API"
+    },
+    "subscriptions": {
+      "api": "API",
+      "apiKey": {
+        "created_at": "Выпущен",
+        "end_at": "Действует до",
+        "ended_at": "Завершён",
+        "expired": {
+          "hide": "Скрыть просроченные ключи",
+          "show": "Показать просроченные ключи"
+        },
+        "revoke": {
+          "label": "Отозвать",
+          "message": "Отозвать этот ключ API?"
+        },
+        "success": {
+          "revoke": "Ключ API отозван"
+        },
+        "title": "Ключи API:"
+      },
+      "close": {
+        "message": "Закрыть эту подписку?",
+        "title": "Закрыть"
+      },
+      "created_at": "Дата подписки",
+      "end_at": "Действует до",
+      "filters": {
+        "api": {
+          "label": "Выберите API",
+          "title": "API"
+        },
+        "status": {
+          "label": "Выберите статус",
+          "title": "Статус"
+        }
+      },
+      "navigateToApi": "Перейти к API",
+      "plan": "План",
+      "processed_at": "Дата обработки",
+      "renew": {
+        "message": "Обновить эту подписку?",
+        "title": "Обновить"
+      },
+      "security_type": "Тип безопасности",
+      "selected": {
+        "title": "Сведения о подписке"
+      },
+      "start_at": "Дата начала",
+      "status": "Статус",
+      "subscribed_by": "Подписал",
+      "success": {
+        "close": "Подписка закрыта",
+        "renew": "Подписка обновлена"
+      },
+      "title": "Подписки"
+    },
+    "success": {
+      "delete": "Приложение удалено",
+      "renewSecret": "Секрет приложения обновлён",
+      "save": "Приложение сохранено"
+    },
+    "type": {
+      "label": "Тип приложения",
+      "title": "Тип приложения"
+    },
+    "types": "{type, select, BACKEND_TO_BACKEND{Сервер — сервер} NATIVE{Нативное} WEB{Веб} BROWSER{Браузер} SIMPLE{Простое} other{Простое}}"
+  },
+  "applicationCreation": {
+    "apiKeyMode": {
+      "title": "Режим"
+    },
+    "exit": "Выйти",
+    "general": {
+      "description": {
+        "label": "Описание",
+        "placeholder": "Кратко опишите назначение"
+      },
+      "domain": {
+        "label": "Домен приложения",
+        "placeholder": "https://my-app.com"
+      },
+      "image": "Изображение приложения",
+      "name": {
+        "label": "Название приложения",
+        "placeholder": "Назовите приложение"
+      }
+    },
+    "planSubscription": {
+      "title": "Настройте подписку",
+      "channel": "Выберите канал подписки",
+      "entrypointId": "Выберите точку входа",
+      "entrypointConfiguration": "Настройте точку входа"
+    },
+    "security": {
+      "description": "В целях безопасности укажите только те типы, которые действительно нужны.",
+      "label": "Типы прав, разрешённые клиенту."
+    },
+    "step": {
+      "apiKeyMode": "Ключ API",
+      "createApp": "Создать приложение",
+      "general": "Общие сведения",
+      "next": "Далее",
+      "previous": "Назад",
+      "security": "Безопасность",
+      "subscription": "Подписка",
+      "validate": "Подтверждение"
+    },
+    "subscription": {
+      "api": {
+        "description": "Найдите API для приложения"
+      },
+      "comment": "Комментарий",
+      "description": "{count, plural, =0{Нет подписок} one{Только одна подписка} other{{count} подписок}}",
+      "disabledPlans": "Чтобы подписаться на {count, plural, =0{недоступный план} one{недоступный план} other{недоступные планы}}, нужен clientID",
+      "noPlan": "Для этого API нет доступных планов",
+      "plan": {
+        "description": "Найдите API для приложения и добавьте планы, на которые хотите подписаться"
+      },
+      "remove": "Удалить",
+      "resubscribe": "Повторить",
+      "subscribe": "Подписаться",
+      "validation": {
+        "auto": "Автоматическая",
+        "manual": "Ручная",
+        "type": "Проверка"
+      }
+    },
+    "validation": {
+      "confirm": "Приложение «{name}» готово!",
+      "error": {
+        "description": "При создании приложения произошла ошибка.",
+        "title": "Не удалось создать приложение"
+      },
+      "pending": {
+        "description": "Чтобы создать приложение, не хватает данных.<br/> Проверьте, что все шаги заполнены.",
+        "title": "Почти готово"
+      },
+      "subscriptionTitle": "Заявка на подписку"
+    }
+  },
+  "applicationType": {
+    "backend_to_backend": {
+      "description": "Приложения «машина — машина» (скрипты, демоны, CLI), которые получают доступ к API через DCR.",
+      "title": "Сервер — сервер"
+    },
+    "browser": {
+      "description": "Фронтенд на JavaScript (React, Angular, Vue), который проходит аутентификацию через DCR.",
+      "title": "SPA"
+    },
+    "native": {
+      "description": "Мобильные и настольные приложения (iOS, Android), которые проходят аутентификацию через DCR.",
+      "title": "Нативное"
+    },
+    "security": {
+      "additionalClientMetadata": {
+        "add": "Добавить метаданные клиента",
+        "description": "Дополнительный ключ метаданных для сервера авторизации (например, policy_uri, tos_uri)",
+        "key": "Ключ метаданных",
+        "remove": "Удалить эти метаданные",
+        "value": "Значение метаданных",
+        "valueDescription": "Значение ключа метаданных"
+      },
+      "authorization_code": {
+        "description": " ",
+        "title": "Код авторизации"
+      },
+      "clientId": {
+        "description": " Client_id приложения. Поле обязательно для подписки на планы OAuth2 и JWT.",
+        "label": "Client ID"
+      },
+      "clientCertificate": {
+        "description": " Клиентский сертификат приложения. Поле обязательно для подписки на планы mTLS.",
+        "label": "Сертификат клиента (только PEM)"
+      },
+      "client_credentials": {
+        "description": " ",
+        "title": "Учётные данные клиента"
+      },
+      "implicit": {
+        "description": " ",
+        "title": "Неявный"
+      },
+      "implicit_hybrid": {
+        "description": " Гибридный",
+        "title": "Неявный"
+      },
+      "password": {
+        "description": "Предоставляется владельцем ресурса",
+        "title": "Пароль"
+      },
+      "redirectUris": {
+        "description": "URI, на который сервер авторизации отправит ответы OAuth",
+        "label": "URI перенаправления"
+      },
+      "refresh_token": {
+        "description": " ",
+        "title": "Токен обновления"
+      },
+      "simple": {
+        "description": "Тип приложения (мобильное, веб и т. д.)",
+        "title": "Тип"
+      }
+    },
+    "simple": {
+      "description": "Автономный клиент, для которого вы сами храните client_id. DCR не используется.",
+      "title": "Простое"
+    },
+    "web": {
+      "description": "Серверные веб-приложения (например, .NET или Java), которые аутентифицируют пользователей через DCR.",
+      "title": "Веб"
+    }
+  },
+  "applications": {
+    "subscribers": {
+      "title": "Смотреть {count, plural, one{подписку} other{подписки}} приложения {appName}"
+    },
+    "title": "Приложения"
+  },
+  "catalog": {
+    "ALL": {
+      "emptyMessage": "В портале нет API"
+    },
+    "FEATURED": {
+      "emptyMessage": "Нет избранных API"
+    },
+    "STARRED": {
+      "emptyMessage": "Оценок пока нет"
+    },
+    "TRENDINGS": {
+      "emptyMessage": "Популярных API пока нет"
+    },
+    "categories": {
+      "emptyMessage": "В категории нет API"
+    },
+    "category": {
+      "documentation": {
+        "hide": "Скрыть документацию",
+        "show": "Показать документацию"
+      }
+    },
+    "defaultCategory": "Все API",
+    "display": {
+      "cards": "Карточки",
+      "list": "Список"
+    },
+    "filter": "Фильтровать результаты",
+    "othersApi": {
+      "subTitle": "Другие API, которые сейчас на виду",
+      "title": "Остальные API"
+    },
+    "search": "Поиск API",
+    "searchAdvanced": "name:\"My api *\" ownerName:admin"
+  },
+  "categories": {
+    "empty": "Категорий нет",
+    "title": "Категории"
+  },
+  "common": {
+    "cancel": "Отмена",
+    "date": {
+      "range": {
+        "title": "Выберите интервал времени"
+      }
+    },
+    "delete": "Удалить",
+    "filters": {
+      "title": "Фильтры"
+    },
+    "general_conditions": {
+      "accept": "Я принимаю условия использования",
+      "title": "Условия использования"
+    },
+    "ok": "Подтвердить",
+    "options": "Параметры",
+    "reset": "Сбросить",
+    "save": "Сохранить",
+    "search": "Найти",
+    "status": {
+      "ACCEPTED": "Принята",
+      "CLOSED": "Закрыта",
+      "PAUSED": "Приостановлена",
+      "PENDING": "Ожидает",
+      "REJECTED": "Отклонена"
+    },
+    "update": "Обновить"
+  },
+  "cookies": {
+    "actions": {
+      "decline": "Отклонить",
+      "ok": "Понятно"
+    },
+    "confirmation": "Если вы отклоните сбор данных, сведения о посещении этого сайта собираться не будут. Помимо обязательных cookie сайта в браузере останется один cookie, который запомнит ваш отказ от отслеживания.",
+    "googleAnalyticsDescription": "Разрешить cookie для Google Analytics",
+    "information": {
+      "common": "Этот сайт сохраняет cookie на вашем компьютере. Они нужны, чтобы запомнить настройки и данные входа и сделать работу с сайтом удобнее.",
+      "withAnalytics": "Также могут собираться сведения о посетителях и метрики (через <a href=\"https://policies.google.com/privacy\" target=\"_blank\">Google Analytics</a>)."
+    },
+    "manage": "Настройки cookie можно изменить здесь.",
+    "success": {
+      "disable": "Cookie {cookieName} отключён",
+      "enable": "Cookie {cookieName} включён"
+    },
+    "title": "Настройки cookie"
+  },
+  "dashboard": {
+    "applications": {
+      "create": "Создать приложение",
+      "createFirst": "Создать первое приложение",
+      "list": "Ваши приложения",
+      "title": "Ваши приложения"
+    },
+    "empty": "У вас пока нет приложений",
+    "noApplicationPermission": "На панели пока ничего нет",
+    "stats": {
+      "avg": "среднее время ответа",
+      "max": "максимальное время ответа",
+      "min": "минимальное время ответа",
+      "ms": "мс",
+      "rph": "запросов в час",
+      "rpm": "запросов в минуту",
+      "rps": "запросов в секунду",
+      "total": "всего"
+    },
+    "subscriptions": {
+      "api": "API",
+      "application": "Приложение",
+      "list": {
+        "empty": "Нет подписок"
+      },
+      "plan": "План",
+      "subtitle": "Выберите подписку, чтобы увидеть активность за последнюю неделю",
+      "title": "Ваши подписки"
+    },
+    "welcome": "Здравствуйте, {username}"
+  },
+  "errors": {
+    "clientRegistrationProvider": {
+      "exception": "Не удалось подключиться к службе управления доступом"
+    },
+    "email": {
+      "required": "Чтобы пользоваться формой обратной связи, укажите адрес электронной почты"
+    },
+    "forbidden": "Недостаточно прав для доступа к этому ресурсу",
+    "metadata": {
+      "exists": "Метаданные «{metadata}» уже существуют"
+    },
+    "passwordFormat": {
+      "invalid": "Пароль не соответствует правилам"
+    },
+    "plan": {
+      "general_conditions_accept": "Для плана {plan} нужно принять условия использования.",
+      "general_conditions_revision": "Условия использования плана {plan} изменились.",
+      "general_conditions_status": "План {plan} ссылается на неопубликованную страницу условий использования.",
+      "notSubscribable": "Чтобы подписаться на план OAuth2 или JWT, нужен client_id.",
+      "notSubscribableWithSharedApiKey": "В режиме общего ключа API нельзя подписаться на второй план с ключом API того же API.",
+      "otherOAuth2OrJWTSubscribed": "Это приложение уже подписано на другой план OAuth2 или JWT",
+      "subscribed": "Для этого плана уже есть подписка в статусе PENDING или ACCEPTED."
+    },
+    "server": {
+      "unavailable": "Сервер недоступен или соединение потеряно"
+    },
+    "support": {
+      "disabled": "Форма обратной связи сейчас недоступна"
+    },
+    "unexpected": "Произошла непредвиденная ошибка",
+    "user": {
+      "exists": "Пользователь с адресом {user} уже есть",
+      "finalized": "Учётная запись уже подтверждена",
+      "registration": {
+        "pendingApproval": "Заявка на регистрацию ожидает решения администратора. После проверки вы получите письмо."
+      },
+      "resetpassword": "Сброс пароля уже запрошен. Проверьте почту и подождите несколько минут перед повторной попыткой."
+    }
+  },
+  "footer": {
+    "rights": "© Все права защищены"
+  },
+  "gv-card-full": {
+    "empty": "Здесь нет API для отображения",
+    "error": "Не удалось загрузить API"
+  },
+  "gv-card": {
+    "empty": "Здесь нет API для отображения",
+    "error": "Не удалось загрузить API"
+  },
+  "gv-category-list": {
+    "error": "Не удалось загрузить список"
+  },
+  "gv-category": {
+    "empty": "Здесь нет категорий для отображения",
+    "error": "Не удалось загрузить категорию"
+  },
+  "gv-chart": {
+    "empty": "Нет данных для отображения",
+    "error": "Не удалось загрузить данные"
+  },
+  "gv-code": {
+    "copy": "Копировать"
+  },
+  "gv-confirm": {
+    "cancel": "Отмена",
+    "ok": "ОК"
+  },
+  "gv-contact": {
+    "apis": {
+      "label": "Найти API",
+      "title": "Связать с API"
+    },
+    "applications": {
+      "label": "Найти приложение",
+      "title": "Связать с приложением"
+    },
+    "button": "Отправить запрос",
+    "content": {
+      "label": "Опишите запрос...",
+      "title": "Ваш запрос"
+    },
+    "receiveCopy": "Получить копию по электронной почте",
+    "subject": {
+      "label": "Тема...",
+      "title": "Тема"
+    },
+    "success": "Запрос отправлен владельцу",
+    "title": "Ваш запрос"
+  },
+  "gv-create-application": {
+    "createApplication": "Создать приложение"
+  },
+  "gv-date-picker": {
+    "endDate": "Дата окончания",
+    "format": "MM/dd/yyyy",
+    "now": "Сейчас",
+    "ok": "ОК",
+    "startDate": "Дата начала",
+    "today": "Сегодня"
+  },
+  "gv-documentation": {
+    "empty": "Документации пока нет"
+  },
+  "gv-file-upload": {
+    "chooseAnotherFile": "выбрать другой файл",
+    "chooseFile": "Выберите файл",
+    "error": {
+      "maxSize": "Размер файла превышает допустимый",
+      "typeNotAllowed": "Этот тип файла не разрешён"
+    },
+    "orDragIt": "или перетащите его сюда.",
+    "removePicture": "Удалить изображение"
+  },
+  "gv-header": {
+    "empty": "Здесь нет API для отображения",
+    "error": "Не удалось загрузить API",
+    "subscribe": "Подписаться"
+  },
+  "gv-input": {
+    "copy": "Копировать",
+    "search": "Найти"
+  },
+  "gv-list": {
+    "error": "Не удалось загрузить список",
+    "paused": "Приостановлена",
+    "pending": "Ожидает"
+  },
+  "gv-markdown-toc": {
+    "title": "Содержание"
+  },
+  "gv-metrics": {
+    "health": "Доступность",
+    "hits": "{count, plural, =0{Вызов} one{Вызов} other{Вызовы}} (за 7 дней)",
+    "subscribers": "{count, plural, =0{Подписчик} one{Подписчик} other{Подписчики}}"
+  },
+  "gv-page": {
+    "swagger": {
+      "badFormat": "Страница, которую вы открываете, не в формате Swagger / OpenAPI"
+    }
+  },
+  "gv-pagination": {
+    "next": "Далее",
+    "previous": "Назад"
+  },
+  "gv-plans": {
+    "characteristics": {
+      "empty": "Об этом плане нет сведений"
+    },
+    "empty": {
+      "redirect": "Связаться с владельцем",
+      "title": "У API сейчас нет доступных планов."
+    },
+    "error": "Не удалось загрузить планы.",
+    "security": {
+      "apiKey": "Персональный ключ",
+      "jwt": "JWT",
+      "keyLess": "Без ключа",
+      "oauth2": "OAuth 2"
+    },
+    "validation": {
+      "auto": "Автоматическая проверка",
+      "manual": "Ручная проверка"
+    }
+  },
+  "gv-promote": {
+    "empty": "Здесь нет API для отображения",
+    "error": "Не удалось загрузить API",
+    "view": "Открыть API"
+  },
+  "gv-rating-list": {
+    "answerLabel": "Добавить ответ",
+    "cancel": "Отмена",
+    "confirmAnswerDelete": "Удалить ответ?",
+    "confirmRatingDelete": "Удалить оценку?",
+    "deleteAnswer": "Удалить ответ",
+    "deleteRating": "Удалить оценку",
+    "reply": "Ответить",
+    "send": "Отправить"
+  },
+  "gv-rating": {
+    "description-1": "Совсем не то",
+    "description-2": "Не нравится",
+    "description-3": "Нормально",
+    "description-4": "Нравится",
+    "description-5": "Отлично",
+    "note": "Оценка",
+    "notes": "Оценки"
+  },
+  "gv-row": {
+    "empty": "Нет данных для отображения",
+    "error": "Не удалось загрузить API"
+  },
+  "gv-stats": {
+    "empty": "Нет данных для отображения",
+    "error": "Не удалось загрузить данные"
+  },
+  "gv-stepper": {
+    "error": "Не удалось загрузить шаги"
+  },
+  "gv-table": {
+    "accepted": "Принята",
+    "empty": "Нет данных для отображения",
+    "error": "Не удалось загрузить данные",
+    "paused": "Приостановлена",
+    "pending": "Ожидает",
+    "rejected": "Отклонена"
+  },
+  "homepage": {
+    "apis": "Избранные API",
+    "explore": "Смотреть API",
+    "signup": "Регистрация",
+    "title": "Раскройте возможности ваших API."
+  },
+  "login": {
+    "button": "Войти",
+    "notification": {
+      "error": "Неверное имя пользователя или пароль"
+    },
+    "password": "Пароль",
+    "resetPassword": "Сбросить пароль",
+    "signup": {
+      "link": "Зарегистрироваться",
+      "text": "Ещё нет учётной записи?"
+    },
+    "title": "Кто вы?",
+    "username": "Имя пользователя"
+  },
+  "notFound": {
+    "goHome": "На главную",
+    "message": "Такой страницы нет или она больше не существует. Ничего страшного: данные на месте.",
+    "title": "Страница не найдена"
+  },
+  "register": {
+    "field": {
+      "address": "Адрес",
+      "city": "Город",
+      "country": "Страна",
+      "job_position": "Должность",
+      "organization": "Компания",
+      "telephone_number": "Телефон",
+      "zip_code": "Индекс"
+    }
+  },
+  "registration": {
+    "backHome": "Вернуться на портал",
+    "backLogin": "Вернуться ко входу",
+    "button": "Зарегистрироваться",
+    "email": "Эл. почта",
+    "firstname": "Имя",
+    "lastname": "Фамилия",
+    "pendingApproval": {
+      "message": "Заявка на регистрацию для {email} ожидает решения администратора. После одобрения вы получите письмо со ссылкой для активации.",
+      "title": "Заявка на регистрацию отправлена"
+    },
+    "success": {
+      "message": "Письмо отправлено на адрес {email}",
+      "title": "Регистрация подтверждена"
+    },
+    "title": "Создать учётную запись"
+  },
+  "registrationConfirmation": {
+    "backHome": "Вернуться на портал",
+    "backLogin": "Вернуться ко входу",
+    "backRegistration": "Вернуться к регистрации",
+    "button": "Подтвердить",
+    "confirmedPassword": "Подтвердите пароль",
+    "email": "Эл. почта",
+    "firstname": "Имя",
+    "lastname": "Фамилия",
+    "password": "Придумайте пароль",
+    "success": {
+      "message": "Создание учётной записи подтверждено",
+      "title": "Регистрация завершена"
+    },
+    "title": "Подтверждение регистрации",
+    "tokenExpired": "Срок заявки на создание учётной записи истёк"
+  },
+  "resetPassword": {
+    "backHome": "Вернуться на портал",
+    "backLogin": "Вернуться ко входу",
+    "button": "Сбросить пароль",
+    "success": {
+      "message": "Если учётная запись существует, на почту придёт письмо.",
+      "title": "Сброс пароля подтверждён"
+    },
+    "title": "Сброс пароля",
+    "username": "Имя пользователя"
+  },
+  "resetPasswordConfirmation": {
+    "backHome": "Вернуться на портал",
+    "backLogin": "Вернуться ко входу",
+    "backResetPassword": "Вернуться к сбросу пароля",
+    "button": "Подтвердить",
+    "confirmedPassword": "Подтвердите пароль",
+    "email": "Эл. почта",
+    "firstname": "Имя",
+    "lastname": "Фамилия",
+    "password": "Придумайте пароль",
+    "success": {
+      "message": "Пароль изменён",
+      "title": "Пароль обновлён"
+    },
+    "title": "Новый пароль",
+    "tokenExpired": "Срок запроса на сброс пароля истёк"
+  },
+  "route": {
+    "alerts": "Оповещения",
+    "analyticsApplication": "Аналитика",
+    "applicationCreation": "Создать приложение",
+    "applications": "Приложения",
+    "catalog": "Каталог",
+    "catalogAll": "Все API",
+    "catalogApi": "Общие сведения",
+    "catalogApiContact": "Контакты",
+    "catalogApiDocumentation": "Документация",
+    "catalogApiSubscribe": "Подписка",
+    "catalogCategories": "Категории",
+    "catalogCategory": "Категория",
+    "catalogFeatured": "Избранные",
+    "catalogStarred": "Отмеченные",
+    "catalogTrending": "Популярные",
+    "contact": "Контакты",
+    "cookies": "Настройки cookie",
+    "dashboard": "Панель",
+    "homepage": "Главная",
+    "login": "Вход",
+    "logout": "Выход",
+    "logsApplication": "Журналы",
+    "management": "Администрирование",
+    "members": "Участники",
+    "metadata": "Метаданные",
+    "myApplications": "Мои приложения",
+    "mySubscriptions": "Мои подписки",
+    "notFound": "Страница не найдена",
+    "notifications": "Уведомления",
+    "subscriptions": "Подписки",
+    "tickets": "Обращения",
+    "user": "Моя учётная запись"
+  },
+  "search": {
+    "results": {
+      "label": "{count, plural, =0{Ничего не найдено} one{{count} результат} other{{count} результатов}}"
+    }
+  },
+  "site": {
+    "title": "Портал разработчика"
+  },
+  "subscriptions": {
+    "applications": {
+      "init": "У вас нет приложений",
+      "name": "Название",
+      "navigate": "Перейти к приложению",
+      "owner": "Владелец",
+      "title": "Приложения"
+    },
+    "subscriptions": {
+      "api": "API",
+      "empty": "У этого приложения нет подписок",
+      "end_date": "Дата окончания",
+      "init": "Наведите на приложение, чтобы увидеть его подписки",
+      "navigate": "Перейти к подписке",
+      "plan": "План",
+      "start_date": "Дата начала",
+      "title": "Подписки"
+    },
+    "title": "Мои подписки"
+  },
+  "tickets": {
+    "api": "API",
+    "application": "Приложение",
+    "content": "Содержание",
+    "date": "Дата",
+    "subject": "Тема",
+    "title": "Обращения"
+  },
+  "user": {
+    "account": {
+      "success": "Учётная запись обновлена",
+      "title": "Личные данные"
+    },
+    "change_picture": "Сменить фото",
+    "email": "Эл. почта:",
+    "first_name": "Имя",
+    "last_name": "Фамилия",
+    "notifications": {
+      "empty": "Уведомлений нет",
+      "read": "Прочитано",
+      "title": "Уведомления"
+    }
+  }
+}

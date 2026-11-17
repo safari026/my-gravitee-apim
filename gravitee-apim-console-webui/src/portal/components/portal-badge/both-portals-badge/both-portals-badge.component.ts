@@ -16,9 +16,11 @@
 import { Component } from '@angular/core';
 import { MatIcon } from '@angular/material/icon';
 
+import { TranslatePipe } from '../../../../shared/i18n/translate.pipe';
+
 @Component({
   selector: 'both-portals-badge',
-  imports: [MatIcon],
+  imports: [MatIcon, TranslatePipe],
   templateUrl: './both-portals-badge.component.html',
 })
 export class BothPortalsBadgeComponent {}

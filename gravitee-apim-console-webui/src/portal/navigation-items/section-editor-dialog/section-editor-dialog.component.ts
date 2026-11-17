@@ -13,8 +13,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, computed, HostListener, inject, OnInit, Signal } from '@angular/core';
-import { toSignal } from '@angular/core/rxjs-interop';
+import { Component, computed, DestroyRef, HostListener, inject, Injector, OnInit, Signal } from '@angular/core';
+import { takeUntilDestroyed, toObservable, toSignal } from '@angular/core/rxjs-interop';
+import { skip } from 'rxjs/operators';
 import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MAT_DIALOG_DATA, MatDialogModule, MatDialogRef } from '@angular/material/dialog';
 import { MatButtonModule } from '@angular/material/button';
@@ -39,7 +40,9 @@ import {
 } from '../../../entities/management-api-v2';
 import { ApiV2Service } from '../../../services-ngx/api-v2.service';
 import { urlValidator } from '../../../shared/validators/url.validator';
-import { getPublicVisibilityDisabledTooltip, isPublicVisibilityDisabled } from '../visibility-toggle.util';
+import { isPublicVisibilityDisabled } from '../visibility-toggle.util';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 export type SectionEditorDialogMode = 'create' | 'edit';
 
@@ -80,11 +83,17 @@ export const PORTAL_PAGE_CONTENT_TYPE_OPTIONS: PortalPageTypeOption[] = [
   { value: 'ASYNCAPI', label: 'AsyncAPI', icon: 'gio:async-api', available: true },
 ];
 
-const TITLE_FIELD_LABEL_BY_TYPE: Record<PortalNavigationItemType, string> = {
-  API: 'API Display Name',
-  FOLDER: 'Folder Title',
-  LINK: 'Link Title',
-  PAGE: 'Page Title',
+const TITLE_FIELD_LABEL_KEY: Record<PortalNavigationItemType, string> = {
+  API: 'developerPortal.section.apiDisplayName',
+  FOLDER: 'developerPortal.section.folderTitle',
+  LINK: 'developerPortal.section.linkTitle',
+  PAGE: 'developerPortal.section.pageTitle',
+};
+
+const PAGE_TYPE_LABEL_KEY: Record<PortalPageContentType, string> = {
+  GRAVITEE_MARKDOWN: 'developerPortal.section.markdown',
+  OPENAPI: 'developerPortal.section.openapi',
+  ASYNCAPI: 'developerPortal.section.asyncapi',
 };
 
 interface SectionFormControls {
@@ -116,6 +125,7 @@ type SectionForm = FormGroup<SectionFormControls>;
     GioFormSelectionInlineModule,
     LowerCasePipe,
     MatTooltipModule,
+    TranslatePipe,
   ],
   templateUrl: './section-editor-dialog.component.html',
   styleUrls: ['./section-editor-dialog.component.scss'],
@@ -131,7 +141,7 @@ export class SectionEditorDialogComponent implements OnInit {
   public mode: SectionEditorDialogMode;
   public title: string;
   public titleFieldLabel: string;
-  readonly pageContentTypeOptions = PORTAL_PAGE_CONTENT_TYPE_OPTIONS;
+  readonly pageContentTypeOptions = PORTAL_PAGE_CONTENT_TYPE_OPTIONS.map(option => ({ ...option }));
 
   showPageTypeSelection(): boolean {
     return this.mode === 'create' && this.type === 'PAGE';
@@ -142,11 +152,20 @@ export class SectionEditorDialogComponent implements OnInit {
   private readonly iconRegistry = inject(MatIconRegistry);
   private readonly sanitizer = inject(DomSanitizer);
   private readonly apiService = inject(ApiV2Service);
+  private readonly languageService = inject(LanguageService);
+  private readonly destroyRef = inject(DestroyRef);
+  private readonly injector = inject(Injector);
   readonly publicDisabled: Signal<boolean> = computed(() => {
     return isPublicVisibilityDisabled(this.data.parentItem);
   });
   readonly publicDisabledTooltip: Signal<string> = computed(() => {
-    return getPublicVisibilityDisabledTooltip(this.data.parentItem);
+    this.languageService.currentLanguage();
+    if (!isPublicVisibilityDisabled(this.data.parentItem)) {
+      return '';
+    }
+    return this.languageService.translate('developerPortal.section.privateParent', {
+      type: this.data.parentItem?.type.toLocaleLowerCase() ?? '',
+    });
   });
   readonly linkedApiName: Signal<string | null> = toSignal(this.loadLinkedApiName(), { initialValue: null });
   public buttonTitle: string;
@@ -155,14 +174,7 @@ export class SectionEditorDialogComponent implements OnInit {
     this.iconRegistry.addSvgIconInNamespace('gio', 'async-api', this.sanitizer.bypassSecurityTrustResourceUrl('assets/logo_asyncapi.svg'));
     this.type = this.data.type;
     this.mode = this.data.mode;
-    this.titleFieldLabel = TITLE_FIELD_LABEL_BY_TYPE[this.type];
-    if (this.data.mode === 'create') {
-      this.title = `Add ${this.type.toLowerCase()}`;
-      this.buttonTitle = 'Add';
-    } else {
-      this.title = `Edit "${this.data.existingItem.title}" ${this.type.toLowerCase()}`;
-      this.buttonTitle = 'Save';
-    }
+    this.refreshLabels();
   }
 
   @HostListener('window:beforeunload', ['$event'])
@@ -175,11 +187,32 @@ export class SectionEditorDialogComponent implements OnInit {
   }
 
   ngOnInit(): void {
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshLabels());
     this.addTypeSpecificControls();
     this.prefillExistingItem();
     this.syncVisibilityControlState();
 
     this.initialFormValues = this.form.getRawValue();
+  }
+
+  private refreshLabels(): void {
+    const type = this.languageService.translate(`developerPortal.section.${this.type.toLowerCase()}`);
+    this.titleFieldLabel = this.languageService.translate(TITLE_FIELD_LABEL_KEY[this.type]);
+    this.pageContentTypeOptions.forEach(option => {
+      option.label = this.languageService.translate(PAGE_TYPE_LABEL_KEY[option.value]);
+    });
+    if (this.data.mode === 'create') {
+      this.title = this.languageService.translate('developerPortal.section.addTitle', { type });
+      this.buttonTitle = this.languageService.translate('common.add');
+    } else {
+      this.title = this.languageService.translate('developerPortal.section.editTitle', {
+        name: this.data.existingItem.title,
+        type,
+      });
+      this.buttonTitle = this.languageService.translate('common.save');
+    }
   }
 
   private syncVisibilityControlState(): void {

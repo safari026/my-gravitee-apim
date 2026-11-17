@@ -20,14 +20,14 @@
     <md-dialog-content layout-padding>
       <h4>{{ctrl.title}}</h4>
       <md-input-container ng-show="!ctrl.token" style="width: 100%">
-        <label>Name</label>
-        <input type="text" md-maxlength="64" autofocus ng-model="ctrl.name" placeholder="What’s this token for?" />
+        <label>{{ ctrl.translate('userMenu.account.tokenName') }}</label>
+        <input type="text" md-maxlength="64" autofocus ng-model="ctrl.name" placeholder="{{ ctrl.translate('userMenu.account.tokenPlaceholder') }}" />
       </md-input-container>
       <div ng-if="ctrl.token">
-        <h5>Make sure to copy your new personal access token now. You won’t be able to see it again.</h5>
+        <h5>{{ ctrl.translate('userMenu.account.tokenCopyHint') }}</h5>
         <span>
           <code>{{ctrl.token.token}}</code>
-          <md-tooltip md-direction="right">Copy to clipboard</md-tooltip>
+          <md-tooltip md-direction="right">{{ ctrl.translate('userMenu.account.copy') }}</md-tooltip>
           <ng-md-icon
             size="20"
             style="fill: #424e5a"
@@ -38,10 +38,10 @@
             role="button"
           ></ng-md-icon>
         </span>
-        <h6>Example of use:</h6>
+        <h6>{{ ctrl.translate('userMenu.account.exampleOfUse') }}</h6>
         <span>
           <code>{{ctrl.getExampleOfUse(ctrl.token.token)}}</code>
-          <md-tooltip md-direction="right">Copy to clipboard</md-tooltip>
+          <md-tooltip md-direction="right">{{ ctrl.translate('userMenu.account.copy') }}</md-tooltip>
           <ng-md-icon
             size="20"
             style="fill: #424e5a"
@@ -55,9 +55,11 @@
       </div>
     </md-dialog-content>
     <md-dialog-actions layout="row">
-      <md-button ng-if="!ctrl.token" type="button" ng-click="ctrl.cancel()">Cancel</md-button>
-      <md-button ng-if="!ctrl.token" class="md-raised md-primary" type="submit" ng-disabled="!ctrl.name">Generate</md-button>
-      <md-button ng-if="ctrl.token" type="button" ng-click="ctrl.confirm()">OK</md-button>
+      <md-button ng-if="!ctrl.token" type="button" ng-click="ctrl.cancel()">{{ ctrl.translate('userMenu.account.cancel') }}</md-button>
+      <md-button ng-if="!ctrl.token" class="md-raised md-primary" type="submit" ng-disabled="!ctrl.name">{{
+        ctrl.translate('userMenu.account.generate')
+      }}</md-button>
+      <md-button ng-if="ctrl.token" type="button" ng-click="ctrl.confirm()">{{ ctrl.translate('userMenu.account.ok') }}</md-button>
     </md-dialog-actions>
   </form>
 </md-dialog>

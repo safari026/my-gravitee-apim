@@ -13,13 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ChangeDetectorRef, Component, OnInit } from '@angular/core';
+import { ChangeDetectorRef, Component, OnDestroy, OnInit } from '@angular/core';
 import { FormBuilder, FormControl, FormGroup, Validators } from '@angular/forms';
 import '@gravitee/ui-components/wc/gv-stepper';
 import '@gravitee/ui-components/wc/gv-option';
 import '@gravitee/ui-components/wc/gv-switch';
 import '@gravitee/ui-components/wc/gv-file-upload';
 import { TranslateService } from '@ngx-translate/core';
+import { Subscription } from 'rxjs';
 import { ActivatedRoute, Router } from '@angular/router';
 import { getApplicationTypeIcon } from '@gravitee/ui-components/src/lib/theme';
 
@@ -89,8 +90,10 @@ function mapToApplicationInput(rawValue): ApplicationInput {
   styleUrls: ['./application-creation.component.css'],
   standalone: false,
 })
-export class ApplicationCreationComponent implements OnInit {
+export class ApplicationCreationComponent implements OnInit, OnDestroy {
   private _allSteps: any;
+  private stepTitleKeys: string[] = [];
+  private langChangeSub: Subscription;
   steps: any;
   currentStep: number;
   applicationForm: ApplicationFormType;
@@ -139,12 +142,13 @@ export class ApplicationCreationComponent implements OnInit {
   }
 
   async ngOnInit() {
-    const stepsTitle: any[] = [
+    const stepsTitle: string[] = [
       'applicationCreation.step.general',
       'applicationCreation.step.security',
       'applicationCreation.step.subscription',
       'applicationCreation.step.validate',
     ];
+    this.stepTitleKeys = stepsTitle;
     if (this.canConfigureSharedApiKey()) {
       stepsTitle.splice(3, 0, 'applicationCreation.step.apiKeyMode');
     }
@@ -182,6 +186,39 @@ export class ApplicationCreationComponent implements OnInit {
       picture: new FormControl(null),
       settings: new FormControl(null, [Validators.required]),
     });
+    this.langChangeSub = this.translateService.onLangChange.subscribe(() => {
+      this.refreshLocalizedLabels();
+    });
+  }
+
+  ngOnDestroy() {
+    this.langChangeSub?.unsubscribe();
+  }
+
+  private async refreshLocalizedLabels() {
+    if (this._allSteps && this.stepTitleKeys.length) {
+      const titles = await Promise.all(this.stepTitleKeys.map(key => this.translateService.get(key).toPromise()));
+      this._allSteps.forEach((step, index) => {
+        step.title = titles[index];
+      });
+    }
+    if (this.allowedTypes) {
+      await Promise.all(
+        this.allowedTypes.map(type =>
+          this.translateService
+            .get([`applicationType.${type.id}.title`, `applicationType.${type.id}.description`])
+            .toPromise()
+            .then(translations => {
+              const [title, description] = Object.values(translations as Record<string, string>);
+              type.title = title;
+              type.description = description;
+            }),
+        ),
+      );
+    }
+    if (this.steps) {
+      await this.updateSteps();
+    }
   }
 
   setCurrentStep(step: number) {

@@ -40,6 +40,8 @@ import { EmptyStateComponent } from '../../../shared/components/empty-state/empt
 import { GioPermissionModule } from '../../../shared/components/gio-permission/gio-permission.module';
 import { GioPermissionService } from '../../../shared/components/gio-permission/gio-permission.service';
 import { PortalNavigationItemIconPipe } from '../../icon/portal-navigation-item-icon.pipe';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 export interface SectionNode {
   id: string;
@@ -107,6 +109,7 @@ interface DropIntent {
     GioPermissionModule,
     DragDropModule,
     PortalNavigationItemIconPipe,
+    TranslatePipe,
   ],
   templateUrl: './flat-tree.component.html',
   styleUrls: ['./flat-tree.component.scss'],
@@ -115,6 +118,7 @@ export class FlatTreeComponent {
   private readonly permissionService = inject(GioPermissionService);
   private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
   private readonly injector = inject(Injector);
+  private readonly languageService = inject(LanguageService);
 
   links = input<PortalNavigationItem[] | null>(null);
   selectedId = input<string | null>(null);
@@ -156,6 +160,7 @@ export class FlatTreeComponent {
   });
 
   publishStateByNodeId = computed(() => {
+    this.languageService.currentLanguage();
     const links = this.links();
     const publishStateByNodeId = new Map<string, PublishActionState>();
 
@@ -175,7 +180,7 @@ export class FlatTreeComponent {
       if (!parentNavigationItem) {
         publishStateByNodeId.set(
           link.id,
-          this.toDisabledPublishActionState('A navigation item cannot be published because its parent is unavailable'),
+          this.toDisabledPublishActionState(this.languageService.translate('developerPortal.navigation.missingParent')),
         );
         continue;
       }
@@ -184,7 +189,9 @@ export class FlatTreeComponent {
         publishStateByNodeId.set(
           link.id,
           this.toDisabledPublishActionState(
-            `A navigation item cannot be published within an unpublished ${parentNavigationItem.type.toLocaleLowerCase()}`,
+            this.languageService.translate('developerPortal.navigation.unpublishedParent', {
+              type: parentNavigationItem.type.toLocaleLowerCase(),
+            }),
           ),
         );
         continue;

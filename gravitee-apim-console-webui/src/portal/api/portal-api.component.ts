@@ -17,10 +17,11 @@ import { Component } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 
 import { PortalHeaderComponent } from '../components/header/portal-header.component';
+import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @Component({
   selector: 'portal-api',
-  imports: [PortalHeaderComponent, RouterOutlet],
+  imports: [PortalHeaderComponent, RouterOutlet, TranslatePipe],
   templateUrl: './portal-api.component.html',
   styleUrl: './portal-api.component.scss',
 })

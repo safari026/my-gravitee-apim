@@ -13,12 +13,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, DestroyRef, inject, OnInit } from '@angular/core';
+import { Component, DestroyRef, inject, Injector, OnInit } from '@angular/core';
 import { MatTableModule } from '@angular/material/table';
 import { BehaviorSubject, Observable, of } from 'rxjs';
 import { FormControl, FormGroup, FormsModule, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog, MatDialogModule } from '@angular/material/dialog';
-import { catchError, filter, map, switchMap, take, tap } from 'rxjs/operators';
+import { catchError, filter, map, skip, switchMap, take, tap } from 'rxjs/operators';
 import {
   GioAvatarModule,
   GioConfirmDialogComponent,
@@ -26,7 +26,7 @@ import {
   GioFormSlideToggleModule,
   GioSaveBarModule,
 } from '@gravitee/ui-particles-angular';
-import { takeUntilDestroyed } from '@angular/core/rxjs-interop';
+import { takeUntilDestroyed, toObservable } from '@angular/core/rxjs-interop';
 import { CdkDrag, CdkDragDrop, CdkDropList } from '@angular/cdk/drag-drop';
 import { AsyncPipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
@@ -44,6 +44,8 @@ import { Category } from '../../../entities/category/Category';
 import { BothPortalsBadgeComponent } from '../../components/portal-badge/both-portals-badge/both-portals-badge.component';
 import { PortalSettingsService } from '../../../services-ngx/portal-settings.service';
 import { PortalSettings } from '../../../entities/portal/portalSettings';
+import { LanguageService } from '../../../shared/i18n/language.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 interface CatalogViewModeVM {
   value: string;
@@ -78,6 +80,7 @@ interface CatalogViewModeVM {
     // Angular CDK
     CdkDropList,
     CdkDrag,
+    TranslatePipe,
   ],
   templateUrl: './category-list.component.html',
   styleUrl: './category-list.component.scss',
@@ -105,6 +108,8 @@ export class CategoryListComponent implements OnInit {
   ];
 
   private destroyRef = inject(DestroyRef);
+  private readonly languageService = inject(LanguageService);
+  private readonly injector = inject(Injector);
 
   constructor(
     private categoryService: CategoryService,
@@ -115,6 +120,10 @@ export class CategoryListComponent implements OnInit {
   ) {}
 
   ngOnInit(): void {
+    this.refreshViewModeLabels();
+    toObservable(this.languageService.currentLanguage, { injector: this.injector })
+      .pipe(skip(1), takeUntilDestroyed(this.destroyRef))
+      .subscribe(() => this.refreshViewModeLabels());
     // If read-only, remove actions column
     if (!this.permissionService.hasAnyMatching(['environment-category-u', 'environment-category-d'])) {
       this.displayedColumns.pop();
@@ -148,9 +157,9 @@ export class CategoryListComponent implements OnInit {
     this.matDialog
       .open<GioConfirmDialogComponent, GioConfirmDialogData, boolean>(GioConfirmDialogComponent, {
         data: {
-          title: 'Delete Category',
-          content: `Are you sure you want to delete the category '${category.name}'?`,
-          confirmButton: 'Delete',
+          title: this.languageService.translate('developerPortal.catalog.deleteTitle'),
+          content: this.languageService.translate('developerPortal.catalog.deleteContent', { name: category.name }),
+          confirmButton: this.languageService.translate('common.delete'),
         },
         role: 'alertdialog',
         id: 'confirmDialog',
@@ -163,10 +172,10 @@ export class CategoryListComponent implements OnInit {
       )
       .subscribe({
         next: _ => {
-          this.snackBarService.success(`'${category.name}' deleted successfully`);
+          this.snackBarService.success(this.languageService.translate('developerPortal.catalog.deleted', { name: category.name }));
           this.categoryList.next(1);
         },
-        error: ({ error }) => this.snackBarService.error(error?.message ?? 'Error during deletion'),
+        error: ({ error }) => this.snackBarService.error(error?.message ?? this.languageService.translate('developerPortal.catalog.deleteError')),
       });
   }
 
@@ -245,6 +254,11 @@ export class CategoryListComponent implements OnInit {
           this.initializeForm(settings);
         },
       });
+  }
+
+  private refreshViewModeLabels(): void {
+    this.viewModes[0].label = this.languageService.translate('developerPortal.catalog.tabs');
+    this.viewModes[1].label = this.languageService.translate('developerPortal.catalog.tiles');
   }
 
   private initializeForm(settings: PortalSettings): void {

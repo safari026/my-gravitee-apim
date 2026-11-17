@@ -26,6 +26,7 @@ import { Application } from '../../../entities/application/Application';
 import { NewTicket } from '../../../entities/ticket/newTicket';
 import { TicketService } from '../../../services-ngx/ticket.service';
 import { SnackBarService } from '../../../services-ngx/snack-bar.service';
+import { LanguageService } from '../../../shared/i18n/language.service';
 
 type TicketForm = FormGroup<{
   api: FormControl<string>;
@@ -53,6 +54,7 @@ export class NewTicketComponent implements OnInit {
     private readonly applicationService: ApplicationService,
     private readonly ticketService: TicketService,
     private readonly snackBarService: SnackBarService,
+    private readonly languageService: LanguageService,
     private readonly router: Router,
     private readonly activatedRoute: ActivatedRoute,
   ) {}
@@ -105,7 +107,7 @@ export class NewTicketComponent implements OnInit {
       .create(newTicket)
       .pipe(
         tap(() => {
-          this.snackBarService.success('New ticket successfully created!');
+          this.snackBarService.success(this.languageService.translate('userMenu.tickets.created'));
           this.router.navigate(['..'], { relativeTo: this.activatedRoute });
         }),
         catchError(({ error }) => {

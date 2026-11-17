@@ -16,7 +16,7 @@
 
 -->
 <div class="back-button">
-  <a mat-button [routerLink]="'../'"><mat-icon svgIcon="gio:arrow-left"></mat-icon>Top Bar Menu</a>
+  <a mat-button [routerLink]="'../'"><mat-icon svgIcon="gio:arrow-left"></mat-icon>{{ 'developerPortal.navigation.topBarMenu' | translate }}</a>
 </div>
 
 <mat-card class="menu-link-edit">
@@ -24,40 +24,40 @@
     <mat-card-content class="menu-link-edit__content">
       <div class="menu-link-edit__content__header">
         <div class="menu-link-edit__content__header__title">
-          <h3>Edit Link</h3>
+          <h3>{{ 'developerPortal.navigation.editLink' | translate }}</h3>
           @if (readableMenuLinkType) {
             <span class="gio-badge-neutral">{{ readableMenuLinkType }}</span>
           }
         </div>
-        <div class="menu-link-edit__content__header__description">Edit the link details that will be displayed in the top menu bar</div>
+        <div class="menu-link-edit__content__header__description">{{ 'developerPortal.navigation.editLinkHint' | translate }}</div>
       </div>
       <mat-form-field>
-        <mat-label>Name</mat-label>
+        <mat-label>{{ 'developerPortal.common.name' | translate }}</mat-label>
         <input matInput formControlName="name" required />
         @if (menuLinkEditForm.controls.name.hasError('required')) {
-          <mat-error>Name is required.</mat-error>
+          <mat-error>{{ 'developerPortal.navigation.nameRequired' | translate }}</mat-error>
         }
       </mat-form-field>
       <mat-form-field>
-        <mat-label>Target</mat-label>
+        <mat-label>{{ 'developerPortal.common.target' | translate }}</mat-label>
         <input matInput formControlName="target" required />
         @if (menuLinkEditForm.controls.target.hasError('required')) {
-          <mat-error>Target is required.</mat-error>
+          <mat-error>{{ 'developerPortal.navigation.targetRequired' | translate }}</mat-error>
         }
       </mat-form-field>
 
       <gio-form-selection-inline id="visibility" formControlName="visibility">
         <gio-form-selection-inline-card value="PUBLIC">
           <gio-form-selection-inline-card-content icon="gio:language">
-            <gio-card-content-title>Public</gio-card-content-title>
-            <gio-card-content-subtitle>Every users can see public links in the Developer Portal.</gio-card-content-subtitle>
+            <gio-card-content-title>{{ 'developerPortal.common.public' | translate }}</gio-card-content-title>
+            <gio-card-content-subtitle>{{ 'developerPortal.navigation.publicHint' | translate }}</gio-card-content-subtitle>
           </gio-form-selection-inline-card-content>
         </gio-form-selection-inline-card>
 
         <gio-form-selection-inline-card value="PRIVATE">
           <gio-form-selection-inline-card-content icon="gio:lock">
-            <gio-card-content-title>Private</gio-card-content-title>
-            <gio-card-content-subtitle>Users must be authenticated in the Developer Portal to see private links.</gio-card-content-subtitle>
+            <gio-card-content-title>{{ 'developerPortal.common.private' | translate }}</gio-card-content-title>
+            <gio-card-content-subtitle>{{ 'developerPortal.navigation.privateHint' | translate }}</gio-card-content-subtitle>
           </gio-form-selection-inline-card-content>
         </gio-form-selection-inline-card>
       </gio-form-selection-inline>

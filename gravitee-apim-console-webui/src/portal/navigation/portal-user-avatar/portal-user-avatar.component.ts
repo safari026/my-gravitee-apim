@@ -26,6 +26,7 @@ import { map } from 'rxjs/operators';
 import { User } from '../../../entities/user/user';
 import { CurrentUserService } from '../../../services-ngx/current-user.service';
 import { AuthService } from '../../../auth/auth.service';
+import { TranslatePipe } from '../../../shared/i18n/translate.pipe';
 
 interface UserVM {
   user: User;
@@ -35,7 +36,7 @@ interface UserVM {
 
 @Component({
   selector: 'portal-user-avatar',
-  imports: [GioAvatarModule, MatDivider, MatIcon, MatIconButton, MatMenu, MatMenuItem, AsyncPipe, MatMenuTrigger],
+  imports: [GioAvatarModule, MatDivider, MatIcon, MatIconButton, MatMenu, MatMenuItem, AsyncPipe, MatMenuTrigger, TranslatePipe],
   templateUrl: './portal-user-avatar.component.html',
   styleUrl: './portal-user-avatar.component.scss',
 })
