@@ -40,17 +40,13 @@
       >
         <mat-icon svgIcon="gio:question-mark-circle"></mat-icon>
       </button>
-      <button
-        mat-icon-button
-        type="button"
-        (click)="toggleLanguage()"
-        [attr.aria-label]="'common.language.switch' | translate"
-        data-testid="top-nav-language-button"
-      >
-        <mat-icon svgIcon="gio:language"></mat-icon>
-      </button>
+      <gio-language-toggle />
       <gio-notification-menu></gio-notification-menu>
-      <gio-user-menu [hasAlert]="hasAlert" [userTaskCount]="userTaskCount"></gio-user-menu>
+      <gio-user-menu
+        [hasAlert]="hasAlert"
+        [userTaskCount]="userTaskCount"
+        [showEnvironmentContext]="showEnvironmentContext"
+      ></gio-user-menu>
     </gio-top-bar-menu>
   </gio-top-bar>
 </div>

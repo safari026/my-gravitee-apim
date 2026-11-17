@@ -24,7 +24,6 @@ import { User } from '../../entities/user/user';
 import { TaskService } from '../../services-ngx/task.service';
 import { UiCustomizationService } from '../../services-ngx/ui-customization.service';
 import { EnvironmentSettingsService } from '../../services-ngx/environment-settings.service';
-import { LanguageService } from '../../shared/i18n/language.service';
 
 @Component({
   selector: 'gio-top-nav',
@@ -37,6 +36,13 @@ export class GioTopNavComponent implements OnInit, OnDestroy {
 
   @Input()
   displayContextualDocumentationButton = false;
+
+  /**
+   * Portal link and environment routes belong to the selected environment.
+   * Organization has no environment in the URL, so those items stay hidden there.
+   */
+  @Input()
+  showEnvironmentContext = true;
 
   @Output()
   public openContextualDocumentationPage = new EventEmitter<void>();
@@ -55,7 +61,6 @@ export class GioTopNavComponent implements OnInit, OnDestroy {
     public readonly taskService: TaskService,
     private readonly uiCustomizationService: UiCustomizationService,
     private readonly licenseService: GioLicenseService,
-    private readonly languageService: LanguageService,
     private readonly environmentSettingsService: EnvironmentSettingsService,
   ) {}
 
@@ -89,19 +94,18 @@ export class GioTopNavComponent implements OnInit, OnDestroy {
         }
       });
 
-    this.environmentSettingsService
-      .get()
-      .pipe(takeUntil(this.unsubscribe$))
-      .subscribe(settings => {
-        this.portalUrl = isEmpty(settings?.portal?.url)
-          ? undefined
-          : this.constants.env.baseURL.replace('{:envId}', this.constants.org.currentEnv.id) + '/portal/redirect';
-      });
-  }
-
-  toggleLanguage(): void {
-    const currentLanguage = this.languageService.currentLanguage();
-    this.languageService.setLanguage(currentLanguage === 'en' ? 'ru' : 'en');
+    if (this.showEnvironmentContext) {
+      this.environmentSettingsService
+        .get()
+        .pipe(takeUntil(this.unsubscribe$))
+        .subscribe(settings => {
+          const envId = this.constants.org.currentEnv?.id;
+          this.portalUrl =
+            !envId || isEmpty(settings?.portal?.url)
+              ? undefined
+              : this.constants.env.baseURL.replace('{:envId}', envId) + '/portal/redirect';
+        });
+    }
   }
 
   openContextualDocumentationClick = () => {

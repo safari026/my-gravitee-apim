@@ -33,6 +33,10 @@ export class GioUserMenuComponent implements OnInit {
   @Input()
   public userTaskCount = 0;
 
+  /** Account, tasks and support live under the selected environment route. */
+  @Input()
+  public showEnvironmentContext = true;
+
   public currentUser: User;
   public userShortName: string;
   public userPicture: string;
@@ -60,20 +64,43 @@ export class GioUserMenuComponent implements OnInit {
     });
   }
 
+  canOpenEnvironmentRoute(): boolean {
+    return this.showEnvironmentContext || !!this.environmentHrid();
+  }
+
   goToMyAccount(): void {
-    this.router.navigate(['my-account'], { relativeTo: this.activatedRoute });
+    this.openEnvironmentRoute('my-account');
   }
 
   goToSupport(): void {
-    this.router.navigate(['support', 'tickets'], { relativeTo: this.activatedRoute });
+    this.openEnvironmentRoute('support', 'tickets');
   }
 
   goToTask(): void {
-    this.router.navigate(['tasks'], { relativeTo: this.activatedRoute });
+    this.openEnvironmentRoute('tasks');
   }
 
   signOut(): void {
     this.authService.logout().subscribe();
+  }
+
+  private openEnvironmentRoute(...commands: string[]): void {
+    if (this.showEnvironmentContext) {
+      this.router.navigate(commands, { relativeTo: this.activatedRoute });
+      return;
+    }
+    const hrid = this.environmentHrid();
+    if (hrid) {
+      this.router.navigate(['/', hrid, ...commands]);
+    }
+  }
+
+  private environmentHrid(): string | undefined {
+    const environment = this.constants.org.currentEnv;
+    if (!environment) {
+      return undefined;
+    }
+    return environment.hrids?.[0] ?? environment.id;
   }
 
   private getUserShortName = (): string => {

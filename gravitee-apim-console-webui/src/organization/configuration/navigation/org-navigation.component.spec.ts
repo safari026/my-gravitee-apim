@@ -15,17 +15,37 @@
  */
 import { ComponentFixture, TestBed } from '@angular/core/testing';
 import { NoopAnimationsModule } from '@angular/platform-browser/animations';
-import { GioLicenseTestingModule } from '@gravitee/ui-particles-angular';
+import { GioLicenseService, GioLicenseTestingModule } from '@gravitee/ui-particles-angular';
+import { of } from 'rxjs';
 
 import { OrgNavigationComponent } from './org-navigation.component';
 
 import { OrganizationSettingsModule } from '../organization-settings.module';
-import { GioTestingModule } from '../../../shared/testing';
+import { CONSTANTS_TESTING, GioTestingModule } from '../../../shared/testing';
+import { Constants } from '../../../entities/Constants';
 import { GioPermissionService, GioTestingPermissionProvider } from '../../../shared/components/gio-permission/gio-permission.service';
+import { CurrentUserService } from '../../../services-ngx/current-user.service';
+import { TaskService } from '../../../services-ngx/task.service';
+import { UiCustomizationService } from '../../../services-ngx/ui-customization.service';
+import { fakeUser } from '../../../entities/user/user.fixture';
 
 describe('OrgNavigationComponent', () => {
   let fixture: ComponentFixture<OrgNavigationComponent>;
   let component: OrgNavigationComponent;
+  const constantsProvider = {
+    provide: Constants,
+    useValue: {
+      ...CONSTANTS_TESTING,
+      org: {
+        ...CONSTANTS_TESTING.org,
+        settings: {
+          ...CONSTANTS_TESTING.org.settings,
+          management: { support: { enabled: false } },
+          newsletter: { enabled: false },
+        },
+      },
+    },
+  };
 
   function createComponent(hasAnyMatching: boolean) {
     TestBed.configureTestingModule({
@@ -36,6 +56,32 @@ describe('OrgNavigationComponent', () => {
           useValue: {
             hasAnyMatching: () => hasAnyMatching,
           },
+        },
+        {
+          provide: CurrentUserService,
+          useValue: {
+            current: () => of(fakeUser()),
+            getUserPictureUrl: () => 'avatar-url',
+          },
+        },
+        constantsProvider,
+        {
+          provide: TaskService,
+          useValue: { getTasksAutoFetch: () => of({ page: { total_elements: 0 } }) },
+        },
+        {
+          provide: GioLicenseService,
+          useValue: {
+            isOEM$: () => of(false),
+            isMissingFeature$: () => of(false),
+            getFeatureInfo: () => ({}),
+            getTrialURL: () => '',
+            openDialog: () => undefined,
+          },
+        },
+        {
+          provide: UiCustomizationService,
+          useValue: { getConsoleCustomization: () => of(null) },
         },
       ],
     }).compileComponents();
@@ -52,6 +98,32 @@ describe('OrgNavigationComponent', () => {
         {
           provide: GioTestingPermissionProvider,
           useValue: permissions,
+        },
+        {
+          provide: CurrentUserService,
+          useValue: {
+            current: () => of(fakeUser()),
+            getUserPictureUrl: () => 'avatar-url',
+          },
+        },
+        constantsProvider,
+        {
+          provide: TaskService,
+          useValue: { getTasksAutoFetch: () => of({ page: { total_elements: 0 } }) },
+        },
+        {
+          provide: GioLicenseService,
+          useValue: {
+            isOEM$: () => of(false),
+            isMissingFeature$: () => of(false),
+            getFeatureInfo: () => ({}),
+            getTrialURL: () => '',
+            openDialog: () => undefined,
+          },
+        },
+        {
+          provide: UiCustomizationService,
+          useValue: { getConsoleCustomization: () => of(null) },
         },
       ],
     }).compileComponents();
@@ -80,6 +152,14 @@ describe('OrgNavigationComponent', () => {
         'Audit',
         'Gravitee Cloud',
       ]);
+    });
+
+    it('shows the shared header once and keeps the organization menu', () => {
+      expect(fixture.nativeElement.querySelectorAll('gio-top-nav')).toHaveLength(1);
+      expect(fixture.nativeElement.querySelectorAll('[data-testid="language-toggle"]')).toHaveLength(1);
+      expect(fixture.nativeElement.querySelectorAll('[data-testid="top-nav-user-menu-button"]')).toHaveLength(1);
+      expect(fixture.nativeElement.textContent).not.toContain('Developer Portal');
+      expect(fixture.nativeElement.textContent).toContain('Organization');
     });
   });
 

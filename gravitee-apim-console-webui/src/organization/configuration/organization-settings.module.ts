@@ -97,6 +97,7 @@ import { GioGoBackButtonModule } from '../../shared/components/gio-go-back-butto
 import { GioTableWrapperModule } from '../../shared/components/gio-table-wrapper/gio-table-wrapper.module';
 import { GioUsersSelectorModule } from '../../shared/components/gio-users-selector/gio-users-selector.module';
 import { GioTooltipOnEllipsisModule } from '../../shared/components/gio-tooltip-on-ellipsis/gio-tooltip-on-ellipsis.module';
+import { GioTopNavModule } from '../../components/gio-top-nav/gio-top-nav.module';
 import { TranslatePipe } from '../../shared/i18n/translate.pipe';
 
 @NgModule({
@@ -151,6 +152,7 @@ import { TranslatePipe } from '../../shared/i18n/translate.pipe';
     GioLicenseModule,
     GioMenuModule,
     GioSubmenuModule,
+    GioTopNavModule,
     GioMonacoEditorModule,
     OrgSettingsPlatformPoliciesStudioModule,
     MatMenu,

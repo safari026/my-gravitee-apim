@@ -3,7 +3,10 @@
 .org-navigation {
   display: grid;
   grid-template-columns: min-content auto;
-  grid-template-areas: 'menu content';
+  grid-template-rows: auto minmax(0, 1fr);
+  grid-template-areas:
+    'header header'
+    'menu content';
 
   //display: flex;
   //flex-direction: row;
@@ -12,11 +15,23 @@
   a {
     text-decoration: none;
   }
+  &__header {
+    grid-area: header;
+  }
   &__nav {
+    display: flex;
     grid-area: menu;
+    height: 100%;
+    min-height: 0;
+    overflow: auto;
+
+    gio-submenu {
+      height: 100%;
+    }
   }
   &__content {
     grid-area: content;
+    min-height: 0;
     overflow: auto;
     //min-height: 100vh;
     //width: 100%;

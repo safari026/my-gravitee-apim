@@ -39,9 +39,9 @@ describe('GioTopNavComponent', () => {
     Array.from(fixture.nativeElement.querySelectorAll('[data-testid="top-nav-contextual-documentation-button"]'));
 
   const languageButtons = (): HTMLButtonElement[] =>
-    Array.from(fixture.nativeElement.querySelectorAll('[data-testid="top-nav-language-button"]'));
+    Array.from(fixture.nativeElement.querySelectorAll('[data-testid="language-toggle"]'));
 
-  const init = async (displayContextualDocumentationButton = true, isOEM = false) => {
+  const init = async (displayContextualDocumentationButton = true, isOEM = false, showEnvironmentContext = true) => {
     await TestBed.configureTestingModule({
       imports: [NoopAnimationsModule, GioTestingModule, GioTopNavModule, MatIconTestingModule],
       providers: [
@@ -92,6 +92,7 @@ describe('GioTopNavComponent', () => {
 
     fixture = TestBed.createComponent(GioTopNavComponent);
     fixture.componentInstance.displayContextualDocumentationButton = displayContextualDocumentationButton;
+    fixture.componentInstance.showEnvironmentContext = showEnvironmentContext;
     fixture.detectChanges();
   };
 
@@ -145,6 +146,14 @@ describe('GioTopNavComponent', () => {
 
     expect(helpButtons()).toHaveLength(0);
     expect(languageButtons()).toHaveLength(1);
+  });
+
+  it('hides the environment portal link outside an environment context', async () => {
+    await init(false, false, false);
+
+    expect(fixture.nativeElement.textContent).not.toContain('Developer Portal');
+    expect(languageButtons()).toHaveLength(1);
+    expect(fixture.nativeElement.querySelectorAll('[data-testid="top-nav-user-menu-button"]')).toHaveLength(1);
   });
 
   it('translates top nav chrome EN → RU → EN without reload', async () => {

@@ -13,25 +13,14 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { Component, inject } from '@angular/core';
-import { MatButtonModule } from '@angular/material/button';
-import { MatIconModule } from '@angular/material/icon';
-import { GioIconsModule } from '@gravitee/ui-particles-angular';
+import { Component } from '@angular/core';
 
-import { LanguageService } from '../shared/i18n/language.service';
-import { TranslatePipe } from '../shared/i18n/translate.pipe';
+import { GioLanguageToggleComponent } from '../shared/components/gio-language-toggle/gio-language-toggle.component';
 
 @Component({
   selector: 'auth-language-toggle',
   templateUrl: './auth-language-toggle.component.html',
   styleUrls: ['./auth-language-toggle.component.scss'],
-  imports: [MatButtonModule, MatIconModule, GioIconsModule, TranslatePipe],
+  imports: [GioLanguageToggleComponent],
 })
-export class AuthLanguageToggleComponent {
-  private readonly languageService = inject(LanguageService);
-
-  toggleLanguage(): void {
-    const currentLanguage = this.languageService.currentLanguage();
-    this.languageService.setLanguage(currentLanguage === 'en' ? 'ru' : 'en');
-  }
-}
+export class AuthLanguageToggleComponent {}

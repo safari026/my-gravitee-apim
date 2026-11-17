@@ -180,4 +180,31 @@ describe('GioUserMenuComponent', () => {
     await menu.clickItem({ text: /Sign Out/ });
     expect(logout).toHaveBeenCalled();
   });
+
+  it('opens account on the known environment from organization', async () => {
+    await init();
+    fixture.componentInstance.showEnvironmentContext = false;
+    fixture.detectChanges();
+
+    const menu = await openMenu();
+    await menu.clickItem({ text: /My Account/ });
+
+    expect(router.navigate).toHaveBeenCalledWith(['/', 'DEFAULT', 'my-account']);
+  });
+
+  it('hides environment routes when organization has no environment', async () => {
+    await init();
+    const constants = TestBed.inject(Constants);
+    constants.org.currentEnv = undefined;
+    fixture.componentInstance.showEnvironmentContext = false;
+    fixture.detectChanges();
+
+    const menu = await openMenu();
+    const texts = (await getMenuTexts(menu)).join(' ');
+
+    expect(texts).not.toContain('My Account');
+    expect(texts).not.toContain('Tasks');
+    expect(texts).not.toContain('Support');
+    expect(texts).toContain('Sign Out');
+  });
 });

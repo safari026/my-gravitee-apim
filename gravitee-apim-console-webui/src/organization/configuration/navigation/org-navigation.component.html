@@ -16,6 +16,7 @@
 
 -->
 <div class="org-navigation">
+  <gio-top-nav class="org-navigation__header" [showEnvironmentContext]="false"></gio-top-nav>
   <div class="org-navigation__nav">
     <gio-submenu theme="light" [static]="true">
       <button gioSubmenuTitle mat-button [attr.aria-label]="'settings.organization.navigation.settingsTitle' | translate" (click)="goBack()">
