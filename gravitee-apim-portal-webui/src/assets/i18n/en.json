@@ -933,8 +933,10 @@
     }
   },
   "gv-pagination": {
+    "goTo": "Go to page",
     "next": "Next",
-    "previous": "Previous"
+    "previous": "Previous",
+    "results": "{count} results"
   },
   "gv-plans": {
     "characteristics": {

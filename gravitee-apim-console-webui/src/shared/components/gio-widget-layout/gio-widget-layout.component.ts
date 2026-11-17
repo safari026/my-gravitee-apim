@@ -13,19 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, input, OnChanges, SimpleChanges } from '@angular/core';
+import { ChangeDetectionStrategy, ChangeDetectorRef, Component, computed, inject, input, OnChanges, SimpleChanges } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { MatCardModule } from '@angular/material/card';
 import { GioLoaderModule } from '@gravitee/ui-particles-angular';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
+import { LanguageService } from '../../i18n/language.service';
+import { TranslatePipe } from '../../i18n/translate.pipe';
+
 export type GioWidgetLayoutState = 'loading' | 'error' | 'success' | 'empty';
 
 @Component({
   selector: 'gio-widget-layout',
   standalone: true,
-  imports: [CommonModule, MatCardModule, MatIconModule, GioLoaderModule, MatTooltipModule],
+  imports: [CommonModule, MatCardModule, MatIconModule, GioLoaderModule, MatTooltipModule, TranslatePipe],
   templateUrl: './gio-widget-layout.component.html',
   styleUrl: './gio-widget-layout.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -37,9 +40,12 @@ export class GioWidgetLayoutComponent implements OnChanges {
   errors = input<string[]>();
   minHeight = input<'small' | 'medium' | 'large'>('small');
 
+  private readonly languageService = inject(LanguageService);
+
   errorMessage = computed(() => {
+    this.languageService.currentLanguage();
     const errors = this.errors();
-    return errors && errors.length > 0 ? errors.join(', ') : 'An error occurred';
+    return errors && errors.length > 0 ? errors.join(', ') : this.languageService.translate('common.errorOccurred');
   });
 
   constructor(private cdr: ChangeDetectorRef) {}

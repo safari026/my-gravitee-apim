@@ -28,6 +28,13 @@ import { environment } from '../../environments/environment';
 export class TranslationService {
   static readonly STORAGE_KEY = 'gio-portal-lang';
 
+  /**
+   * First `TranslateService.use()` emission is the raw catalog.
+   * Later emissions are MessageFormat functions. ui-components reads those
+   * values as labels, so the raw catalog has to be kept.
+   */
+  private readonly plainCatalogs = new Map<string, object>();
+
   constructor(
     private translateService: TranslateService,
     private titleService: Title,
@@ -51,10 +58,64 @@ export class TranslationService {
     }
     return this.translateService.use(lang).pipe(
       tap(translations => {
-        setLanguage(this.translateService.currentLang);
-        addTranslations(this.translateService.currentLang, translations as object, this.translateService.currentLang);
+        const lang = this.translateService.currentLang;
+        const catalog = this.plainCatalog(lang, translations);
+        setLanguage(lang);
+        addTranslations(lang, catalog, lang);
+        this.refreshTableComponents();
       }),
     );
+  }
+
+  private plainCatalog(lang: string, translations: unknown): object {
+    if (!this.hasCompilerFunction(translations)) {
+      const catalog = (translations ?? {}) as object;
+      this.plainCatalogs.set(lang, catalog);
+      return catalog;
+    }
+    return this.plainCatalogs.get(lang) ?? (this.stringsFromCompiler(translations) as object);
+  }
+
+  private hasCompilerFunction(value: unknown): boolean {
+    if (typeof value === 'function') {
+      return true;
+    }
+    if (Array.isArray(value)) {
+      return value.some(child => this.hasCompilerFunction(child));
+    }
+    if (value && typeof value === 'object') {
+      return Object.keys(value).some(key => this.hasCompilerFunction((value as Record<string, unknown>)[key]));
+    }
+    return false;
+  }
+
+  private stringsFromCompiler(value: unknown): unknown {
+    if (typeof value === 'function') {
+      const source = Function.prototype.toString.call(value);
+      const literal = source.match(/^\(\)\s*=>\s*(?:"((?:\\.|[^"\\])*)"|'((?:\\.|[^'\\])*)')$/);
+      const text = literal?.[1] ?? literal?.[2];
+      return text === undefined ? value : text.replace(/\\(["'\\])/g, '$1');
+    }
+    if (Array.isArray(value)) {
+      return value.map(child => this.stringsFromCompiler(child));
+    }
+    if (value && typeof value === 'object') {
+      const catalog = value as Record<string, unknown>;
+      return Object.keys(catalog).reduce<Record<string, unknown>>((result, key) => {
+        result[key] = this.stringsFromCompiler(catalog[key]);
+        return result;
+      }, {});
+    }
+    return value;
+  }
+
+  private refreshTableComponents(): void {
+    if (typeof document === 'undefined') {
+      return;
+    }
+    document.querySelectorAll('gv-pagination, gv-table, gv-row').forEach(element => {
+      (element as { requestUpdate?: () => void }).requestUpdate?.();
+    });
   }
 
   private readStoredLanguage(): string | null {

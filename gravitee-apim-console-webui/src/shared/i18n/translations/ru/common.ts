@@ -39,7 +39,19 @@ export const ruCommon = {
   comingSoon: 'Скоро!',
   loading: 'Загрузка...',
   noDataToDisplay: 'Нет данных для отображения',
+  adjustSearchFilters: 'Измените условия поиска и фильтры, чтобы увидеть больше результатов.',
+  errorOccurred: 'Произошла ошибка',
   tryWideningTimeframe: 'Могут быть доступны дополнительные данные. Расширьте интервал или измените фильтры.',
+  paginator: {
+    itemsPerPage: 'Элементов на странице:',
+    nextPage: 'Следующая страница',
+    previousPage: 'Предыдущая страница',
+    firstPage: 'Первая страница',
+    lastPage: 'Последняя страница',
+    notAvailable: 'н/д',
+    emptyRange: '0 из {total}',
+    range: '{start} – {end} из {total}',
+  },
 
   language: {
     switch: 'Переключить язык',

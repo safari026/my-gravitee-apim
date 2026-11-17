@@ -36,7 +36,7 @@
           <div class="icon">
             <mat-icon svgIcon="gio:alert-circle"></mat-icon>
           </div>
-          <div class="mat-h3" data-test-id="error-title">No data to display</div>
+          <div class="mat-h3" data-test-id="error-title">{{ 'common.noDataToDisplay' | translate }}</div>
           <div data-test-id="error-message">{{ errorMessage() }}</div>
         </div>
       }
@@ -50,8 +50,8 @@
           <div class="icon">
             <mat-icon svgIcon="gio:stat-up"></mat-icon>
           </div>
-          <div class="mat-h3" data-test-id="empty-title">No data to display</div>
-          <div data-test-id="empty-message">Adjust your search criteria and filters for better results.</div>
+          <div class="mat-h3" data-test-id="empty-title">{{ 'common.noDataToDisplay' | translate }}</div>
+          <div data-test-id="empty-message">{{ 'common.adjustSearchFilters' | translate }}</div>
         </div>
       }
     }

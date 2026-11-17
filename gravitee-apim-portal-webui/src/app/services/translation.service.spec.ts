@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-import { of } from 'rxjs';
+import { Observable, of } from 'rxjs';
 import { createServiceFactory, SpectatorService } from '@ngneat/spectator/jest';
 import { TranslateService } from '@ngx-translate/core';
 import { Title } from '@angular/platform-browser';
@@ -33,7 +33,7 @@ describe('TranslationService', () => {
     setDefaultLang: jest.fn(),
     getBrowserLang: jest.fn(() => 'fr'),
     currentLang: 'en',
-    use: jest.fn((lang: string) => {
+    use: jest.fn((lang: string): Observable<unknown> => {
       translate.currentLang = lang;
       return of({ 'site.title': 'Developer Portal' });
     }),
@@ -96,5 +96,47 @@ describe('TranslationService', () => {
 
     expect(localStorage.getItem(TranslationService.STORAGE_KEY)).toBe('ru');
     expect(title.setTitle).not.toHaveBeenCalled();
+  });
+
+  it('reuses the plain catalog when ngx-translate later returns compiled functions', () => {
+    spectator.service.use('en').subscribe();
+    translate.use.mockImplementation((lang: string) => {
+      translate.currentLang = lang;
+      return of({
+        'gv-pagination': {
+          previous: () => 'Previous',
+          next: () => 'Next',
+        },
+      });
+    });
+    (addTranslations as jest.Mock).mockClear();
+
+    spectator.service.use('en').subscribe();
+
+    expect(addTranslations).toHaveBeenCalledWith('en', { 'site.title': 'Developer Portal' }, 'en');
+  });
+
+  it('reads a compiled label function as text when the plain catalog is unavailable', () => {
+    const previous = new Function('return () => "Previous"')() as () => string;
+    translate.use.mockImplementation((lang: string) => {
+      translate.currentLang = lang;
+      return of({ previous });
+    });
+
+    spectator.service.use('ru').subscribe();
+
+    expect(addTranslations).toHaveBeenCalledWith('ru', { previous: 'Previous' }, 'ru');
+  });
+
+  it('asks rendered table components to redraw translated labels', () => {
+    const pagination = document.createElement('gv-pagination');
+    const requestUpdate = jest.fn();
+    (pagination as unknown as { requestUpdate: () => void }).requestUpdate = requestUpdate;
+    document.body.appendChild(pagination);
+
+    spectator.service.use('ru').subscribe();
+
+    expect(requestUpdate).toHaveBeenCalled();
+    pagination.remove();
   });
 });

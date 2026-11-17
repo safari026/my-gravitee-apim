@@ -39,7 +39,19 @@ export const enCommon = {
   comingSoon: 'Coming soon!',
   loading: 'Loading...',
   noDataToDisplay: 'No data to display',
+  adjustSearchFilters: 'Adjust your search criteria and filters for better results.',
+  errorOccurred: 'An error occurred',
   tryWideningTimeframe: 'More data may be available. Try widening your timeframe or adjusting your filters.',
+  paginator: {
+    itemsPerPage: 'Items per page:',
+    nextPage: 'Next page',
+    previousPage: 'Previous page',
+    firstPage: 'First page',
+    lastPage: 'Last page',
+    notAvailable: 'N/A',
+    emptyRange: '0 of {total}',
+    range: '{start} – {end} of {total}',
+  },
 
   language: {
     switch: 'Switch language',

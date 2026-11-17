@@ -933,8 +933,10 @@
     }
   },
   "gv-pagination": {
+    "goTo": "Перейти к странице",
     "next": "Далее",
-    "previous": "Назад"
+    "previous": "Назад",
+    "results": "{count} результатов"
   },
   "gv-plans": {
     "characteristics": {
